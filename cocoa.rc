@@ -1,0 +1,14 @@
+#[link(name = "cocoa",
+       vers = "0.1",
+       uuid = "5b7b7262-780d-465d-892c-15eab956dedc",
+       url = "http://github.com/pcwalton/cocoa")];
+
+#[comment = "The Servo Parallel Browser Project"];
+#[license = "MIT"];
+#[crate_type = "lib"];
+
+use std;
+
+mod appkit;
+mod base;
+

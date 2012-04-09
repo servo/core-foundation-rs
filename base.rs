@@ -13,8 +13,14 @@ native mod objc {
 
 #[test]
 fn test_nsapp() {
-    let klass = str::as_c_str("NSApplication") { |s| objc::objc_getClass(s) };
-    let sel = str::as_c_str("sharedApplication") { |s| objc::sel_registerName(s) };
+    let klass = str::as_c_str("NSApplication") { |s|
+        objc::objc_getClass(s)
+    };
+
+    let sel = str::as_c_str("sharedApplication") { |s|
+        objc::sel_registerName(s)
+    };
+
     let nsapp = objc::objc_msgSend(klass, sel);
 
     io::println(#fmt("nsapp: %d", (nsapp as int)));

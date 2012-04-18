@@ -1,0 +1,9 @@
+*~
+*#
+*.o
+*.so
+*.dylib
+*.dSYM
+*.dll
+*.dummy
+cocoa-test

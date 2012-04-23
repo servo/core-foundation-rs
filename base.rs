@@ -4,6 +4,7 @@ type id = libc::intptr_t;
 type Class = libc::intptr_t;
 type IMP = *u8;
 type SEL = libc::intptr_t;
+type Ivar = libc::intptr_t;
 
 const nil : id = 0 as id;
 
@@ -12,6 +13,17 @@ native mod objc {
                        name : SEL,
                        imp : IMP,
                        types : *libc::c_char) -> bool;
+    fn class_addIvar(cls : Class,
+                     name : *libc::c_char,
+                     size : libc::size_t,
+                     alignment: u8,
+		     types: *libc::c_char) -> bool;
+    fn object_setInstanceVariable(obj : id,
+                                  name : *libc::c_char,
+                                  value : *libc::c_void);
+    fn object_getInstanceVariable(obj : id,
+                                  name : *libc::c_char,
+                                  outValue : **libc::c_void);
     fn objc_allocateClassPair(superclass : Class,
                               name : *libc::c_char,
                               extraBytes : libc::size_t) -> Class;

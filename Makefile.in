@@ -1,9 +1,11 @@
+VPATH=%VPATH%
+
 CC ?= gcc
 RUSTC ?= rustc
 AR ?= ar
 RUSTFLAGS ?=
 
-RUST_SRC = $(shell find . -type f -name '*.rs')
+RUST_SRC = $(shell find $(VPATH)/. -type f -name '*.rs')
 
 .PHONY: all
 all: libcocoa.dummy

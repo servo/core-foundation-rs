@@ -8,3 +8,4 @@
 *.dll
 *.dummy
 cocoa-test
+build

@@ -12,6 +12,7 @@ native mod cg {
                                    ) -> CGDataProviderRef;
     fn CGDataProviderRelease(provider: CGDataProviderRef);
     fn CGFontCreateWithDataProvider(provider: CGDataProviderRef) -> CGFontRef;
+    fn CGFontRelease(font: CGFontRef);
 }
 
 type CGFontRef = *c_void;

@@ -5,6 +5,6 @@ fn msgSend1Id(theReceiver: base::id, theSelector: base::SEL, id: base::id) {
 
 #[link_args = "-L. -lmsgsend"]
 #[nolink]
-native mod msgsend {
+extern mod msgsend {
     fn msgSend1IdHACK(theReceiver: base::id, theSelector: base::SEL, id: base::id);
 }

@@ -7,8 +7,8 @@ extern mod appkit {
 }
 
 fn NSApp() -> base::id {
-    let klass = str::as_c_str("NSApplication", |s| objc::objc_getClass(s));
-    let sel = str::as_c_str("sharedApplication", |s| objc::sel_registerName(s));
+    let klass = str::as_c_str(~"NSApplication", |s| objc::objc_getClass(s));
+    let sel = str::as_c_str(~"sharedApplication", |s| objc::sel_registerName(s));
     ret objc::objc_msgSend(klass, sel);
 }
 

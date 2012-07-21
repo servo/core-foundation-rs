@@ -35,17 +35,17 @@ extern mod objc {
 
 #[test]
 fn test_nsapp() {
-    let klass = str::as_c_str("NSApplication", |s|
+    let klass = str::as_c_str(~"NSApplication", |s|
         objc::objc_getClass(s)
     );
 
-    let sel = str::as_c_str("sharedApplication", |s|
+    let sel = str::as_c_str(~"sharedApplication", |s|
         objc::sel_registerName(s)
     );
 
     let nsapp = objc::objc_msgSend(klass, sel);
 
-    io::println(#fmt("nsapp: %d", (nsapp as int)));
+    io::println(#fmt(~"nsapp: %d", (nsapp as int)));
 }
 
 #[test]
@@ -55,23 +55,23 @@ fn test_custom_obj() {
         ret this;
     }
 
-    let NSObject = str::as_c_str("NSObject", |s|
+    let NSObject = str::as_c_str(~"NSObject", |s|
         objc::objc_getClass(s)
     );
-    let MyObject = str::as_c_str("MyObject", |s|
+    let MyObject = str::as_c_str(~"MyObject", |s|
         objc::objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
     );
-    let doSomething = str::as_c_str("doSomething", |s|
+    let doSomething = str::as_c_str(~"doSomething", |s|
         objc::sel_registerName(s)
     );
-    let _ = str::as_c_str("@@:", |types|
+    let _ = str::as_c_str(~"@@:", |types|
         objc::class_addMethod(MyObject, doSomething, MyObject_doSomething,
                               types)
     );
     objc::objc_registerClassPair(MyObject);
 
-    let alloc = str::as_c_str("alloc", |s| objc::sel_registerName(s));
-    let init = str::as_c_str("init", |s| objc::sel_registerName(s));
+    let alloc = str::as_c_str(~"alloc", |s| objc::sel_registerName(s));
+    let init = str::as_c_str(~"init", |s| objc::sel_registerName(s));
 
     let mut obj = objc::objc_msgSend(MyObject, alloc);
     obj = objc::objc_msgSend(obj, init);

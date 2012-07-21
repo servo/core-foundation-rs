@@ -51,7 +51,7 @@ fn test_nsapp() {
 #[test]
 fn test_custom_obj() {
     extern fn MyObject_doSomething(this : id, _sel : SEL) -> id {
-        io::println("doSomething");
+        io::println(~"doSomething");
         ret this;
     }
 

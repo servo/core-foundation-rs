@@ -45,7 +45,7 @@ fn test_nsapp() {
 
     let nsapp = objc::objc_msgSend(klass, sel);
 
-    io::println(#fmt(~"nsapp: %d", (nsapp as int)));
+    io::println(#fmt("nsapp: %d", (nsapp as int)));
 }
 
 #[test]

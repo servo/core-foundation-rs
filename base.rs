@@ -52,7 +52,7 @@ fn test_nsapp() {
 fn test_custom_obj() {
     extern fn MyObject_doSomething(this : id, _sel : SEL) -> id {
         io::println(~"doSomething");
-        ret this;
+        return this;
     }
 
     let NSObject = str::as_c_str(~"NSObject", |s|

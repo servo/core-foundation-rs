@@ -18,6 +18,6 @@ fn NSAutoreleasePool() -> base::id {
     let init_sel = str::as_c_str(~"init", |s| objc::sel_registerName(s));
 
     let pool = objc::objc_msgSend(klass, alloc_sel);
-    ret objc::objc_msgSend(pool, init_sel);
+    return objc::objc_msgSend(pool, init_sel);
 }
 

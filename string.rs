@@ -1,5 +1,5 @@
-use base::{Boolean, CFAllocatorRef, CFIndex, CFRelease, CFType, CFTypeRef, kCFAllocatorDefault};
-use base::{kCFAllocatorNull};
+use base::{AbstractCFType, Boolean, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef};
+use base::{kCFAllocatorDefault, kCFAllocatorNull};
 use libc::c_char;
 use unsafe::reinterpret_cast;
 
@@ -40,8 +40,8 @@ mod CFString {
     }
 }
 
-impl CFString : CFType {
-    pure fn get(&self) -> CFTypeRef {
+impl CFString : AbstractCFType {
+    pure fn as_type_ref(&self) -> CFTypeRef {
         unsafe {
             reinterpret_cast(self.obj)
         }

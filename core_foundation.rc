@@ -1,4 +1,5 @@
 mod base;
+mod boolean;
 mod dictionary;
 mod string;
 mod test;

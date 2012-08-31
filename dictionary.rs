@@ -1,4 +1,4 @@
-use base::{CFAllocatorRef, CFIndex, CFRelease, CFType, CFTypeRef, kCFAllocatorDefault};
+use base::{AbstractCFType, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef, kCFAllocatorDefault};
 use dvec::DVec;
 use libc::c_void;
 use ptr::to_unsafe_ptr;
@@ -31,7 +31,7 @@ pub struct CFDictionaryValueCallBacks {
 struct __CFDictionary { private: () }
 pub type CFDictionaryRef = *__CFDictionary;
 
-struct CFDictionary<K:CFType,V:CFType> {
+struct CFDictionary<K:AbstractCFType,V:AbstractCFType> {
     obj: CFDictionaryRef,
 
     drop {
@@ -42,18 +42,18 @@ struct CFDictionary<K:CFType,V:CFType> {
 }
 
 mod CFDictionary {
-    fn wrap<K:CFType,V:CFType>(obj: CFDictionaryRef) -> CFDictionary<K,V> {
+    fn wrap<K:AbstractCFType,V:AbstractCFType>(obj: CFDictionaryRef) -> CFDictionary<K,V> {
         CFDictionary { obj: obj }
     }
 
-    fn new_dictionary<K:CFType,V:CFType>(pairs: &[(K,V)]) -> CFDictionary<K,V> {
+    fn new_dictionary<K:AbstractCFType,V:AbstractCFType>(pairs: &[(K,V)]) -> CFDictionary<K,V> {
         let (keys, values) = (DVec(), DVec());
         for pairs.each |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
             match pair {
                 (ref key, ref value) => {
-                    keys.push(key.get());
-                    values.push(value.get());
+                    keys.push(key.as_type_ref());
+                    values.push(value.as_type_ref());
                 }
             }
         }
@@ -76,8 +76,8 @@ mod CFDictionary {
     }
 }
 
-impl<K:CFType,V:CFType> CFDictionary<K,V> : CFType {
-    pure fn get(&self) -> CFTypeRef {
+impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> : AbstractCFType {
+    pure fn as_type_ref(&self) -> CFTypeRef {
         unsafe {
             reinterpret_cast(self.obj)
         }

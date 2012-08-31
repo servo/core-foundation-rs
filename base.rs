@@ -10,17 +10,39 @@ pub type CFAllocatorRef = *__CFAllocator;
 struct __CFType { private: () }
 pub type CFTypeRef = *__CFType;
 
-trait CFType {
-    pure fn get(&self) -> CFTypeRef;
+struct CFType {
+    obj: CFTypeRef,
+
+    drop {
+        unsafe {
+            CFRelease(self.obj)
+        }
+    }
+}
+
+impl CFType : AbstractCFType {
+    pure fn as_type_ref(&self) -> CFTypeRef {
+        self.obj
+    }
+}
+
+trait AbstractCFType {
+    pure fn as_type_ref(&self) -> CFTypeRef;
 }
 
 trait CFTypeOps {
+    fn as_type(self) -> CFType;
     fn show(&self);
 }
 
-impl<T:CFType> T : CFTypeOps {
+impl<T:AbstractCFType> T : CFTypeOps {
+    // Consumes self.
+    fn as_type(self) -> CFType {
+        CFType { obj: self.as_type_ref() }
+    }
+
     fn show(&self) {
-        CFShow(self.get());
+        CFShow(self.as_type_ref());
     }
 }
 

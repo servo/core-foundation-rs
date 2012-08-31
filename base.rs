@@ -31,14 +31,20 @@ trait AbstractCFType {
 }
 
 trait CFTypeOps {
-    fn as_type(self) -> CFType;
+    fn as_type(&self) -> CFType;
+    fn retain_count(&self) -> CFIndex;
     fn show(&self);
 }
 
 impl<T:AbstractCFType> T : CFTypeOps {
-    // Consumes self.
-    fn as_type(self) -> CFType {
+    // FIXME: Should move, but there's a linearity bug.
+    fn as_type(&self) -> CFType {
+        CFRetain(self.as_type_ref());
         CFType { obj: self.as_type_ref() }
+    }
+
+    fn retain_count(&self) -> CFIndex {
+        CFGetRetainCount(self.as_type_ref())
     }
 
     fn show(&self) {
@@ -60,6 +66,7 @@ extern {
     const kCFAllocatorNull: CFAllocatorRef;
     const kCFAllocatorUseContext: CFAllocatorRef;
 
+    fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;
     fn CFRetain(cf: CFTypeRef) -> CFTypeRef;
     fn CFRelease(cf: CFTypeRef);
 

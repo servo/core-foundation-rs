@@ -25,7 +25,7 @@ mod CFNumber {
     fn new_number<T:copy ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             CFNumber {
-                obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), reinterpret_cast(&&n))
+                obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), reinterpret_cast(& &n))
             }
         }
     }

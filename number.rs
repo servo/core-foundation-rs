@@ -12,7 +12,7 @@ struct CFNumber {
 
     drop {
         unsafe {
-            CFRelease(reinterpret_cast(self.obj));
+            CFRelease(reinterpret_cast(&self.obj));
         }
     }
 }
@@ -25,7 +25,7 @@ mod CFNumber {
     fn new_number<T:copy ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             CFNumber {
-                obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), reinterpret_cast(&n))
+                obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), reinterpret_cast(&&n))
             }
         }
     }
@@ -34,7 +34,7 @@ mod CFNumber {
 impl CFNumber : AbstractCFType {
     pure fn as_type_ref(&self) -> CFTypeRef {
         unsafe {
-            reinterpret_cast(self.obj)
+            reinterpret_cast(&self.obj)
         }
     }
 }

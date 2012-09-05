@@ -9,7 +9,7 @@ struct CFBoolean {
 
     drop {
         unsafe {
-            CFRelease(reinterpret_cast(self.obj));
+            CFRelease(reinterpret_cast(&self.obj));
         }
     }
 }
@@ -22,7 +22,7 @@ mod CFBoolean {
     fn true_value() -> CFBoolean {
         unsafe {
             let obj = kCFBooleanTrue;
-            CFRetain(reinterpret_cast(obj));
+            CFRetain(reinterpret_cast(&obj));
             return wrap(obj);
         }
     }
@@ -30,7 +30,7 @@ mod CFBoolean {
     fn false_value() -> CFBoolean {
         unsafe {
             let obj = kCFBooleanFalse;
-            CFRetain(reinterpret_cast(obj));
+            CFRetain(reinterpret_cast(&obj));
             return wrap(obj);
         }
     }
@@ -39,7 +39,7 @@ mod CFBoolean {
 impl CFBoolean : AbstractCFType {
     pure fn as_type_ref(&self) -> CFTypeRef {
         unsafe {
-            reinterpret_cast(self.obj)
+            reinterpret_cast(&self.obj)
         }
     }
 }

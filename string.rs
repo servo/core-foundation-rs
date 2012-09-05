@@ -17,7 +17,7 @@ struct CFString {
 
     drop {
         unsafe {
-            CFRelease(reinterpret_cast(self.obj));
+            CFRelease(reinterpret_cast(&self.obj));
         }
     }
 }
@@ -43,7 +43,7 @@ mod CFString {
 impl CFString : AbstractCFType {
     pure fn as_type_ref(&self) -> CFTypeRef {
         unsafe {
-            reinterpret_cast(self.obj)
+            reinterpret_cast(&self.obj)
         }
     }
 }

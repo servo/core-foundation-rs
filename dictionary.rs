@@ -3,7 +3,7 @@ use dvec::DVec;
 use libc::c_void;
 use ptr::to_unsafe_ptr;
 use unsafe::reinterpret_cast;
-use vec::unsafe::to_ptr_slice;
+use vec::unsafe::to_ptr;
 
 pub type CFDictionaryRetainCallBack = *u8;
 pub type CFDictionaryReleaseCallBack = *u8;
@@ -36,7 +36,7 @@ struct CFDictionary<K:AbstractCFType,V:AbstractCFType> {
 
     drop {
         unsafe {
-            CFRelease(reinterpret_cast(self.obj));
+            CFRelease(reinterpret_cast(&self.obj));
         }
     }
 }
@@ -65,8 +65,8 @@ mod CFDictionary {
         let dictionary_ref;
         unsafe {
             dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
-                                                reinterpret_cast(to_ptr_slice(keys)),
-                                                reinterpret_cast(to_ptr_slice(values)),
+                                                reinterpret_cast(&to_ptr(keys)),
+                                                reinterpret_cast(&to_ptr(values)),
                                                 keys.len() as CFIndex,
                                                 to_unsafe_ptr(&kCFTypeDictionaryKeyCallBacks),
                                                 to_unsafe_ptr(&kCFTypeDictionaryValueCallBacks));
@@ -79,7 +79,7 @@ mod CFDictionary {
 impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> : AbstractCFType {
     pure fn as_type_ref(&self) -> CFTypeRef {
         unsafe {
-            reinterpret_cast(self.obj)
+            reinterpret_cast(&self.obj)
         }
     }
 }

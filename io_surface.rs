@@ -1,11 +1,10 @@
 // Rust bindings to the IOSurface framework on Mac OS X.
 
-use core_foundation::base::{AbstractCFType, CFType, CFTypeOps, CFTypeRef};
-use core_foundation::base::__foreign_mod__::CFRelease;  // FIXME
+use core_foundation::base::{AbstractCFType, CFRelease, CFType, CFTypeOps, CFTypeRef};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
 use core_foundation::string::{CFString, CFStringRef};
-use unsafe::reinterpret_cast;
+use unsafe::transmute;
 
 struct __IOSurface { private: () }
 pub type IOSurfaceRef = *__IOSurface;
@@ -17,7 +16,7 @@ pub struct IOSurface {
 
     drop {
         unsafe {
-            CFRelease(reinterpret_cast(self.obj));
+            CFRelease(transmute(copy self.obj));
         }
     }
 }
@@ -40,7 +39,7 @@ pub mod IOSurface {
 impl IOSurface : AbstractCFType {
     pure fn as_type_ref(&self) -> CFTypeRef {
         unsafe {
-            reinterpret_cast(self.obj)
+            transmute(copy self.obj)
         }
     }
 }

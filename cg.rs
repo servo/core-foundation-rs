@@ -1,6 +1,6 @@
 // FIXME: Should be bindgenned
 
-import libc::{c_void, c_char, size_t};
+use libc::{c_void, c_char, size_t};
 
 #[nolink]
 extern mod cg {

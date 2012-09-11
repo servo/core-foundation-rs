@@ -1,4 +1,4 @@
-import base::objc;
+use base::objc;
 
 #[nolink]
 #[link_args="-framework AppKit"]

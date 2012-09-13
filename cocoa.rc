@@ -7,7 +7,7 @@
 #[license = "MIT"];
 #[crate_type = "lib"];
 
-use std;
+extern mod std;
 
 mod appkit;
 mod base;

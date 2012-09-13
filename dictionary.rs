@@ -3,7 +3,7 @@ use dvec::DVec;
 use libc::c_void;
 use ptr::to_unsafe_ptr;
 use unsafe::reinterpret_cast;
-use vec::unsafe::to_ptr;
+use vec::raw::to_ptr;
 
 pub type CFDictionaryRetainCallBack = *u8;
 pub type CFDictionaryReleaseCallBack = *u8;
@@ -59,8 +59,8 @@ mod CFDictionary {
         }
 
         assert keys.len() == values.len();
-        let keys = vec::from_mut(dvec::unwrap(keys));
-        let values = vec::from_mut(dvec::unwrap(values));
+        let keys = dvec::unwrap(keys);
+        let values = dvec::unwrap(values);
 
         let dictionary_ref;
         unsafe {

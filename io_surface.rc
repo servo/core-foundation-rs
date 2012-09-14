@@ -1,2 +1,4 @@
+#[crate_type = "lib"];
+
 extern mod core_foundation;
 

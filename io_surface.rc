@@ -1,3 +1,5 @@
+#[link(name = "io_surface",
+	   vers = "0.1")];
 #[crate_type = "lib"];
 
 extern mod core_foundation;

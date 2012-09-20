@@ -4,7 +4,7 @@ use core_foundation::base::{AbstractCFType, CFRelease, CFType, CFTypeOps, CFType
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
 use core_foundation::string::{CFString, CFStringRef};
-use unsafe::transmute;
+use cast::transmute;
 
 struct __IOSurface { private: () }
 pub type IOSurfaceRef = *__IOSurface;

@@ -1,5 +1,5 @@
 use base::{AbstractCFType, CFRelease, CFRetain, CFTypeRef};
-use unsafe::reinterpret_cast;
+use cast::reinterpret_cast;
 
 struct __CFBoolean { private: () }
 pub type CFBooleanRef = *__CFBoolean;

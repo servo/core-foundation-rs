@@ -1,7 +1,7 @@
 use base::{AbstractCFType, Boolean, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef};
 use base::{kCFAllocatorDefault, kCFAllocatorNull};
+use cast::reinterpret_cast;
 use libc::c_char;
-use unsafe::reinterpret_cast;
 
 type CFStringEncoding = u32;
 

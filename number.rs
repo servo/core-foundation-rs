@@ -1,6 +1,6 @@
 use base::{AbstractCFType, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef, kCFAllocatorDefault};
+use cast::reinterpret_cast;
 use libc::{c_int, c_void};
-use unsafe::reinterpret_cast;
 
 struct __CFNumber { private: () }
 pub type CFNumberRef = *__CFNumber;

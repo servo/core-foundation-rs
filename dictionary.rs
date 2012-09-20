@@ -1,8 +1,8 @@
 use base::{AbstractCFType, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef, kCFAllocatorDefault};
+use cast::reinterpret_cast;
 use dvec::DVec;
 use libc::c_void;
 use ptr::to_unsafe_ptr;
-use unsafe::reinterpret_cast;
 use vec::raw::to_ptr;
 
 pub type CFDictionaryRetainCallBack = *u8;
@@ -50,7 +50,7 @@ mod CFDictionary {
         let (keys, values) = (DVec(), DVec());
         for pairs.each |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
-            match pair {
+            match *pair {
                 (ref key, ref value) => {
                     keys.push(key.as_type_ref());
                     values.push(value.as_type_ref());

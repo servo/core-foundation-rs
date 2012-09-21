@@ -41,11 +41,11 @@ impl CFNumber : AbstractCFType {
 
 trait ConvertibleToCFNumber {
     // FIXME: Should be static, but that breaks.
-    pure fn cf_number_type(self) -> CFNumberType;
+    pure fn cf_number_type(&self) -> CFNumberType;
 }
 
 impl i32 : ConvertibleToCFNumber {
-    pure fn cf_number_type(self) -> CFNumberType { kCFNumberSInt32Type as CFNumberType }
+    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt32Type as CFNumberType }
 }
 
 type CFNumberType = CFIndex;

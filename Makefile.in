@@ -1,26 +1,16 @@
 VPATH=%VPATH%
 
-CC ?= gcc
-CXX ?= g++
-CXXFLAGS ?=
-AR ?= ar
-RUSTC ?= rustc
-RUSTFLAGS ?=
-
 RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 
 .PHONE: all
 all:	librustcorefoundation.dummy
 
-%.o:	%.c
-	$(CC) $< -o $@ -c $(CFLAGS)
-
 librustcorefoundation.dummy: core_foundation.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@
+	$(CFG_RUSTC) $(CFG_RUSTC_FLAGS) $< -o $@
 	touch $@
 
 rustcorefoundation-test: core_foundation.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
+	$(CFG_RUSTC) $(CFG_RUSTC_FLAGS) $< -o $@ --test
 
 check: rustcorefoundation-test
 	./rustcorefoundation-test

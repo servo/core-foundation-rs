@@ -1,14 +1,14 @@
 use std;
 
-type id = libc::intptr_t;
-type Class = libc::intptr_t;
-type IMP = *u8;
-type SEL = libc::intptr_t;
-type Ivar = libc::intptr_t;
+pub type id = libc::intptr_t;
+pub type Class = libc::intptr_t;
+pub type IMP = *u8;
+pub type SEL = libc::intptr_t;
+pub type Ivar = libc::intptr_t;
 
-const nil : id = 0 as id;
+pub const nil : id = 0 as id;
 
-extern mod objc {
+pub extern mod objc {
     fn class_addMethod(cls : Class,
                        name : SEL,
                        imp : IMP,
@@ -17,7 +17,7 @@ extern mod objc {
                      name : *libc::c_char,
                      size : libc::size_t,
                      alignment: u8,
-		     types: *libc::c_char) -> bool;
+		             types: *libc::c_char) -> bool;
     fn object_setInstanceVariable(obj : id,
                                   name : *libc::c_char,
                                   value : *libc::c_void);
@@ -34,7 +34,7 @@ extern mod objc {
 }
 
 #[test]
-fn test_nsapp() {
+pub fn test_nsapp() {
     let klass = str::as_c_str(~"NSApplication", |s|
         objc::objc_getClass(s)
     );
@@ -49,7 +49,7 @@ fn test_nsapp() {
 }
 
 #[test]
-fn test_custom_obj() {
+pub fn test_custom_obj() {
     extern fn MyObject_doSomething(this : id, _sel : SEL) -> id {
         io::println(~"doSomething");
         return this;

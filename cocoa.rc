@@ -9,7 +9,7 @@
 
 extern mod std;
 
-mod appkit;
-mod base;
-mod foundation;
-mod cg;
+pub mod appkit;
+pub mod base;
+pub mod foundation;
+pub mod cg;

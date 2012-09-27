@@ -4,10 +4,10 @@
 
 extern mod std;
 
-mod base;
-mod boolean;
-mod dictionary;
-mod number;
-mod string;
-mod test;
+pub mod base;
+pub mod boolean;
+pub mod dictionary;
+pub mod number;
+pub mod string;
+pub mod test;
 

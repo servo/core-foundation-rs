@@ -41,12 +41,12 @@ struct CFDictionary<K:AbstractCFType,V:AbstractCFType> {
     }
 }
 
-mod CFDictionary {
-    fn wrap<K:AbstractCFType,V:AbstractCFType>(obj: CFDictionaryRef) -> CFDictionary<K,V> {
+pub mod CFDictionary {
+    pub fn wrap<K:AbstractCFType,V:AbstractCFType>(obj: CFDictionaryRef) -> CFDictionary<K,V> {
         CFDictionary { obj: obj }
     }
 
-    fn new_dictionary<K:AbstractCFType,V:AbstractCFType>(pairs: &[(K,V)]) -> CFDictionary<K,V> {
+    pub fn new_dictionary<K:AbstractCFType,V:AbstractCFType>(pairs: &[(K,V)]) -> CFDictionary<K,V> {
         let (keys, values) = (DVec(), DVec());
         for pairs.each |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.

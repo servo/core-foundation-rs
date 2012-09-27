@@ -12,7 +12,7 @@ const kCFStringEncodingUTF8: u32 = 0x08000100;
 struct __CFString { private: () }
 pub type CFStringRef = *__CFString;
 
-struct CFString {
+pub struct CFString {
     obj: CFStringRef,
 
     drop {
@@ -22,12 +22,12 @@ struct CFString {
     }
 }
 
-mod CFString {
-    fn wrap(obj: CFStringRef) -> CFString {
+pub mod CFString {
+    pub fn wrap(obj: CFStringRef) -> CFString {
         CFString { obj: obj }
     }
 
-    fn new_static(string: &static/str) -> CFString {
+    pub fn new_static(string: &static/str) -> CFString {
         let string_ref = do str::as_buf(string) |bytes, len| {
             CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
                                           bytes,

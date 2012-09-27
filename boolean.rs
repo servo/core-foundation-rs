@@ -4,7 +4,7 @@ use cast::reinterpret_cast;
 struct __CFBoolean { private: () }
 pub type CFBooleanRef = *__CFBoolean;
 
-struct CFBoolean {
+pub struct CFBoolean {
     obj: CFBooleanRef,
 
     drop {
@@ -14,12 +14,12 @@ struct CFBoolean {
     }
 }
 
-mod CFBoolean {
-    fn wrap(obj: CFBooleanRef) -> CFBoolean {
+pub mod CFBoolean {
+    pub fn wrap(obj: CFBooleanRef) -> CFBoolean {
         CFBoolean { obj: obj }
     }
 
-    fn true_value() -> CFBoolean {
+    pub fn true_value() -> CFBoolean {
         unsafe {
             let obj = kCFBooleanTrue;
             CFRetain(reinterpret_cast(&obj));
@@ -27,7 +27,7 @@ mod CFBoolean {
         }
     }
 
-    fn false_value() -> CFBoolean {
+    pub fn false_value() -> CFBoolean {
         unsafe {
             let obj = kCFBooleanFalse;
             CFRetain(reinterpret_cast(&obj));

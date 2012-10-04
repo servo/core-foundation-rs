@@ -3,7 +3,7 @@
 use libc::{c_void, c_char, size_t};
 
 #[nolink]
-extern mod cg {
+pub extern mod cg {
     pub fn CGDataProviderCreateWithFilename(filename: *c_char) -> CGDataProviderRef;
     pub fn CGDataProviderCreateWithData(info: *c_void,
                                         data: *c_void,

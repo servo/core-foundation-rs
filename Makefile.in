@@ -1,8 +1,11 @@
 VPATH=%VPATH%
 
+RUSTC ?= rustc
+RUSTFLAGS ?=
+
 RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 
-.PHONE: all
+.PHONY: all clean
 all:	librustcorefoundation.dummy
 
 librustcorefoundation.dummy: core_foundation.rc $(RUST_SRC)
@@ -15,7 +18,6 @@ rustcorefoundation-test: core_foundation.rc $(RUST_SRC)
 check: rustcorefoundation-test
 	./rustcorefoundation-test
 
-.PHONY: clean
 clean:
 	rm -f *.o *.a *.so *.dylib *.dll *.dummy
 

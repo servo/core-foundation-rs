@@ -4,5 +4,7 @@
 
 extern mod std;
 
+pub mod base;
 pub mod data_provider;
 pub mod font;
+pub mod geometry;

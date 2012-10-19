@@ -11,15 +11,15 @@ use cg = core_graphics;
 use cg::base::{
     CGAffineTransform,
     CGFloat,
-}
+};
 use cg::font::{
     CGGlyph,
     CGFontRef,
-}
+};
 use cg::geometry::{
     CGRect,
     CGSize,
-}
+};
 
 pub type CTFontRef = *u8;
 pub type CTFontOrientation = u32;

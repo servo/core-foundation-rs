@@ -3,8 +3,8 @@ use data_provider::CGDataProviderRef;
 
 pub type CGFontRef = *c_void;
 
-#[link_args="-framework CoreGraphics"]
 #[nolink]
+#[link_args="-framework ApplicationServices"]
 extern {
     pub fn CGFontCreateWithDataProvider(provider: CGDataProviderRef) -> CGFontRef;
     pub fn CGFontRelease(font: CGFontRef);

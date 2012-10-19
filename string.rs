@@ -22,12 +22,12 @@ pub struct CFString {
     }
 }
 
-pub mod CFString {
-    pub fn wrap(obj: CFStringRef) -> CFString {
+pub impl CFString {
+    static fn wrap(obj: CFStringRef) -> CFString {
         CFString { obj: obj }
     }
 
-    pub fn new_static(string: &static/str) -> CFString {
+    static fn new_static(string: &static/str) -> CFString {
         let string_ref = do str::as_buf(string) |bytes, len| {
             CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
                                           bytes,
@@ -36,7 +36,7 @@ pub mod CFString {
                                           false as Boolean,
                                           kCFAllocatorNull)
         };
-        wrap(string_ref)
+        CFString::wrap(string_ref)
     }
 }
 

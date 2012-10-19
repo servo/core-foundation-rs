@@ -17,12 +17,12 @@ pub struct CFNumber {
     }
 }
 
-pub mod CFNumber {
-    pub fn wrap(obj: CFNumberRef) -> CFNumber {
+pub impl CFNumber {
+    static fn wrap(obj: CFNumberRef) -> CFNumber {
         CFNumber { obj: obj }
     }
 
-    pub fn new_number<T:Copy ConvertibleToCFNumber>(n: T) -> CFNumber {
+    static fn new_number<T:Copy ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             CFNumber {
                 obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), reinterpret_cast(& &n))

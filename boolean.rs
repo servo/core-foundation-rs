@@ -14,24 +14,24 @@ pub struct CFBoolean {
     }
 }
 
-pub mod CFBoolean {
-    pub fn wrap(obj: CFBooleanRef) -> CFBoolean {
+pub impl CFBoolean {
+    static fn wrap(obj: CFBooleanRef) -> CFBoolean {
         CFBoolean { obj: obj }
     }
 
-    pub fn true_value() -> CFBoolean {
+    static fn true_value() -> CFBoolean {
         unsafe {
             let obj = kCFBooleanTrue;
             CFRetain(reinterpret_cast(&obj));
-            return wrap(obj);
+            return CFBoolean::wrap(obj);
         }
     }
 
-    pub fn false_value() -> CFBoolean {
+    static fn false_value() -> CFBoolean {
         unsafe {
             let obj = kCFBooleanFalse;
             CFRetain(reinterpret_cast(&obj));
-            return wrap(obj);
+            return CFBoolean::wrap(obj);
         }
     }
 }

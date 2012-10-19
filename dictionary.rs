@@ -41,12 +41,12 @@ struct CFDictionary<K:AbstractCFType,V:AbstractCFType> {
     }
 }
 
-pub mod CFDictionary {
-    pub fn wrap<K:AbstractCFType,V:AbstractCFType>(obj: CFDictionaryRef) -> CFDictionary<K,V> {
+pub impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> {
+    static fn wrap(obj: CFDictionaryRef) -> CFDictionary<K,V> {
         CFDictionary { obj: obj }
     }
 
-    pub fn new_dictionary<K:AbstractCFType,V:AbstractCFType>(pairs: &[(K,V)]) -> CFDictionary<K,V> {
+    static fn new_dictionary(pairs: &[(K,V)]) -> CFDictionary<K,V> {
         let (keys, values) = (DVec(), DVec());
         for pairs.each |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
@@ -72,7 +72,7 @@ pub mod CFDictionary {
                                                 to_unsafe_ptr(&kCFTypeDictionaryValueCallBacks));
         }
 
-        return wrap(dictionary_ref);
+        return CFDictionary::wrap(dictionary_ref);
     }
 }
 

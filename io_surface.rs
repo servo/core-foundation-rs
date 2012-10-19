@@ -21,18 +21,18 @@ pub struct IOSurface {
     }
 }
 
-pub mod IOSurface {
-    fn wrap(obj: IOSurfaceRef) -> IOSurface {
+pub impl IOSurface {
+    static fn wrap(obj: IOSurfaceRef) -> IOSurface {
         assert obj != ptr::null();
         IOSurface { obj: obj }
     }
 
-    fn new_io_surface(properties: &CFDictionary<CFString,CFType>) -> IOSurface {
-        wrap(IOSurfaceCreate(properties.obj))
+    static fn new_io_surface(properties: &CFDictionary<CFString,CFType>) -> IOSurface {
+        IOSurface::wrap(IOSurfaceCreate(properties.obj))
     }
 
-    fn lookup(csid: IOSurfaceID) -> IOSurface {
-        wrap(IOSurfaceLookup(csid))
+    static fn lookup(csid: IOSurfaceID) -> IOSurface {
+        IOSurface::wrap(IOSurfaceLookup(csid))
     }
 }
 

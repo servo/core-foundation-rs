@@ -22,7 +22,7 @@ pub impl CFNumber {
         CFNumber { obj: obj }
     }
 
-    static fn new_number<T:Copy ConvertibleToCFNumber>(n: T) -> CFNumber {
+    static fn new<T:Copy ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             CFNumber {
                 obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), reinterpret_cast(& &n))

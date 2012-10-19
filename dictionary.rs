@@ -46,7 +46,7 @@ pub impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> {
         CFDictionary { obj: obj }
     }
 
-    static fn new_dictionary(pairs: &[(K,V)]) -> CFDictionary<K,V> {
+    static fn new(pairs: &[(K,V)]) -> CFDictionary<K,V> {
         let (keys, values) = (DVec(), DVec());
         for pairs.each |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
@@ -59,8 +59,8 @@ pub impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> {
         }
 
         assert keys.len() == values.len();
-        let keys = dvec::unwrap(keys);
-        let values = dvec::unwrap(values);
+        let keys = dvec::unwrap(move keys);
+        let values = dvec::unwrap(move values);
 
         let dictionary_ref;
         unsafe {

@@ -3,7 +3,8 @@ use base::{kCFAllocatorDefault, kCFAllocatorNull};
 use cast::reinterpret_cast;
 use libc::c_char;
 
-type CFStringEncoding = u32;
+pub type UniChar = libc::c_ushort;
+pub type CFStringEncoding = u32;
 
 const kCFStringEncodingMacRoman: u32 = 0;
 const kCFStringEncodingWindowsLatin1: u32 = 0x0500;

@@ -9,7 +9,7 @@ RUSTFLAGS ?=
 
 RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 
-.PHONE: all
+.PHONY: all
 all:	librustiosurface.dummy
 
 %.o:	%.c

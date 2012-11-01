@@ -8,3 +8,5 @@ extern mod core_foundation;
 extern mod core_graphics;
 
 pub mod font;
+pub mod font_descriptor;
+pub mod font_manager;

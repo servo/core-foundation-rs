@@ -1,8 +1,12 @@
-use base::{AbstractCFType, CFRelease, CFRetain, CFTypeRef};
+use base::{AbstractCFType, AbstractCFTypeRef, CFRelease, CFRetain, CFTypeRef};
 use cast::reinterpret_cast;
 
 struct __CFBoolean { private: () }
 pub type CFBooleanRef = *__CFBoolean;
+
+impl CFBooleanRef : AbstractCFTypeRef {
+    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+}
 
 pub struct CFBoolean {
     obj: CFBooleanRef,
@@ -36,11 +40,17 @@ pub impl CFBoolean {
     }
 }
 
-impl CFBoolean : AbstractCFType {
+impl CFBoolean : AbstractCFType<CFBooleanRef> {
     pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            reinterpret_cast(&self.obj)
-        }
+        unsafe { cast::transmute(self.obj) }
+    }
+
+    static fn wrap(obj: CFBooleanRef) -> CFBoolean {
+        CFBoolean { obj: obj }
+    }
+
+    static fn unwrap(wrapper: CFBoolean) -> CFBooleanRef {
+        wrapper.obj
     }
 }
 

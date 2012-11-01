@@ -1,4 +1,4 @@
-use base::{AbstractCFType, Boolean, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef};
+use base::{AbstractCFType, AbstractCFTypeRef, Boolean, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef};
 use base::{kCFAllocatorDefault, kCFAllocatorNull};
 use cast::reinterpret_cast;
 use libc::c_char;
@@ -12,6 +12,10 @@ const kCFStringEncodingUTF8: u32 = 0x08000100;
 
 struct __CFString { private: () }
 pub type CFStringRef = *__CFString;
+
+impl CFStringRef : AbstractCFTypeRef {
+    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+}
 
 pub struct CFString {
     obj: CFStringRef,
@@ -41,17 +45,29 @@ pub impl CFString {
     }
 }
 
-impl CFString : AbstractCFType {
+pub impl CFString : AbstractCFType<CFStringRef> {
     pure fn as_type_ref(&self) -> CFTypeRef {
         unsafe {
             reinterpret_cast(&self.obj)
         }
+    }
+
+    static fn wrap(obj: CFStringRef) -> CFString {
+        CFString { obj: obj }
+    }
+
+    static fn unwrap(wrapper: CFString) -> CFStringRef {
+        wrapper.obj
     }
 }
 
 #[link_args="-framework CoreFoundation"]
 #[nolink]
 extern {
+    /*
+     * CFString.h
+     */
+
     fn CFStringCreateWithBytesNoCopy(alloc: CFAllocatorRef,
                                      bytes: *u8,
                                      numBytes: CFIndex,

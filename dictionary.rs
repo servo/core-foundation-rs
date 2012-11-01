@@ -1,4 +1,4 @@
-use base::{AbstractCFType, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef, kCFAllocatorDefault};
+use base::{AbstractCFType, AbstractCFTypeRef, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef, kCFAllocatorDefault};
 use cast::reinterpret_cast;
 use dvec::DVec;
 use libc::c_void;
@@ -31,7 +31,14 @@ pub struct CFDictionaryValueCallBacks {
 struct __CFDictionary { private: () }
 pub type CFDictionaryRef = *__CFDictionary;
 
-struct CFDictionary<K:AbstractCFType,V:AbstractCFType> {
+impl CFDictionaryRef : AbstractCFTypeRef {
+    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+}
+
+struct CFDictionary<KeyRefType   : AbstractCFTypeRef,
+                    ValueRefType : AbstractCFTypeRef,
+                    KeyType      : AbstractCFType<KeyRefType>,
+                    ValueType    : AbstractCFType<ValueRefType>> {
     obj: CFDictionaryRef,
 
     drop {
@@ -41,12 +48,31 @@ struct CFDictionary<K:AbstractCFType,V:AbstractCFType> {
     }
 }
 
-pub impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> {
-    static fn wrap(obj: CFDictionaryRef) -> CFDictionary<K,V> {
+pub impl<KeyRefType   : AbstractCFTypeRef,
+         ValueRefType : AbstractCFTypeRef,
+         KeyType      : AbstractCFType<KeyRefType>,
+         ValueType    : AbstractCFType<ValueRefType>>
+    CFDictionary<KeyRefType, ValueRefType, KeyType, ValueType> : AbstractCFType<CFDictionaryRef> {
+    pure fn as_type_ref(&self) -> CFTypeRef {
+        unsafe { self.obj.as_type_ref() }
+    }
+
+    static fn wrap(obj: CFDictionaryRef) -> CFDictionary<KeyRefType, ValueRefType, KeyType, ValueType> {
         CFDictionary { obj: obj }
     }
 
-    static fn new(pairs: &[(K,V)]) -> CFDictionary<K,V> {
+    static fn unwrap(wrapper: CFDictionary<KeyRefType, ValueRefType, KeyType, ValueType>) -> CFDictionaryRef {
+        wrapper.obj
+    }
+}
+
+pub impl<KeyRefType   : AbstractCFTypeRef,
+         ValueRefType : AbstractCFTypeRef,
+         KeyType      : AbstractCFType<KeyRefType>,
+         ValueType    : AbstractCFType<ValueRefType>>
+    CFDictionary<KeyRefType, ValueRefType, KeyType, ValueType> {
+
+    static fn new(pairs: &[(KeyType,ValueType)]) -> CFDictionary<KeyRefType, ValueRefType, KeyType, ValueType> {
         let (keys, values) = (DVec(), DVec());
         for pairs.each |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
@@ -62,7 +88,7 @@ pub impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> {
         let keys = dvec::unwrap(move keys);
         let values = dvec::unwrap(move values);
 
-        let dictionary_ref;
+        let dictionary_ref : CFDictionaryRef;
         unsafe {
             dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
                                                 reinterpret_cast(&to_ptr(keys)),
@@ -72,21 +98,18 @@ pub impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> {
                                                 to_unsafe_ptr(&kCFTypeDictionaryValueCallBacks));
         }
 
-        return CFDictionary::wrap(dictionary_ref);
+        return base::wrap(dictionary_ref);
     }
 }
 
-impl<K:AbstractCFType,V:AbstractCFType> CFDictionary<K,V> : AbstractCFType {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            reinterpret_cast(&self.obj)
-        }
-    }
-}
 
 #[link_args="-framework CoreFoundation"]
 #[nolink]
 extern {
+    /*
+     * CFDictionary.h
+     */
+
     const kCFTypeDictionaryKeyCallBacks: CFDictionaryKeyCallBacks;
     const kCFTypeDictionaryValueCallBacks: CFDictionaryValueCallBacks;
 

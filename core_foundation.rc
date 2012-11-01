@@ -4,10 +4,12 @@
 
 extern mod std;
 
+pub mod array;
 pub mod base;
 pub mod boolean;
+pub mod data;
 pub mod dictionary;
 pub mod number;
 pub mod string;
 pub mod test;
-
+pub mod url;

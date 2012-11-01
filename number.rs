@@ -1,18 +1,48 @@
-use base::{AbstractCFType, CFAllocatorRef, CFIndex, CFRelease, CFTypeRef, kCFAllocatorDefault};
-use cast::reinterpret_cast;
+use base::{
+    AbstractCFType,
+    AbstractCFTypeRef,
+    CFAllocatorRef,
+    CFIndex,
+    CFRelease,
+    CFTypeRef,
+    kCFAllocatorDefault
+};
 use libc::{c_int, c_void};
+
+pub type CFNumberType = u32;
+
+// members of enum CFNumberType
+const kCFNumberSInt8Type:     CFNumberType = 1;
+const kCFNumberSInt16Type:    CFNumberType = 2;
+const kCFNumberSInt32Type:    CFNumberType = 3;
+const kCFNumberSInt64Type:    CFNumberType = 4;
+const kCFNumberFloat32Type:   CFNumberType = 5;
+const kCFNumberFloat64Type:   CFNumberType = 6;
+const kCFNumberCharType:      CFNumberType = 7;
+const kCFNumberShortType:     CFNumberType = 8;
+const kCFNumberIntType:       CFNumberType = 9;
+const kCFNumberLongType:      CFNumberType = 10;
+const kCFNumberLongLongType:  CFNumberType = 11;
+const kCFNumberFloatType:     CFNumberType = 12;
+const kCFNumberDoubleType:    CFNumberType = 13;
+const kCFNumberCFIndexType:   CFNumberType = 14;
+const kCFNumberNSIntegerType: CFNumberType = 15;
+const kCFNumberCGFloatType:   CFNumberType = 16;
+const kCFNumberMaxType:       CFNumberType = 16;
 
 struct __CFNumber { private: () }
 pub type CFNumberRef = *__CFNumber;
 
-pub const kCFNumberSInt32Type: c_int = 3;
+impl CFNumberRef : AbstractCFTypeRef {
+    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+}
 
 pub struct CFNumber {
     obj: CFNumberRef,
 
     drop {
         unsafe {
-            CFRelease(reinterpret_cast(&self.obj));
+            CFRelease(cast::transmute(self.obj));
         }
     }
 }
@@ -25,17 +55,63 @@ pub impl CFNumber {
     static fn new<T:Copy ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             CFNumber {
-                obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), reinterpret_cast(& &n))
+                obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), cast::transmute(&n))
             }
         }
     }
+
+    pure fn to_i8() -> i8 {
+        let ty = kCFNumberSInt8Type;
+        assert self.has_number_type(ty);
+        unsafe {
+            let val: i8 = 0i8;
+            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+                fail ~"Error in unwrapping CFNumber to i8";
+            }
+            return val;
+        }
+    }
+
+    pure fn to_i16() -> i16 {
+        let ty = kCFNumberSInt16Type;
+        assert self.has_number_type(ty);
+        unsafe {
+            let val: i16 = 0i16;
+            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+                fail ~"Error in unwrapping CFNumber to i16";
+            }
+            return val;
+        }
+    }
+
+    pure fn to_i32() -> i32 {
+        let ty = kCFNumberSInt32Type;
+        assert self.has_number_type(ty);
+        unsafe {
+            let val: i32 = 0i32;
+            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+                fail ~"Error in unwrapping CFNumber to i32";
+            }
+            return val;
+        }
+    }
+
+    priv pure fn has_number_type(ty: CFNumberType) -> bool {
+        unsafe { CFNumberGetType(self.obj) == ty }
+    }
 }
 
-impl CFNumber : AbstractCFType {
+impl CFNumber : AbstractCFType<CFNumberRef> {
     pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            reinterpret_cast(&self.obj)
-        }
+        unsafe { cast::transmute(self.obj) }
+    }
+
+    static fn wrap(obj: CFNumberRef) -> CFNumber {
+        CFNumber { obj: obj }
+    }
+
+    static fn unwrap(wrapper: CFNumber) -> CFNumberRef {
+        wrapper.obj
     }
 }
 
@@ -44,16 +120,39 @@ pub trait ConvertibleToCFNumber {
     pure fn cf_number_type(&self) -> CFNumberType;
 }
 
+impl i8 : ConvertibleToCFNumber {
+    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt8Type as CFNumberType }
+}
+
+impl i16 : ConvertibleToCFNumber {
+    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt16Type as CFNumberType }
+}
+
 impl i32 : ConvertibleToCFNumber {
     pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt32Type as CFNumberType }
 }
 
-pub type CFNumberType = CFIndex;
+impl i64 : ConvertibleToCFNumber {
+    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt64Type as CFNumberType }
+}
+
+impl float : ConvertibleToCFNumber {
+    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberFloatType as CFNumberType }
+}
 
 #[link_args="-framework CoreFoundation"]
 #[nolink]
 extern {
+    /*
+     * CFNumber.h
+     */
+
+    const kCFNumberNaN: CFNumberRef;
+    const kCFNumberNegativeInfinity: CFNumberRef;
+    const kCFNumberPositiveInfinity: CFNumberRef;
+
     fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *c_void)
                    -> CFNumberRef;
+    fn CFNumberGetType(number: CFNumberRef) -> CFNumberType;
+    fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *c_void) -> bool;
 }
-

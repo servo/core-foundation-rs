@@ -1,13 +1,18 @@
 // Rust bindings to the IOSurface framework on Mac OS X.
 
-use core_foundation::base::{AbstractCFType, CFRelease, CFType, CFTypeOps, CFTypeRef};
-use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
-use core_foundation::number::CFNumber;
-use core_foundation::string::{CFString, CFStringRef};
+use cf = core_foundation;
+use cf::base::{AbstractCFType, AbstractCFTypeRef, CFRelease, CFType, CFTypeOps, CFTypeRef};
+use cf::dictionary::{CFDictionary, CFDictionaryRef};
+use cf::number::CFNumber;
+use cf::string::{CFString, CFStringRef};
 use cast::transmute;
 
 struct __IOSurface { private: () }
 pub type IOSurfaceRef = *__IOSurface;
+
+impl IOSurfaceRef : AbstractCFTypeRef {
+    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+}
 
 pub type IOSurfaceID = u32;
 
@@ -22,25 +27,29 @@ pub struct IOSurface {
 }
 
 pub impl IOSurface {
+    static fn new_io_surface(properties: &CFDictionary<CFStringRef, CFTypeRef, CFString, CFType>) -> IOSurface {
+        cf::base::wrap(IOSurfaceCreate(properties.obj))
+    }
+
+    static fn lookup(csid: IOSurfaceID) -> IOSurface {
+        cf::base::wrap(IOSurfaceLookup(csid))
+    }
+}
+
+impl IOSurface : AbstractCFType<IOSurfaceRef> {
+    pure fn as_type_ref(&self) -> CFTypeRef {
+        unsafe {
+            transmute(copy self.obj)
+        }
+    }
+
     static fn wrap(obj: IOSurfaceRef) -> IOSurface {
         assert obj != ptr::null();
         IOSurface { obj: obj }
     }
 
-    static fn new_io_surface(properties: &CFDictionary<CFString,CFType>) -> IOSurface {
-        IOSurface::wrap(IOSurfaceCreate(properties.obj))
-    }
-
-    static fn lookup(csid: IOSurfaceID) -> IOSurface {
-        IOSurface::wrap(IOSurfaceLookup(csid))
-    }
-}
-
-impl IOSurface : AbstractCFType {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            transmute(copy self.obj)
-        }
+    static fn unwrap(wrapper: IOSurface) -> IOSurfaceRef {
+        wrapper.obj
     }
 }
 

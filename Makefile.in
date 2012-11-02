@@ -21,7 +21,7 @@ libmsgsend.a: msgsend.o
 	$(AR) rcs libmsgsend.a msgsend.o
 
 msgsend.o: msgsend.c
-	$(CC) $< -o $@ -c
+	$(CC) $(CFLAGS) $< -o $@ -c
 
 check: cocoa-test
 	./cocoa-test

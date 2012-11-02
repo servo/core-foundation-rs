@@ -3,7 +3,7 @@ use libc::c_long;
 pub type Boolean = u8;
 
 pub type CFIndex = c_long;
-
+pub type CFOptionFlags = u32;
 pub struct CFRange {
     location: CFIndex,
     length: CFIndex
@@ -17,6 +17,9 @@ pub type CFNullRef = *__CFNull;
 
 struct __CFType { private: () }
 pub type CFTypeRef = *__CFType;
+
+pub type CFHashCode = libc::c_ulong;
+pub type CFTypeID = libc::c_ulong;
 
 struct CFType {
     obj: CFTypeRef,
@@ -93,6 +96,8 @@ extern {
      * CFBase.h
      */
 
+    /* CFAllocator Reference */
+    // N.B. Many CFAllocator functions and constants are omitted here.
     const kCFAllocatorDefault: CFAllocatorRef;
     const kCFAllocatorSystemDefault: CFAllocatorRef;
     const kCFAllocatorMalloc: CFAllocatorRef;
@@ -100,17 +105,26 @@ extern {
     const kCFAllocatorNull: CFAllocatorRef;
     const kCFAllocatorUseContext: CFAllocatorRef;
 
+    /* CFNull Reference */
+
     const kCFNull: CFNullRef;
 
+    /* CFType Reference */
+
+    //fn CFCopyDescription
+    //fn CFCopyTypeIDDescription
+    //fn CFEqual
+    //fn CFGetAllocator
     fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;
-    fn CFRetain(cf: CFTypeRef) -> CFTypeRef;
+    //fn CFHash
+    //fn CFMakeCollectable
     fn CFRelease(cf: CFTypeRef);
-
-    /*
-     * CFString.h
-     */
-
+    fn CFRetain(cf: CFTypeRef) -> CFTypeRef;
     fn CFShow(obj: CFTypeRef);
+
+    /* Base Utilities Reference */
+    // N.B. Some things missing here.
+    //fn CFRangeMake
 }
 
     

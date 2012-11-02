@@ -26,6 +26,9 @@ pub struct CFArrayCallBacks {
 struct __CFArray { private: () }
 pub type CFArrayRef = *__CFArray;
 
+impl CFArrayRef : AbstractCFTypeRef {
+    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+}
 
 struct CFArray<ElemRefType : AbstractCFTypeRef,
                ElemType    : AbstractCFType<ElemRefType>> {

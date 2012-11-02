@@ -19,8 +19,14 @@ extern {
     //fn CTFontManagerEnableFontDescriptors
     //fn CTFontManagerGetAutoActivationSetting
     //fn CTFontManagerGetScopeForURL
+    //fn CTFontManagerGetAutoActivationSetting
+    //fn CTFontManagerGetScopeForURL
     fn CTFontManagerIsSupportedFont(fontURL: CFURLRef) -> bool;
     //fn CTFontManagerRegisterFontsForURL
     //fn CTFontManagerRegisterFontsForURLs
-    //fn 
+    //fn CTFontManagerRegisterGraphicsFont
+    //fn CTFontManagerSetAutoActivationSetting
+    //fn CTFontManagerUnregisterFontsForURL
+    //fn CTFontManagerUnregisterFontsForURLs
+    //fn CTFontManagerUnregisterGraphicsFont
 }

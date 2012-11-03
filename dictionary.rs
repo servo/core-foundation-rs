@@ -57,6 +57,8 @@ pub impl<KeyRefType   : AbstractCFTypeRef,
         unsafe { self.obj.as_type_ref() }
     }
 
+    pure fn borrow_ref(&self) -> &self/CFDictionaryRef { &self.obj }
+
     static fn wrap(obj: CFDictionaryRef) -> CFDictionary<KeyRefType, ValueRefType, KeyType, ValueType> {
         CFDictionary { obj: obj }
     }

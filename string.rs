@@ -22,26 +22,8 @@ pub struct CFString {
 
     drop {
         unsafe {
-            CFRelease(reinterpret_cast(&self.obj));
+            CFRelease(cast::transmute(self.obj));
         }
-    }
-}
-
-pub impl CFString {
-    static fn wrap(obj: CFStringRef) -> CFString {
-        CFString { obj: obj }
-    }
-
-    static fn new_static(string: &static/str) -> CFString {
-        let string_ref = do str::as_buf(string) |bytes, len| {
-            CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
-                                          bytes,
-                                          len as CFIndex,
-                                          kCFStringEncodingUTF8,
-                                          false as Boolean,
-                                          kCFAllocatorNull)
-        };
-        CFString::wrap(string_ref)
     }
 }
 
@@ -58,6 +40,26 @@ pub impl CFString : AbstractCFType<CFStringRef> {
 
     static fn unwrap(wrapper: CFString) -> CFStringRef {
         wrapper.obj
+    }
+}
+
+pub impl CFString {
+    // convenience method to make it easier to wrap extern
+    // CFStringRefs without providing explicit typarams to base::wrap()
+    static fn wrap_extern(string: CFStringRef) -> CFString {
+        base::wrap(string)
+    }
+
+    static fn new_static(string: &static/str) -> CFString {
+        let string_ref = do str::as_buf(string) |bytes, len| {
+            CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
+                                          bytes,
+                                          len as CFIndex,
+                                          kCFStringEncodingUTF8,
+                                          false as Boolean,
+                                          kCFAllocatorNull)
+        };
+        base::wrap(string_ref)
     }
 }
 

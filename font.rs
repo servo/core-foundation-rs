@@ -90,18 +90,14 @@ struct CTFont {
 }
 
 pub impl CTFont : AbstractCFType<CTFontRef> {
+    pure fn get_ref() -> CTFontRef { self.obj }
+
     static fn wrap(obj: CTFontRef) -> CTFont {
         CTFont { obj: obj }
     }
 
     static fn unwrap(wrapper: CTFont) -> CTFontRef {
         wrapper.obj
-    }
-
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            cast::transmute(self.obj)
-        }
     }
 }
 

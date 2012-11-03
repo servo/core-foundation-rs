@@ -34,6 +34,8 @@ struct CTFontCollection {
 }
 
 pub impl CTFontCollection : AbstractCFType<CTFontCollectionRef> {
+    pure fn get_ref() -> CTFontCollectionRef { self.obj }
+
     static fn wrap(obj: CTFontCollectionRef) -> CTFontCollection {
         CTFontCollection { obj: obj }
     }
@@ -41,21 +43,14 @@ pub impl CTFontCollection : AbstractCFType<CTFontCollectionRef> {
     static fn unwrap(wrapper: CTFontCollection) -> CTFontCollectionRef {
         wrapper.obj
     }
-
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            cast::transmute(self.obj)
-        }
-    }
 }
 
 pub impl CTFontCollection {
     static fn new() -> CTFontCollection {
         let options = CFDictionary::new([
-            (CFString::new_wrapped(kCTFontCollectionRemoveDuplicatesOption), CFNumber::new(1_i8))
+            (CFString::wrap_extern(kCTFontCollectionRemoveDuplicatesOption), CFNumber::new(1_i8))
         ]);
-        let collection = CTFontCollectionCreateFromAvailableFonts(*options.borrow_ref());
-
+        let collection = CTFontCollectionCreateFromAvailableFonts(options.get_ref());
         CTFontCollection { obj: move collection }
     }
 }

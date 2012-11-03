@@ -10,8 +10,10 @@ use cf::base::{
     CFTypeRef,
     kCFAllocatorDefault,
 };
-use cf::dictionary::CFDictionaryRef;
-use cf::string::CFStringRef;
+use cf::dictionary::{CFDictionary, CFDictionaryRef};
+use cf::number::CFNumber;
+use cf::string::{CFString, CFStringRef};
+
 use libc::c_void;
 
 struct __CTFontCollection { private: () }
@@ -44,6 +46,17 @@ pub impl CTFontCollection : AbstractCFType<CTFontCollectionRef> {
         unsafe {
             cast::transmute(self.obj)
         }
+    }
+}
+
+pub impl CTFontCollection {
+    static fn new() -> CTFontCollection {
+        let options = CFDictionary::new([
+            (CFString::new_wrapped(kCTFontCollectionRemoveDuplicatesOption), CFNumber::new(1_i8))
+        ]);
+        let collection = CTFontCollectionCreateFromAvailableFonts(*options.borrow_ref());
+
+        CTFontCollection { obj: move collection }
     }
 }
 

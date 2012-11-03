@@ -30,9 +30,8 @@ struct CFData {
 }
 
 impl CFData : AbstractCFType<CFDataRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        self.obj.as_type_ref()
-    }
+    pure fn get_ref() -> CFDataRef { self.obj }
+
     static fn wrap(obj: CFDataRef) -> CFData {
         CFData { obj: obj }
     }

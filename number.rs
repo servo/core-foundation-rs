@@ -102,9 +102,7 @@ pub impl CFNumber {
 }
 
 impl CFNumber : AbstractCFType<CFNumberRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe { cast::transmute(self.obj) }
-    }
+    pure fn get_ref() -> CFNumberRef { self.obj }
 
     static fn wrap(obj: CFNumberRef) -> CFNumber {
         CFNumber { obj: obj }

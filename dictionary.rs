@@ -53,11 +53,8 @@ pub impl<KeyRefType   : AbstractCFTypeRef,
          KeyType      : AbstractCFType<KeyRefType>,
          ValueType    : AbstractCFType<ValueRefType>>
     CFDictionary<KeyRefType, ValueRefType, KeyType, ValueType> : AbstractCFType<CFDictionaryRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe { self.obj.as_type_ref() }
-    }
 
-    pure fn borrow_ref(&self) -> &self/CFDictionaryRef { &self.obj }
+    pure fn get_ref() -> CFDictionaryRef { self.obj }
 
     static fn wrap(obj: CFDictionaryRef) -> CFDictionary<KeyRefType, ValueRefType, KeyType, ValueType> {
         CFDictionary { obj: obj }
@@ -80,8 +77,9 @@ pub impl<KeyRefType   : AbstractCFTypeRef,
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
             match *pair {
                 (ref key, ref value) => {
-                    keys.push(key.as_type_ref());
-                    values.push(value.as_type_ref());
+                    // TODO: should be able to say key.get_type_ref(), but resolve isn't having any of it.
+                    keys.push(key.get_ref().as_type_ref());
+                    values.push(value.get_ref().as_type_ref());
                 }
             }
         }

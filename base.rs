@@ -39,7 +39,7 @@ trait AbstractCFTypeRef {
 }
 
 trait AbstractCFType<T: AbstractCFTypeRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef;
+    pure fn get_ref() -> T;
     static fn wrap(T) -> self;
     static fn unwrap(wrapper: self) -> T;
 }
@@ -49,9 +49,8 @@ impl CFTypeRef : AbstractCFTypeRef {
 }
 
 impl CFType : AbstractCFType<CFTypeRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        self.obj
-    }
+    pure fn get_ref() -> CFTypeRef { self.obj }
+
     static fn wrap(obj: CFTypeRef) -> CFType {
         CFType { obj: obj }
     }
@@ -62,30 +61,44 @@ impl CFType : AbstractCFType<CFTypeRef> {
 }
 
 trait CFTypeOps<T:AbstractCFTypeRef> {
-    fn as_type(&self) -> CFType;
-    static fn wrap_borrowed(T) -> self;
+    pure fn get_type_ref(&self) -> CFTypeRef;
+    static fn as_CFType(o: self) -> CFType;
+    fn clone_as_CFType(&self) -> CFType;
+    static fn clone(&T) -> self;
     fn retain_count(&self) -> CFIndex;
     fn show(&self);
 }
 
-impl<T:AbstractCFTypeRef,S:AbstractCFType<T>> S : CFTypeOps<T> {
-    // FIXME: Should move, but there's a linearity bug.
-    fn as_type(&self) -> CFType {
-        CFRetain(self.as_type_ref());
-        CFType { obj: self.as_type_ref() }
+impl<T:Copy AbstractCFTypeRef,S:AbstractCFType<T>> S : CFTypeOps<T> {
+    // not actually unsafe
+    pure fn get_type_ref(&self) -> CFTypeRef unsafe {
+        self.get_ref().as_type_ref()
     }
 
-    static fn wrap_borrowed(cfref: T) -> S {
+    // FIXME: Should move, but there's a linearity bug.
+    static fn as_CFType(obj: S) -> CFType {
+        let tyref : CFTypeRef = base::unwrap(move obj).as_type_ref();
+        CFType { obj: tyref }
+    }
+
+    // FIXME: Should move, but there's a linearity bug.
+    fn clone_as_CFType(&self) -> CFType {
+        let tyref = self.get_ref().as_type_ref();
+        CFRetain(tyref);
+        CFType { obj: tyref }
+    }
+
+    static fn clone(cfref: &T) -> S {
         CFRetain(cfref.as_type_ref());
-        base::wrap(move cfref)
+        base::wrap(copy *cfref)
     }
 
     fn retain_count(&self) -> CFIndex {
-        CFGetRetainCount(self.as_type_ref())
+        CFGetRetainCount(self.get_type_ref())
     }
 
     fn show(&self) {
-        CFShow(self.as_type_ref());
+        CFShow(self.get_type_ref());
     }
 }
 

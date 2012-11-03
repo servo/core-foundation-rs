@@ -47,9 +47,7 @@ pub impl<ElemRefType : AbstractCFTypeRef,
     static fn new(elems: &[ElemType]) -> CFArray<ElemRefType, ElemType> {
         let array_ref : CFArrayRef;
 
-        let elems_refs = do vec::map(elems) |e| {
-            e.as_type_ref()
-        };
+        let elems_refs = do vec::map(elems) |e: &ElemType| { e.get_ref().as_type_ref() };
 
         unsafe {
             array_ref = CFArrayCreate(kCFAllocatorDefault,
@@ -81,18 +79,15 @@ pub impl<ElemRefType : AbstractCFTypeRef,
 pub impl<ElemRefType : AbstractCFTypeRef,
          ElemType    : AbstractCFType<ElemRefType>> 
     CFArray<ElemRefType, ElemType> : AbstractCFType<CFArrayRef> {
+
+    pure fn get_ref() -> CFArrayRef { self.obj }
+
     static fn wrap(obj: CFArrayRef) -> CFArray<ElemRefType, ElemType> {
         CFArray { obj: obj }
     }
 
     static fn unwrap(wrapper: CFArray<ElemRefType, ElemType>) -> CFArrayRef {
         wrapper.obj
-    }
-
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            cast::transmute(self.obj)
-        }
     }
 }
 

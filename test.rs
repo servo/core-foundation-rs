@@ -1,17 +1,17 @@
 use base::CFTypeOps;
-use boolean::CFBoolean;
-use number::CFNumber;
+use boolean::{CFBoolean, CFBooleanRef};
+use number::{CFNumber, CFNumberRef};
 use dictionary::CFDictionary;
-use string::CFString;
+use string::{CFString, CFStringRef};
 
 fn main() {
     /*let n = CFNumber::new_number(42 as i32);
     io::println(fmt!("%d", (&n).retain_count() as int));
     (&n).show();*/
     let d = CFDictionary::new([
-        (CFString::new_static("Foo"), (&CFString::new_static("Bar")).as_type()),
-        (CFString::new_static("Baz"), (&CFBoolean::true_value()).as_type()),
-        (CFString::new_static("Boo"), (&CFNumber::new(42 as i32)).as_type()),
+        (CFString::new_static("Foo"), base::as_CFType::<CFStringRef, CFString>(CFString::new_static("Bar"))),
+        (CFString::new_static("Baz"), base::as_CFType::<CFBooleanRef, CFBoolean>(CFBoolean::true_value())),
+        (CFString::new_static("Boo"), base::as_CFType::<CFNumberRef, CFNumber>(CFNumber::new(42 as i32))),
     ]);
     (&d).show();
 }

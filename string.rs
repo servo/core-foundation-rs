@@ -28,11 +28,7 @@ pub struct CFString {
 }
 
 pub impl CFString : AbstractCFType<CFStringRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            reinterpret_cast(&self.obj)
-        }
-    }
+    pure fn get_ref() -> CFStringRef { self.obj }
 
     static fn wrap(obj: CFStringRef) -> CFString {
         CFString { obj: obj }

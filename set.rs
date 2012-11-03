@@ -42,11 +42,7 @@ pub struct CFSet {
 }
 
 pub impl CFSet : AbstractCFType<CFSetRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            self.obj.as_type_ref()
-        }
-    }
+    pure fn get_ref() -> CFSetRef { self.obj }
 
     static fn wrap(obj: CFSetRef) -> CFSet {
         CFSet { obj: obj }

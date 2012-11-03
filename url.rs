@@ -32,9 +32,8 @@ struct CFURL {
 }
 
 impl CFURL : AbstractCFType<CFURLRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        self.obj.as_type_ref()
-    }
+    pure fn get_ref() -> CFURLRef { self.obj }
+
     static fn wrap(obj: CFURLRef) -> CFURL {
         CFURL { obj: obj }
     }

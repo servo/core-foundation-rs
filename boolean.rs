@@ -41,9 +41,7 @@ pub impl CFBoolean {
 }
 
 impl CFBoolean : AbstractCFType<CFBooleanRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe { cast::transmute(self.obj) }
-    }
+    pure fn get_ref() -> CFBooleanRef { self.obj }
 
     static fn wrap(obj: CFBooleanRef) -> CFBoolean {
         CFBoolean { obj: obj }

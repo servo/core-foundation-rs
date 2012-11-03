@@ -37,11 +37,7 @@ pub impl IOSurface {
 }
 
 impl IOSurface : AbstractCFType<IOSurfaceRef> {
-    pure fn as_type_ref(&self) -> CFTypeRef {
-        unsafe {
-            transmute(copy self.obj)
-        }
-    }
+    pure fn get_ref() -> IOSurfaceRef { self.obj }
 
     static fn wrap(obj: IOSurfaceRef) -> IOSurface {
         assert obj != ptr::null();

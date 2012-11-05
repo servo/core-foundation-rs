@@ -155,17 +155,25 @@ pub impl<KeyRefType   : AbstractCFTypeRef Copy,
         option::unwrap(move value)
     }
 
-             fn each(blk: fn&(&KeyType, &ValueType) -> bool) unsafe {
-                 let len = self.len();
-                 let keys: ~[KeyRefType] = vec::from_elem(len, cast::transmute::<*c_void, KeyRefType>(ptr::null()));
-                 let values: ~[ValueRefType] = vec::from_elem(len, cast::transmute::<*c_void, ValueRefType>(ptr::null()));
+    fn each_ref(blk: fn&(KeyRefType, ValueRefType) -> bool) unsafe {
+        let len = self.len();
+        let keys: ~[KeyRefType] = vec::from_elem(len, cast::transmute::<*c_void, KeyRefType>(ptr::null()));
+        let values: ~[ValueRefType] = vec::from_elem(len, cast::transmute::<*c_void, ValueRefType>(ptr::null()));
 
-                 do uint::range(0,len) |i| {
-                     let key = base::wrap(keys[i]);
-                     let value = base::wrap(values[i]);
-                     blk(&key, &value)
-                 }
-             }
+        do uint::range(0,len) |i| { blk(keys[i], values[i]) }
+    }
+
+    fn each(blk: fn&(&KeyType, &ValueType) -> bool) unsafe {
+        let len = self.len();
+        let keys: ~[KeyRefType] = vec::from_elem(len, cast::transmute::<*c_void, KeyRefType>(ptr::null()));
+        let values: ~[ValueRefType] = vec::from_elem(len, cast::transmute::<*c_void, ValueRefType>(ptr::null()));
+
+        do uint::range(0,len) |i| {
+            let key = base::wrap(keys[i]);
+            let value = base::wrap(values[i]);
+            blk(&key, &value)
+        }
+    }
 }
 
 

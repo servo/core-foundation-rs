@@ -59,16 +59,20 @@ pub impl<ElemRefType : AbstractCFTypeRef,
         return CFArray { obj: array_ref };
     }
 
-    pub fn each<A>(cb: fn&(ElemRefType) -> A) {
-        for uint::range(0, self.len()) |i| {
-            cb(self[i]);
-        }
+    pub fn each_ref<A>(cb: fn&(ElemRefType) -> A) {
+        for uint::range(0, self.len()) |i| { cb(self[i]); }
     }
 
-    pub fn eachi<A>(cb: fn&(uint, ElemRefType) -> A) {
-        for uint::range(0, self.len()) |i| {
-            cb(i, self[i]);
-        }
+    pub fn eachi_ref<A>(cb: fn&(uint, ElemRefType) -> A) {
+        for uint::range(0, self.len()) |i| { cb(i, self[i]); }
+    }
+
+    pub fn each<A>(cb: fn&(&ElemType) -> A) {
+        for uint::range(0, self.len()) |i| { cb(&base::wrap(self[i])); }
+    }
+
+    pub fn eachi<A>(cb: fn&(uint, &ElemType) -> A) {
+        for uint::range(0, self.len()) |i| { cb(i, &base::wrap(self[i])); }
     }
 
     pub pure fn len() -> uint {
@@ -122,7 +126,7 @@ extern {
 
 #[test]
 fn should_box_and_unbox() {
-    use number::CFNumber;
+    use number::{CFNumber, CFNumberRef};
 
     let arr = CFArray::new([
         CFNumber::new(1 as i32),
@@ -138,4 +142,11 @@ fn should_box_and_unbox() {
     }
 
     assert sum == 15;
+
+    for arr.each_ref |elem: CFNumberRef| {
+        let n: CFNumber = base::wrap(elem);
+        sum += n.to_i32();
+    }
+
+    assert sum == 30;
 }

@@ -129,7 +129,8 @@ extern {
     //fn CFEqual
     //fn CFGetAllocator
     fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;
-    //fn CFHash
+    fn CFGetTypeID(cf: CFTypeRef) -> CFTypeID;
+    fn CFHash(cf: CFTypeRef) -> CFHashCode;
     //fn CFMakeCollectable
     fn CFRelease(cf: CFTypeRef);
     fn CFRetain(cf: CFTypeRef) -> CFTypeRef;

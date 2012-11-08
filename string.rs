@@ -7,6 +7,7 @@ use base::{
     CFOptionFlags,
     CFRelease,
     CFTypeRef,
+    CFTypeID,
 
     kCFAllocatorDefault,
     kCFAllocatorNull,
@@ -331,7 +332,7 @@ extern {
 
     /* Getting String Properties */
     //fn CFShowStr
-    //fn CFStringGetTypeID
+    fn CFStringGetTypeID() -> CFTypeID;
 
     /* String File System Representations */
     //fn CFStringCreateWithFileSystemRepresentation

@@ -9,6 +9,10 @@ pub struct CFRange {
     length: CFIndex
 }
 
+fn CFRangeMake(off: CFIndex, len: CFIndex) -> CFRange {
+    CFRange { location: off, length: len }
+}
+
 struct __CFAllocator { private: () }
 pub type CFAllocatorRef = *__CFAllocator;
 
@@ -138,7 +142,4 @@ extern {
 
     /* Base Utilities Reference */
     // N.B. Some things missing here.
-    //fn CFRangeMake
 }
-
-    

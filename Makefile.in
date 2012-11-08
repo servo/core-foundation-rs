@@ -19,5 +19,5 @@ check: rustcorefoundation-test
 	./rustcorefoundation-test
 
 clean:
-	rm -f *.o *.a *.so *.dylib *.dll *.dummy
+	rm -f *.o *.a *.so *.dylib *.dll *.dummy rustcorefoundation-test
 

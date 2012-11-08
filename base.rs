@@ -79,13 +79,11 @@ impl<T:Copy AbstractCFTypeRef,S:AbstractCFType<T>> S : CFTypeOps<T> {
         self.get_ref().as_type_ref()
     }
 
-    // FIXME: Should move, but there's a linearity bug.
     static fn as_CFType(obj: S) -> CFType {
         let tyref : CFTypeRef = base::unwrap(move obj).as_type_ref();
         CFType { obj: tyref }
     }
 
-    // FIXME: Should move, but there's a linearity bug.
     fn clone_as_CFType(&self) -> CFType {
         let tyref = self.get_ref().as_type_ref();
         CFRetain(tyref);

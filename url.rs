@@ -4,12 +4,14 @@ use base::{
     CFAllocatorRef,
     CFRelease,
     CFType,
+    CFTypeID,
     CFTypeRef,
 };
 use data::{
     CFDataRef,
 };
 use string::{
+    CFString,
     CFStringRef,
     CFStringEncoding,
 };
@@ -43,6 +45,13 @@ impl CFURL : AbstractCFType<CFURLRef> {
     }
 }
 
+impl CFURL : ToStr {
+    pure fn to_str() -> ~str unsafe {
+        let cfstr : CFString = base::wrap(CFURLGetString(self.obj));
+        cfstr.to_str()
+    }
+}
+
 
 #[link_args="-framework CoreFoundation"]
 #[nolink]
@@ -57,5 +66,6 @@ extern {
                        encoding: CFStringEncoding, escapeWhitespace: bool) -> CFDataRef;
     fn CFURLGetString(anURL: CFURLRef) -> CFStringRef;
     fn CFURLGetBaseURL(anURL: CFURLRef) -> CFURLRef;
+    fn CFURLGetTypeID() -> CFTypeID;
 
 }

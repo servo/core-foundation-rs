@@ -66,6 +66,15 @@ extern {
      * CFString.h
      */
 
+    // N.B. organized according to "Functions by task" in docs
+
+    /* Creating a CFString */
+    //fn CFSTR
+    //fn CFStringCreateArrayBySeparatingStrings
+    //fn CFStringCreateByCombiningStrings
+    //fn CFStringCreateCopy
+    //fn CFStringCreateFromExternalRepresentation
+    //fn CFStringCreateWithBytes
     fn CFStringCreateWithBytesNoCopy(alloc: CFAllocatorRef,
                                      bytes: *u8,
                                      numBytes: CFIndex,
@@ -73,5 +82,86 @@ extern {
                                      isExternalRepresentation: Boolean,
                                      contentsDeallocator: CFAllocatorRef)
                                   -> CFStringRef;
+    //fn CFStringCreateWithCharacters
+    //fn CFStringCreateWithCharactersNoCopy
+    //fn CFStringCreateWithCString
+    //fn CFStringCreateWithCStringNoCopy
+    //fn CFStringCreateWithFormat
+    //fn CFStringCreateWithFormatAndArguments
+    //fn CFStringCreateWithPascalString
+    //fn CFStringCreateWithPascalStringNoCopy
+    //fn CFStringCreateWithSubstring
+
+    /* Searching Strings */
+    //fn CFStringCreateArrayWithFindResults
+    //fn CFStringFind
+    //fn CFStringFindCharacterFromSet
+    //fn CFStringFindWithOptions
+    //fn CFStringFindWithOptionsAndLocale
+    //fn CFStringGetLineBounds
+
+    /* Comparing Strings */
+    //fn CFStringCompare
+    //fn CFStringCompareWithOptions
+    //fn CFStringCompareWithOptionsAndLocale
+    //fn CFStringHasPrefix
+    //fn CFStringHasSuffix
+
+    /* Accessing Characters */
+    //fn CFStringCreateExternalRepresentation
+    //fn CFStringGetBytes
+    //fn CFStringGetCharacterAtIndex
+    //fn CFStringGetCharacters
+    //fn CFStringGetCharactersPtr
+    //fn CFStringGetCharacterFromInlineBuffer
+    //fn CFStringGetCString
+    //fn CFStringGetCStringPtr
+    //fn CFStringGetLength
+    //fn CFStringGetPascalString
+    //fn CFStringGetPascalStringPtr
+    //fn CFStringGetRangeOfComposedCharactersAtIndex
+    //fn CFStringInitInlineBuffer
+
+    /* Working With Hyphenation */
+    //fn CFStringGetHyphenationLocationBeforeIndex
+    //fn CFStringIsHyphenationAvailableForLocale
+
+    /* Working With Encodings */
+    //fn CFStringConvertEncodingToIANACharSetName
+    //fn CFStringConvertEncodingToNSStringEncoding
+    //fn CFStringConvertEncodingToWindowsCodepage
+    //fn CFStringConvertIANACharSetNameToEncoding
+    //fn CFStringConvertNSStringEncodingToEncoding
+    //fn CFStringConvertWindowsCodepageToEncoding
+    //fn CFStringGetFastestEncoding
+    //fn CFStringGetListOfAvailableEncodings
+    //fn CFStringGetMaximumSizeForEncoding
+    //fn CFStringGetMostCompatibleMacStringEncoding
+    //fn CFStringGetNameOfEncoding
+    //fn CFStringGetSmallestEncoding
+    //fn CFStringGetSystemEncoding
+    //fn CFStringIsEncodingAvailable
+
+    /* Getting Numeric Values */
+    //fn CFStringGetDoubleValue
+    //fn CFStringGetIntValue
+
+    /* Getting String Properties */
+    //fn CFShowStr
+    //fn CFStringGetTypeID
+
+    /* String File System Representations */
+    //fn CFStringCreateWithFileSystemRepresentation
+    //fn CFStringGetFileSystemRepresentation
+    //fn CFStringGetMaximumSizeOfFileSystemRepresentation
+
+    /* Getting Paragraph Bounds */
+    //fn CFStringGetParagraphBounds
+
+    /* Managing Surrogates */
+    //fn CFStringGetLongCharacterForSurrogatePair
+    //fn CFStringGetSurrogatePairForLongCharacter
+    //fn CFStringIsSurrogateHighCharacter
+    //fn CFStringIsSurrogateLowCharacter
 }
 

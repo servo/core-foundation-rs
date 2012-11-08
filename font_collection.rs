@@ -1,5 +1,5 @@
 use cf = core_foundation;
-use cf::array::CFArrayRef;
+use cf::array::{CFArray, CFArrayRef};
 use cf::base::{
     AbstractCFType,
     AbstractCFTypeRef,
@@ -7,12 +7,15 @@ use cf::base::{
     CFIndex,
     CFRange,
     CFRelease,
+    CFTypeID,
     CFTypeRef,
     kCFAllocatorDefault,
 };
 use cf::dictionary::{CFDictionary, CFDictionaryRef};
 use cf::number::CFNumber;
 use cf::string::{CFString, CFStringRef};
+
+use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef};
 
 use libc::c_void;
 
@@ -53,6 +56,10 @@ pub impl CTFontCollection {
         let collection = CTFontCollectionCreateFromAvailableFonts(options.get_ref());
         CTFontCollection { obj: move collection }
     }
+
+    fn get_descriptors() -> CFArray<CTFontDescriptorRef, CTFontDescriptor> {
+        cf::base::wrap(CTFontCollectionCreateMatchingFontDescriptors(self.obj))
+    }
 }
 
 extern {
@@ -62,12 +69,12 @@ extern {
 
     const kCTFontCollectionRemoveDuplicatesOption: CFStringRef;
 
-    fn CTFontCollectionCreateCopyWithFontDescriptors(descriptors: CFArrayRef, options: CFDictionaryRef) ->CTFontCollectionRef;
+    fn CTFontCollectionCreateCopyWithFontDescriptors(descriptors: CFArrayRef, options: CFDictionaryRef) -> CTFontCollectionRef;
     fn CTFontCollectionCreateFromAvailableFonts(options: CFDictionaryRef) -> CTFontCollectionRef;
     fn CTFontCollectionCreateMatchingFontDescriptors(collection: CTFontCollectionRef) -> CFArrayRef;
     fn CTFontCollectionCreateWithFontDescriptors(original: CTFontCollectionRef, 
                                                  descriptors: CFArrayRef,
                                                  options: CFDictionaryRef) -> CTFontCollectionRef;
     //fn CTFontCollectionCreateMatchingFontDescriptorsSortedWithCallback;
-    //fn CTFontCollectionGetTypeID;
+    fn CTFontCollectionGetTypeID() -> CFTypeID;
 }

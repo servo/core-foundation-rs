@@ -8,8 +8,9 @@ use cf::base::{
     CFGetTypeID,
     CFRange,
     CFRelease,
-    CFTypeRef,
     CFTypeID,
+    CFTypeOps,
+    CFTypeRef,
     kCFAllocatorDefault,
 };
 use cf::dictionary::CFDictionaryRef;
@@ -19,6 +20,11 @@ use cf::string::{
     CFString,
     CFStringRef,
     CFStringGetTypeID,
+};
+use cf::url::{
+    CFURL,
+    CFURLRef,
+    CFURLGetTypeID,
 };
 
 use cg = core_graphics;
@@ -118,6 +124,21 @@ pub impl CTFontDescriptor {
         let name : CFString = cf::base::wrap(value as CFStringRef);
         return name.to_str();
     }
+
+    fn font_path() -> ~str {
+        let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
+        assert value.is_not_null();
+        assert CFGetTypeID(value) == CFURLGetTypeID();
+
+        let cfurl : CFURL = cf::base::wrap(value as CFURLRef);
+        return cfurl.to_str();
+    }
+}
+
+pub fn debug_descriptor(desc: &CTFontDescriptor) {
+    io::println(fmt!("family: %s", desc.family_name()));
+    io::println(fmt!("path: %s", desc.font_path()));
+    desc.show();
 }
 
 extern {

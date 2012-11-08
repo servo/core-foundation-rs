@@ -28,4 +28,4 @@ check: cocoa-test
 
 .PHONY: clean
 clean:
-	rm -f cocoa-test *.a *.o *.so *.dylib *.dll *.dummy
+	rm -f cocoa-test *.a *.o *.so *.dylib *.dll *.dummy cocoa-test

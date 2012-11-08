@@ -5,6 +5,7 @@ use cf::base::{
     AbstractCFTypeRef,
     CFAllocatorRef,
     CFIndex,
+    CFGetTypeID,
     CFRange,
     CFRelease,
     CFTypeRef,
@@ -14,7 +15,11 @@ use cf::base::{
 use cf::dictionary::CFDictionaryRef;
 use cf::number::CFNumberRef;
 use cf::set::CFSetRef;
-use cf::string::CFStringRef;
+use cf::string::{
+    CFString,
+    CFStringRef,
+    CFStringGetTypeID,
+};
 
 use cg = core_graphics;
 use cg::base::CGFloat;
@@ -100,6 +105,18 @@ pub impl CTFontDescriptor : AbstractCFType<CTFontDescriptorRef> {
 
     static fn unwrap(wrapper: CTFontDescriptor) -> CTFontDescriptorRef {
         wrapper.obj
+    }
+}
+
+pub impl CTFontDescriptor {
+    fn family_name() -> ~str {
+        let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontDisplayNameAttribute);
+        // family name should never be null.
+        assert value.is_not_null();
+        assert CFGetTypeID(value) == CFStringGetTypeID();
+
+        let name : CFString = cf::base::wrap(value as CFStringRef);
+        return name.to_str();
     }
 }
 

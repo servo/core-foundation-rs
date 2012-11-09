@@ -5,10 +5,13 @@ use base::{
     CFAllocatorRef,
     CFIndex,
     CFRelease,
+    CFType,
     CFTypeID,
     CFTypeRef,
     kCFAllocatorDefault
 };
+use string::{CFString, CFStringRef};
+
 use cast::reinterpret_cast;
 use dvec::DVec;
 use libc::c_void;
@@ -58,6 +61,8 @@ struct CFDictionary<KeyRefType   : AbstractCFTypeRef,
         }
     }
 }
+
+pub type UntypedCFDictionary = CFDictionary<CFStringRef, CFTypeRef, CFString, CFType>;
 
 pub impl<KeyRefType   : AbstractCFTypeRef,
          ValueRefType : AbstractCFTypeRef,

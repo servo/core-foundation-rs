@@ -8,6 +8,7 @@ use base::{
     CFRange,
     CFRangeMake,
     CFRelease,
+    CFRetain,
     CFTypeRef,
     CFTypeID,
 

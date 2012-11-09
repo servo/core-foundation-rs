@@ -1,9 +1,11 @@
 use base::{
     AbstractCFType,
     AbstractCFTypeRef,
+    Boolean,
     CFAllocatorRef,
     CFIndex,
     CFRelease,
+    CFTypeID,
     CFTypeRef,
     kCFAllocatorDefault
 };
@@ -48,10 +50,6 @@ pub struct CFNumber {
 }
 
 pub impl CFNumber {
-    static fn wrap(obj: CFNumberRef) -> CFNumber {
-        CFNumber { obj: obj }
-    }
-
     static fn new<T:Copy ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             CFNumber {
@@ -59,6 +57,8 @@ pub impl CFNumber {
             }
         }
     }
+
+    static fn type_id() -> CFTypeID { CFNumberGetTypeID() }
 
     pure fn to_i8() -> i8 {
         let ty = kCFNumberSInt8Type;
@@ -95,6 +95,29 @@ pub impl CFNumber {
             return val;
         }
     }
+
+    pure fn to_float() -> float unsafe {
+        assert self.has_float_type();
+        let ty = CFNumberGetType(self.obj);
+        if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
+            let mut val: libc::c_float = 0.0f as libc::c_float;
+            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+                fail ~"Error in unwrapping CFNumber to libc::c_float";
+            }
+            return val as float;
+        }
+        else if ty == kCFNumberFloat64Type || ty == kCFNumberDoubleType {
+            let mut val: libc::c_double = 0.0f as libc::c_double;
+            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+                    fail ~"Error in unwrapping CFNumber to libc::c_double";
+                }
+            return val as float;
+        }
+
+        fail fmt!("Unable to wrap CFNumber into float: with type tag=%?", ty)
+    }
+
+    priv pure fn has_float_type() -> bool unsafe { CFNumberIsFloatType(self.obj) as bool }
 
     priv pure fn has_number_type(ty: CFNumberType) -> bool {
         unsafe { CFNumberGetType(self.obj) == ty }
@@ -151,6 +174,10 @@ extern {
 
     fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *c_void)
                    -> CFNumberRef;
+    //fn CFNumberGetByteSize
     fn CFNumberGetType(number: CFNumberRef) -> CFNumberType;
     fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *c_void) -> bool;
+    fn CFNumberIsFloatType(number: CFNumberRef) -> Boolean;
+    //fn CFNumberCompare
+    fn CFNumberGetTypeID() -> CFTypeID;
 }

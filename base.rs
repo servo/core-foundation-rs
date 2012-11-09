@@ -67,9 +67,11 @@ impl CFType : AbstractCFType<CFTypeRef> {
 trait CFTypeOps<T:AbstractCFTypeRef> {
     pure fn get_type_ref(&self) -> CFTypeRef;
     static fn as_CFType(o: self) -> CFType;
+    static fn convert_from_CFType(o: CFType) -> self;
     fn clone_as_CFType(&self) -> CFType;
     static fn clone(&T) -> self;
     fn retain_count(&self) -> CFIndex;
+    pure fn type_id() -> CFTypeID;
     fn show(&self);
 }
 
@@ -82,6 +84,15 @@ impl<T:Copy AbstractCFTypeRef,S:AbstractCFType<T>> S : CFTypeOps<T> {
     static fn as_CFType(obj: S) -> CFType {
         let tyref : CFTypeRef = base::unwrap(move obj).as_type_ref();
         CFType { obj: tyref }
+    }
+
+    static fn convert_from_CFType(obj: CFType) -> S unsafe {
+        // so we don't deallocate while transferring out of CFType.
+        // the call will be balanced by the dtor of the returned wrapper.
+        CFRetain(obj.get_ref());
+        let tyref : CFTypeRef = base::unwrap(move obj);
+        let convref : T = cast::transmute(tyref); 
+        base::wrap(convref)
     }
 
     fn clone_as_CFType(&self) -> CFType {
@@ -97,6 +108,10 @@ impl<T:Copy AbstractCFTypeRef,S:AbstractCFType<T>> S : CFTypeOps<T> {
 
     fn retain_count(&self) -> CFIndex {
         CFGetRetainCount(self.get_type_ref())
+    }
+
+    pure fn type_id() -> CFTypeID unsafe {
+        CFGetTypeID(self.get_type_ref())
     }
 
     fn show(&self) {

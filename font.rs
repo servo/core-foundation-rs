@@ -7,7 +7,9 @@ use font_descriptor::{
     CTFontDescriptorRef,
     CTFontOrientation,
     CTFontSymbolicTraits,
+    CTFontTraits,
     SymbolicTraitAccessors,
+    TraitAccessors,
 };
 
 use cf = core_foundation;
@@ -23,6 +25,7 @@ use cf::base::{
 };
 use cf::dictionary::{
     CFDictionaryRef,
+    UntypedCFDictionary,
 };
 use cf::string::{
     CFStringGetTypeID,
@@ -163,6 +166,11 @@ pub impl CTFont {
         CTFontGetSymbolicTraits(self.obj)
     }
 
+    pure fn all_traits() -> CTFontTraits unsafe {
+        let value = CTFontCopyTraits(self.obj);
+        return cf::base::wrap(value);
+    }
+
     // Font metrics
     pure fn ascent() -> CGFloat unsafe {
         CTFontGetAscent(self.obj)
@@ -231,12 +239,17 @@ pub fn debug_font_names(font: &CTFont) {
 }
 
 pub fn debug_font_traits(font: &CTFont) {
-    let sym = font.symbolic_traits() as SymbolicTraitAccessors;
+    let sym = font.symbolic_traits();
     io::println(fmt!("kCTFontItalicTrait: %b", sym.is_italic()));
     io::println(fmt!("kCTFontBoldTrait: %b", sym.is_bold()));
     io::println(fmt!("kCTFontExpandedTrait: %b", sym.is_expanded()));
     io::println(fmt!("kCTFontCondensedTrait: %b", sym.is_condensed()));
     io::println(fmt!("kCTFontMonoSpaceTrait: %b", sym.is_monospace()));
+
+    let traits = font.all_traits();
+    io::println(fmt!("kCTFontWeightTrait: %f", traits.normalized_weight()));
+//    io::println(fmt!("kCTFontWidthTrait: %f", traits.normalized_width()));
+//    io::println(fmt!("kCTFontSlantTrait: %f", traits.normalized_slant()));
 }
 
 #[nolink]

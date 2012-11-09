@@ -8,13 +8,19 @@ use cf::base::{
     CFGetTypeID,
     CFRange,
     CFRelease,
+    CFRetain,
+    CFType,
     CFTypeID,
     CFTypeOps,
     CFTypeRef,
     kCFAllocatorDefault,
 };
-use cf::dictionary::CFDictionaryRef;
-use cf::number::CFNumberRef;
+use cf::dictionary::{
+    CFDictionary,
+    CFDictionaryRef,
+    UntypedCFDictionary,
+};
+use cf::number::{CFNumber, CFNumberRef};
 use cf::set::CFSetRef;
 use cf::string::{
     CFString,
@@ -119,6 +125,47 @@ pub impl CTFontStylisticClass : StylisticClassAccessors {
 
     pure fn is_symbols() -> bool {
         return (self & kCTFontSymbolicClass) != 0;
+    }
+}
+
+pub type CTFontTraits = UntypedCFDictionary;
+
+pub trait TraitAccessors {
+    fn symbolic_traits() -> CTFontSymbolicTraits;
+    fn normalized_weight() -> float;
+    fn normalized_width() -> float;
+    fn normalized_slant() -> float;
+}
+
+impl CTFontTraits : TraitAccessors {
+    priv fn extract_number_for_key(key: CFStringRef) -> CFNumber {
+        let value : CFType = self.get(&CFString::wrap_extern(key));
+        // TODO(Issue #185): use wrap_borrowed
+        // addref'd since we don't own the reference.
+        CFRetain(value.get_ref());
+        assert value.type_id() == CFNumber::type_id();
+        let number : CFNumber = cf::base::convert_from_CFType::<CFNumberRef, CFNumber>(move value);
+        return move number;
+    }
+
+    fn symbolic_traits() -> CTFontSymbolicTraits unsafe {
+        let number = self.extract_number_for_key(kCTFontSymbolicTrait);
+        return cast::transmute(number.to_i32());
+    }
+
+    fn normalized_weight() -> float unsafe {
+        let number = self.extract_number_for_key(kCTFontWeightTrait);
+        return cast::transmute(number.to_float());
+    }
+
+    fn normalized_width() -> float unsafe {
+        let number = self.extract_number_for_key(kCTFontWidthTrait);
+        return cast::transmute(number.to_float());
+    }
+
+    fn normalized_slant() -> float unsafe {
+        let number = self.extract_number_for_key(kCTFontSlantTrait);
+        return cast::transmute(number.to_float());
     }
 }
 

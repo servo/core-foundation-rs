@@ -56,6 +56,22 @@ pub const kCTFontVerticalTrait: CTFontSymbolicTraits = (1 << 11);
 pub const kCTFontUIOptimizedTrait: CTFontSymbolicTraits = (1 << 12);
 pub const kCTFontClassMaskTrait: CTFontSymbolicTraits = (15 << kCTFontClassMaskShift);
 
+pub trait SymbolicTraitAccessors {
+    pure fn is_italic() -> bool;
+    pure fn is_bold() -> bool;
+    pure fn is_expanded() -> bool;
+    pure fn is_condensed() -> bool;
+    pure fn is_monospace() -> bool;
+}
+
+pub impl CTFontSymbolicTraits : SymbolicTraitAccessors {
+    pure fn is_italic() -> bool { (self & kCTFontItalicTrait) != 0 }
+    pure fn is_bold() -> bool { (self & kCTFontBoldTrait) != 0 }
+    pure fn is_expanded() -> bool { (self & kCTFontExpandedTrait) != 0 }
+    pure fn is_condensed() -> bool { (self & kCTFontCondensedTrait) != 0 }
+    pure fn is_monospace() -> bool { (self & kCTFontMonoSpaceTrait) != 0 }
+}
+
 pub type CTFontStylisticClass = u32;
 pub const kCTFontUnknownClass: CTFontStylisticClass = (0 << kCTFontClassMaskShift);
 pub const kCTFontOldStyleSerifsClass: CTFontStylisticClass = (1 << kCTFontClassMaskShift);
@@ -68,6 +84,43 @@ pub const kCTFontSansSerifClass: CTFontStylisticClass = (8 << kCTFontClassMaskSh
 pub const kCTFontOrnamentalsClass: CTFontStylisticClass = (9 << kCTFontClassMaskShift);
 pub const kCTFontScriptsClass: CTFontStylisticClass = (10 << kCTFontClassMaskShift);
 pub const kCTFontSymbolicClass: CTFontStylisticClass = (12 << kCTFontClassMaskShift);
+
+pub trait StylisticClassAccessors {
+    pure fn is_serif() -> bool;
+    pure fn is_sans_serif() -> bool;
+    pure fn is_script() -> bool;
+    pure fn is_fantasy() -> bool;
+    pure fn is_symbols() -> bool;
+}
+
+pub impl CTFontStylisticClass : StylisticClassAccessors {
+    pure fn is_serif() -> bool {
+        let any_serif_class = kCTFontOldStyleSerifsClass 
+            | kCTFontTransitionalSerifsClass
+            | kCTFontModernSerifsClass
+            | kCTFontClarendonSerifsClass
+            | kCTFontSlabSerifsClass
+            | kCTFontFreeformSerifsClass;
+
+        return (self & any_serif_class) != 0;
+    }
+
+    pure fn is_sans_serif() -> bool {
+        return (self & kCTFontSansSerifClass) != 0;
+    }
+
+    pure fn is_script() -> bool {
+        return (self & kCTFontScriptsClass) != 0;
+    }
+
+    pure fn is_fantasy() -> bool {
+        return (self & kCTFontOrnamentalsClass) != 0;
+    }
+
+    pure fn is_symbols() -> bool {
+        return (self & kCTFontSymbolicClass) != 0;
+    }
+}
 
 /*
 * CTFontDescriptor.h

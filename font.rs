@@ -3,15 +3,14 @@ extern mod core_graphics;
 
 use libc::c_uint;
 
-use font_descriptor::{CTFontDescriptorRef, CTFontOrientation};
+use font_descriptor::{
+    CTFontDescriptorRef,
+    CTFontOrientation,
+    CTFontSymbolicTraits,
+    SymbolicTraitAccessors,
+};
 
 use cf = core_foundation;
-use cf::string::{
-    CFStringGetTypeID,
-    CFString,
-    CFStringRef,
-    UniChar
-};
 use cf::base::{
     AbstractCFType,
     AbstractCFTypeRef,
@@ -21,6 +20,15 @@ use cf::base::{
     CFRelease,
     CFTypeID,
     CFTypeRef,
+};
+use cf::dictionary::{
+    CFDictionaryRef,
+};
+use cf::string::{
+    CFStringGetTypeID,
+    CFString,
+    CFStringRef,
+    UniChar
 };
 
 use cg = core_graphics;
@@ -103,10 +111,6 @@ struct CTFont {
 pub impl CTFont : AbstractCFType<CTFontRef> {
     pure fn get_ref() -> CTFontRef { self.obj }
 
-    fn copy_cg_font(&const self) -> CGFontRef {
-        CTFontCopyGraphicsFont(self.obj, ptr::null())
-    }
-
     static fn wrap(obj: CTFontRef) -> CTFont {
         CTFont { obj: obj }
     }
@@ -129,14 +133,34 @@ pub impl CTFont {
         return move cf::base::wrap(value);
     }
 
-    fn copy_to_CGFont() -> CGFontRef {
+    fn copy_to_CGFont(&const self) -> CGFontRef {
         CTFontCopyGraphicsFont(self.obj, ptr::null())
     }
 
     // Names
+    pure fn family_name() -> ~str unsafe {
+        let value = get_string_by_name_key(&self, kCTFontFamilyNameKey);
+        return move option::expect(move value, ~"Fonts should always have a family name.");
+    }
+
     pure fn face_name() -> ~str unsafe {
-        let value = get_string_by_name_key(&self, kCTFontStyleNameKey);
+        let value = get_string_by_name_key(&self, kCTFontSubFamilyNameKey);
         return move option::expect(move value, ~"Fonts should always have a face name.");
+    }
+
+    pure fn unique_name() -> ~str unsafe {
+        let value = get_string_by_name_key(&self, kCTFontUniqueNameKey);
+        return move option::expect(move value, ~"Fonts should always have a unique name.");
+    }
+
+    pure fn postscript_name() -> ~str unsafe {
+        let value = get_string_by_name_key(&self, kCTFontPostScriptNameKey);
+        return move option::expect(move value, ~"Fonts should always have a PostScript name.");
+    }
+
+    // Properties
+    priv pure fn symbolic_traits() -> CTFontSymbolicTraits unsafe {
+        CTFontGetSymbolicTraits(self.obj)
     }
 
     // Font metrics
@@ -206,6 +230,15 @@ pub fn debug_font_names(font: &CTFont) {
     io::println(fmt!("kCTFontPostScriptNameKey: %s", get_key(font, kCTFontPostScriptNameKey)));
 }
 
+pub fn debug_font_traits(font: &CTFont) {
+    let sym = font.symbolic_traits() as SymbolicTraitAccessors;
+    io::println(fmt!("kCTFontItalicTrait: %b", sym.is_italic()));
+    io::println(fmt!("kCTFontBoldTrait: %b", sym.is_bold()));
+    io::println(fmt!("kCTFontExpandedTrait: %b", sym.is_expanded()));
+    io::println(fmt!("kCTFontCondensedTrait: %b", sym.is_condensed()));
+    io::println(fmt!("kCTFontMonoSpaceTrait: %b", sym.is_monospace()));
+}
+
 #[nolink]
 #[link_args = "-framework ApplicationServices"]
 extern {
@@ -268,8 +301,8 @@ extern {
     fn CTFontCopyAttribute(font: CTFontRef) -> CFTypeRef;
     fn CTFontGetSize(font: CTFontRef) -> CGFloat;
     //fn CTFontGetMatrix
-    //fn CTFontGetSymbolicTraits
-    //fn CTFontCopyTraits
+    fn CTFontGetSymbolicTraits(font: CTFontRef) -> CTFontSymbolicTraits;
+    fn CTFontCopyTraits(font: CTFontRef) -> CFDictionaryRef;
 
     /* Getting Font Names */
     fn CTFontCopyPostScriptName(font: CTFontRef) -> CFStringRef;

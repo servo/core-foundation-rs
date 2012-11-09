@@ -6,13 +6,20 @@ use libc::c_uint;
 use font_descriptor::{CTFontDescriptorRef, CTFontOrientation};
 
 use cf = core_foundation;
-use cf::string::{CFStringRef, UniChar};
+use cf::string::{
+    CFStringGetTypeID,
+    CFString,
+    CFStringRef,
+    UniChar
+};
 use cf::base::{
     AbstractCFType,
     AbstractCFTypeRef,
+    CFGetTypeID,
     CFIndex,
     CFOptionFlags,
     CFRelease,
+    CFTypeID,
     CFTypeRef,
 };
 
@@ -28,6 +35,10 @@ use cg::font::{
 use cg::geometry::{
     CGRect,
     CGSize,
+};
+
+use font_descriptor::{
+    CTFontDescriptor
 };
 
 pub type CTFontUIFontType = u32;
@@ -102,9 +113,15 @@ pub impl CTFont : AbstractCFType<CTFontRef> {
 }
 
 pub impl CTFont {
+    // Creation methods
     static fn new_from_CGFont(cgfont: CGFontRef, pt_size: float) -> CTFont {
         assert cgfont.is_not_null();
         let value = CTFontCreateWithGraphicsFont(cgfont, pt_size as CGFloat, ptr::null(), ptr::null());
+        return move cf::base::wrap(value);
+    }
+
+    static fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
+        let value = CTFontCreateWithFontDescriptor(desc.get_ref(), pt_size as CGFloat, ptr::null());
         return move cf::base::wrap(value);
     }
 
@@ -112,6 +129,13 @@ pub impl CTFont {
         CTFontCopyGraphicsFont(self.obj, ptr::null())
     }
 
+    // Names
+    pure fn face_name() -> ~str unsafe {
+        let value = get_string_by_name_key(&self, kCTFontStyleNameKey);
+        return move option::expect(move value, ~"Fonts should always have a face name.");
+    }
+
+    // Font metrics
     pure fn ascent() -> CGFloat unsafe {
         CTFontGetAscent(self.obj)
     }
@@ -151,6 +175,31 @@ pub impl CTFont {
     fn get_advances_for_glyphs(orientation: CTFontOrientation, glyphs: *CGGlyph, advances: *CGSize, count: CFIndex) -> float {
         CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as float
     }
+}
+
+// Helper methods
+priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
+    let value = CTFontCopyName(font.get_ref(), name_key);
+    if value.is_null() {
+        return None;
+    }
+
+    assert CFGetTypeID(value.as_type_ref()) == CFStringGetTypeID();
+    let cfstr: CFString = cf::base::wrap(value as CFStringRef);
+    return Some(cfstr.to_str());
+}
+
+pub fn debug_font_names(font: &CTFont) {
+    fn get_key(font: &CTFont, key: CFStringRef) -> ~str {
+        option::unwrap(move get_string_by_name_key(font, key))
+    }
+
+    io::println(fmt!("kCTFontFamilyNameKey: %s", get_key(font, kCTFontFamilyNameKey)));
+    io::println(fmt!("kCTFontSubFamilyNameKey: %s", get_key(font, kCTFontSubFamilyNameKey)));
+    io::println(fmt!("kCTFontStyleNameKey: %s", get_key(font, kCTFontStyleNameKey)));
+    io::println(fmt!("kCTFontUniqueNameKey: %s", get_key(font, kCTFontUniqueNameKey)));
+    io::println(fmt!("kCTFontFullNameKey: %s", get_key(font, kCTFontFullNameKey)));
+    io::println(fmt!("kCTFontPostScriptNameKey: %s", get_key(font, kCTFontPostScriptNameKey)));
 }
 
 #[nolink]
@@ -201,7 +250,8 @@ extern {
     /* Creating Fonts */
     //fn CTFontCreateWithName
     //fn CTFontCreateWithNameAndOptions
-    //fn CTFontCreateWithFontDescriptor
+    fn CTFontCreateWithFontDescriptor(descriptor: CTFontDescriptorRef, size: CGFloat,
+                                      matrix: *CGAffineTransform) -> CTFontRef;
     //fn CTFontCreateWithFontDescriptorAndOptions
     //fn CTFontCreateUIFontForLanguage
     //fn CTFontCreateCopyWithAttributes
@@ -210,20 +260,21 @@ extern {
     //fn CTFontCreateForString
 
     /* Getting Font Data */
-    //fn CTFontCopyFontDescriptor
-    //fn CTFontCopyAttribute
+    fn CTFontCopyFontDescriptor(font: CTFontRef) -> CTFontDescriptorRef;
+    fn CTFontCopyAttribute(font: CTFontRef) -> CFTypeRef;
     fn CTFontGetSize(font: CTFontRef) -> CGFloat;
-    //fn CTFontGetMatricx
+    //fn CTFontGetMatrix
     //fn CTFontGetSymbolicTraits
     //fn CTFontCopyTraits
 
     /* Getting Font Names */
-    //fn CTFontCopyPostScriptName
-    //fn CTFontCopyFamilyName
-    //fn CTFontCopyFullName
-    //fn CTFontCopyDisplayName
-    //fn CTFontCopyName
-    //fn CTFontCopyLocalizedName
+    fn CTFontCopyPostScriptName(font: CTFontRef) -> CFStringRef;
+    fn CTFontCopyFamilyName(font: CTFontRef) -> CFStringRef;
+    fn CTFontCopyFullName(font: CTFontRef) -> CFStringRef;
+    fn CTFontCopyDisplayName(font: CTFontRef) -> CFStringRef;
+    fn CTFontCopyName(font: CTFontRef, nameKey: CFStringRef) -> CFStringRef;
+    fn CTFontCopyLocalizedName(font: CTFontRef, nameKey: CFStringRef, 
+                               language: *CFStringRef) -> CFStringRef;
 
     /* Working With Encoding */
     //fn CTFontCopyCharacterSet
@@ -276,6 +327,6 @@ extern {
     //fn CTFontCopyAvailableTables
     //fn CTFontCopyTable
 
-    //fn CTFontGetTypeID
+    fn CTFontGetTypeID() -> CFTypeID;
     
 }

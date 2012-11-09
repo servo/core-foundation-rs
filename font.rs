@@ -100,13 +100,6 @@ struct CTFont {
     }
 }
 
-pub impl CTFont {
-    static pub fn new_with_cg_font(cg_font: CGFontRef, size: CGFloat) -> CTFont {
-        let ct_font = CTFontCreateWithGraphicsFont(cg_font, size, ptr::null(), ptr::null());
-        cf::base::wrap(move ct_font)
-    }
-}
-
 pub impl CTFont : AbstractCFType<CTFontRef> {
     pure fn get_ref() -> CTFontRef { self.obj }
 

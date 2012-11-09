@@ -101,6 +101,57 @@ pub impl CTFont : AbstractCFType<CTFontRef> {
     }
 }
 
+pub impl CTFont {
+    static fn new_from_CGFont(cgfont: CGFontRef, pt_size: float) -> CTFont {
+        assert cgfont.is_not_null();
+        let value = CTFontCreateWithGraphicsFont(cgfont, pt_size as CGFloat, ptr::null(), ptr::null());
+        return move cf::base::wrap(value);
+    }
+
+    fn copy_to_CGFont() -> CGFontRef {
+        CTFontCopyGraphicsFont(self.obj, ptr::null())
+    }
+
+    pure fn ascent() -> CGFloat unsafe {
+        CTFontGetAscent(self.obj)
+    }
+
+    pure fn descent() -> CGFloat unsafe {
+        CTFontGetDescent(self.obj)
+    }
+
+    pure fn underline_thickness() -> CGFloat unsafe {
+        CTFontGetUnderlineThickness(self.obj)
+    }
+
+    pure fn underline_position() -> CGFloat unsafe {
+        CTFontGetUnderlinePosition(self.obj)
+    }
+
+    pure fn bounding_box() -> CGRect unsafe {
+        CTFontGetBoundingBox(self.obj)
+    }
+
+    pure fn leading() -> CGFloat unsafe {
+        CTFontGetLeading(self.obj)
+    }
+
+    pure fn x_height() -> CGFloat unsafe {
+        CTFontGetXHeight(self.obj)
+    }
+
+    pure fn pt_size() -> CGFloat unsafe {
+        CTFontGetSize(self.obj)
+    }
+
+    fn get_glyphs_for_characters(characters: *UniChar, glyphs: *CGGlyph, count: CFIndex) -> bool unsafe {
+        CTFontGetGlyphsForCharacters(self.obj, characters, glyphs, count)
+    }
+
+    fn get_advances_for_glyphs(orientation: CTFontOrientation, glyphs: *CGGlyph, advances: *CGSize, count: CFIndex) -> float {
+        CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as float
+    }
+}
 
 #[nolink]
 #[link_args = "-framework ApplicationServices"]
@@ -213,7 +264,7 @@ extern {
     //fn CTFontGetLigatureCaretPositions
 
     /* Converting Fonts */
-    //fn CTFontCopyGraphicsFont
+    fn CTFontCopyGraphicsFont(font: CTFontRef, attributes: *CTFontDescriptorRef) -> CGFontRef;
     fn CTFontCreateWithGraphicsFont(graphicsFont: CGFontRef, size: CGFloat, 
                                     matrix: *CGAffineTransform, 
                                     attributes: CTFontDescriptorRef) -> CTFontRef;

@@ -3,6 +3,7 @@
 #[crate_type = "lib"];
 
 extern mod std;
+extern mod core_foundation;
 
 pub mod base;
 pub mod data_provider;

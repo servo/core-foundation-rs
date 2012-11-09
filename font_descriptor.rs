@@ -115,14 +115,35 @@ pub impl CTFontDescriptor : AbstractCFType<CTFontDescriptorRef> {
 }
 
 pub impl CTFontDescriptor {
-    fn family_name() -> ~str {
-        let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontDisplayNameAttribute);
-        // family name should never be null.
-        assert value.is_not_null();
-        assert CFGetTypeID(value) == CFStringGetTypeID();
+    priv fn get_string_attribute(attribute: CFStringRef) -> Option<~str> {
+        let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
+        if value.is_null() {
+            return None;
+        }
 
-        let name : CFString = cf::base::wrap(value as CFStringRef);
-        return name.to_str();
+        assert CFGetTypeID(value) == CFStringGetTypeID();
+        let cfstr: CFString = cf::base::wrap(value as CFStringRef);
+        return Some(cfstr.to_str());
+    }
+
+    fn family_name() -> ~str {
+        let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
+        return option::expect(move value, ~"A font must have a non-null font family name.");
+    }
+
+    fn font_name() -> ~str {
+        let value = self.get_string_attribute(kCTFontNameAttribute);
+        return option::expect(move value, ~"A font must have a non-null name.");
+    }
+
+    fn style_name() -> ~str {
+        let value = self.get_string_attribute(kCTFontStyleNameAttribute);
+        return option::expect(move value, ~"A font must have a non-null style name.");
+    }
+
+    fn display_name() -> ~str {
+        let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
+        return move option::expect(move value, ~"A font must have a non-null display name.");
     }
 
     fn font_path() -> ~str {
@@ -137,6 +158,9 @@ pub impl CTFontDescriptor {
 
 pub fn debug_descriptor(desc: &CTFontDescriptor) {
     io::println(fmt!("family: %s", desc.family_name()));
+    io::println(fmt!("name: %s", desc.font_name()));
+    io::println(fmt!("style: %s", desc.style_name()));
+    io::println(fmt!("display: %s", desc.display_name()));
     io::println(fmt!("path: %s", desc.font_path()));
     desc.show();
 }
@@ -156,29 +180,31 @@ extern {
      * CTFontDescriptor.h
      */
 
-    // font attribute constants
-    const kCTFontURLAttribute: CFStringRef;
-    const kCTFontNameAttribute: CFStringRef;
-    const kCTFontDisplayNameAttribute: CFStringRef;
-    const kCTFontFamilyNameAttribute: CFStringRef;
-    const kCTFontStyleNameAttribute: CFStringRef;
-    const kCTFontTraitsAttribute: CFStringRef;
-    const kCTFontVariationAttribute: CFStringRef;
-    const kCTFontSizeAttribute: CFStringRef;
-    const kCTFontMatrixAttribute: CFStringRef;
-    const kCTFontCascadeListAttribute: CFStringRef;
-    const kCTFontCharacterSetAttribute: CFStringRef;
-    const kCTFontLanguagesAttribute: CFStringRef;
-    const kCTFontBaselineAdjustAttribute: CFStringRef;
-    const kCTFontMacintoshEncodingsAttribute: CFStringRef;
-    const kCTFontFeaturesAttribute: CFStringRef;
-    const kCTFontFeatureSettingsAttribute: CFStringRef;
-    const kCTFontFixedAdvanceAttribute: CFStringRef;
-    const kCTFontOrientationAttribute: CFStringRef;
-    const kCTFontFormatAttribute: CFStringRef;
-    const kCTFontRegistrationScopeAttribute: CFStringRef;
-    const kCTFontPriorityAttribute: CFStringRef;
-    const kCTFontEnabledAttribute: CFStringRef;
+    // font attribute constants. Note that the name-related attributes
+    // here are somewhat flaky. Servo creates CTFont instances and
+    // then uses CTFontCopyName to get more fine-grained names.
+    const kCTFontURLAttribute:                  CFStringRef; // value: CFURLRef
+    const kCTFontNameAttribute:                 CFStringRef; // value: CFStringRef
+    const kCTFontDisplayNameAttribute:          CFStringRef; // value: CFStringRef
+    const kCTFontFamilyNameAttribute:           CFStringRef; // value: CFStringRef
+    const kCTFontStyleNameAttribute:            CFStringRef; // value: CFStringRef
+    const kCTFontTraitsAttribute:               CFStringRef;
+    const kCTFontVariationAttribute:            CFStringRef;
+    const kCTFontSizeAttribute:                 CFStringRef;
+    const kCTFontMatrixAttribute:               CFStringRef;
+    const kCTFontCascadeListAttribute:          CFStringRef;
+    const kCTFontCharacterSetAttribute:         CFStringRef;
+    const kCTFontLanguagesAttribute:            CFStringRef;
+    const kCTFontBaselineAdjustAttribute:       CFStringRef;
+    const kCTFontMacintoshEncodingsAttribute:   CFStringRef;
+    const kCTFontFeaturesAttribute:             CFStringRef;
+    const kCTFontFeatureSettingsAttribute:      CFStringRef;
+    const kCTFontFixedAdvanceAttribute:         CFStringRef;
+    const kCTFontOrientationAttribute:          CFStringRef;
+    const kCTFontFormatAttribute:               CFStringRef;
+    const kCTFontRegistrationScopeAttribute:    CFStringRef;
+    const kCTFontPriorityAttribute:             CFStringRef;
+    const kCTFontEnabledAttribute:              CFStringRef;
 
     fn CTFontDescriptorCopyAttribute(descriptor: CTFontDescriptorRef, attribute: CFStringRef) -> CFTypeRef;
     fn CTFontDescriptorCopyAttributes(descriptor: CTFontDescriptorRef) -> CFDictionaryRef;

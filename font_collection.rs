@@ -57,7 +57,7 @@ pub impl CTFontCollection {
         CTFontCollection { obj: move collection }
     }
 
-    fn get_descriptors() -> CFArray<CTFontDescriptorRef, CTFontDescriptor> {
+    pure fn get_descriptors() -> CFArray<CTFontDescriptorRef, CTFontDescriptor> unsafe {
         cf::base::wrap(CTFontCollectionCreateMatchingFontDescriptors(self.obj))
     }
 }

@@ -140,6 +140,11 @@ pub impl CTFont {
         CTFontCopyGraphicsFont(self.obj, ptr::null())
     }
 
+    fn clone_with_font_size(&const self, size: float) -> CTFont {
+        let result = CTFontCreateCopyWithAttributes(self.obj, size as CGFloat, ptr::null(), ptr::null());
+        return cf::base::wrap(result);
+    }
+
     // Names
     pure fn family_name() -> ~str unsafe {
         let value = get_string_by_name_key(&self, kCTFontFamilyNameKey);
@@ -304,7 +309,8 @@ extern {
                                       matrix: *CGAffineTransform) -> CTFontRef;
     //fn CTFontCreateWithFontDescriptorAndOptions
     //fn CTFontCreateUIFontForLanguage
-    //fn CTFontCreateCopyWithAttributes
+    fn CTFontCreateCopyWithAttributes(font: CTFontRef, size: CGFloat, matrix: *CGAffineTransform, 
+                                      attributes: CTFontDescriptorRef) -> CTFontRef;
     //fn CTFontCreateCopyWithSymbolicTraits
     //fn CTFontCreateCopyWithFamily
     //fn CTFontCreateForString

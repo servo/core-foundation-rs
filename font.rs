@@ -13,6 +13,9 @@ use font_descriptor::{
 };
 
 use cf = core_foundation;
+use cf::array::{
+    CFArrayRef,
+};
 use cf::base::{
     AbstractCFType,
     AbstractCFTypeRef,
@@ -22,6 +25,10 @@ use cf::base::{
     CFRelease,
     CFTypeID,
     CFTypeRef,
+};
+use cf::data::{
+    CFData,
+    CFDataRef,
 };
 use cf::dictionary::{
     CFDictionaryRef,
@@ -216,6 +223,14 @@ pub impl CTFont {
     fn get_advances_for_glyphs(orientation: CTFontOrientation, glyphs: *CGGlyph, advances: *CGSize, count: CFIndex) -> float {
         CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as float
     }
+
+    fn get_font_table(tag: u32) -> Option<CFData> {
+        let result = CTFontCopyTable(self.obj, tag as CTFontTableTag, kCTFontTableOptionsExcludeSynthetic);
+        return match result.is_null() {
+            true => None,
+            false => Some(cf::base::wrap(result)),
+        }
+    }
 }
 
 // Helper methods
@@ -380,8 +395,8 @@ extern {
     //fn CTFontCreateWithQuickdrawInstance
 
     /* Getting Font Table Data */
-    //fn CTFontCopyAvailableTables
-    //fn CTFontCopyTable
+    fn CTFontCopyAvailableTables(font: CTFontRef, options: CTFontTableOptions) -> CFArrayRef;
+    fn CTFontCopyTable(font: CTFontRef, table: CTFontTableTag, options: CTFontTableOptions) -> CFDataRef;
 
     fn CTFontGetTypeID() -> CFTypeID;
     

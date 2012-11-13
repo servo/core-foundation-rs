@@ -233,6 +233,8 @@ pub impl CFString {
         base::wrap(string)
     }
 
+    // like CFString::new, but references a string that can be used as
+    // a backing store by virtue of being statically allocated.
     static fn new_static(string: &static/str) -> CFString {
         let string_ref = do str::as_buf(string) |bytes, len| {
             CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
@@ -241,6 +243,18 @@ pub impl CFString {
                                           kCFStringEncodingUTF8,
                                           false as Boolean,
                                           kCFAllocatorNull)
+        };
+        base::wrap(string_ref)
+    }
+
+    static fn new(string: &str) -> CFString {
+        let string_ref = do str::as_buf(string) |bytes, len| {
+            CFStringCreateWithBytes(kCFAllocatorDefault,
+                                    bytes,
+                                    (len-1) as CFIndex, // does NOT want trailing NUL
+                                    kCFStringEncodingUTF8,
+                                    false as Boolean,
+                                    kCFAllocatorNull)
         };
         base::wrap(string_ref)
     }
@@ -294,7 +308,13 @@ extern {
     //fn CFStringCreateByCombiningStrings
     //fn CFStringCreateCopy
     //fn CFStringCreateFromExternalRepresentation
-    //fn CFStringCreateWithBytes
+    fn CFStringCreateWithBytes(alloc: CFAllocatorRef,
+                                     bytes: *u8,
+                                     numBytes: CFIndex,
+                                     encoding: CFStringEncoding,
+                                     isExternalRepresentation: Boolean,
+                                     contentsDeallocator: CFAllocatorRef)
+                                  -> CFStringRef;
     fn CFStringCreateWithBytesNoCopy(alloc: CFAllocatorRef,
                                      bytes: *u8,
                                      numBytes: CFIndex,

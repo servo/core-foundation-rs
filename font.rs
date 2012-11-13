@@ -143,6 +143,15 @@ pub impl CTFont {
         return move cf::base::wrap(value);
     }
 
+    static fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
+        let cfname = CFString::new(name);
+        let value = CTFontCreateWithName(cfname.get_ref(), pt_size as CGFloat, ptr::null());
+
+        if value.is_null() { return Err(()); }
+
+        return Ok(move cf::base::wrap(value));
+    }
+
     fn copy_to_CGFont(&const self) -> CGFontRef {
         CTFontCopyGraphicsFont(self.obj, ptr::null())
     }
@@ -318,7 +327,7 @@ extern {
     // to the documentation's Functions By Task listing, because there so many functions.
 
     /* Creating Fonts */
-    //fn CTFontCreateWithName
+    fn CTFontCreateWithName(name: CFStringRef, size: CGFloat, matrix: *CGAffineTransform) -> CTFontRef;
     //fn CTFontCreateWithNameAndOptions
     fn CTFontCreateWithFontDescriptor(descriptor: CTFontDescriptorRef, size: CGFloat,
                                       matrix: *CGAffineTransform) -> CTFontRef;

@@ -128,6 +128,7 @@ pub impl CTFontStylisticClass : StylisticClassAccessors {
     }
 }
 
+pub type CTFontAttributes = UntypedCFDictionary;
 pub type CTFontTraits = UntypedCFDictionary;
 
 pub trait TraitAccessors {
@@ -215,6 +216,11 @@ pub impl CTFontDescriptor : AbstractCFType<CTFontDescriptorRef> {
 }
 
 pub impl CTFontDescriptor {
+    static fn new_from_attributes(attributes: &CTFontAttributes) -> CTFontDescriptor {
+        let descriptor = CTFontDescriptorCreateWithAttributes(attributes.get_ref());
+        return cf::base::wrap(descriptor)
+    }
+
     priv fn get_string_attribute(attribute: CFStringRef) -> Option<~str> {
         let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
         if value.is_null() {
@@ -306,14 +312,24 @@ extern {
     const kCTFontPriorityAttribute:             CFStringRef;
     const kCTFontEnabledAttribute:              CFStringRef;
 
-    fn CTFontDescriptorCopyAttribute(descriptor: CTFontDescriptorRef, attribute: CFStringRef) -> CFTypeRef;
+    fn CTFontDescriptorCopyAttribute(descriptor: CTFontDescriptorRef,
+                                     attribute: CFStringRef) -> CFTypeRef;
     fn CTFontDescriptorCopyAttributes(descriptor: CTFontDescriptorRef) -> CFDictionaryRef;
-    fn CTFontDescriptorCopyLocalizedAttribute(descriptor: CTFontDescriptorRef, attribute: CFStringRef, language: *CFStringRef) -> CFTypeRef;
-    fn CTFontDescriptorCreateCopyWithAttributes(original: CTFontDescriptorRef, attributes: CFDictionaryRef) -> CTFontDescriptorRef;
-    fn CTFontDescriptorCreateCopyWithFeature(original: CTFontDescriptorRef, featureTypeIdentifier: CFNumberRef, featureSelectorIdentifier: CFNumberRef) -> CTFontDescriptorRef;
-    fn CTFontDescriptorCreateCopyWithVariation(original: CTFontDescriptorRef, variationIdentifier: CFNumberRef, variationValue: CGFloat) -> CTFontDescriptorRef;
-    fn CTFontDescriptorCreateMatchingFontDescriptor(descriptor: CTFontDescriptorRef, mandatoryAttributes: CFSetRef) -> CTFontDescriptorRef;
-    fn CTFontDescriptorCreateMatchingFontDescriptors(descriptor: CTFontDescriptorRef, mandatoryAttributes: CFSetRef) -> CTFontDescriptorRef;
+    fn CTFontDescriptorCopyLocalizedAttribute(descriptor: CTFontDescriptorRef,
+                                              attribute: CFStringRef,
+                                              language: *CFStringRef) -> CFTypeRef;
+    fn CTFontDescriptorCreateCopyWithAttributes(original: CTFontDescriptorRef, 
+                                                attributes: CFDictionaryRef) -> CTFontDescriptorRef;
+    fn CTFontDescriptorCreateCopyWithFeature(original: CTFontDescriptorRef,
+                                             featureTypeIdentifier: CFNumberRef,
+                                             featureSelectorIdentifier: CFNumberRef) -> CTFontDescriptorRef;
+    fn CTFontDescriptorCreateCopyWithVariation(original: CTFontDescriptorRef, 
+                                               variationIdentifier: CFNumberRef,
+                                               variationValue: CGFloat) -> CTFontDescriptorRef;
+    fn CTFontDescriptorCreateMatchingFontDescriptor(descriptor: CTFontDescriptorRef,
+                                                    mandatoryAttributes: CFSetRef) -> CTFontDescriptorRef;
+    fn CTFontDescriptorCreateMatchingFontDescriptors(descriptor: CTFontDescriptorRef,
+                                                     mandatoryAttributes: CFSetRef) -> CFArrayRef;
     fn CTFontDescriptorCreateWithAttributes(attributes: CFDictionaryRef) -> CTFontDescriptorRef;
     fn CTFontDescriptorCreateWithNameAndSize(name: CFStringRef, size: CGFloat) -> CTFontDescriptorRef;
     fn CTFontDescriptorGetTypeID() -> CFTypeID;

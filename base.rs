@@ -82,6 +82,9 @@ impl<T:Copy AbstractCFTypeRef,S:AbstractCFType<T>> S : CFTypeOps<T> {
     }
 
     static fn as_CFType(obj: S) -> CFType {
+        // so we don't deallocate while transferring into CFType.
+        // the call will be balanced by the dtor of the returned wrapper.
+        CFRetain(obj.get_ref().as_type_ref());
         let tyref : CFTypeRef = base::unwrap(move obj).as_type_ref();
         CFType { obj: tyref }
     }

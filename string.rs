@@ -1,5 +1,4 @@
 use base::{
-    AbstractCFType,
     AbstractCFTypeRef,
     Boolean,
     CFAllocatorRef,
@@ -7,16 +6,14 @@ use base::{
     CFOptionFlags,
     CFRange,
     CFRangeMake,
-    CFRelease,
-    CFRetain,
     CFTypeRef,
     CFTypeID,
+    CFWrapper,
 
     kCFAllocatorDefault,
     kCFAllocatorNull,
 };
 
-use cast::reinterpret_cast;
 use libc::c_char;
 
 pub type UniChar = libc::c_ushort;
@@ -200,37 +197,17 @@ const kCFStringEncodingShiftJIS_X0213_00: CFStringEncoding = 0x0628; /* Deprecat
 struct __CFString { private: () }
 pub type CFStringRef = *__CFString;
 
-impl CFStringRef : AbstractCFTypeRef {
+pub impl CFStringRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
-pub struct CFString {
-    obj: CFStringRef,
-
-    drop {
-        unsafe {
-            CFRelease(cast::transmute(self.obj));
-        }
-    }
-}
-
-pub impl CFString : AbstractCFType<CFStringRef> {
-    pure fn get_ref() -> CFStringRef { self.obj }
-
-    static fn wrap(obj: CFStringRef) -> CFString {
-        CFString { obj: obj }
-    }
-
-    static fn unwrap(wrapper: CFString) -> CFStringRef {
-        wrapper.obj
-    }
-}
+pub type CFString = CFWrapper<CFStringRef, (), ()>;
 
 pub impl CFString {
     // convenience method to make it easier to wrap extern
     // CFStringRefs without providing explicit typarams to base::wrap()
     static fn wrap_extern(string: CFStringRef) -> CFString {
-        base::wrap(string)
+        CFWrapper::wrap_shared(string)
     }
 
     // like CFString::new, but references a string that can be used as
@@ -244,7 +221,7 @@ pub impl CFString {
                                           false as Boolean,
                                           kCFAllocatorNull)
         };
-        base::wrap(string_ref)
+        CFWrapper::wrap_owned(string_ref)
     }
 
     static fn new(string: &str) -> CFString {
@@ -256,14 +233,14 @@ pub impl CFString {
                                     false as Boolean,
                                     kCFAllocatorNull)
         };
-        base::wrap(string_ref)
+        CFWrapper::wrap_owned(string_ref)
     }
-}
 
-pub impl CFString {
     pub pure fn char_len() -> uint unsafe {
         CFStringGetLength(self.obj) as uint
     }
+
+    
 }
 
 pub impl CFString : ToStr {

@@ -1,54 +1,25 @@
-use base::{AbstractCFType, AbstractCFTypeRef, CFRelease, CFRetain, CFTypeRef};
-use cast::reinterpret_cast;
+use base::{
+    AbstractCFTypeRef,
+    CFTypeRef,
+    CFWrapper,
+};
 
 struct __CFBoolean { private: () }
 pub type CFBooleanRef = *__CFBoolean;
 
-impl CFBooleanRef : AbstractCFTypeRef {
+pub impl CFBooleanRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
-pub struct CFBoolean {
-    obj: CFBooleanRef,
-
-    drop {
-        unsafe {
-            CFRelease(reinterpret_cast(&self.obj));
-        }
-    }
-}
+pub type CFBoolean = CFWrapper<CFBooleanRef, (), ()>;
 
 pub impl CFBoolean {
-    static fn wrap(obj: CFBooleanRef) -> CFBoolean {
-        CFBoolean { obj: obj }
-    }
-
     static fn true_value() -> CFBoolean {
-        unsafe {
-            let obj = kCFBooleanTrue;
-            CFRetain(reinterpret_cast(&obj));
-            return CFBoolean::wrap(obj);
-        }
+        CFWrapper::wrap_shared(kCFBooleanTrue)
     }
 
     static fn false_value() -> CFBoolean {
-        unsafe {
-            let obj = kCFBooleanFalse;
-            CFRetain(reinterpret_cast(&obj));
-            return CFBoolean::wrap(obj);
-        }
-    }
-}
-
-impl CFBoolean : AbstractCFType<CFBooleanRef> {
-    pure fn get_ref() -> CFBooleanRef { self.obj }
-
-    static fn wrap(obj: CFBooleanRef) -> CFBoolean {
-        CFBoolean { obj: obj }
-    }
-
-    static fn unwrap(wrapper: CFBoolean) -> CFBooleanRef {
-        wrapper.obj
+        CFWrapper::wrap_shared(kCFBooleanFalse)
     }
 }
 

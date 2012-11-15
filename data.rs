@@ -1,12 +1,11 @@
 use base::{
-    AbstractCFType,
     AbstractCFTypeRef,
     CFAllocatorRef,
     CFIndex,
     CFRange,
-    CFRelease,
     CFType,
     CFTypeRef,
+    CFWrapper,
     kCFAllocatorDefault,
 };
 
@@ -19,35 +18,17 @@ impl CFDataRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
-struct CFData {
-    obj: CFDataRef,
-
-    drop {
-        unsafe {
-            CFRelease(self.obj.as_type_ref())
-        }
-    }
-}
-
-impl CFData : AbstractCFType<CFDataRef> {
-    pure fn get_ref() -> CFDataRef { self.obj }
-
-    static fn wrap(obj: CFDataRef) -> CFData {
-        CFData { obj: obj }
-    }
-
-    static fn unwrap(wrapper: CFData) -> CFDataRef {
-        wrapper.obj
-    }
-}
+type CFData = CFWrapper<CFDataRef, (), ()>;
 
 pub impl CFData {
     static fn new_from_buf(buf: &[u8]) -> CFData {
+        let result;
         unsafe {
-            let r = CFDataCreate(kCFAllocatorDefault, 
-                                 vec::raw::to_ptr(buf), buf.len() as CFIndex);
-            return base::wrap(r);
+            result = CFDataCreate(kCFAllocatorDefault, 
+                                  vec::raw::to_ptr(buf), buf.len() as CFIndex);
         }
+
+        CFWrapper::wrap_owned(result)
     }
 
     // tread with caution; read-only

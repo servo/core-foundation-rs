@@ -1,12 +1,11 @@
 use base::{
-    AbstractCFType,
     AbstractCFTypeRef,
     Boolean,
     CFAllocatorRef,
     CFIndex,
-    CFRelease,
     CFTypeID,
     CFTypeRef,
+    CFWrapper,
     kCFAllocatorDefault
 };
 use libc::{c_int, c_void};
@@ -35,30 +34,21 @@ const kCFNumberMaxType:       CFNumberType = 16;
 struct __CFNumber { private: () }
 pub type CFNumberRef = *__CFNumber;
 
-impl CFNumberRef : AbstractCFTypeRef {
+pub impl CFNumberRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
-pub struct CFNumber {
-    obj: CFNumberRef,
-
-    drop {
-        unsafe {
-            CFRelease(cast::transmute(self.obj));
-        }
-    }
+pub impl CFNumberRef {
+    static fn type_id() -> CFTypeID { CFNumberGetTypeID() }
 }
+
+pub type CFNumber = CFWrapper<CFNumberRef, (), ()>;
 
 pub impl CFNumber {
     static fn new<T:Copy ConvertibleToCFNumber>(n: T) -> CFNumber {
-        unsafe {
-            CFNumber {
-                obj: CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), cast::transmute(&n))
-            }
-        }
+        let objref = unsafe { CFNumberCreate(kCFAllocatorDefault, n.cf_number_type(), cast::transmute(&n)) };
+        CFWrapper::wrap_owned(objref)
     }
-
-    static fn type_id() -> CFTypeID { CFNumberGetTypeID() }
 
     pure fn to_i8() -> i8 {
         let ty = kCFNumberSInt8Type;
@@ -121,18 +111,6 @@ pub impl CFNumber {
 
     priv pure fn has_number_type(ty: CFNumberType) -> bool {
         unsafe { CFNumberGetType(self.obj) == ty }
-    }
-}
-
-impl CFNumber : AbstractCFType<CFNumberRef> {
-    pure fn get_ref() -> CFNumberRef { self.obj }
-
-    static fn wrap(obj: CFNumberRef) -> CFNumber {
-        CFNumber { obj: obj }
-    }
-
-    static fn unwrap(wrapper: CFNumber) -> CFNumberRef {
-        wrapper.obj
     }
 }
 

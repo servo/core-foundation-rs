@@ -1,12 +1,11 @@
 use base::{
-    AbstractCFType,
     AbstractCFTypeRef,
     Boolean,
     CFAllocatorRef,
     CFIndex,
-    CFRelease,
     CFTypeRef,
     CFTypeID,
+    CFWrapper,
     kCFAllocatorDefault,
 };
 use libc::{c_char, c_void};
@@ -33,49 +32,23 @@ impl CFSetRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
-struct CFSet<ElemRefType : AbstractCFTypeRef,
-             ElemType    : AbstractCFType<ElemRefType>> {
-    obj: CFSetRef,
+pub type CFSet<ElemRefType: AbstractCFTypeRef> = CFWrapper<CFSetRef, ElemRefType, ()>;
 
-    drop {
-        unsafe {
-            CFRelease(cast::transmute(self.obj));
-        }
-    }
-}
-
-pub impl<ElemRefType : AbstractCFTypeRef,
-         ElemType    : AbstractCFType<ElemRefType>>
-    CFSet<ElemRefType, ElemType> {
-    static fn new(elems: &[ElemType]) -> CFSet<ElemRefType, ElemType> {
-        let set_ref : CFSetRef;
-        let elems_refs = do vec::map(elems) |e: &ElemType| { e.get_ref().as_type_ref() };
+pub impl<ElemRefType : AbstractCFTypeRef>
+    CFSet<ElemRefType> {
+    static fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
+        let result : CFSetRef;
+        let elems_refs = do vec::map(elems) |e: &ElemRefType| { e.as_type_ref() };
 
         unsafe {
-            set_ref = CFSetCreate(kCFAllocatorDefault,
+            result = CFSetCreate(kCFAllocatorDefault,
                                   cast::transmute(vec::raw::to_ptr(elems_refs)),
                                   elems.len() as CFIndex,
                                   ptr::to_unsafe_ptr(&kCFTypeSetCallBacks));
         }
-        // return CFSet::wrap(set_ref)
-        return CFSet { obj: set_ref };
+        CFWrapper::wrap_owned(result)
     }
 }
-
-pub impl<ElemRefType : AbstractCFTypeRef,
-         ElemType    : AbstractCFType<ElemRefType>>
-    CFSet<ElemRefType, ElemType> : AbstractCFType<CFSetRef> {
-    pure fn get_ref() -> CFSetRef { self.obj }
-
-    static fn wrap(obj: CFSetRef) -> CFSet<ElemRefType, ElemType> {
-        CFSet { obj: obj }
-    }
-
-    static fn unwrap(wrapper: CFSet<ElemRefType, ElemType>) -> CFSetRef {
-        wrapper.obj
-    }
-}
-
 
 #[link_args="-framework CoreFoundation"]
 #[nolink]

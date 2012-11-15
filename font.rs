@@ -17,14 +17,13 @@ use cf::array::{
     CFArrayRef,
 };
 use cf::base::{
-    AbstractCFType,
     AbstractCFTypeRef,
     CFGetTypeID,
     CFIndex,
     CFOptionFlags,
-    CFRelease,
     CFTypeID,
     CFTypeRef,
+    CFWrapper,
 };
 use cf::data::{
     CFData,
@@ -108,48 +107,60 @@ impl CTFontRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
-struct CTFont {
-    obj: CTFontRef,
+pub type CTFont = CFWrapper<CTFontRef, (), ()>;
 
-    drop {
-        unsafe {
-            CFRelease(cast::transmute(self.obj))
-        }
-    }
+pub trait CTFontMethods {
+    // Creation methods
+    static fn new_from_CGFont(cgfont: CGFontRef, pt_size: float) -> CTFont;
+    static fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont;
+    static fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()>;
+    fn copy_to_CGFont(&const self) -> CGFontRef;
+    fn clone_with_font_size(&const self, size: float) -> CTFont;
+
+    // Names
+    pure fn family_name() -> ~str;
+    pure fn face_name() -> ~str;
+    pure fn unique_name() -> ~str;
+    pure fn postscript_name() -> ~str;
+
+    // Properties
+    pure fn all_traits() -> CTFontTraits;
+
+    // Font metrics
+    pure fn ascent() -> CGFloat;
+    pure fn descent() -> CGFloat;
+    pure fn underline_thickness() -> CGFloat;
+    pure fn underline_position() -> CGFloat;
+    pure fn bounding_box() -> CGRect;
+    pure fn leading() -> CGFloat;
+    pure fn x_height() -> CGFloat;
+    pure fn pt_size() -> CGFloat;
+    fn get_glyphs_for_characters(characters: *UniChar, glyphs: *CGGlyph, count: CFIndex) -> bool;
+    fn get_advances_for_glyphs(orientation: CTFontOrientation, glyphs: *CGGlyph, advances: *CGSize, count: CFIndex) -> float;
+    fn get_font_table(tag: u32) -> Option<CFData>;
 }
 
-pub impl CTFont : AbstractCFType<CTFontRef> {
-    pure fn get_ref() -> CTFontRef { self.obj }
-
-    static fn wrap(obj: CTFontRef) -> CTFont {
-        CTFont { obj: obj }
-    }
-
-    static fn unwrap(wrapper: CTFont) -> CTFontRef {
-        wrapper.obj
-    }
-}
-
-pub impl CTFont {
+pub impl CTFont : CTFontMethods {
     // Creation methods
     static fn new_from_CGFont(cgfont: CGFontRef, pt_size: float) -> CTFont {
         assert cgfont.is_not_null();
-        let value = CTFontCreateWithGraphicsFont(cgfont, pt_size as CGFloat, ptr::null(), ptr::null());
-        return move cf::base::wrap(value);
+        let result = CTFontCreateWithGraphicsFont(cgfont, pt_size as CGFloat, ptr::null(), ptr::null());
+
+        CFWrapper::wrap_owned(result)
     }
 
     static fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
-        let value = CTFontCreateWithFontDescriptor(desc.get_ref(), pt_size as CGFloat, ptr::null());
-        return move cf::base::wrap(value);
+        let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(), pt_size as CGFloat, ptr::null());
+
+        CFWrapper::wrap_owned(result)
     }
 
     static fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
         let cfname = CFString::new(name);
-        let value = CTFontCreateWithName(cfname.get_ref(), pt_size as CGFloat, ptr::null());
+        let result = CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null());
+        if result.is_null() { return Err(()); }
 
-        if value.is_null() { return Err(()); }
-
-        return Ok(move cf::base::wrap(value));
+        return Ok(move CFWrapper::wrap_owned(result));
     }
 
     fn copy_to_CGFont(&const self) -> CGFontRef {
@@ -158,7 +169,7 @@ pub impl CTFont {
 
     fn clone_with_font_size(&const self, size: float) -> CTFont {
         let result = CTFontCreateCopyWithAttributes(self.obj, size as CGFloat, ptr::null(), ptr::null());
-        return cf::base::wrap(result);
+        CFWrapper::wrap_owned(result)
     }
 
     // Names
@@ -188,8 +199,8 @@ pub impl CTFont {
     }
 
     pure fn all_traits() -> CTFontTraits unsafe {
-        let value = CTFontCopyTraits(self.obj);
-        return cf::base::wrap(value);
+        let result = CTFontCopyTraits(self.obj);
+        CFWrapper::wrap_owned(result)
     }
 
     // Font metrics
@@ -237,20 +248,19 @@ pub impl CTFont {
         let result = CTFontCopyTable(self.obj, tag as CTFontTableTag, kCTFontTableOptionsExcludeSynthetic);
         return match result.is_null() {
             true => None,
-            false => Some(cf::base::wrap(result)),
+            false => Some(CFWrapper::wrap_owned(result)),
         }
     }
 }
 
 // Helper methods
 priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
-    let value = CTFontCopyName(font.get_ref(), name_key);
-    if value.is_null() {
-        return None;
-    }
+    let result = CTFontCopyName(*font.borrow_ref(), name_key);
+    if result.is_null() { return None; }
 
-    assert CFGetTypeID(value.as_type_ref()) == CFStringGetTypeID();
-    let cfstr: CFString = cf::base::wrap(value as CFStringRef);
+    // TODO: do this inside wrap_owned
+    let cfstr: CFString = CFWrapper::wrap_owned(result as CFStringRef);
+    assert cfstr.type_id() == CFStringGetTypeID();
     return Some(cfstr.to_str());
 }
 

@@ -1,18 +1,15 @@
 use cf = core_foundation;
 use cf::array::CFArrayRef;
 use cf::base::{
-    AbstractCFType,
     AbstractCFTypeRef,
     CFAllocatorRef,
     CFIndex,
     CFGetTypeID,
     CFRange,
-    CFRelease,
-    CFRetain,
     CFType,
     CFTypeID,
-    CFTypeOps,
     CFTypeRef,
+    CFWrapper,
     kCFAllocatorDefault,
 };
 use cf::dictionary::{
@@ -140,13 +137,11 @@ pub trait TraitAccessors {
 
 impl CTFontTraits : TraitAccessors {
     priv fn extract_number_for_key(key: CFStringRef) -> CFNumber {
-        let value : CFType = self.get(&CFString::wrap_extern(key));
-        // TODO(Issue #185): use wrap_borrowed
-        // addref'd since we don't own the reference.
-        CFRetain(value.get_ref());
-        assert value.type_id() == CFNumber::type_id();
-        let number : CFNumber = cf::base::convert_from_CFType::<CFNumberRef, CFNumber>(move value);
-        return move number;
+        let value : CFTypeRef = self.get(&key);
+        let wrapper : CFType = CFWrapper::wrap_shared(value);
+        // TODO: do this in CFWrapper::wrap_shared
+        assert wrapper.type_id() == CFNumberRef::type_id();
+        CFWrapper::from_CFType::<CFNumberRef, (), ()>(move wrapper)
     }
 
     fn symbolic_traits() -> CTFontSymbolicTraits unsafe {
@@ -193,42 +188,28 @@ impl CTFontDescriptorRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
-struct CTFontDescriptor {
-    obj: CTFontDescriptorRef,
+pub type CTFontDescriptor = CFWrapper<CTFontDescriptorRef, (), ()>;
 
-    drop {
-        unsafe {
-            CFRelease(cast::transmute(self.obj))
-        }
-    }
+pub trait CTFontDescriptorMethods {
+    fn family_name() -> ~str;
+    fn font_name() -> ~str;
+    fn style_name() -> ~str;
+    fn display_name() -> ~str;
+    fn font_path() -> ~str;
 }
 
-pub impl CTFontDescriptor : AbstractCFType<CTFontDescriptorRef> {
-    pure fn get_ref() -> CTFontDescriptorRef { self.obj }
-
-    static fn wrap(obj: CTFontDescriptorRef) -> CTFontDescriptor {
-        CTFontDescriptor { obj: obj }
-    }
-
-    static fn unwrap(wrapper: CTFontDescriptor) -> CTFontDescriptorRef {
-        wrapper.obj
-    }
-}
-
-pub impl CTFontDescriptor {
-    static fn new_from_attributes(attributes: &CTFontAttributes) -> CTFontDescriptor {
-        let descriptor = CTFontDescriptorCreateWithAttributes(attributes.get_ref());
-        return cf::base::wrap(descriptor)
-    }
-
+pub impl CTFontDescriptor : CTFontDescriptorMethods {
     priv fn get_string_attribute(attribute: CFStringRef) -> Option<~str> {
         let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
         if value.is_null() {
             return None;
         }
 
-        assert CFGetTypeID(value) == CFStringGetTypeID();
-        let cfstr: CFString = cf::base::wrap(value as CFStringRef);
+        let cfty: CFType = CFWrapper::wrap_owned(value);
+        // TODO: check in wrap_owned
+        assert cfty.type_id() == CFStringGetTypeID();
+        
+        let cfstr: CFString = CFWrapper::from_CFType::<CFStringRef, (), ()>(move cfty);
         return Some(cfstr.to_str());
     }
 
@@ -255,11 +236,19 @@ pub impl CTFontDescriptor {
     fn font_path() -> ~str {
         let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
         assert value.is_not_null();
+
+        let cfty = CFWrapper::wrap_owned(value);
         assert CFGetTypeID(value) == CFURLGetTypeID();
 
-        let cfurl : CFURL = cf::base::wrap(value as CFURLRef);
+        let cfurl : CFURL = CFWrapper::from_CFType::<CFURLRef, (), ()>(move cfty);
         return cfurl.to_str();
     }
+}
+
+pub fn new_from_attributes(attributes: &CFWrapper<CFDictionaryRef, CFStringRef, CFTypeRef>) -> CTFontDescriptor {
+    let result : CTFontDescriptorRef = CTFontDescriptorCreateWithAttributes(*attributes.borrow_ref());
+    let ret : CTFontDescriptor =CFWrapper::wrap_owned(result);
+    return move ret;
 }
 
 pub fn debug_descriptor(desc: &CTFontDescriptor) {

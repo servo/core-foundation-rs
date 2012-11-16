@@ -18,7 +18,6 @@ use cf::array::{
 };
 use cf::base::{
     AbstractCFTypeRef,
-    CFGetTypeID,
     CFIndex,
     CFOptionFlags,
     CFTypeID,
@@ -105,6 +104,7 @@ pub type CTFontRef = *__CTFont;
 
 impl CTFontRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CTFontGetTypeID() }
 }
 
 pub type CTFont = CFWrapper<CTFontRef, (), ()>;
@@ -255,10 +255,7 @@ priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~
     let result = CTFontCopyName(*font.borrow_ref(), name_key);
     if result.is_null() { return None; }
 
-    // TODO: do this inside wrap_owned
-    let cfstr: CFString = CFWrapper::wrap_owned(result as CFStringRef);
-    assert cfstr.type_id() == CFStringGetTypeID();
-    return Some(cfstr.to_str());
+    return Some(CFWrapper::wrap_owned(result).to_str());
 }
 
 pub fn debug_font_names(font: &CTFont) {

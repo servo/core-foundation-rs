@@ -30,6 +30,7 @@ pub type CTFontCollectionRef = *__CTFontCollection;
 
 impl CTFontCollectionRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CTFontCollectionGetTypeID() }
 }
 
 pub type CTFontCollection = CFWrapper<CTFontCollectionRef, (), ()>;
@@ -44,8 +45,7 @@ pub impl CTFontCollection : CTFontCollectionMethods {
 
         // surprise! this function follows the Get rule, despite being named *Create*.
         // So we have to addRef it to avoid CTFontCollection from double freeing it later.
-        let wrapper : CFArray<CTFontDescriptorRef> = CFWrapper::wrap_shared(CTFontCollectionCreateMatchingFontDescriptors(self.obj));
-        return move wrapper;
+        CFWrapper::wrap_shared(CTFontCollectionCreateMatchingFontDescriptors(self.obj))
     }
 }
 

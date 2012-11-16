@@ -39,10 +39,6 @@ pub impl CFNumberRef : AbstractCFTypeRef {
     static pure fn type_id() -> CFTypeID unsafe { CFNumberGetTypeID() }
 }
 
-pub impl CFNumberRef {
-    static fn type_id() -> CFTypeID { CFNumberGetTypeID() }
-}
-
 pub type CFNumber = CFWrapper<CFNumberRef, (), ()>;
 
 pub impl CFNumber {

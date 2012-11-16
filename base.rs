@@ -66,7 +66,9 @@ pub impl<T:Copy AbstractCFTypeRef, E1, E2>
     // Use this when following Core Foundation's "Create" rule; i.e., the wrapper assumes ownership.
     // The object has already been retained, so we need not increment the retain count ourself.
     static pure fn wrap_owned(some_ref: T) -> CFWrapper<T,E1,E2> {
-        unsafe { assert CFGetRetainCount(some_ref.as_type_ref()) == 1 as CFIndex; }
+        // N.B. we can't make any assertions about retain count here,
+        // because returned things are only guaranteed to be already
+        // retained. Strings, for example, could be interned.
         CFWrapper { obj: some_ref }
     }
 

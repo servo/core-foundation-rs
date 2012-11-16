@@ -1,11 +1,15 @@
 // Rust bindings to the IOSurface framework on Mac OS X.
 
 use cf = core_foundation;
-use cf::base::{AbstractCFType, AbstractCFTypeRef, CFRelease, CFType, CFTypeOps, CFTypeRef};
-use cf::dictionary::{CFDictionary, CFDictionaryRef};
+use cf::base::{
+    AbstractCFTypeRef,
+    CFType,
+    CFTypeRef,
+    CFWrapper,
+};
+use cf::dictionary::{CFDictionary, CFDictionaryRef, UntypedCFDictionary};
 use cf::number::CFNumber;
 use cf::string::{CFString, CFStringRef};
-use cast::transmute;
 
 struct __IOSurface { private: () }
 pub type IOSurfaceRef = *__IOSurface;
@@ -14,42 +18,28 @@ impl IOSurfaceRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
+pub type IOSurface = CFWrapper<IOSurfaceRef, (), ()>;
+
 pub type IOSurfaceID = u32;
 
-pub struct IOSurface {
-    obj: IOSurfaceRef,
+pub trait IOSurfaceMethods {
+    static fn new_io_surface(properties: &UntypedCFDictionary) -> IOSurface;
+    static fn lookup(csid: IOSurfaceID) -> IOSurface;
 
-    drop {
-        unsafe {
-            CFRelease(transmute(copy self.obj));
-        }
-    }
+    fn get_id(&self) -> IOSurfaceID;
 }
 
-pub impl IOSurface {
-    static fn new_io_surface(properties: &CFDictionary<CFStringRef, CFTypeRef, CFString, CFType>) -> IOSurface {
-        cf::base::wrap(IOSurfaceCreate(properties.obj))
+pub impl IOSurface : IOSurfaceMethods {
+    static fn new_io_surface(properties: &UntypedCFDictionary) -> IOSurface {
+        let result = IOSurfaceCreate(*properties.borrow_ref());
+        CFWrapper::wrap_owned(result)
     }
 
     static fn lookup(csid: IOSurfaceID) -> IOSurface {
-        cf::base::wrap(IOSurfaceLookup(csid))
-    }
-}
-
-impl IOSurface : AbstractCFType<IOSurfaceRef> {
-    pure fn get_ref() -> IOSurfaceRef { self.obj }
-
-    static fn wrap(obj: IOSurfaceRef) -> IOSurface {
-        assert obj != ptr::null();
-        IOSurface { obj: obj }
+        let result = IOSurfaceLookup(csid);
+        CFWrapper::wrap_owned(result)
     }
 
-    static fn unwrap(wrapper: IOSurface) -> IOSurfaceRef {
-        wrapper.obj
-    }
-}
-
-impl IOSurface {
     fn get_id(&self) -> IOSurfaceID {
         IOSurfaceGetID(self.obj)
     }

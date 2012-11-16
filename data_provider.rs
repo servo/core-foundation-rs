@@ -1,11 +1,10 @@
 use cf = core_foundation;
 use cf::base::{
-    AbstractCFType,
     AbstractCFTypeRef,
     CFIndex,
-    CFRelease,
     CFTypeID,
     CFTypeRef,
+    CFWrapper,
 };
 
 use libc::{c_void, c_char, size_t};
@@ -29,37 +28,21 @@ pub impl CGDataProviderRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 }
 
-pub struct CGDataProvider {
-    obj: CGDataProviderRef,
+pub type CGDataProvider = CFWrapper<CGDataProviderRef, (), ()>;
 
-    drop {
-        unsafe {
-            CFRelease(cast::transmute(self.obj))
-        }
-    }
+pub trait CGDataProviderMethods {
+    static fn new_from_buffer(buf: *u8, len: uint) -> CGDataProvider;
 }
 
-pub impl CGDataProvider : AbstractCFType<CGDataProviderRef> {
-    pure fn get_ref() -> CGDataProviderRef { self.obj }
-
-    static fn wrap(obj: CGDataProviderRef) -> CGDataProvider {
-        CGDataProvider { obj: obj }
-    }
-
-    static fn unwrap(wrapper: CGDataProvider) -> CGDataProviderRef {
-        wrapper.obj
-    }
-}
-
-pub impl CGDataProvider {
+pub impl CGDataProvider : CGDataProviderMethods {
     static fn new_from_buffer(buf: *u8, len: uint) -> CGDataProvider unsafe {
-        let obj = CGDataProviderCreateWithData(
+        let result = CGDataProviderCreateWithData(
             ptr::null(),
             cast::transmute(buf),
             len as size_t,
             ptr::null());
 
-        return cf::base::wrap(obj);
+        CFWrapper::wrap_owned(result)
     }
 }
 

@@ -110,10 +110,7 @@ impl CTFontRef : AbstractCFTypeRef {
 pub type CTFont = CFWrapper<CTFontRef, (), ()>;
 
 pub trait CTFontMethods {
-    // Creation methods
-    static fn new_from_CGFont(cgfont: CGFontRef, pt_size: float) -> CTFont;
-    static fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont;
-    static fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()>;
+    // Creation methods (statics below)
     fn copy_to_CGFont(&const self) -> CGFontRef;
     fn clone_with_font_size(&const self, size: float) -> CTFont;
 
@@ -140,29 +137,29 @@ pub trait CTFontMethods {
     fn get_font_table(tag: u32) -> Option<CFData>;
 }
 
+pub fn new_from_CGFont(cgfont: CGFontRef, pt_size: float) -> CTFont {
+    assert cgfont.is_not_null();
+    let result = CTFontCreateWithGraphicsFont(cgfont, pt_size as CGFloat, ptr::null(), ptr::null());
+
+    CFWrapper::wrap_owned(result)
+}
+
+pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
+    let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(), pt_size as CGFloat, ptr::null());
+
+    CFWrapper::wrap_owned(result)
+}
+
+pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
+    let cfname = CFString::new(name);
+    let result = CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null());
+    if result.is_null() { return Err(()); }
+
+    return Ok(move CFWrapper::wrap_owned(result));
+}
+
 pub impl CTFont : CTFontMethods {
     // Creation methods
-    static fn new_from_CGFont(cgfont: CGFontRef, pt_size: float) -> CTFont {
-        assert cgfont.is_not_null();
-        let result = CTFontCreateWithGraphicsFont(cgfont, pt_size as CGFloat, ptr::null(), ptr::null());
-
-        CFWrapper::wrap_owned(result)
-    }
-
-    static fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
-        let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(), pt_size as CGFloat, ptr::null());
-
-        CFWrapper::wrap_owned(result)
-    }
-
-    static fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
-        let cfname = CFString::new(name);
-        let result = CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null());
-        if result.is_null() { return Err(()); }
-
-        return Ok(move CFWrapper::wrap_owned(result));
-    }
-
     fn copy_to_CGFont(&const self) -> CGFontRef {
         CTFontCopyGraphicsFont(self.obj, ptr::null())
     }

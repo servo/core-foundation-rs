@@ -4,6 +4,7 @@ use cf = core_foundation;
 use cf::base::{
     AbstractCFTypeRef,
     CFType,
+    CFTypeID,
     CFTypeRef,
     CFWrapper,
 };
@@ -16,6 +17,7 @@ pub type IOSurfaceRef = *__IOSurface;
 
 impl IOSurfaceRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { IOSurfaceGetTypeID() }
 }
 
 pub type IOSurface = CFWrapper<IOSurfaceRef, (), ()>;
@@ -73,5 +75,7 @@ extern {
     fn IOSurfaceCreate(properties: CFDictionaryRef) -> IOSurfaceRef;
     fn IOSurfaceLookup(csid: IOSurfaceID) -> IOSurfaceRef;
     fn IOSurfaceGetID(buffer: IOSurfaceRef) -> IOSurfaceID;
+
+    fn IOSurfaceGetTypeID() -> CFTypeID;
 }
 

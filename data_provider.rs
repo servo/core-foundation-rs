@@ -26,6 +26,7 @@ pub type CGDataProviderRef = *__CGDataProvider;
 
 pub impl CGDataProviderRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CGDataProviderGetTypeID() }
 }
 
 pub type CGDataProvider = CFWrapper<CGDataProviderRef, (), ()>;

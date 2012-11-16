@@ -104,24 +104,29 @@ extern {
 fn should_box_and_unbox() {
     use number::{CFNumber, CFNumberRef};
 
+    let one = CFNumber::new(1 as i32);
+    let two = CFNumber::new(2 as i32);
+    let thr = CFNumber::new(3 as i32);
+    let fou = CFNumber::new(4 as i32);
+    let fiv = CFNumber::new(5 as i32);
+
     let arr = CFArray::new([
-        CFNumber::new(1 as i32),
-        CFNumber::new(2 as i32),
-        CFNumber::new(3 as i32),
-        CFNumber::new(4 as i32),
-        CFNumber::new(5 as i32)]);
+        *one.borrow_ref(),
+        *two.borrow_ref(),
+        *thr.borrow_ref(),
+        *fou.borrow_ref(),
+        *fiv.borrow_ref()]);
 
     let mut sum = 0i32;
-    // TODO: not always safe to re-wrap, unless we addref the element
-    for arr.each |elem| {
-        sum += elem.to_i32();
+
+    for arr.each |elem: &CFNumberRef| {
+        sum += CFWrapper::wrap_shared(*elem).to_i32();
     }
 
     assert sum == 15;
 
-    for arr.each_ref |elem: CFNumberRef| {
-        let n: CFNumber = base::wrap(elem);
-        sum += n.to_i32();
+    for arr.each |elem: &CFNumberRef| {
+        sum += CFWrapper::wrap_shared(*elem).to_i32();
     }
 
     assert sum == 30;

@@ -30,12 +30,7 @@ pub impl CGDataProviderRef : AbstractCFTypeRef {
 
 pub type CGDataProvider = CFWrapper<CGDataProviderRef, (), ()>;
 
-pub trait CGDataProviderMethods {
-    static fn new_from_buffer(buf: *u8, len: uint) -> CGDataProvider;
-}
-
-pub impl CGDataProvider : CGDataProviderMethods {
-    static fn new_from_buffer(buf: *u8, len: uint) -> CGDataProvider unsafe {
+pub fn new_from_buffer(buf: *u8, len: uint) -> CGDataProvider unsafe {
         let result = CGDataProviderCreateWithData(
             ptr::null(),
             cast::transmute(buf),
@@ -43,9 +38,7 @@ pub impl CGDataProvider : CGDataProviderMethods {
             ptr::null());
 
         CFWrapper::wrap_owned(result)
-    }
 }
-
 
 #[nolink]
 #[link_args="-framework ApplicationServices"]

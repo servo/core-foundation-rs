@@ -68,11 +68,20 @@ pub impl<ElemRefType : AbstractCFTypeRef,
     }
 
     pub fn each<A>(cb: fn&(&ElemType) -> A) {
-        for uint::range(0, self.len()) |i| { cb(&base::wrap(self[i])); }
+        for uint::range(0, self.len()) |i| {
+            // NB: Rewrapping means that we must retain again.
+            let elem = self[i];
+            base::CFRetain(elem.as_type_ref());
+            cb(&base::wrap(move elem));
+        }
     }
 
     pub fn eachi<A>(cb: fn&(uint, &ElemType) -> A) {
-        for uint::range(0, self.len()) |i| { cb(i, &base::wrap(self[i])); }
+        for uint::range(0, self.len()) |i| {
+            let elem = self[i];
+            base::CFRetain(elem.as_type_ref());
+            cb(i, &base::wrap(move elem));
+        }
     }
 
     pub pure fn len() -> uint {
@@ -98,6 +107,7 @@ pub impl<ElemRefType : AbstractCFTypeRef,
 pub impl<ElemRefType : AbstractCFTypeRef,
          ElemType    : AbstractCFType<ElemRefType>> 
     CFArray<ElemRefType, ElemType> : Index<uint, ElemRefType> {
+    // NB: This function does *not* retain the element!
     pure fn index(idx: uint) -> ElemRefType {
         assert idx < self.len();
         unsafe { 

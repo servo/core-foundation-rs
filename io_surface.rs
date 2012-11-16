@@ -23,23 +23,20 @@ pub type IOSurface = CFWrapper<IOSurfaceRef, (), ()>;
 pub type IOSurfaceID = u32;
 
 pub trait IOSurfaceMethods {
-    static fn new_io_surface(properties: &UntypedCFDictionary) -> IOSurface;
-    static fn lookup(csid: IOSurfaceID) -> IOSurface;
-
     fn get_id(&self) -> IOSurfaceID;
 }
 
+pub fn new(properties: &UntypedCFDictionary) -> IOSurface {
+    let result = IOSurfaceCreate(*properties.borrow_ref());
+    CFWrapper::wrap_owned(result)
+}
+
+pub fn lookup(csid: IOSurfaceID) -> IOSurface {
+    let result = IOSurfaceLookup(csid);
+    CFWrapper::wrap_owned(result)
+}
+
 pub impl IOSurface : IOSurfaceMethods {
-    static fn new_io_surface(properties: &UntypedCFDictionary) -> IOSurface {
-        let result = IOSurfaceCreate(*properties.borrow_ref());
-        CFWrapper::wrap_owned(result)
-    }
-
-    static fn lookup(csid: IOSurfaceID) -> IOSurface {
-        let result = IOSurfaceLookup(csid);
-        CFWrapper::wrap_owned(result)
-    }
-
     fn get_id(&self) -> IOSurfaceID {
         IOSurfaceGetID(self.obj)
     }

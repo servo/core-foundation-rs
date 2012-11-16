@@ -46,6 +46,7 @@ use cg::base::{
 };
 use cg::font::{
     CGGlyph,
+    CGFont,
     CGFontRef,
 };
 use cg::geometry::{
@@ -111,7 +112,7 @@ pub type CTFont = CFWrapper<CTFontRef, (), ()>;
 
 pub trait CTFontMethods {
     // Creation methods (statics below)
-    fn copy_to_CGFont(&const self) -> CGFontRef;
+    fn copy_to_CGFont(&const self) -> CGFont;
     fn clone_with_font_size(&const self, size: float) -> CTFont;
 
     // Names
@@ -137,16 +138,13 @@ pub trait CTFontMethods {
     fn get_font_table(tag: u32) -> Option<CFData>;
 }
 
-pub fn new_from_CGFont(cgfont: CGFontRef, pt_size: float) -> CTFont {
-    assert cgfont.is_not_null();
-    let result = CTFontCreateWithGraphicsFont(cgfont, pt_size as CGFloat, ptr::null(), ptr::null());
-
+pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
+    let result = CTFontCreateWithGraphicsFont(*cgfont.borrow_ref(), pt_size as CGFloat, ptr::null(), ptr::null());
     CFWrapper::wrap_owned(result)
 }
 
 pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
     let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(), pt_size as CGFloat, ptr::null());
-
     CFWrapper::wrap_owned(result)
 }
 
@@ -160,8 +158,9 @@ pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
 
 pub impl CTFont : CTFontMethods {
     // Creation methods
-    fn copy_to_CGFont(&const self) -> CGFontRef {
-        CTFontCopyGraphicsFont(self.obj, ptr::null())
+    fn copy_to_CGFont(&const self) -> CGFont {
+        let value = CTFontCopyGraphicsFont(self.obj, ptr::null());
+        CFWrapper::wrap_owned(value)
     }
 
     fn clone_with_font_size(&const self, size: float) -> CTFont {

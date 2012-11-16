@@ -3,6 +3,7 @@ use base::{
     CFAllocatorRef,
     CFIndex,
     CFRange,
+    CFTypeID,
     CFTypeRef,
     CFWrapper,
     kCFAllocatorDefault,
@@ -27,6 +28,7 @@ pub type CFArrayRef = *__CFArray;
 
 pub impl CFArrayRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CFArrayGetTypeID() }
 }
 
 pub type CFArray<ElemRefType: AbstractCFTypeRef> = CFWrapper<CFArrayRef, ElemRefType, ()>;
@@ -95,9 +97,17 @@ extern {
 
     fn CFArrayCreate(allocator: CFAllocatorRef, values: **c_void,
                      numValues: CFIndex, callBacks: *CFArrayCallBacks) -> CFArrayRef;
-
-    fn CFArrayGetValueAtIndex(theArray: CFArrayRef, idx: CFIndex) -> *c_void;
+    // CFArrayCreateCopy
+    // CFArrayBSearchValues
+    // CFArrayContainsValue
     fn CFArrayGetCount(theArray: CFArrayRef) -> CFIndex;
+    // CFArrayGetCountOfValue
+    // CFArrayGetFirstIndexOfValue
+    // CFArrayGetLastIndexOfValue
+    // CFArrayGetValues
+    fn CFArrayGetValueAtIndex(theArray: CFArrayRef, idx: CFIndex) -> *c_void;
+    // CFArrayApplyFunction
+    fn CFArrayGetTypeID() -> CFTypeID;
 }
 
 #[test]

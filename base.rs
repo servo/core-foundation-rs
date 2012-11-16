@@ -5,6 +5,7 @@ use libc::c_long;
 // borrow semantics. 
 trait AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef;
+    static pure fn type_id() -> CFTypeID;
 }
 
 pub type Boolean = u8;
@@ -35,6 +36,13 @@ pub type CFTypeRef = *__CFType;
 
 pub impl CFTypeRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self }
+    // this can't be used, because CFType is the supertype and has no type id.
+    static pure fn type_id() -> CFTypeID { fail; }
+}
+
+pub pure fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T unsafe {
+    assert CFGetTypeID(r) == type_id::<T>();
+    cast::transmute(r)
 }
 
 struct CFWrapper<T:Copy AbstractCFTypeRef, PlaceholderType1, PlaceholderType2> {
@@ -89,6 +97,7 @@ pub impl<T:Copy AbstractCFTypeRef, E1, E2>
     }
 
     static fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> unsafe {
+        assert wrapper.type_id() == type_id::<T>();
         cast::transmute(move wrapper)
     }
 

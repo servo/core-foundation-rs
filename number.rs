@@ -36,6 +36,7 @@ pub type CFNumberRef = *__CFNumber;
 
 pub impl CFNumberRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CFNumberGetTypeID() }
 }
 
 pub impl CFNumberRef {
@@ -158,4 +159,14 @@ extern {
     fn CFNumberIsFloatType(number: CFNumberRef) -> Boolean;
     //fn CFNumberCompare
     fn CFNumberGetTypeID() -> CFTypeID;
+}
+
+fn should_fail_on_bad_downcast() {
+    #[test];
+    #[should_fail];
+
+    use boolean::CFBooleanRef;
+
+    let one = CFWrapper::to_CFType(CFNumber::new(1_i32));
+    let casted = base::downcast::<CFBooleanRef>(*one.borrow_ref());
 }

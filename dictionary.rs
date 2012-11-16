@@ -43,6 +43,7 @@ pub type CFDictionaryRef = *__CFDictionary;
 
 impl CFDictionaryRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CFDictionaryGetTypeID() }
 }
 
 pub type CFDictionary<KeyRefType, ValueRefType> = CFWrapper<CFDictionaryRef, KeyRefType, ValueRefType>;

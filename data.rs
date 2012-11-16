@@ -3,8 +3,8 @@ use base::{
     CFAllocatorRef,
     CFIndex,
     CFRange,
-    CFType,
     CFTypeRef,
+    CFTypeID,
     CFWrapper,
     kCFAllocatorDefault,
 };
@@ -16,6 +16,7 @@ pub type CFDataRef = *__CFData;
 
 impl CFDataRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CFDataGetTypeID() }
 }
 
 type CFData = CFWrapper<CFDataRef, (), ()>;
@@ -66,4 +67,6 @@ extern {
     fn CFDataGetBytePtr(theData: CFDataRef) -> *u8;
     fn CFDataGetBytes(theData: CFDataRef, range: CFRange, buffer: *u8);
     fn CFDataGetLength(theData: CFDataRef) -> CFIndex;
+
+    fn CFDataGetTypeID() -> CFTypeID;
 }

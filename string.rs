@@ -199,6 +199,7 @@ pub type CFStringRef = *__CFString;
 
 pub impl CFStringRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CFStringGetTypeID() }
 }
 
 pub type CFString = CFWrapper<CFStringRef, (), ()>;

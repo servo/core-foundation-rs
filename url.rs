@@ -20,6 +20,7 @@ pub type CFURLRef = *__CFURL;
 
 impl CFURLRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    static pure fn type_id() -> CFTypeID unsafe { CFURLGetTypeID() }
 }
 
 pub type CFURL = CFWrapper<CFURLRef, (), ()>;

@@ -135,12 +135,19 @@ pub trait TraitAccessors {
     fn normalized_slant() -> float;
 }
 
-impl CTFontTraits : TraitAccessors {
+priv trait TraitAccessorPrivate {
+    fn extract_number_for_key(key: CFStringRef) -> CFNumber;
+}
+
+impl CTFontTraits: TraitAccessorPrivate {
     priv fn extract_number_for_key(key: CFStringRef) -> CFNumber {
         let value = self.get(&key);
         CFWrapper::wrap_shared(cf::base::downcast::<CFNumberRef>(value))
     }
 
+}
+
+impl CTFontTraits : TraitAccessors {
     fn symbolic_traits() -> CTFontSymbolicTraits unsafe {
         let number = self.extract_number_for_key(kCTFontSymbolicTrait);
         cast::transmute(number.to_i32())
@@ -196,7 +203,11 @@ pub trait CTFontDescriptorMethods {
     fn font_path() -> ~str;
 }
 
-pub impl CTFontDescriptor : CTFontDescriptorMethods {
+priv trait CTFontDescriptorMethodsPrivate {
+    fn get_string_attribute(attribute: CFStringRef) -> Option<~str>;
+}
+
+impl CTFontDescriptor: CTFontDescriptorMethodsPrivate {
     priv fn get_string_attribute(attribute: CFStringRef) -> Option<~str> {
         let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
         if value.is_null() { return None; }
@@ -204,6 +215,9 @@ pub impl CTFontDescriptor : CTFontDescriptorMethods {
         Some(CFWrapper::wrap_owned(cf::base::downcast::<CFStringRef>(value)).to_str())
     }
 
+}
+
+pub impl CTFontDescriptor : CTFontDescriptorMethods {
     fn family_name() -> ~str {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
         option::expect(move value, ~"A font must have a non-null font family name.")

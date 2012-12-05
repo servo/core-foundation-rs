@@ -156,6 +156,18 @@ pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
     return Ok(move CFWrapper::wrap_owned(result));
 }
 
+priv trait CTFontMethodsPrivate {
+    pure fn symbolic_traits() -> CTFontSymbolicTraits;
+}
+
+pub impl CTFont: CTFontMethodsPrivate {
+
+    // Properties
+    priv pure fn symbolic_traits() -> CTFontSymbolicTraits unsafe {
+        CTFontGetSymbolicTraits(self.obj)
+    }
+}
+
 pub impl CTFont : CTFontMethods {
     // Creation methods
     fn copy_to_CGFont(&const self) -> CGFont {
@@ -187,11 +199,6 @@ pub impl CTFont : CTFontMethods {
     pure fn postscript_name() -> ~str unsafe {
         let value = get_string_by_name_key(&self, kCTFontPostScriptNameKey);
         return move option::expect(move value, ~"Fonts should always have a PostScript name.");
-    }
-
-    // Properties
-    priv pure fn symbolic_traits() -> CTFontSymbolicTraits unsafe {
-        CTFontGetSymbolicTraits(self.obj)
     }
 
     pure fn all_traits() -> CTFontTraits unsafe {

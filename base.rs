@@ -3,7 +3,7 @@ use libc::c_long;
 // a raw Core Foundation reference. It may or may not have been
 // CFRetain'ed, depending on whether it was obtained via ownership or
 // borrow semantics. 
-trait AbstractCFTypeRef {
+pub trait AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef;
     static pure fn type_id() -> CFTypeID;
 }
@@ -17,7 +17,7 @@ pub struct CFRange {
     length: CFIndex
 }
 
-fn CFRangeMake(off: CFIndex, len: CFIndex) -> CFRange {
+pub fn CFRangeMake(off: CFIndex, len: CFIndex) -> CFRange {
     CFRange { location: off, length: len }
 }
 
@@ -45,7 +45,7 @@ pub pure fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T unsafe {
     cast::transmute(r)
 }
 
-struct CFWrapper<T:Copy AbstractCFTypeRef, PlaceholderType1, PlaceholderType2> {
+pub struct CFWrapper<T:Copy AbstractCFTypeRef, PlaceholderType1, PlaceholderType2> {
     obj: T,
 
     drop {
@@ -127,16 +127,16 @@ extern {
 
     /* CFAllocator Reference */
     // N.B. Many CFAllocator functions and constants are omitted here.
-    const kCFAllocatorDefault: CFAllocatorRef;
-    const kCFAllocatorSystemDefault: CFAllocatorRef;
-    const kCFAllocatorMalloc: CFAllocatorRef;
-    const kCFAllocatorMallocZone: CFAllocatorRef;
-    const kCFAllocatorNull: CFAllocatorRef;
-    const kCFAllocatorUseContext: CFAllocatorRef;
+    pub const kCFAllocatorDefault: CFAllocatorRef;
+    pub const kCFAllocatorSystemDefault: CFAllocatorRef;
+    pub const kCFAllocatorMalloc: CFAllocatorRef;
+    pub const kCFAllocatorMallocZone: CFAllocatorRef;
+    pub const kCFAllocatorNull: CFAllocatorRef;
+    pub const kCFAllocatorUseContext: CFAllocatorRef;
 
     /* CFNull Reference */
 
-    const kCFNull: CFNullRef;
+    pub const kCFNull: CFNullRef;
 
     /* CFType Reference */
 
@@ -144,13 +144,13 @@ extern {
     //fn CFCopyTypeIDDescription
     //fn CFEqual
     //fn CFGetAllocator
-    fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;
-    fn CFGetTypeID(cf: CFTypeRef) -> CFTypeID;
-    fn CFHash(cf: CFTypeRef) -> CFHashCode;
+    pub fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;
+    pub fn CFGetTypeID(cf: CFTypeRef) -> CFTypeID;
+    pub fn CFHash(cf: CFTypeRef) -> CFHashCode;
     //fn CFMakeCollectable
-    fn CFRelease(cf: CFTypeRef);
-    fn CFRetain(cf: CFTypeRef) -> CFTypeRef;
-    fn CFShow(obj: CFTypeRef);
+    pub fn CFRelease(cf: CFTypeRef);
+    pub fn CFRetain(cf: CFTypeRef) -> CFTypeRef;
+    pub fn CFShow(obj: CFTypeRef);
 
     /* Base Utilities Reference */
     // N.B. Some things missing here.

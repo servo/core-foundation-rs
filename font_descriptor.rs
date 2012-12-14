@@ -1,38 +1,12 @@
-use cf = core_foundation;
-use cf::array::CFArrayRef;
-use cf::base::{
-    AbstractCFTypeRef,
-    CFAllocatorRef,
-    CFIndex,
-    CFGetTypeID,
-    CFRange,
-    CFType,
-    CFTypeID,
-    CFTypeRef,
-    CFWrapper,
-    kCFAllocatorDefault,
-};
-use cf::dictionary::{
-    CFDictionary,
-    CFDictionaryRef,
-    UntypedCFDictionary,
-};
-use cf::number::{CFNumber, CFNumberRef};
-use cf::set::CFSetRef;
-use cf::string::{
-    CFString,
-    CFStringRef,
-    CFStringGetTypeID,
-};
-use cf::url::{
-    CFURL,
-    CFURLRef,
-    CFURLGetTypeID,
-};
-
-use cg = core_graphics;
-use cg::base::CGFloat;
-
+use core_foundation::array::CFArrayRef;
+use core_foundation::base::{AbstractCFTypeRef, CFAllocatorRef, CFIndex, CFGetTypeID, CFRange};
+use core_foundation::base::{CFType, CFTypeID, CFTypeRef, CFWrapper, kCFAllocatorDefault};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef, UntypedCFDictionary};
+use core_foundation::number::{CFNumber, CFNumberRef};
+use core_foundation::set::CFSetRef;
+use core_foundation::string::{CFString, CFStringRef, CFStringGetTypeID};
+use core_foundation::url::{CFURL, CFURLRef, CFURLGetTypeID};
+use core_graphics::base::CGFloat;
 use libc::c_void;
 
 /*
@@ -142,7 +116,7 @@ priv trait TraitAccessorPrivate {
 impl CTFontTraits: TraitAccessorPrivate {
     priv fn extract_number_for_key(key: CFStringRef) -> CFNumber {
         let value = self.get(&key);
-        CFWrapper::wrap_shared(cf::base::downcast::<CFNumberRef>(value))
+        CFWrapper::wrap_shared(core_foundation::base::downcast::<CFNumberRef>(value))
     }
 
 }
@@ -212,7 +186,8 @@ impl CTFontDescriptor: CTFontDescriptorMethodsPrivate {
         let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
         if value.is_null() { return None; }
 
-        Some(CFWrapper::wrap_owned(cf::base::downcast::<CFStringRef>(value)).to_str())
+        Some(CFWrapper::wrap_owned(core_foundation::base::downcast::<CFStringRef>(
+                value)).to_str())
     }
 
 }
@@ -242,12 +217,14 @@ pub impl CTFontDescriptor : CTFontDescriptorMethods {
         let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
         assert value.is_not_null();
 
-        CFWrapper::wrap_owned(cf::base::downcast::<CFURLRef>(value)).to_str()
+        CFWrapper::wrap_owned(core_foundation::base::downcast::<CFURLRef>(value)).to_str()
     }
 }
 
-pub fn new_from_attributes(attributes: &CFWrapper<CFDictionaryRef, CFStringRef, CFTypeRef>) -> CTFontDescriptor {
-    let result : CTFontDescriptorRef = CTFontDescriptorCreateWithAttributes(*attributes.borrow_ref());
+pub fn new_from_attributes(attributes: &CFWrapper<CFDictionaryRef, CFStringRef, CFTypeRef>)
+                        -> CTFontDescriptor {
+    let result: CTFontDescriptorRef =
+        CTFontDescriptorCreateWithAttributes(*attributes.borrow_ref());
     CFWrapper::wrap_owned(result)
 }
 

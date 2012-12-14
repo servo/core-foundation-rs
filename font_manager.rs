@@ -1,6 +1,5 @@
-use cf = core_foundation;
-use cf::array::CFArrayRef;
-use cf::url::CFURLRef;
+use core_foundation::array::CFArrayRef;
+use core_foundation::url::CFURLRef;
 
 extern {
     /*

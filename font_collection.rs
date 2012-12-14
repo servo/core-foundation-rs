@@ -1,29 +1,15 @@
-use cf = core_foundation;
-use cf::array::{CFArray, CFArrayRef};
-use cf::base::{
-    AbstractCFTypeRef,
-    CFAllocatorRef,
-    CFIndex,
-    CFRange,
-    CFTypeID,
-    CFTypeRef,
-    CFWrapper,
-    kCFAllocatorDefault,
-};
-use cf::dictionary::{CFDictionary, CFDictionaryRef, UntypedCFDictionary};
-use cf::number::CFNumber;
-use cf::set::CFSet;
-use cf::string::{CFString, CFStringRef};
-
-use font_descriptor::{
-    CTFontAttributes,
-    CTFontDescriptor,
-    CTFontDescriptorCreateMatchingFontDescriptors,
-    CTFontDescriptorRef,
-};
+use font_descriptor::{CTFontAttributes, CTFontDescriptor};
+use font_descriptor::{CTFontDescriptorCreateMatchingFontDescriptors, CTFontDescriptorRef};
 use font_manager::CTFontManagerCopyAvailableFontFamilyNames;
 
-use libc::c_void;
+use core::libc::c_void;
+use core_foundation::array::{CFArray, CFArrayRef};
+use core_foundation::base::{AbstractCFTypeRef, CFAllocatorRef, CFIndex, CFRange, CFTypeID};
+use core_foundation::base::{CFTypeRef, CFWrapper, kCFAllocatorDefault};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef, UntypedCFDictionary};
+use core_foundation::number::CFNumber;
+use core_foundation::set::CFSet;
+use core_foundation::string::{CFString, CFStringRef};
 
 struct __CTFontCollection { private: () }
 pub type CTFontCollectionRef = *__CTFontCollection;
@@ -41,7 +27,7 @@ pub trait CTFontCollectionMethods {
 
 pub impl CTFontCollection : CTFontCollectionMethods {
     pure fn get_descriptors() -> CFArray<CTFontDescriptorRef> unsafe {
-        use cf::base::CFRetain;
+        use core_foundation::base::CFRetain;
 
         // surprise! this function follows the Get rule, despite being named *Create*.
         // So we have to addRef it to avoid CTFontCollection from double freeing it later.

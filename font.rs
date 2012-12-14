@@ -1,62 +1,19 @@
 extern mod core_foundation;
 extern mod core_graphics;
 
-use libc::c_uint;
+use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
+use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
 
-use font_descriptor::{
-    CTFontDescriptorRef,
-    CTFontOrientation,
-    CTFontSymbolicTraits,
-    CTFontTraits,
-    SymbolicTraitAccessors,
-    TraitAccessors,
-};
-
-use cf = core_foundation;
-use cf::array::{
-    CFArrayRef,
-};
-use cf::base::{
-    AbstractCFTypeRef,
-    CFIndex,
-    CFOptionFlags,
-    CFTypeID,
-    CFTypeRef,
-    CFWrapper,
-};
-use cf::data::{
-    CFData,
-    CFDataRef,
-};
-use cf::dictionary::{
-    CFDictionaryRef,
-    UntypedCFDictionary,
-};
-use cf::string::{
-    CFStringGetTypeID,
-    CFString,
-    CFStringRef,
-    UniChar
-};
-
-use cg = core_graphics;
-use cg::base::{
-    CGAffineTransform,
-    CGFloat,
-};
-use cg::font::{
-    CGGlyph,
-    CGFont,
-    CGFontRef,
-};
-use cg::geometry::{
-    CGRect,
-    CGSize,
-};
-
-use font_descriptor::{
-    CTFontDescriptor
-};
+use core::libc::c_uint;
+use core_foundation::array::{CFArrayRef};
+use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFOptionFlags, CFTypeID, CFTypeRef};
+use core_foundation::base::{CFWrapper};
+use core_foundation::data::{CFData, CFDataRef};
+use core_foundation::dictionary::{CFDictionaryRef, UntypedCFDictionary};
+use core_foundation::string::{CFStringGetTypeID, CFString, CFStringRef, UniChar};
+use core_graphics::base::{CGAffineTransform, CGFloat};
+use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
+use core_graphics::geometry::{CGRect, CGSize};
 
 pub type CTFontUIFontType = u32;
 // kCTFontNoFontType: CTFontUIFontType = -1;

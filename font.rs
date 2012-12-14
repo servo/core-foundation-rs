@@ -1,17 +1,6 @@
-use cf = core_foundation;
+use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFTypeID, CFTypeRef, CFWrapper};
 
-use cf::base::{
-    AbstractCFTypeRef,
-    CFIndex,
-    CFTypeID,
-    CFTypeRef,
-    CFWrapper,
-};
-
-use data_provider::{
-    CGDataProvider,
-    CGDataProviderRef,
-};
+use data_provider::{CGDataProvider, CGDataProviderRef};
 
 use libc::{c_void, c_char, size_t};
 

@@ -1,11 +1,4 @@
-use cf = core_foundation;
-use cf::base::{
-    AbstractCFTypeRef,
-    CFIndex,
-    CFTypeID,
-    CFTypeRef,
-    CFWrapper,
-};
+use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFTypeID, CFTypeRef, CFWrapper};
 
 use libc::{c_void, c_char, size_t};
 

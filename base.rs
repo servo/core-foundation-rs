@@ -41,7 +41,7 @@ pub impl CFTypeRef : AbstractCFTypeRef {
 }
 
 pub pure fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T unsafe {
-    assert CFGetTypeID(r) == type_id::<T>();
+    assert CFGetTypeID(r) == AbstractCFTypeRef::type_id::<T>();
     cast::transmute(r)
 }
 
@@ -97,7 +97,7 @@ pub impl<T:Copy AbstractCFTypeRef, E1, E2>
     }
 
     static fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> unsafe {
-        assert wrapper.type_id() == type_id::<T>();
+        assert wrapper.type_id() == AbstractCFTypeRef::type_id::<T>();
         cast::transmute(move wrapper)
     }
 

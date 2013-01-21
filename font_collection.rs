@@ -1,3 +1,4 @@
+use font_descriptor;
 use font_descriptor::{CTFontAttributes, CTFontDescriptor};
 use font_descriptor::{CTFontDescriptorCreateMatchingFontDescriptors, CTFontDescriptorRef};
 use font_manager::CTFontManagerCopyAvailableFontFamilyNames;
@@ -70,7 +71,7 @@ pub fn create_for_family(family: &str) -> CTFontCollection unsafe {
 
     // I suppose one doesn't even need the CTFontCollection object at this point.
     // But we stick descriptors into and out of it just to provide a nice wrapper API.
-    font_collection::new_from_descriptors(&matched_descs)
+    new_from_descriptors(&matched_descs)
 }
 
 pub pure fn get_family_names() -> CFArray<CFStringRef> unsafe {

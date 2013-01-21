@@ -1,3 +1,4 @@
+use core_foundation;
 use core_foundation::array::CFArrayRef;
 use core_foundation::base::{AbstractCFTypeRef, CFAllocatorRef, CFIndex, CFGetTypeID, CFRange};
 use core_foundation::base::{CFType, CFTypeID, CFTypeRef, CFWrapper, kCFAllocatorDefault};

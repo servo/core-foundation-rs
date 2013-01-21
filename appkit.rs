@@ -1,4 +1,5 @@
 use base::objc;
+use base;
 
 #[nolink]
 #[link_args="-framework AppKit"]

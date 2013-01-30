@@ -8,8 +8,8 @@ pub extern mod appkit {
 }
 
 pub fn NSApp() -> base::id {
-    let klass = str::as_c_str(~"NSApplication", |s| objc::objc_getClass(s));
-    let sel = str::as_c_str(~"sharedApplication", |s| objc::sel_registerName(s));
-    return objc::objc_msgSend(klass, sel);
+    let klass = str::as_c_str(~"NSApplication", |s| unsafe { objc::objc_getClass(s) } );
+    let sel = str::as_c_str(~"sharedApplication", |s| unsafe { objc::sel_registerName(s) } );
+    return unsafe { objc::objc_msgSend(klass, sel) };
 }
 

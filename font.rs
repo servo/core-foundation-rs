@@ -62,7 +62,7 @@ pub type CTFontRef = *__CTFont;
 
 impl CTFontRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { CTFontGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { CTFontGetTypeID() } }
 }
 
 pub type CTFont = CFWrapper<CTFontRef, (), ()>;
@@ -96,18 +96,18 @@ pub trait CTFontMethods {
 }
 
 pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
-    let result = CTFontCreateWithGraphicsFont(*cgfont.borrow_ref(), pt_size as CGFloat, ptr::null(), ptr::null());
+    let result = unsafe { CTFontCreateWithGraphicsFont(*cgfont.borrow_ref(), pt_size as CGFloat, ptr::null(), ptr::null()) };
     CFWrapper::wrap_owned(result)
 }
 
 pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
-    let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(), pt_size as CGFloat, ptr::null());
+    let result = unsafe { CTFontCreateWithFontDescriptor(*desc.borrow_ref(), pt_size as CGFloat, ptr::null()) };
     CFWrapper::wrap_owned(result)
 }
 
 pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
     let cfname = CFString::new(name);
-    let result = CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null());
+    let result = unsafe { CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null()) };
     if result.is_null() { return Err(()); }
 
     return Ok(move CFWrapper::wrap_owned(result));
@@ -120,92 +120,128 @@ priv trait CTFontMethodsPrivate {
 pub impl CTFont: CTFontMethodsPrivate {
 
     // Properties
-    priv pure fn symbolic_traits() -> CTFontSymbolicTraits unsafe {
-        CTFontGetSymbolicTraits(self.obj)
+    priv pure fn symbolic_traits() -> CTFontSymbolicTraits {
+        unsafe {
+            CTFontGetSymbolicTraits(self.obj)
+        }
     }
 }
 
 pub impl CTFont : CTFontMethods {
     // Creation methods
     fn copy_to_CGFont(&const self) -> CGFont {
-        let value = CTFontCopyGraphicsFont(self.obj, ptr::null());
-        CFWrapper::wrap_owned(value)
+        unsafe {
+            let value = CTFontCopyGraphicsFont(self.obj, ptr::null());
+            CFWrapper::wrap_owned(value)
+        }
     }
 
     fn clone_with_font_size(&const self, size: float) -> CTFont {
-        let result = CTFontCreateCopyWithAttributes(self.obj, size as CGFloat, ptr::null(), ptr::null());
-        CFWrapper::wrap_owned(result)
+        unsafe {
+            let result = CTFontCreateCopyWithAttributes(self.obj, size as CGFloat, ptr::null(), ptr::null());
+            CFWrapper::wrap_owned(result)
+        }
     }
 
     // Names
-    pure fn family_name() -> ~str unsafe {
-        let value = get_string_by_name_key(&self, kCTFontFamilyNameKey);
-        return move option::expect(move value, ~"Fonts should always have a family name.");
+    pure fn family_name() -> ~str {
+        unsafe {
+            let value = get_string_by_name_key(&self, kCTFontFamilyNameKey);
+            return move option::expect(move value, ~"Fonts should always have a family name.");
+        }
     }
 
-    pure fn face_name() -> ~str unsafe {
-        let value = get_string_by_name_key(&self, kCTFontSubFamilyNameKey);
-        return move option::expect(move value, ~"Fonts should always have a face name.");
+    pure fn face_name() -> ~str {
+        unsafe {
+            let value = get_string_by_name_key(&self, kCTFontSubFamilyNameKey);
+            return move option::expect(move value, ~"Fonts should always have a face name.");
+        }
     }
 
-    pure fn unique_name() -> ~str unsafe {
-        let value = get_string_by_name_key(&self, kCTFontUniqueNameKey);
-        return move option::expect(move value, ~"Fonts should always have a unique name.");
+    pure fn unique_name() -> ~str {
+        unsafe {
+            let value = get_string_by_name_key(&self, kCTFontUniqueNameKey);
+            return move option::expect(move value, ~"Fonts should always have a unique name.");
+        }
     }
 
-    pure fn postscript_name() -> ~str unsafe {
-        let value = get_string_by_name_key(&self, kCTFontPostScriptNameKey);
-        return move option::expect(move value, ~"Fonts should always have a PostScript name.");
+    pure fn postscript_name() -> ~str {
+        unsafe {
+            let value = get_string_by_name_key(&self, kCTFontPostScriptNameKey);
+            return move option::expect(move value, ~"Fonts should always have a PostScript name.");
+        }
     }
 
-    pure fn all_traits() -> CTFontTraits unsafe {
-        let result = CTFontCopyTraits(self.obj);
-        CFWrapper::wrap_owned(result)
+    pure fn all_traits() -> CTFontTraits {
+        unsafe {
+            let result = CTFontCopyTraits(self.obj);
+            CFWrapper::wrap_owned(result)
+        }
     }
 
     // Font metrics
-    pure fn ascent() -> CGFloat unsafe {
-        CTFontGetAscent(self.obj)
+    pure fn ascent() -> CGFloat {
+        unsafe {
+            CTFontGetAscent(self.obj)
+        }
     }
 
-    pure fn descent() -> CGFloat unsafe {
-        CTFontGetDescent(self.obj)
+    pure fn descent() -> CGFloat {
+        unsafe {
+            CTFontGetDescent(self.obj)
+        }
     }
 
-    pure fn underline_thickness() -> CGFloat unsafe {
-        CTFontGetUnderlineThickness(self.obj)
+    pure fn underline_thickness() -> CGFloat {
+        unsafe {
+            CTFontGetUnderlineThickness(self.obj)
+        }
     }
 
-    pure fn underline_position() -> CGFloat unsafe {
-        CTFontGetUnderlinePosition(self.obj)
+    pure fn underline_position() -> CGFloat {
+        unsafe {
+            CTFontGetUnderlinePosition(self.obj)
+        }
     }
 
-    pure fn bounding_box() -> CGRect unsafe {
-        CTFontGetBoundingBox(self.obj)
+    pure fn bounding_box() -> CGRect {
+        unsafe {
+            CTFontGetBoundingBox(self.obj)
+        }
     }
 
-    pure fn leading() -> CGFloat unsafe {
-        CTFontGetLeading(self.obj)
+    pure fn leading() -> CGFloat {
+        unsafe {
+            CTFontGetLeading(self.obj)
+        }
     }
 
-    pure fn x_height() -> CGFloat unsafe {
-        CTFontGetXHeight(self.obj)
+    pure fn x_height() -> CGFloat {
+        unsafe {
+            CTFontGetXHeight(self.obj)
+        }
     }
 
-    pure fn pt_size() -> CGFloat unsafe {
-        CTFontGetSize(self.obj)
+    pure fn pt_size() -> CGFloat {
+        unsafe {
+            CTFontGetSize(self.obj)
+        }
     }
 
-    fn get_glyphs_for_characters(characters: *UniChar, glyphs: *CGGlyph, count: CFIndex) -> bool unsafe {
-        CTFontGetGlyphsForCharacters(self.obj, characters, glyphs, count)
+    fn get_glyphs_for_characters(characters: *UniChar, glyphs: *CGGlyph, count: CFIndex) -> bool {
+        unsafe {
+            CTFontGetGlyphsForCharacters(self.obj, characters, glyphs, count)
+        }
     }
 
     fn get_advances_for_glyphs(orientation: CTFontOrientation, glyphs: *CGGlyph, advances: *CGSize, count: CFIndex) -> float {
-        CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as float
+        unsafe {
+            CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as float
+        }
     }
 
     fn get_font_table(tag: u32) -> Option<CFData> {
-        let result = CTFontCopyTable(self.obj, tag as CTFontTableTag, kCTFontTableOptionsExcludeSynthetic);
+        let result = unsafe { CTFontCopyTable(self.obj, tag as CTFontTableTag, kCTFontTableOptionsExcludeSynthetic) };
         return match result.is_null() {
             true => None,
             false => Some(CFWrapper::wrap_owned(result)),
@@ -215,7 +251,7 @@ pub impl CTFont : CTFontMethods {
 
 // Helper methods
 priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
-    let result = CTFontCopyName(*font.borrow_ref(), name_key);
+    let result = unsafe { CTFontCopyName(*font.borrow_ref(), name_key) };
     if result.is_null() { return None; }
 
     return Some(CFWrapper::wrap_owned(result).to_str());

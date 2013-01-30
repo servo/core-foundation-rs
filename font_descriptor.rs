@@ -73,14 +73,16 @@ pub trait StylisticClassAccessors {
 
 pub impl CTFontStylisticClass : StylisticClassAccessors {
     pure fn is_serif() -> bool {
-        let any_serif_class = kCTFontOldStyleSerifsClass 
-            | kCTFontTransitionalSerifsClass
-            | kCTFontModernSerifsClass
-            | kCTFontClarendonSerifsClass
-            | kCTFontSlabSerifsClass
-            | kCTFontFreeformSerifsClass;
+        unsafe {
+            let any_serif_class = kCTFontOldStyleSerifsClass 
+                | kCTFontTransitionalSerifsClass
+                | kCTFontModernSerifsClass
+                | kCTFontClarendonSerifsClass
+                | kCTFontSlabSerifsClass
+                | kCTFontFreeformSerifsClass;
 
-        return (self & any_serif_class) != 0;
+            return (self & any_serif_class) != 0;
+        }
     }
 
     pure fn is_sans_serif() -> bool {
@@ -123,24 +125,32 @@ impl CTFontTraits: TraitAccessorPrivate {
 }
 
 impl CTFontTraits : TraitAccessors {
-    fn symbolic_traits() -> CTFontSymbolicTraits unsafe {
-        let number = self.extract_number_for_key(kCTFontSymbolicTrait);
-        cast::transmute(number.to_i32())
+    fn symbolic_traits() -> CTFontSymbolicTraits {
+        unsafe {
+            let number = self.extract_number_for_key(kCTFontSymbolicTrait);
+            cast::transmute(number.to_i32())
+        }
     }
 
-    fn normalized_weight() -> float unsafe {
-        let number = self.extract_number_for_key(kCTFontWeightTrait);
-        cast::transmute(number.to_float())
+    fn normalized_weight() -> float {
+        unsafe {
+            let number = self.extract_number_for_key(kCTFontWeightTrait);
+            cast::transmute(number.to_float())
+        }
     }
 
-    fn normalized_width() -> float unsafe {
-        let number = self.extract_number_for_key(kCTFontWidthTrait);
-        cast::transmute(number.to_float())
+    fn normalized_width() -> float {
+        unsafe {
+            let number = self.extract_number_for_key(kCTFontWidthTrait);
+            cast::transmute(number.to_float())
+        }
     }
 
-    fn normalized_slant() -> float unsafe {
-        let number = self.extract_number_for_key(kCTFontSlantTrait);
-        cast::transmute(number.to_float())
+    fn normalized_slant() -> float {
+        unsafe {
+            let number = self.extract_number_for_key(kCTFontSlantTrait);
+            cast::transmute(number.to_float())
+        }
     }
 }
 
@@ -165,7 +175,7 @@ pub type CTFontDescriptorRef = *__CTFontDescriptor;
 
 impl CTFontDescriptorRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { CTFontDescriptorGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { CTFontDescriptorGetTypeID() } }
 }
 
 pub type CTFontDescriptor = CFWrapper<CTFontDescriptorRef, (), ()>;
@@ -184,7 +194,7 @@ priv trait CTFontDescriptorMethodsPrivate {
 
 impl CTFontDescriptor: CTFontDescriptorMethodsPrivate {
     priv fn get_string_attribute(attribute: CFStringRef) -> Option<~str> {
-        let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
+        let value = unsafe { CTFontDescriptorCopyAttribute(self.obj, attribute) };
         if value.is_null() { return None; }
 
         Some(CFWrapper::wrap_owned(core_foundation::base::downcast::<CFStringRef>(
@@ -215,18 +225,22 @@ pub impl CTFontDescriptor : CTFontDescriptorMethods {
     }
 
     fn font_path() -> ~str {
-        let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
-        assert value.is_not_null();
+        unsafe {
+            let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
+            assert value.is_not_null();
 
-        CFWrapper::wrap_owned(core_foundation::base::downcast::<CFURLRef>(value)).to_str()
+            CFWrapper::wrap_owned(core_foundation::base::downcast::<CFURLRef>(value)).to_str()
+        }
     }
 }
 
 pub fn new_from_attributes(attributes: &CFWrapper<CFDictionaryRef, CFStringRef, CFTypeRef>)
                         -> CTFontDescriptor {
-    let result: CTFontDescriptorRef =
-        CTFontDescriptorCreateWithAttributes(*attributes.borrow_ref());
-    CFWrapper::wrap_owned(result)
+    unsafe {
+        let result: CTFontDescriptorRef =
+            CTFontDescriptorCreateWithAttributes(*attributes.borrow_ref());
+        CFWrapper::wrap_owned(result)
+    }
 }
 
 pub fn debug_descriptor(desc: &CTFontDescriptor) {

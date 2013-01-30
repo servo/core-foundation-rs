@@ -28,7 +28,7 @@ pub type CFArrayRef = *__CFArray;
 
 pub impl CFArrayRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { CFArrayGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { CFArrayGetTypeID() } }
 }
 
 pub type CFArray<ElemRefType: AbstractCFTypeRef> = CFWrapper<CFArrayRef, ElemRefType, ()>;

@@ -36,7 +36,7 @@ pub type CFNumberRef = *__CFNumber;
 
 pub impl CFNumberRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { CFNumberGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { CFNumberGetTypeID() } }
 }
 
 pub type CFNumber = CFWrapper<CFNumberRef, (), ()>;
@@ -83,28 +83,30 @@ pub impl CFNumber {
         }
     }
 
-    pure fn to_float() -> float unsafe {
-        assert self.has_float_type();
-        let ty = CFNumberGetType(self.obj);
-        if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
-            let mut val: libc::c_float = 0.0f as libc::c_float;
-            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
-                fail ~"Error in unwrapping CFNumber to libc::c_float";
+    pure fn to_float() -> float {
+        unsafe {
+            assert self.has_float_type();
+            let ty = CFNumberGetType(self.obj);
+            if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
+                let mut val: libc::c_float = 0.0f as libc::c_float;
+                if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+                    fail ~"Error in unwrapping CFNumber to libc::c_float";
+                }
+                return val as float;
             }
-            return val as float;
-        }
-        else if ty == kCFNumberFloat64Type || ty == kCFNumberDoubleType {
-            let mut val: libc::c_double = 0.0f as libc::c_double;
-            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+            else if ty == kCFNumberFloat64Type || ty == kCFNumberDoubleType {
+                let mut val: libc::c_double = 0.0f as libc::c_double;
+                if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
                     fail ~"Error in unwrapping CFNumber to libc::c_double";
                 }
-            return val as float;
-        }
+                return val as float;
+            }
 
-        fail fmt!("Unable to wrap CFNumber into float: with type tag=%?", ty)
+            fail fmt!("Unable to wrap CFNumber into float: with type tag=%?", ty)
+        }
     }
 
-    priv pure fn has_float_type() -> bool unsafe { CFNumberIsFloatType(self.obj) as bool }
+    priv pure fn has_float_type() -> bool { unsafe { CFNumberIsFloatType(self.obj) as bool } }
 
     priv pure fn has_number_type(ty: CFNumberType) -> bool {
         unsafe { CFNumberGetType(self.obj) == ty }

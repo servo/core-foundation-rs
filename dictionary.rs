@@ -43,7 +43,7 @@ pub type CFDictionaryRef = *__CFDictionary;
 
 impl CFDictionaryRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { CFDictionaryGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { CFDictionaryGetTypeID() } }
 }
 
 pub type CFDictionary<KeyRefType, ValueRefType> = CFWrapper<CFDictionaryRef, KeyRefType, ValueRefType>;
@@ -85,28 +85,34 @@ pub impl<KeyRefType: Copy AbstractCFTypeRef, ValueRefType: Copy AbstractCFTypeRe
 pub impl<KeyRefType   : AbstractCFTypeRef Copy,
          ValueRefType : AbstractCFTypeRef Copy>
     CFDictionary<KeyRefType, ValueRefType> {
-    pure fn len() -> uint unsafe {
-        return CFDictionaryGetCount(self.obj) as uint;
+    pure fn len() -> uint {
+        unsafe {
+            return CFDictionaryGetCount(self.obj) as uint;
+        }
     }
 
     pure fn is_empty() -> bool { self.len() == 0 }
 
-    pure fn contains_key(key: &KeyRefType) -> bool unsafe {
-        return CFDictionaryContainsKey(self.obj, cast::transmute(key.as_type_ref())) as bool;
+    pure fn contains_key(key: &KeyRefType) -> bool {
+        unsafe {
+            return CFDictionaryContainsKey(self.obj, cast::transmute(key.as_type_ref())) as bool;
+        }
     }
 
-    pure fn find(key: &KeyRefType) -> Option<ValueRefType> unsafe {
-        let value : *c_void = ptr::null();
-        let did_find_value = CFDictionaryGetValueIfPresent(self.obj,
-                                                           cast::transmute(key.as_type_ref()),
-                                                           cast::transmute(&value)) as bool;
+    pure fn find(key: &KeyRefType) -> Option<ValueRefType> {
+        unsafe {
+            let value : *c_void = ptr::null();
+            let did_find_value = CFDictionaryGetValueIfPresent(self.obj,
+                                                               cast::transmute(key.as_type_ref()),
+                                                               cast::transmute(&value)) as bool;
 
-        // FIXME: this will not handle non-CF dictionary entries
-        // or ptr::null() values correctly.
-        return if did_find_value {
-            Some(cast::transmute::<*c_void, ValueRefType>(value))
-        } else {
-            None
+            // FIXME: this will not handle non-CF dictionary entries
+            // or ptr::null() values correctly.
+            return if did_find_value {
+                Some(cast::transmute::<*c_void, ValueRefType>(value))
+            } else {
+                None
+            }
         }
     }
 
@@ -118,12 +124,14 @@ pub impl<KeyRefType   : AbstractCFTypeRef Copy,
         return option::unwrap(value);
     }
 
-    fn each(blk: fn&(&KeyRefType, &ValueRefType) -> bool) unsafe {
-        let len = self.len();
-        let keys: ~[KeyRefType] = vec::from_elem(len, cast::transmute::<*c_void, KeyRefType>(ptr::null()));
-        let values: ~[ValueRefType] = vec::from_elem(len, cast::transmute::<*c_void, ValueRefType>(ptr::null()));
+    fn each(blk: fn&(&KeyRefType, &ValueRefType) -> bool) {
+        unsafe {
+            let len = self.len();
+            let keys: ~[KeyRefType] = vec::from_elem(len, cast::transmute::<*c_void, KeyRefType>(ptr::null()));
+            let values: ~[ValueRefType] = vec::from_elem(len, cast::transmute::<*c_void, ValueRefType>(ptr::null()));
 
-        do uint::range(0,len) |i| { blk(&keys[i], &values[i]) }
+            do uint::range(0,len) |i| { blk(&keys[i], &values[i]) }
+        }
     }
 }
 

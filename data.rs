@@ -16,7 +16,7 @@ pub type CFDataRef = *__CFData;
 
 impl CFDataRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { CFDataGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { CFDataGetTypeID() } }
 }
 
 type CFData = CFWrapper<CFDataRef, (), ()>;
@@ -33,20 +33,28 @@ pub impl CFData {
     }
 
     // tread with caution; read-only
-    fn bytes() -> *u8 unsafe {
-        CFDataGetBytePtr(self.obj)
+    fn bytes() -> *u8 {
+        unsafe {
+            CFDataGetBytePtr(self.obj)
+        }
     }
 
     fn len() -> uint {
-        CFDataGetLength(self.obj) as uint
+        unsafe {
+            CFDataGetLength(self.obj) as uint
+        }
     }
 
-    fn copy_to_buf() -> ~[u8] unsafe {
-        vec::from_buf(self.bytes(), self.len())
+    fn copy_to_buf() -> ~[u8] {
+        unsafe {
+            vec::from_buf(self.bytes(), self.len())
+        }
     }
 
-    fn with_buf<U>(blk: fn&(v: &[u8]) -> U) -> U unsafe {
-        vec::raw::buf_as_slice(self.bytes(), self.len(), blk)
+    fn with_buf<U>(blk: fn&(v: &[u8]) -> U) -> U {
+        unsafe {
+            vec::raw::buf_as_slice(self.bytes(), self.len(), blk)
+        }
     }
 }
 

@@ -40,9 +40,11 @@ pub impl CFTypeRef : AbstractCFTypeRef {
     static pure fn type_id() -> CFTypeID { fail; }
 }
 
-pub pure fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T unsafe {
-    assert CFGetTypeID(r) == AbstractCFTypeRef::type_id::<T>();
-    cast::transmute(r)
+pub pure fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T {
+    unsafe {
+        assert CFGetTypeID(r) == AbstractCFTypeRef::type_id::<T>();
+        cast::transmute(r)
+    }
 }
 
 pub struct CFWrapper<T:Copy AbstractCFTypeRef, PlaceholderType1, PlaceholderType2> {
@@ -67,8 +69,10 @@ pub impl<T:Copy AbstractCFTypeRef, E1, E2>
         &self.obj
     }
 
-    pure fn borrow_type_ref() -> &self/CFTypeRef unsafe {
-        cast::transmute(&self.obj)
+    pure fn borrow_type_ref() -> &self/CFTypeRef {
+        unsafe {
+            cast::transmute(&self.obj)
+        }
     }
 
     // Use this when following Core Foundation's "Create" rule; i.e., the wrapper assumes ownership.
@@ -92,29 +96,39 @@ pub impl<T:Copy AbstractCFTypeRef, E1, E2>
         wrapper.obj
     }
 
-    static fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType unsafe {
-        cast::transmute(move wrapper)
+    static fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType {
+        unsafe {
+            cast::transmute(move wrapper)
+        }
     }
 
-    static fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> unsafe {
-        assert wrapper.type_id() == AbstractCFTypeRef::type_id::<T>();
-        cast::transmute(move wrapper)
+    static fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> {
+        unsafe {
+            assert wrapper.type_id() == AbstractCFTypeRef::type_id::<T>();
+            cast::transmute(move wrapper)
+        }
     }
 
     static fn clone(wrapper: &CFWrapper<T,E1,E2>) -> CFWrapper<T,E1,E2> {
         CFWrapper::wrap_shared(*wrapper.borrow_ref())
     }
 
-    pure fn retain_count() -> CFIndex unsafe {
-        CFGetRetainCount(*self.borrow_type_ref())
+    pure fn retain_count() -> CFIndex {
+        unsafe {
+            CFGetRetainCount(*self.borrow_type_ref())
+        }
     }
 
-    pure fn type_id() -> CFTypeID unsafe {
-        CFGetTypeID(*self.borrow_type_ref())
+    pure fn type_id() -> CFTypeID {
+        unsafe {
+            CFGetTypeID(*self.borrow_type_ref())
+        }
     }
 
-    pure fn show() unsafe {
-        CFShow(*self.borrow_type_ref());
+    pure fn show() {
+        unsafe {
+            CFShow(*self.borrow_type_ref());
+        }
     }
 }
 

@@ -20,15 +20,17 @@ pub type CFURLRef = *__CFURL;
 
 impl CFURLRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { CFURLGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { CFURLGetTypeID() } }
 }
 
 pub type CFURL = CFWrapper<CFURLRef, (), ()>;
 
 pub impl CFURL : ToStr {
-    pure fn to_str() -> ~str unsafe {
-        let cfstr : CFString = CFWrapper::wrap_shared(CFURLGetString(self.obj));
-        cfstr.to_str()
+    pure fn to_str() -> ~str {
+        unsafe {
+            let cfstr : CFString = CFWrapper::wrap_shared(CFURLGetString(self.obj));
+            cfstr.to_str()
+        }
     }
 }
 

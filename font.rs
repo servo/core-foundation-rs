@@ -11,15 +11,17 @@ pub type CGFontRef = *__CGFont;
 
 pub impl CGFontRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { CGFontGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { CGFontGetTypeID() } }
 }
 
 pub type CGFont = CFWrapper<CGFontRef, (), ()>;
 
 pub fn create_with_data_provider(provider: &CGDataProvider) -> CGFont {
-    // TODO: error handling
-    let value = CGFontCreateWithDataProvider(*provider.borrow_ref());
-    CFWrapper::wrap_owned(value)
+    unsafe {
+        // TODO: error handling
+        let value = CGFontCreateWithDataProvider(*provider.borrow_ref());
+        CFWrapper::wrap_owned(value)
+    }
 }
 
 #[nolink]

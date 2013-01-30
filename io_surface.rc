@@ -24,7 +24,7 @@ pub type IOSurfaceRef = *__IOSurface;
 
 impl IOSurfaceRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID unsafe { IOSurfaceGetTypeID() }
+    static pure fn type_id() -> CFTypeID { unsafe { IOSurfaceGetTypeID() } }
 }
 
 pub type IOSurface = CFWrapper<IOSurfaceRef, (), ()>;
@@ -36,18 +36,24 @@ pub trait IOSurfaceMethods {
 }
 
 pub fn new(properties: &UntypedCFDictionary) -> IOSurface {
-    let result = IOSurfaceCreate(*properties.borrow_ref());
-    CFWrapper::wrap_owned(result)
+    unsafe {
+        let result = IOSurfaceCreate(*properties.borrow_ref());
+        CFWrapper::wrap_owned(result)
+    }
 }
 
 pub fn lookup(csid: IOSurfaceID) -> IOSurface {
-    let result = IOSurfaceLookup(csid);
-    CFWrapper::wrap_owned(result)
+    unsafe {
+        let result = IOSurfaceLookup(csid);
+        CFWrapper::wrap_owned(result)
+    }
 }
 
 pub impl IOSurface : IOSurfaceMethods {
     fn get_id(&self) -> IOSurfaceID {
-        IOSurfaceGetID(self.obj)
+        unsafe {
+            IOSurfaceGetID(self.obj)
+        }
     }
 }
 

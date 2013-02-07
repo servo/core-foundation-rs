@@ -12,7 +12,10 @@ pub type CFBooleanRef = *__CFBoolean;
 
 pub impl CFBooleanRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CFBooleanGetTypeID() } }
+
+    static pure fn type_id() -> CFTypeID {
+        unsafe { CFBooleanGetTypeID() }
+    }
 }
 
 pub type CFBoolean = CFWrapper<CFBooleanRef, (), ()>;

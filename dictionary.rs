@@ -43,7 +43,12 @@ pub type CFDictionaryRef = *__CFDictionary;
 
 impl CFDictionaryRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CFDictionaryGetTypeID() } }
+
+    static pure fn type_id() -> CFTypeID {
+        unsafe {
+            CFDictionaryGetTypeID()
+        }
+    }
 }
 
 pub type CFDictionary<KeyRefType, ValueRefType> = CFWrapper<CFDictionaryRef, KeyRefType, ValueRefType>;
@@ -119,7 +124,7 @@ pub impl<KeyRefType   : AbstractCFTypeRef Copy,
     pure fn get(key: &KeyRefType) -> ValueRefType {
         let value = self.find(key);
         if value.is_none() {
-            fail fmt!("No entry found for key: %?", key);
+            die!(fmt!("No entry found for key: %?", key));
         }
         return option::unwrap(value);
     }
@@ -127,8 +132,10 @@ pub impl<KeyRefType   : AbstractCFTypeRef Copy,
     fn each(blk: fn&(&KeyRefType, &ValueRefType) -> bool) {
         unsafe {
             let len = self.len();
-            let keys: ~[KeyRefType] = vec::from_elem(len, cast::transmute::<*c_void, KeyRefType>(ptr::null()));
-            let values: ~[ValueRefType] = vec::from_elem(len, cast::transmute::<*c_void, ValueRefType>(ptr::null()));
+            let null_keys = cast::transmute::<*c_void,KeyRefType>(ptr::null());
+            let keys: ~[KeyRefType] = vec::from_elem(len, null_keys);
+            let null_vals = cast::transmute::<*c_void,ValueRefType>(ptr::null());
+            let values: ~[ValueRefType] = vec::from_elem(len, null_vals);
 
             do uint::range(0,len) |i| { blk(&keys[i], &values[i]) }
         }
@@ -154,13 +161,18 @@ extern {
                           numValues: CFIndex, keyCallBacks: *CFDictionaryKeyCallBacks,
                           valueCallBacks: *CFDictionaryValueCallBacks)
                        -> CFDictionaryRef;
-    fn CFDictionaryCreateCopy(allocator: CFAllocatorRef, theDict: CFDictionaryRef) -> CFDictionaryRef;
+    fn CFDictionaryCreateCopy(allocator: CFAllocatorRef,
+                              theDict: CFDictionaryRef)
+                           -> CFDictionaryRef;
     fn CFDictionaryGetCount(theDict: CFDictionaryRef) -> CFIndex;
     fn CFDictionaryGetCountOfKey(theDict: CFDictionaryRef, key: *c_void) -> CFIndex;
     fn CFDictionaryGetCountOfValue(theDict: CFDictionaryRef, value: *c_void) -> CFIndex;
     fn CFDictionaryGetKeysAndValues(theDict: CFDictionaryRef, keys: **c_void, values: **c_void);
     fn CFDictionaryGetTypeID() -> CFTypeID;
     fn CFDictionaryGetValue(theDict: CFDictionaryRef, key: *c_void) -> *c_void;
-    fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *c_void, value: **c_void) -> Boolean;
+    fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef,
+                                     key: *c_void,
+                                     value: **c_void)
+                                  -> Boolean;
 }
 

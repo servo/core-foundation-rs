@@ -30,10 +30,15 @@ pub type CFSetRef = *__CFSet;
 
 impl CFSetRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CFSetGetTypeID() } }
+
+    static pure fn type_id() -> CFTypeID {
+        unsafe {
+            CFSetGetTypeID()
+        }
+    }
 }
 
-pub type CFSet<ElemRefType: AbstractCFTypeRef> = CFWrapper<CFSetRef, ElemRefType, ()>;
+pub type CFSet<ElemRefType> = CFWrapper<CFSetRef, ElemRefType, ()>;
 
 pub impl<ElemRefType : AbstractCFTypeRef>
     CFSet<ElemRefType> {

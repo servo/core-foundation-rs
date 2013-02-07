@@ -37,7 +37,7 @@ pub type CFTypeRef = *__CFType;
 pub impl CFTypeRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self }
     // this can't be used, because CFType is the supertype and has no type id.
-    static pure fn type_id() -> CFTypeID { fail; }
+    static pure fn type_id() -> CFTypeID { fail!(); }
 }
 
 pub pure fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T {
@@ -47,16 +47,21 @@ pub pure fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T {
     }
 }
 
-pub struct CFWrapper<T:Copy AbstractCFTypeRef, PlaceholderType1, PlaceholderType2> {
+pub struct RawCFWrapper {
+    obj: CFTypeRef
+}
+
+pub struct CFWrapper<T, PlaceholderType1, PlaceholderType2> {
     obj: T,
 
     drop {
         unsafe {
-            assert CFGetRetainCount(cast::transmute(self.obj)) > 0 as CFIndex;
             // sadly, cannot use obj.as_type_ref() here, because drop
             // cannot make virtual method calls using trait
             // types. Instead, just transmute the bugger.
-            CFRelease(cast::transmute(self.obj))
+            let this: &RawCFWrapper = cast::transmute(&self);
+            assert CFGetRetainCount(this.obj) > 0 as CFIndex;
+            CFRelease(this.obj)
         }
     }
 }

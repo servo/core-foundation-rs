@@ -20,26 +20,36 @@ pub type CFURLRef = *__CFURL;
 
 impl CFURLRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CFURLGetTypeID() } }
+
+    static pure fn type_id() -> CFTypeID {
+        unsafe {
+            CFURLGetTypeID()
+        }
+    }
 }
 
 pub type CFURL = CFWrapper<CFURLRef, (), ()>;
 
 pub impl CFURL : ToStr {
-    pure fn to_str() -> ~str {
+    pure fn to_str(&self) -> ~str {
         unsafe {
-            let cfstr : CFString = CFWrapper::wrap_shared(CFURLGetString(self.obj));
+            let cfstr: CFString = CFWrapper::wrap_shared(CFURLGetString(self.obj));
             cfstr.to_str()
         }
     }
 }
 
 type CFURLBookmarkCreationOptions = CFOptionFlags;
-const kCFURLBookmarkCreationPreferFileIDResolutionMask : CFURLBookmarkCreationOptions = (1 << 8) as u32;
-const kCFURLBookmarkCreationMinimalBookmarkMask : CFURLBookmarkCreationOptions = (1 << 9) as u32;
-const kCFURLBookmarkCreationSuitableForBookmarkFile : CFURLBookmarkCreationOptions = (1 << 10) as u32;
-const kCFURLBookmarkCreationWithSecurityScope : CFURLBookmarkCreationOptions = (1 << 11) as u32;
-const kCFURLBookmarkCreationSecurityScopeAllowOnlyReadAccess : CFURLBookmarkCreationOptions = (1 << 12) as u32;
+const kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
+    (1 << 8) as u32;
+const kCFURLBookmarkCreationMinimalBookmarkMask: CFURLBookmarkCreationOptions =
+    (1 << 9) as u32;
+const kCFURLBookmarkCreationSuitableForBookmarkFile: CFURLBookmarkCreationOptions =
+    (1 << 10) as u32;
+const kCFURLBookmarkCreationWithSecurityScope: CFURLBookmarkCreationOptions =
+    (1 << 11) as u32;
+const kCFURLBookmarkCreationSecurityScopeAllowOnlyReadAccess: CFURLBookmarkCreationOptions =
+    (1 << 12) as u32;
 
 // TODO: there are a lot of missing keys and constants. Add if you are bored or need them.
 

@@ -195,11 +195,17 @@ const kCFStringEncodingUTF7_IMAP: CFStringEncoding = 0x0A10;
 const kCFStringEncodingShiftJIS_X0213_00: CFStringEncoding = 0x0628; /* Deprecated */
 
 struct __CFString { private: () }
+
 pub type CFStringRef = *__CFString;
 
 pub impl CFStringRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CFStringGetTypeID() } }
+
+    static pure fn type_id() -> CFTypeID {
+        unsafe {
+            CFStringGetTypeID()
+        }
+    }
 }
 
 pub type CFString = CFWrapper<CFStringRef, (), ()>;
@@ -251,25 +257,37 @@ pub impl CFString {
 }
 
 pub impl CFString : ToStr {
-    pure fn to_str() -> ~str {
+    pure fn to_str(&self) -> ~str {
         unsafe {
             let char_len = self.char_len();
             let range : CFRange = CFRangeMake(0 as CFIndex, char_len as CFIndex);
             let encoding = kCFStringEncodingUTF8;
             let mut bytes_required: CFIndex = 0 as CFIndex;
             // first, ask how big the buffer ought to be.
-            CFStringGetBytes(self.obj, range, encoding, 0, false as Boolean, 
-                             ptr::null(), 0, ptr::to_unsafe_ptr(&bytes_required));
+            CFStringGetBytes(self.obj,
+                             range,
+                             encoding,
+                             0,
+                             false as Boolean, 
+                             ptr::null(),
+                             0,
+                             &bytes_required);
 
             let buffer : ~[u8] = vec::from_elem(1+bytes_required as uint, '\x00' as u8);
             let mut bytes_used: CFIndex = 0 as CFIndex;
             // then, allocate the buffer and actually copy.
-            let chars_written = CFStringGetBytes(self.obj, range, encoding, 0, false as Boolean, 
-                                                 vec::raw::to_ptr(buffer), buffer.len() as CFIndex,
+            let chars_written = CFStringGetBytes(self.obj,
+                                                 range,
+                                                 encoding,
+                                                 0,
+                                                 false as Boolean, 
+                                                 vec::raw::to_ptr(buffer),
+                                                 buffer.len() as CFIndex,
                                                  ptr::to_unsafe_ptr(&bytes_used)) as uint;
 
             assert chars_written == char_len;
-            // this is dangerous; we over-allocate and nul-terminate the string (during initialization)
+            // this is dangerous; we over-allocate and nul-terminate the string (during
+            // initialization)
             assert bytes_used + 1 == buffer.len() as CFIndex;
             // then, reinterpret it as as string. you have been warned!
             let casted_str : ~str = cast::transmute(move buffer);

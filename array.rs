@@ -31,7 +31,7 @@ pub impl CFArrayRef : AbstractCFTypeRef {
     static pure fn type_id() -> CFTypeID { unsafe { CFArrayGetTypeID() } }
 }
 
-pub type CFArray<ElemRefType: AbstractCFTypeRef> = CFWrapper<CFArrayRef, ElemRefType, ()>;
+pub type CFArray<ElemRefType> = CFWrapper<CFArrayRef, ElemRefType, ()>;
 
 pub impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
     static fn new(elems: &[ElemRefType]) -> CFArray<ElemRefType> {

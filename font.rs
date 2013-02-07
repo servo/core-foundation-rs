@@ -62,7 +62,12 @@ pub type CTFontRef = *__CTFont;
 
 impl CTFontRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CTFontGetTypeID() } }
+
+    static pure fn type_id() -> CFTypeID {
+        unsafe {
+            CTFontGetTypeID()
+        }
+    }
 }
 
 pub type CTFont = CFWrapper<CTFontRef, (), ()>;
@@ -96,21 +101,32 @@ pub trait CTFontMethods {
 }
 
 pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
-    let result = unsafe { CTFontCreateWithGraphicsFont(*cgfont.borrow_ref(), pt_size as CGFloat, ptr::null(), ptr::null()) };
-    CFWrapper::wrap_owned(result)
+    unsafe {
+        let result = CTFontCreateWithGraphicsFont(*cgfont.borrow_ref(),
+                                                  pt_size as CGFloat,
+                                                  ptr::null(),
+                                                  ptr::null());
+        CFWrapper::wrap_owned(result)
+    }
 }
 
 pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
-    let result = unsafe { CTFontCreateWithFontDescriptor(*desc.borrow_ref(), pt_size as CGFloat, ptr::null()) };
-    CFWrapper::wrap_owned(result)
+    unsafe {
+        let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(),
+                                                    pt_size as CGFloat,
+                                                    ptr::null());
+        CFWrapper::wrap_owned(result)
+    }
 }
 
 pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
-    let cfname = CFString::new(name);
-    let result = unsafe { CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null()) };
-    if result.is_null() { return Err(()); }
+    unsafe {
+        let cfname = CFString::new(name);
+        let result = CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null());
+        if result.is_null() { return Err(()); }
 
-    return Ok(move CFWrapper::wrap_owned(result));
+        return Ok(move CFWrapper::wrap_owned(result));
+    }
 }
 
 priv trait CTFontMethodsPrivate {
@@ -138,7 +154,10 @@ pub impl CTFont : CTFontMethods {
 
     fn clone_with_font_size(&const self, size: float) -> CTFont {
         unsafe {
-            let result = CTFontCreateCopyWithAttributes(self.obj, size as CGFloat, ptr::null(), ptr::null());
+            let result = CTFontCreateCopyWithAttributes(self.obj,
+                                                        size as CGFloat,
+                                                        ptr::null(),
+                                                        ptr::null());
             CFWrapper::wrap_owned(result)
         }
     }
@@ -228,33 +247,46 @@ pub impl CTFont : CTFontMethods {
         }
     }
 
-    fn get_glyphs_for_characters(characters: *UniChar, glyphs: *CGGlyph, count: CFIndex) -> bool {
+    fn get_glyphs_for_characters(characters: *UniChar,
+                                 glyphs: *CGGlyph,
+                                 count: CFIndex)
+                              -> bool {
         unsafe {
             CTFontGetGlyphsForCharacters(self.obj, characters, glyphs, count)
         }
     }
 
-    fn get_advances_for_glyphs(orientation: CTFontOrientation, glyphs: *CGGlyph, advances: *CGSize, count: CFIndex) -> float {
+    fn get_advances_for_glyphs(orientation: CTFontOrientation,
+                               glyphs: *CGGlyph,
+                               advances: *CGSize,
+                               count: CFIndex)
+                            -> float {
         unsafe {
             CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as float
         }
     }
 
     fn get_font_table(tag: u32) -> Option<CFData> {
-        let result = unsafe { CTFontCopyTable(self.obj, tag as CTFontTableTag, kCTFontTableOptionsExcludeSynthetic) };
-        return match result.is_null() {
-            true => None,
-            false => Some(CFWrapper::wrap_owned(result)),
+        unsafe {
+            let result = CTFontCopyTable(self.obj,
+                                         tag as CTFontTableTag,
+                                         kCTFontTableOptionsExcludeSynthetic);
+            return match result.is_null() {
+                true => None,
+                false => Some(CFWrapper::wrap_owned(result)),
+            }
         }
     }
 }
 
 // Helper methods
 priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
-    let result = unsafe { CTFontCopyName(*font.borrow_ref(), name_key) };
-    if result.is_null() { return None; }
+    unsafe {
+        let result = CTFontCopyName(*font.borrow_ref(), name_key);
+        if result.is_null() { return None; }
 
-    return Some(CFWrapper::wrap_owned(result).to_str());
+        return Some(CFWrapper::wrap_owned(result).to_str());
+    }
 }
 
 pub fn debug_font_names(font: &CTFont) {

@@ -175,7 +175,12 @@ pub type CTFontDescriptorRef = *__CTFontDescriptor;
 
 impl CTFontDescriptorRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CTFontDescriptorGetTypeID() } }
+
+    static pure fn type_id() -> CFTypeID {
+        unsafe {
+            CTFontDescriptorGetTypeID()
+        }
+    }
 }
 
 pub type CTFontDescriptor = CFWrapper<CTFontDescriptorRef, (), ()>;
@@ -194,11 +199,15 @@ priv trait CTFontDescriptorMethodsPrivate {
 
 impl CTFontDescriptor: CTFontDescriptorMethodsPrivate {
     priv fn get_string_attribute(attribute: CFStringRef) -> Option<~str> {
-        let value = unsafe { CTFontDescriptorCopyAttribute(self.obj, attribute) };
-        if value.is_null() { return None; }
+        unsafe {
+            let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
+            if value.is_null() {
+                return None;
+            }
 
-        Some(CFWrapper::wrap_owned(core_foundation::base::downcast::<CFStringRef>(
-                value)).to_str())
+            Some(CFWrapper::wrap_owned(core_foundation::base::downcast::<CFStringRef>(
+                    value)).to_str())
+        }
     }
 
 }

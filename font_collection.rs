@@ -17,7 +17,12 @@ pub type CTFontCollectionRef = *__CTFontCollection;
 
 impl CTFontCollectionRef : AbstractCFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CTFontCollectionGetTypeID() } }
+
+    static pure fn type_id() -> CFTypeID {
+        unsafe {
+            CTFontCollectionGetTypeID()
+        }
+    }
 }
 
 pub type CTFontCollection = CFWrapper<CTFontCollectionRef, (), ()>;
@@ -28,11 +33,11 @@ pub trait CTFontCollectionMethods {
 
 pub impl CTFontCollection : CTFontCollectionMethods {
     pure fn get_descriptors() -> CFArray<CTFontDescriptorRef> {
-        unsafe {
-            use core_foundation::base::CFRetain;
+        use core_foundation::base::CFRetain;
 
-            // surprise! this function follows the Get rule, despite being named *Create*.
-            // So we have to addRef it to avoid CTFontCollection from double freeing it later.
+        // surprise! this function follows the Get rule, despite being named *Create*.
+        // So we have to addRef it to avoid CTFontCollection from double freeing it later.
+        unsafe {
             CFWrapper::wrap_shared(CTFontCollectionCreateMatchingFontDescriptors(self.obj))
         }
     }
@@ -42,40 +47,48 @@ pub fn new_from_descriptors(descs: &CFArray<CTFontDescriptorRef>) -> CTFontColle
     let key = CFString::wrap_extern(kCTFontCollectionRemoveDuplicatesOption);
     let value = CFNumber::new(1_i8);
     let options = CFDictionary::new([ (*key.borrow_ref(), *value.borrow_type_ref()) ]);
-    let result = unsafe { CTFontCollectionCreateWithFontDescriptors(*descs.borrow_ref(), *options.borrow_ref()) };
-    CFWrapper::wrap_owned(result)
+    unsafe {
+        let result = CTFontCollectionCreateWithFontDescriptors(*descs.borrow_ref(),
+                                                               *options.borrow_ref());
+        CFWrapper::wrap_owned(result)
+    }
 }
 
 pub fn create_for_all_families() -> CTFontCollection {
     let key = CFString::wrap_extern(kCTFontCollectionRemoveDuplicatesOption);
     let value = CFNumber::new(1_i8);
     let options = CFDictionary::new([ (*key.borrow_ref(), *value.borrow_type_ref()) ]);
-    let result = unsafe { CTFontCollectionCreateFromAvailableFonts(*options.borrow_ref()) };
-    CFWrapper::wrap_owned(result)
+    unsafe {
+        let result = CTFontCollectionCreateFromAvailableFonts(*options.borrow_ref());
+        CFWrapper::wrap_owned(result)
+    }
 }
 
 pub fn create_for_family(family: &str) -> CTFontCollection {
-    unsafe {
-        use font_descriptor::kCTFontFamilyNameAttribute;
-        
-        let family_attr = CFString::wrap_extern(kCTFontFamilyNameAttribute);
-        let family_name = CFString::new(family);
+    use font_descriptor::kCTFontFamilyNameAttribute;
+   
+    let family_attr = CFString::wrap_extern(kCTFontFamilyNameAttribute);
+    let family_name = CFString::new(family);
 
-        let specified_attrs : CFWrapper<CFDictionaryRef, CFStringRef, CFTypeRef> = CFDictionary::new([
-            ( *family_attr.borrow_ref(), *family_name.borrow_type_ref() )
+    let specified_attrs: CFWrapper<CFDictionaryRef,CFStringRef,CFTypeRef> =
+        CFDictionary::new([
+            (*family_attr.borrow_ref(), *family_name.borrow_type_ref())
         ]);
 
-        let wildcard_desc : CTFontDescriptor = font_descriptor::new_from_attributes(&specified_attrs);
-        let mandatory_attrs = CFSet::new([ *family_attr.borrow_ref() ]);
-        let matched_descs = CTFontDescriptorCreateMatchingFontDescriptors(*wildcard_desc.borrow_ref(),
-                                                                          *mandatory_attrs.borrow_ref());
+    let wildcard_desc: CTFontDescriptor =
+        font_descriptor::new_from_attributes(&specified_attrs);
+    let mandatory_attrs = CFSet::new([ *family_attr.borrow_ref() ]);
+    let matched_descs = unsafe {
+        CTFontDescriptorCreateMatchingFontDescriptors(
+            *wildcard_desc.borrow_ref(),
+            *mandatory_attrs.borrow_ref())
+    };
 
-        let matched_descs : CFArray<CTFontDescriptorRef> = CFWrapper::wrap_owned(matched_descs);
+    let matched_descs: CFArray<CTFontDescriptorRef> = CFWrapper::wrap_owned(matched_descs);
 
-        // I suppose one doesn't even need the CTFontCollection object at this point.
-        // But we stick descriptors into and out of it just to provide a nice wrapper API.
-        new_from_descriptors(&matched_descs)
-    }
+    // I suppose one doesn't even need the CTFontCollection object at this point.
+    // But we stick descriptors into and out of it just to provide a nice wrapper API.
+    new_from_descriptors(&matched_descs)
 }
 
 pub pure fn get_family_names() -> CFArray<CFStringRef> {

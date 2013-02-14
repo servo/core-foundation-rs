@@ -8,6 +8,7 @@ use base::{
     CFWrapper,
     kCFAllocatorDefault
 };
+use base;
 use libc::{c_int, c_void};
 
 pub type CFNumberType = u32;

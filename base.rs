@@ -36,16 +36,21 @@ pub extern mod objc {
 #[test]
 pub fn test_nsapp() {
     let klass = str::as_c_str(~"NSApplication", |s|
-        objc::objc_getClass(s)
+        unsafe {
+            objc::objc_getClass(s)
+        }
     );
 
     let sel = str::as_c_str(~"sharedApplication", |s|
-        objc::sel_registerName(s)
+        unsafe {
+            objc::sel_registerName(s)
+        }
     );
 
-    let nsapp = objc::objc_msgSend(klass, sel);
-
-    io::println(fmt!("nsapp: %d", (nsapp as int)));
+    unsafe {
+        let nsapp = objc::objc_msgSend(klass, sel);
+        io::println(fmt!("nsapp: %d", (nsapp as int)));
+    }
 }
 
 #[test]
@@ -56,25 +61,40 @@ pub fn test_custom_obj() {
     }
 
     let NSObject = str::as_c_str(~"NSObject", |s|
-        objc::objc_getClass(s)
+        unsafe {
+            objc::objc_getClass(s)
+        }
     );
     let MyObject = str::as_c_str(~"MyObject", |s|
-        objc::objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
+        unsafe {
+            objc::objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
+        }
     );
     let doSomething = str::as_c_str(~"doSomething", |s|
-        objc::sel_registerName(s)
+        unsafe {
+            objc::sel_registerName(s)
+        }
     );
     let _ = str::as_c_str(~"@@:", |types|
-        objc::class_addMethod(MyObject, doSomething, MyObject_doSomething,
-                              types)
+        unsafe {
+            objc::class_addMethod(MyObject,
+                                  doSomething,
+                                  MyObject_doSomething,
+                                  types)
+        }
     );
-    objc::objc_registerClassPair(MyObject);
 
-    let alloc = str::as_c_str(~"alloc", |s| objc::sel_registerName(s));
-    let init = str::as_c_str(~"init", |s| objc::sel_registerName(s));
+    unsafe {
+        objc::objc_registerClassPair(MyObject);
+    }
 
-    let mut obj = objc::objc_msgSend(MyObject, alloc);
-    obj = objc::objc_msgSend(obj, init);
-    objc::objc_msgSend(obj, doSomething);
+    let alloc = str::as_c_str(~"alloc", |s| unsafe { objc::sel_registerName(s) });
+    let init = str::as_c_str(~"init", |s| unsafe { objc::sel_registerName(s) });
+
+    unsafe {
+        let mut obj = objc::objc_msgSend(MyObject, alloc);
+        obj = objc::objc_msgSend(obj, init);
+        objc::objc_msgSend(obj, doSomething);
+    }
 }
 

@@ -17,7 +17,7 @@ pub type CGDataProviderGetBytesAtPositionCallback = *u8;
 struct __CGDataProvider { private: () }
 pub type CGDataProviderRef = *__CGDataProvider;
 
-pub impl CGDataProviderRef : AbstractCFTypeRef {
+pub impl AbstractCFTypeRef for CGDataProviderRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {

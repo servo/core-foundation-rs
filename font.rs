@@ -9,7 +9,7 @@ pub type CGGlyph = libc::c_ushort;
 struct __CGFont { private: () }
 pub type CGFontRef = *__CGFont;
 
-pub impl CGFontRef : AbstractCFTypeRef {
+pub impl AbstractCFTypeRef for CGFontRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {

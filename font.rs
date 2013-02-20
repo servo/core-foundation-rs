@@ -60,7 +60,7 @@ pub const kCTFontOptionsPreferSystemFont: CTFontOptions = (1 << 2);
 struct __CTFont { private: () }
 pub type CTFontRef = *__CTFont;
 
-impl CTFontRef : AbstractCFTypeRef {
+impl AbstractCFTypeRef for CTFontRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {
@@ -125,7 +125,7 @@ pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
         let result = CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null());
         if result.is_null() { return Err(()); }
 
-        return Ok(move CFWrapper::wrap_owned(result));
+        return Ok(CFWrapper::wrap_owned(result));
     }
 }
 
@@ -133,8 +133,7 @@ priv trait CTFontMethodsPrivate {
     pure fn symbolic_traits() -> CTFontSymbolicTraits;
 }
 
-pub impl CTFont: CTFontMethodsPrivate {
-
+pub impl CTFontMethodsPrivate for CTFont {
     // Properties
     priv pure fn symbolic_traits() -> CTFontSymbolicTraits {
         unsafe {
@@ -143,7 +142,7 @@ pub impl CTFont: CTFontMethodsPrivate {
     }
 }
 
-pub impl CTFont : CTFontMethods {
+pub impl CTFontMethods for CTFont {
     // Creation methods
     fn copy_to_CGFont(&const self) -> CGFont {
         unsafe {
@@ -166,28 +165,28 @@ pub impl CTFont : CTFontMethods {
     pure fn family_name() -> ~str {
         unsafe {
             let value = get_string_by_name_key(&self, kCTFontFamilyNameKey);
-            return move option::expect(move value, ~"Fonts should always have a family name.");
+            return option::expect(value, ~"Fonts should always have a family name.");
         }
     }
 
     pure fn face_name() -> ~str {
         unsafe {
             let value = get_string_by_name_key(&self, kCTFontSubFamilyNameKey);
-            return move option::expect(move value, ~"Fonts should always have a face name.");
+            return option::expect(value, ~"Fonts should always have a face name.");
         }
     }
 
     pure fn unique_name() -> ~str {
         unsafe {
             let value = get_string_by_name_key(&self, kCTFontUniqueNameKey);
-            return move option::expect(move value, ~"Fonts should always have a unique name.");
+            return option::expect(value, ~"Fonts should always have a unique name.");
         }
     }
 
     pure fn postscript_name() -> ~str {
         unsafe {
             let value = get_string_by_name_key(&self, kCTFontPostScriptNameKey);
-            return move option::expect(move value, ~"Fonts should always have a PostScript name.");
+            return option::expect(value, ~"Fonts should always have a PostScript name.");
         }
     }
 
@@ -291,7 +290,7 @@ priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~
 
 pub fn debug_font_names(font: &CTFont) {
     fn get_key(font: &CTFont, key: CFStringRef) -> ~str {
-        option::unwrap(move get_string_by_name_key(font, key))
+        option::unwrap(get_string_by_name_key(font, key))
     }
 
     io::println(fmt!("kCTFontFamilyNameKey: %s", get_key(font, kCTFontFamilyNameKey)));

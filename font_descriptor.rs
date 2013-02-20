@@ -42,7 +42,7 @@ pub trait SymbolicTraitAccessors {
     pure fn is_monospace() -> bool;
 }
 
-pub impl CTFontSymbolicTraits : SymbolicTraitAccessors {
+pub impl SymbolicTraitAccessors for CTFontSymbolicTraits {
     pure fn is_italic() -> bool { (self & kCTFontItalicTrait) != 0 }
     pure fn is_bold() -> bool { (self & kCTFontBoldTrait) != 0 }
     pure fn is_expanded() -> bool { (self & kCTFontExpandedTrait) != 0 }
@@ -71,7 +71,7 @@ pub trait StylisticClassAccessors {
     pure fn is_symbols() -> bool;
 }
 
-pub impl CTFontStylisticClass : StylisticClassAccessors {
+pub impl StylisticClassAccessors for CTFontStylisticClass {
     pure fn is_serif() -> bool {
         unsafe {
             let any_serif_class = kCTFontOldStyleSerifsClass 
@@ -116,7 +116,7 @@ priv trait TraitAccessorPrivate {
     fn extract_number_for_key(key: CFStringRef) -> CFNumber;
 }
 
-impl CTFontTraits: TraitAccessorPrivate {
+impl TraitAccessorPrivate for CTFontTraits {
     priv fn extract_number_for_key(key: CFStringRef) -> CFNumber {
         let value = self.get(&key);
         CFWrapper::wrap_shared(core_foundation::base::downcast::<CFNumberRef>(value))
@@ -124,7 +124,7 @@ impl CTFontTraits: TraitAccessorPrivate {
 
 }
 
-impl CTFontTraits : TraitAccessors {
+impl TraitAccessors for CTFontTraits {
     fn symbolic_traits() -> CTFontSymbolicTraits {
         unsafe {
             let number = self.extract_number_for_key(kCTFontSymbolicTrait);
@@ -173,7 +173,7 @@ pub const kCTFontPriorityProcess: CTFontPriority = 60000;
 struct __CTFontDescriptor { private: () }
 pub type CTFontDescriptorRef = *__CTFontDescriptor;
 
-impl CTFontDescriptorRef : AbstractCFTypeRef {
+impl AbstractCFTypeRef for CTFontDescriptorRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {
@@ -197,7 +197,7 @@ priv trait CTFontDescriptorMethodsPrivate {
     fn get_string_attribute(attribute: CFStringRef) -> Option<~str>;
 }
 
-impl CTFontDescriptor: CTFontDescriptorMethodsPrivate {
+impl CTFontDescriptorMethodsPrivate for CTFontDescriptor {
     priv fn get_string_attribute(attribute: CFStringRef) -> Option<~str> {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
@@ -212,25 +212,25 @@ impl CTFontDescriptor: CTFontDescriptorMethodsPrivate {
 
 }
 
-pub impl CTFontDescriptor : CTFontDescriptorMethods {
+pub impl CTFontDescriptorMethods for CTFontDescriptor {
     fn family_name() -> ~str {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
-        option::expect(move value, ~"A font must have a non-null font family name.")
+        option::expect(value, ~"A font must have a non-null font family name.")
     }
 
     fn font_name() -> ~str {
         let value = self.get_string_attribute(kCTFontNameAttribute);
-        option::expect(move value, ~"A font must have a non-null name.")
+        option::expect(value, ~"A font must have a non-null name.")
     }
 
     fn style_name() -> ~str {
         let value = self.get_string_attribute(kCTFontStyleNameAttribute);
-        option::expect(move value, ~"A font must have a non-null style name.")
+        option::expect(value, ~"A font must have a non-null style name.")
     }
 
     fn display_name() -> ~str {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
-        option::expect(move value, ~"A font must have a non-null display name.")
+        option::expect(value, ~"A font must have a non-null display name.")
     }
 
     fn font_path() -> ~str {

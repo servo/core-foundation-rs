@@ -15,7 +15,7 @@ use core_foundation::string::{CFString, CFStringRef};
 struct __CTFontCollection { private: () }
 pub type CTFontCollectionRef = *__CTFontCollection;
 
-impl CTFontCollectionRef : AbstractCFTypeRef {
+impl AbstractCFTypeRef for CTFontCollectionRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {
@@ -31,7 +31,7 @@ pub trait CTFontCollectionMethods {
     pure fn get_descriptors() -> CFArray<CTFontDescriptorRef>;
 }
 
-pub impl CTFontCollection : CTFontCollectionMethods {
+pub impl CTFontCollectionMethods for CTFontCollection {
     pure fn get_descriptors() -> CFArray<CTFontDescriptorRef> {
         use core_foundation::base::CFRetain;
 

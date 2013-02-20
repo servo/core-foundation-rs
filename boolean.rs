@@ -10,7 +10,7 @@ pub type Boolean = u32;
 struct __CFBoolean { private: () }
 pub type CFBooleanRef = *__CFBoolean;
 
-pub impl CFBooleanRef : AbstractCFTypeRef {
+pub impl AbstractCFTypeRef for CFBooleanRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {

@@ -28,7 +28,7 @@ pub struct CFSetCallBacks {
 struct __CFSet { private: () }
 pub type CFSetRef = *__CFSet;
 
-impl CFSetRef : AbstractCFTypeRef {
+impl AbstractCFTypeRef for CFSetRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {

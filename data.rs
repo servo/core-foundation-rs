@@ -14,7 +14,7 @@ use core::vec;
 struct __CFData { private: () }
 pub type CFDataRef = *__CFData;
 
-impl CFDataRef : AbstractCFTypeRef {
+impl AbstractCFTypeRef for CFDataRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {

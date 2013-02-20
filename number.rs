@@ -35,7 +35,7 @@ const kCFNumberMaxType:       CFNumberType = 16;
 struct __CFNumber { private: () }
 pub type CFNumberRef = *__CFNumber;
 
-pub impl CFNumberRef : AbstractCFTypeRef {
+pub impl AbstractCFTypeRef for CFNumberRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {
@@ -134,23 +134,23 @@ pub trait ConvertibleToCFNumber {
     pure fn cf_number_type(&self) -> CFNumberType;
 }
 
-impl i8 : ConvertibleToCFNumber {
+impl ConvertibleToCFNumber for i8 {
     pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt8Type as CFNumberType }
 }
 
-impl i16 : ConvertibleToCFNumber {
+impl ConvertibleToCFNumber for i16 {
     pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt16Type as CFNumberType }
 }
 
-impl i32 : ConvertibleToCFNumber {
+impl ConvertibleToCFNumber for i32 {
     pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt32Type as CFNumberType }
 }
 
-impl i64 : ConvertibleToCFNumber {
+impl ConvertibleToCFNumber for i64 {
     pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt64Type as CFNumberType }
 }
 
-impl float : ConvertibleToCFNumber {
+impl ConvertibleToCFNumber for float {
     pure fn cf_number_type(&self) -> CFNumberType { kCFNumberFloatType as CFNumberType }
 }
 

@@ -34,7 +34,7 @@ struct __CFType { private: () }
 pub type CFTypeRef = *__CFType;
 
 
-pub impl CFTypeRef : AbstractCFTypeRef {
+pub impl AbstractCFTypeRef for CFTypeRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self }
     // this can't be used, because CFType is the supertype and has no type id.
     static pure fn type_id() -> CFTypeID { fail!(); }
@@ -103,14 +103,14 @@ pub impl<T:Copy AbstractCFTypeRef, E1, E2>
 
     static fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType {
         unsafe {
-            cast::transmute(move wrapper)
+            cast::transmute(wrapper)
         }
     }
 
     static fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> {
         unsafe {
             assert wrapper.type_id() == AbstractCFTypeRef::type_id::<T>();
-            cast::transmute(move wrapper)
+            cast::transmute(wrapper)
         }
     }
 

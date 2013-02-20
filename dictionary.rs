@@ -41,7 +41,7 @@ pub struct CFDictionaryValueCallBacks {
 struct __CFDictionary { private: () }
 pub type CFDictionaryRef = *__CFDictionary;
 
-impl CFDictionaryRef : AbstractCFTypeRef {
+impl AbstractCFTypeRef for CFDictionaryRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {
@@ -70,8 +70,8 @@ pub impl<KeyRefType: Copy AbstractCFTypeRef, ValueRefType: Copy AbstractCFTypeRe
         }
 
         assert keys.len() == values.len();
-        let keys = dvec::unwrap(move keys);
-        let values = dvec::unwrap(move values);
+        let keys = dvec::unwrap(keys);
+        let values = dvec::unwrap(values);
 
         let dictionary_ref : CFDictionaryRef;
         unsafe {
@@ -124,7 +124,7 @@ pub impl<KeyRefType   : AbstractCFTypeRef Copy,
     pure fn get(key: &KeyRefType) -> ValueRefType {
         let value = self.find(key);
         if value.is_none() {
-            die!(fmt!("No entry found for key: %?", key));
+            fail!(fmt!("No entry found for key: %?", key));
         }
         return option::unwrap(value);
     }

@@ -198,7 +198,7 @@ struct __CFString { private: () }
 
 pub type CFStringRef = *__CFString;
 
-pub impl CFStringRef : AbstractCFTypeRef {
+pub impl AbstractCFTypeRef for CFStringRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {
@@ -256,7 +256,7 @@ pub impl CFString {
     
 }
 
-pub impl CFString : ToStr {
+pub impl ToStr for CFString {
     pure fn to_str(&self) -> ~str {
         unsafe {
             let char_len = self.char_len();
@@ -290,9 +290,9 @@ pub impl CFString : ToStr {
             // initialization)
             assert bytes_used + 1 == buffer.len() as CFIndex;
             // then, reinterpret it as as string. you have been warned!
-            let casted_str : ~str = cast::transmute(move buffer);
+            let casted_str : ~str = cast::transmute(buffer);
             // sanity check.
-            return move casted_str;
+            return casted_str;
         }
     }
 }

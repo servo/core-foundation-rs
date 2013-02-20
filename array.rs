@@ -26,7 +26,7 @@ pub struct CFArrayCallBacks {
 struct __CFArray { private: () }
 pub type CFArrayRef = *__CFArray;
 
-pub impl CFArrayRef : AbstractCFTypeRef {
+pub impl AbstractCFTypeRef for CFArrayRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
     static pure fn type_id() -> CFTypeID { unsafe { CFArrayGetTypeID() } }
 }
@@ -35,7 +35,7 @@ pub type CFArray<ElemRefType> = CFWrapper<CFArrayRef, ElemRefType, ()>;
 
 pub impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
     static fn new(elems: &[ElemRefType]) -> CFArray<ElemRefType> {
-        let array_ref : CFArrayRef;
+        let array_ref: CFArrayRef;
         let elems_refs = do vec::map(elems) |e: &ElemRefType| { e.as_type_ref() };
 
         unsafe {
@@ -44,7 +44,8 @@ pub impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
                                       elems.len() as CFIndex,
                                       ptr::to_unsafe_ptr(&kCFTypeArrayCallBacks));
         }
-        return move CFWrapper::wrap_owned(array_ref);
+
+        CFWrapper::wrap_owned(array_ref)
     }
 
     pub fn each_ref<A>(cb: fn&(ElemRefType) -> A) {

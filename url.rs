@@ -18,7 +18,7 @@ use string::{
 struct __CFURL { private: () }
 pub type CFURLRef = *__CFURL;
 
-impl CFURLRef : AbstractCFTypeRef {
+impl AbstractCFTypeRef for CFURLRef {
     pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     static pure fn type_id() -> CFTypeID {
@@ -30,7 +30,7 @@ impl CFURLRef : AbstractCFTypeRef {
 
 pub type CFURL = CFWrapper<CFURLRef, (), ()>;
 
-pub impl CFURL : ToStr {
+pub impl ToStr for CFURL {
     pure fn to_str(&self) -> ~str {
         unsafe {
             let cfstr: CFString = CFWrapper::wrap_shared(CFURLGetString(self.obj));

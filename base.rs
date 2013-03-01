@@ -68,8 +68,7 @@ pub struct CFWrapper<T, PlaceholderType1, PlaceholderType2> {
 
 pub type CFType = CFWrapper<CFTypeRef, (), ()>;
 
-pub impl<T:Copy AbstractCFTypeRef, E1, E2>
-    CFWrapper<T, E1, E2> {
+pub impl<T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T, E1, E2> {
     pure fn borrow_ref(&self) -> &self/T {
         &self.obj
     }

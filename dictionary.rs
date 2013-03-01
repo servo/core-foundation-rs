@@ -54,7 +54,7 @@ impl AbstractCFTypeRef for CFDictionaryRef {
 pub type CFDictionary<KeyRefType, ValueRefType> = CFWrapper<CFDictionaryRef, KeyRefType, ValueRefType>;
 pub type UntypedCFDictionary = CFDictionary<CFStringRef, CFTypeRef>;
 
-pub impl<KeyRefType: Copy AbstractCFTypeRef, ValueRefType: Copy AbstractCFTypeRef>
+pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRef>
     CFDictionary<KeyRefType, ValueRefType> {
 
     static fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
@@ -87,8 +87,8 @@ pub impl<KeyRefType: Copy AbstractCFTypeRef, ValueRefType: Copy AbstractCFTypeRe
     }
 }
 
-pub impl<KeyRefType   : AbstractCFTypeRef Copy,
-         ValueRefType : AbstractCFTypeRef Copy>
+pub impl<KeyRefType   : AbstractCFTypeRef + Copy,
+         ValueRefType : AbstractCFTypeRef + Copy>
     CFDictionary<KeyRefType, ValueRefType> {
     pure fn len() -> uint {
         unsafe {

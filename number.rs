@@ -48,7 +48,7 @@ pub impl AbstractCFTypeRef for CFNumberRef {
 pub type CFNumber = CFWrapper<CFNumberRef, (), ()>;
 
 pub impl CFNumber {
-    static fn new<T:Copy ConvertibleToCFNumber>(n: T) -> CFNumber {
+    static fn new<T:Copy + ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             let objref = CFNumberCreate(kCFAllocatorDefault,
                                         n.cf_number_type(),

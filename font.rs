@@ -78,26 +78,35 @@ pub trait CTFontMethods {
     fn clone_with_font_size(&const self, size: float) -> CTFont;
 
     // Names
-    pure fn family_name() -> ~str;
-    pure fn face_name() -> ~str;
-    pure fn unique_name() -> ~str;
-    pure fn postscript_name() -> ~str;
+    pure fn family_name(&self) -> ~str;
+    pure fn face_name(&self) -> ~str;
+    pure fn unique_name(&self) -> ~str;
+    pure fn postscript_name(&self) -> ~str;
 
     // Properties
-    pure fn all_traits() -> CTFontTraits;
+    pure fn all_traits(&self) -> CTFontTraits;
 
     // Font metrics
-    pure fn ascent() -> CGFloat;
-    pure fn descent() -> CGFloat;
-    pure fn underline_thickness() -> CGFloat;
-    pure fn underline_position() -> CGFloat;
-    pure fn bounding_box() -> CGRect;
-    pure fn leading() -> CGFloat;
-    pure fn x_height() -> CGFloat;
-    pure fn pt_size() -> CGFloat;
-    fn get_glyphs_for_characters(characters: *UniChar, glyphs: *CGGlyph, count: CFIndex) -> bool;
-    fn get_advances_for_glyphs(orientation: CTFontOrientation, glyphs: *CGGlyph, advances: *CGSize, count: CFIndex) -> float;
-    fn get_font_table(tag: u32) -> Option<CFData>;
+    pure fn ascent(&self) -> CGFloat;
+    pure fn descent(&self) -> CGFloat;
+    pure fn underline_thickness(&self) -> CGFloat;
+    pure fn underline_position(&self) -> CGFloat;
+    pure fn bounding_box(&self) -> CGRect;
+    pure fn leading(&self) -> CGFloat;
+    pure fn x_height(&self) -> CGFloat;
+    pure fn pt_size(&self) -> CGFloat;
+    fn get_glyphs_for_characters(&self,
+                                 characters: *UniChar,
+                                 glyphs: *CGGlyph,
+                                 count: CFIndex)
+                              -> bool;
+    fn get_advances_for_glyphs(&self,
+                               orientation: CTFontOrientation,
+                               glyphs: *CGGlyph,
+                               advances: *CGSize,
+                               count: CFIndex)
+                            -> float;
+    fn get_font_table(&self, tag: u32) -> Option<CFData>;
 }
 
 pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
@@ -162,35 +171,35 @@ pub impl CTFontMethods for CTFont {
     }
 
     // Names
-    pure fn family_name() -> ~str {
+    pure fn family_name(&self) -> ~str {
         unsafe {
-            let value = get_string_by_name_key(&self, kCTFontFamilyNameKey);
+            let value = get_string_by_name_key(self, kCTFontFamilyNameKey);
             return option::expect(value, ~"Fonts should always have a family name.");
         }
     }
 
-    pure fn face_name() -> ~str {
+    pure fn face_name(&self) -> ~str {
         unsafe {
-            let value = get_string_by_name_key(&self, kCTFontSubFamilyNameKey);
+            let value = get_string_by_name_key(self, kCTFontSubFamilyNameKey);
             return option::expect(value, ~"Fonts should always have a face name.");
         }
     }
 
-    pure fn unique_name() -> ~str {
+    pure fn unique_name(&self) -> ~str {
         unsafe {
-            let value = get_string_by_name_key(&self, kCTFontUniqueNameKey);
+            let value = get_string_by_name_key(self, kCTFontUniqueNameKey);
             return option::expect(value, ~"Fonts should always have a unique name.");
         }
     }
 
-    pure fn postscript_name() -> ~str {
+    pure fn postscript_name(&self) -> ~str {
         unsafe {
-            let value = get_string_by_name_key(&self, kCTFontPostScriptNameKey);
+            let value = get_string_by_name_key(self, kCTFontPostScriptNameKey);
             return option::expect(value, ~"Fonts should always have a PostScript name.");
         }
     }
 
-    pure fn all_traits() -> CTFontTraits {
+    pure fn all_traits(&self) -> CTFontTraits {
         unsafe {
             let result = CTFontCopyTraits(self.obj);
             CFWrapper::wrap_owned(result)
@@ -198,55 +207,56 @@ pub impl CTFontMethods for CTFont {
     }
 
     // Font metrics
-    pure fn ascent() -> CGFloat {
+    pure fn ascent(&self) -> CGFloat {
         unsafe {
             CTFontGetAscent(self.obj)
         }
     }
 
-    pure fn descent() -> CGFloat {
+    pure fn descent(&self) -> CGFloat {
         unsafe {
             CTFontGetDescent(self.obj)
         }
     }
 
-    pure fn underline_thickness() -> CGFloat {
+    pure fn underline_thickness(&self) -> CGFloat {
         unsafe {
             CTFontGetUnderlineThickness(self.obj)
         }
     }
 
-    pure fn underline_position() -> CGFloat {
+    pure fn underline_position(&self) -> CGFloat {
         unsafe {
             CTFontGetUnderlinePosition(self.obj)
         }
     }
 
-    pure fn bounding_box() -> CGRect {
+    pure fn bounding_box(&self) -> CGRect {
         unsafe {
             CTFontGetBoundingBox(self.obj)
         }
     }
 
-    pure fn leading() -> CGFloat {
+    pure fn leading(&self) -> CGFloat {
         unsafe {
             CTFontGetLeading(self.obj)
         }
     }
 
-    pure fn x_height() -> CGFloat {
+    pure fn x_height(&self) -> CGFloat {
         unsafe {
             CTFontGetXHeight(self.obj)
         }
     }
 
-    pure fn pt_size() -> CGFloat {
+    pure fn pt_size(&self) -> CGFloat {
         unsafe {
             CTFontGetSize(self.obj)
         }
     }
 
-    fn get_glyphs_for_characters(characters: *UniChar,
+    fn get_glyphs_for_characters(&self,
+                                 characters: *UniChar,
                                  glyphs: *CGGlyph,
                                  count: CFIndex)
                               -> bool {
@@ -255,7 +265,8 @@ pub impl CTFontMethods for CTFont {
         }
     }
 
-    fn get_advances_for_glyphs(orientation: CTFontOrientation,
+    fn get_advances_for_glyphs(&self,
+                               orientation: CTFontOrientation,
                                glyphs: *CGGlyph,
                                advances: *CGSize,
                                count: CFIndex)
@@ -265,7 +276,7 @@ pub impl CTFontMethods for CTFont {
         }
     }
 
-    fn get_font_table(tag: u32) -> Option<CFData> {
+    fn get_font_table(&self, tag: u32) -> Option<CFData> {
         unsafe {
             let result = CTFontCopyTable(self.obj,
                                          tag as CTFontTableTag,

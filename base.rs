@@ -1,11 +1,11 @@
-use libc::c_long;
+use core::libc::c_long;
 
 // a raw Core Foundation reference. It may or may not have been
 // CFRetain'ed, depending on whether it was obtained via ownership or
 // borrow semantics. 
 pub trait AbstractCFTypeRef {
-    pure fn as_type_ref(&self) -> CFTypeRef;
-    static pure fn type_id() -> CFTypeID;
+    fn as_type_ref(&self) -> CFTypeRef;
+    fn type_id() -> CFTypeID;
 }
 
 pub type Boolean = u8;
@@ -34,15 +34,15 @@ struct __CFType { private: () }
 pub type CFTypeRef = *__CFType;
 
 
-pub impl AbstractCFTypeRef for CFTypeRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self }
+impl AbstractCFTypeRef for CFTypeRef {
+    fn as_type_ref(&self) -> CFTypeRef { *self }
     // this can't be used, because CFType is the supertype and has no type id.
-    static pure fn type_id() -> CFTypeID { fail!(); }
+    fn type_id() -> CFTypeID { fail!(); }
 }
 
-pub pure fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T {
+pub fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T {
     unsafe {
-        assert CFGetTypeID(r) == AbstractCFTypeRef::type_id::<T>();
+        fail_unless!(CFGetTypeID(r) == AbstractCFTypeRef::type_id::<T>());
         cast::transmute(r)
     }
 }
@@ -52,15 +52,18 @@ pub struct RawCFWrapper {
 }
 
 pub struct CFWrapper<T, PlaceholderType1, PlaceholderType2> {
-    obj: T,
+    obj: T
+}
 
-    drop {
+#[unsafe_destructor]
+impl<T,E1,E2> Drop for CFWrapper<T,E1,E2> {
+    fn finalize(&self) {
         unsafe {
             // sadly, cannot use obj.as_type_ref() here, because drop
             // cannot make virtual method calls using trait
             // types. Instead, just transmute the bugger.
             let this: &RawCFWrapper = cast::transmute(&self);
-            assert CFGetRetainCount(this.obj) > 0 as CFIndex;
+            fail_unless!(CFGetRetainCount(this.obj) > 0 as CFIndex);
             CFRelease(this.obj)
         }
     }
@@ -68,12 +71,12 @@ pub struct CFWrapper<T, PlaceholderType1, PlaceholderType2> {
 
 pub type CFType = CFWrapper<CFTypeRef, (), ()>;
 
-pub impl<T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T, E1, E2> {
-    pure fn borrow_ref(&self) -> &self/T {
+pub impl<T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
+    fn borrow_ref(&self) -> &'self T {
         &self.obj
     }
 
-    pure fn borrow_type_ref() -> &self/CFTypeRef {
+    fn borrow_type_ref(&self) -> &'self CFTypeRef {
         unsafe {
             cast::transmute(&self.obj)
         }
@@ -81,7 +84,7 @@ pub impl<T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T, E1, E2> {
 
     // Use this when following Core Foundation's "Create" rule; i.e., the wrapper assumes ownership.
     // The object has already been retained, so we need not increment the retain count ourself.
-    static pure fn wrap_owned(some_ref: T) -> CFWrapper<T,E1,E2> {
+    fn wrap_owned(some_ref: T) -> CFWrapper<T,E1,E2> {
         // N.B. we can't make any assertions about retain count here,
         // because returned things are only guaranteed to be already
         // retained. Strings, for example, could be interned.
@@ -90,46 +93,46 @@ pub impl<T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T, E1, E2> {
 
     // Use this when following Core Foundation's "Get" rule. The wrapper does not have ownership.
     // Twe need to increment object's the retain count so it isn't freed out from under our noses.
-    static pure fn wrap_shared(some_ref: T) -> CFWrapper<T,E1,E2> {
+    fn wrap_shared(some_ref: T) -> CFWrapper<T,E1,E2> {
         unsafe { CFRetain(some_ref.as_type_ref()); }
         CFWrapper { obj: some_ref }
     }
 
     // Unwraps the wrapper, returning the underlying AbstractCFType.
-    static fn unwrap(wrapper: CFWrapper<T,E1,E2>) -> T {
+    fn unwrap(wrapper: CFWrapper<T,E1,E2>) -> T {
         wrapper.obj
     }
 
-    static fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType {
+    fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType {
         unsafe {
             cast::transmute(wrapper)
         }
     }
 
-    static fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> {
+    fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> {
         unsafe {
-            assert wrapper.type_id() == AbstractCFTypeRef::type_id::<T>();
+            fail_unless!(wrapper.type_id() == AbstractCFTypeRef::type_id::<T>());
             cast::transmute(wrapper)
         }
     }
 
-    static fn clone(wrapper: &CFWrapper<T,E1,E2>) -> CFWrapper<T,E1,E2> {
+    fn clone(wrapper: &CFWrapper<T,E1,E2>) -> CFWrapper<T,E1,E2> {
         CFWrapper::wrap_shared(*wrapper.borrow_ref())
     }
 
-    pure fn retain_count() -> CFIndex {
+    fn retain_count(&self) -> CFIndex {
         unsafe {
             CFGetRetainCount(*self.borrow_type_ref())
         }
     }
 
-    pure fn type_id() -> CFTypeID {
+    fn type_id(&self) -> CFTypeID {
         unsafe {
             CFGetTypeID(*self.borrow_type_ref())
         }
     }
 
-    pure fn show() {
+    fn show(&self) {
         unsafe {
             CFShow(*self.borrow_type_ref());
         }
@@ -145,16 +148,16 @@ extern {
 
     /* CFAllocator Reference */
     // N.B. Many CFAllocator functions and constants are omitted here.
-    pub const kCFAllocatorDefault: CFAllocatorRef;
-    pub const kCFAllocatorSystemDefault: CFAllocatorRef;
-    pub const kCFAllocatorMalloc: CFAllocatorRef;
-    pub const kCFAllocatorMallocZone: CFAllocatorRef;
-    pub const kCFAllocatorNull: CFAllocatorRef;
-    pub const kCFAllocatorUseContext: CFAllocatorRef;
+    pub static kCFAllocatorDefault: CFAllocatorRef;
+    pub static kCFAllocatorSystemDefault: CFAllocatorRef;
+    pub static kCFAllocatorMalloc: CFAllocatorRef;
+    pub static kCFAllocatorMallocZone: CFAllocatorRef;
+    pub static kCFAllocatorNull: CFAllocatorRef;
+    pub static kCFAllocatorUseContext: CFAllocatorRef;
 
     /* CFNull Reference */
 
-    pub const kCFNull: CFNullRef;
+    pub static kCFNull: CFNullRef;
 
     /* CFType Reference */
 

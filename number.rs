@@ -8,37 +8,37 @@ use base::{
     CFWrapper,
     kCFAllocatorDefault
 };
-use base;
-use libc::{c_int, c_void};
+
+use core::libc::{c_int, c_void};
 
 pub type CFNumberType = u32;
 
 // members of enum CFNumberType
-const kCFNumberSInt8Type:     CFNumberType = 1;
-const kCFNumberSInt16Type:    CFNumberType = 2;
-const kCFNumberSInt32Type:    CFNumberType = 3;
-const kCFNumberSInt64Type:    CFNumberType = 4;
-const kCFNumberFloat32Type:   CFNumberType = 5;
-const kCFNumberFloat64Type:   CFNumberType = 6;
-const kCFNumberCharType:      CFNumberType = 7;
-const kCFNumberShortType:     CFNumberType = 8;
-const kCFNumberIntType:       CFNumberType = 9;
-const kCFNumberLongType:      CFNumberType = 10;
-const kCFNumberLongLongType:  CFNumberType = 11;
-const kCFNumberFloatType:     CFNumberType = 12;
-const kCFNumberDoubleType:    CFNumberType = 13;
-const kCFNumberCFIndexType:   CFNumberType = 14;
-const kCFNumberNSIntegerType: CFNumberType = 15;
-const kCFNumberCGFloatType:   CFNumberType = 16;
-const kCFNumberMaxType:       CFNumberType = 16;
+static kCFNumberSInt8Type:     CFNumberType = 1;
+static kCFNumberSInt16Type:    CFNumberType = 2;
+static kCFNumberSInt32Type:    CFNumberType = 3;
+static kCFNumberSInt64Type:    CFNumberType = 4;
+static kCFNumberFloat32Type:   CFNumberType = 5;
+static kCFNumberFloat64Type:   CFNumberType = 6;
+static kCFNumberCharType:      CFNumberType = 7;
+static kCFNumberShortType:     CFNumberType = 8;
+static kCFNumberIntType:       CFNumberType = 9;
+static kCFNumberLongType:      CFNumberType = 10;
+static kCFNumberLongLongType:  CFNumberType = 11;
+static kCFNumberFloatType:     CFNumberType = 12;
+static kCFNumberDoubleType:    CFNumberType = 13;
+static kCFNumberCFIndexType:   CFNumberType = 14;
+static kCFNumberNSIntegerType: CFNumberType = 15;
+static kCFNumberCGFloatType:   CFNumberType = 16;
+static kCFNumberMaxType:       CFNumberType = 16;
 
 struct __CFNumber { private: () }
 pub type CFNumberRef = *__CFNumber;
 
-pub impl AbstractCFTypeRef for CFNumberRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+impl AbstractCFTypeRef for CFNumberRef {
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFNumberGetTypeID()
         }
@@ -48,7 +48,7 @@ pub impl AbstractCFTypeRef for CFNumberRef {
 pub type CFNumber = CFWrapper<CFNumberRef, (), ()>;
 
 pub impl CFNumber {
-    static fn new<T:Copy + ConvertibleToCFNumber>(n: T) -> CFNumber {
+    fn new<T:Copy + ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             let objref = CFNumberCreate(kCFAllocatorDefault,
                                         n.cf_number_type(),
@@ -57,9 +57,9 @@ pub impl CFNumber {
         }
     }
 
-    pure fn to_i8() -> i8 {
+    fn to_i8(&self) -> i8 {
         let ty = kCFNumberSInt8Type;
-        assert self.has_number_type(ty);
+        fail_unless!(self.has_number_type(ty));
         unsafe {
             let val: i8 = 0i8;
             if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
@@ -69,9 +69,9 @@ pub impl CFNumber {
         }
     }
 
-    pure fn to_i16() -> i16 {
+    fn to_i16(&self) -> i16 {
         let ty = kCFNumberSInt16Type;
-        assert self.has_number_type(ty);
+        fail_unless!(self.has_number_type(ty));
         unsafe {
             let val: i16 = 0i16;
             if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
@@ -81,9 +81,9 @@ pub impl CFNumber {
         }
     }
 
-    pure fn to_i32() -> i32 {
+    fn to_i32(&self) -> i32 {
         let ty = kCFNumberSInt32Type;
-        assert self.has_number_type(ty);
+        fail_unless!(self.has_number_type(ty));
         unsafe {
             let val: i32 = 0i32;
             if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
@@ -93,9 +93,9 @@ pub impl CFNumber {
         }
     }
 
-    pure fn to_float() -> float {
+    fn to_float(&self) -> float {
         unsafe {
-            assert self.has_float_type();
+            fail_unless!(self.has_float_type());
             let ty = CFNumberGetType(self.obj);
             if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
                 let mut val: libc::c_float = 0.0f as libc::c_float;
@@ -116,13 +116,13 @@ pub impl CFNumber {
         }
     }
 
-    priv pure fn has_float_type() -> bool {
+    priv fn has_float_type(&self) -> bool {
         unsafe {
             CFNumberIsFloatType(self.obj) as bool
         }
     }
 
-    priv pure fn has_number_type(ty: CFNumberType) -> bool {
+    priv fn has_number_type(&self, ty: CFNumberType) -> bool {
         unsafe {
             CFNumberGetType(self.obj) == ty
         }
@@ -131,27 +131,27 @@ pub impl CFNumber {
 
 pub trait ConvertibleToCFNumber {
     // FIXME: Should be static, but that breaks.
-    pure fn cf_number_type(&self) -> CFNumberType;
+    fn cf_number_type(&self) -> CFNumberType;
 }
 
 impl ConvertibleToCFNumber for i8 {
-    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt8Type as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt8Type as CFNumberType }
 }
 
 impl ConvertibleToCFNumber for i16 {
-    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt16Type as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt16Type as CFNumberType }
 }
 
 impl ConvertibleToCFNumber for i32 {
-    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt32Type as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt32Type as CFNumberType }
 }
 
 impl ConvertibleToCFNumber for i64 {
-    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt64Type as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt64Type as CFNumberType }
 }
 
 impl ConvertibleToCFNumber for float {
-    pure fn cf_number_type(&self) -> CFNumberType { kCFNumberFloatType as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType { kCFNumberFloatType as CFNumberType }
 }
 
 #[link_args="-framework CoreFoundation"]
@@ -161,9 +161,9 @@ extern {
      * CFNumber.h
      */
 
-    const kCFNumberNaN: CFNumberRef;
-    const kCFNumberNegativeInfinity: CFNumberRef;
-    const kCFNumberPositiveInfinity: CFNumberRef;
+    static kCFNumberNaN: CFNumberRef;
+    static kCFNumberNegativeInfinity: CFNumberRef;
+    static kCFNumberPositiveInfinity: CFNumberRef;
 
     fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *c_void)
                    -> CFNumberRef;
@@ -178,9 +178,10 @@ extern {
 fn should_fail_on_bad_downcast() {
     #[test];
     #[should_fail];
-
+    
+    use base;
     use boolean::CFBooleanRef;
 
     let one = CFWrapper::to_CFType(CFNumber::new(1_i32));
-    let casted = base::downcast::<CFBooleanRef>(*one.borrow_ref());
+    base::downcast::<CFBooleanRef>(*one.borrow_ref());
 }

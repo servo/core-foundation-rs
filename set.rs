@@ -8,7 +8,7 @@ use base::{
     CFWrapper,
     kCFAllocatorDefault,
 };
-use libc::{c_char, c_void};
+use core::libc::{c_char, c_void};
 
 pub type CFSetRetainCallBack = *u8;
 pub type CFSetReleaseCallBack = *u8;
@@ -29,9 +29,9 @@ struct __CFSet { private: () }
 pub type CFSetRef = *__CFSet;
 
 impl AbstractCFTypeRef for CFSetRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFSetGetTypeID()
         }
@@ -40,9 +40,9 @@ impl AbstractCFTypeRef for CFSetRef {
 
 pub type CFSet<ElemRefType> = CFWrapper<CFSetRef, ElemRefType, ()>;
 
-pub impl<ElemRefType : AbstractCFTypeRef>
+impl<ElemRefType : AbstractCFTypeRef>
     CFSet<ElemRefType> {
-    static fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
+    fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
         let result : CFSetRef;
         let elems_refs = do vec::map(elems) |e: &ElemRefType| { e.as_type_ref() };
 
@@ -63,8 +63,8 @@ extern {
      * CFSet.h
      */
 
-    const kCFTypeSetCallBacks: CFSetCallBacks;
-    const kCFTypeCopyStringSetCallBacks: CFSetCallBacks;
+    static kCFTypeSetCallBacks: CFSetCallBacks;
+    static kCFTypeCopyStringSetCallBacks: CFSetCallBacks;
 
     /* Creating Sets */
     fn CFSetCreate(allocator: CFAllocatorRef, values: **c_void, numValues: CFIndex, 

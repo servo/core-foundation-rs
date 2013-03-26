@@ -11,8 +11,7 @@ use base::{
 };
 use string::{CFString, CFStringRef};
 
-use dvec::DVec;
-use libc::c_void;
+use core::libc::c_void;
 
 pub type CFDictionaryApplierFunction = *u8;
 pub type CFDictionaryCopyDescriptionCallBack = *u8;
@@ -42,9 +41,9 @@ struct __CFDictionary { private: () }
 pub type CFDictionaryRef = *__CFDictionary;
 
 impl AbstractCFTypeRef for CFDictionaryRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFDictionaryGetTypeID()
         }
@@ -57,8 +56,9 @@ pub type UntypedCFDictionary = CFDictionary<CFStringRef, CFTypeRef>;
 pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRef>
     CFDictionary<KeyRefType, ValueRefType> {
 
-    static fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
-        let (keys, values) = (DVec(), DVec());
+    fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
+        let mut keys : ~[CFTypeRef] = ~[];
+        let mut values : ~[CFTypeRef] = ~[];
         for pairs.each |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
             match *pair {
@@ -69,15 +69,13 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
             }
         }
 
-        assert keys.len() == values.len();
-        let keys = dvec::unwrap(keys);
-        let values = dvec::unwrap(values);
+        assert!(keys.len() == values.len());
 
         let dictionary_ref : CFDictionaryRef;
         unsafe {
             dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
-                                                cast::transmute(vec::raw::to_ptr(keys)),
-                                                cast::transmute(vec::raw::to_ptr(values)),
+                                                cast::transmute::<*CFTypeRef, **c_void>(vec::raw::to_ptr(keys)),
+                                                cast::transmute::<*CFTypeRef, **c_void>(vec::raw::to_ptr(values)),
                                                 keys.len() as CFIndex,
                                                 ptr::to_unsafe_ptr(&kCFTypeDictionaryKeyCallBacks),
                                                 ptr::to_unsafe_ptr(&kCFTypeDictionaryValueCallBacks));
@@ -85,31 +83,28 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
 
         CFWrapper::wrap_owned(dictionary_ref)
     }
-}
 
-pub impl<KeyRefType   : AbstractCFTypeRef + Copy,
-         ValueRefType : AbstractCFTypeRef + Copy>
-    CFDictionary<KeyRefType, ValueRefType> {
-    pure fn len() -> uint {
+    fn len(&self) -> uint {
         unsafe {
             return CFDictionaryGetCount(self.obj) as uint;
         }
     }
 
-    pure fn is_empty() -> bool { self.len() == 0 }
+    fn is_empty(&self) -> bool { self.len() == 0 }
 
-    pure fn contains_key(key: &KeyRefType) -> bool {
+    fn contains_key(&self, key: &KeyRefType) -> bool {
         unsafe {
-            return CFDictionaryContainsKey(self.obj, cast::transmute(key.as_type_ref())) as bool;
+            return CFDictionaryContainsKey(self.obj, 
+                                           cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref())) as bool;
         }
     }
 
-    pure fn find(key: &KeyRefType) -> Option<ValueRefType> {
+    fn find(&self, key: &KeyRefType) -> Option<ValueRefType> {
         unsafe {
             let value : *c_void = ptr::null();
             let did_find_value = CFDictionaryGetValueIfPresent(self.obj,
-                                                               cast::transmute(key.as_type_ref()),
-                                                               cast::transmute(&value)) as bool;
+                                                               cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref()),
+                                                               cast::transmute::<&*c_void, **c_void>(&value)) as bool;
 
             // FIXME: this will not handle non-CF dictionary entries
             // or ptr::null() values correctly.
@@ -121,7 +116,7 @@ pub impl<KeyRefType   : AbstractCFTypeRef + Copy,
         }
     }
 
-    pure fn get(key: &KeyRefType) -> ValueRefType {
+    fn get(&self, key: &KeyRefType) -> ValueRefType {
         let value = self.find(key);
         if value.is_none() {
             fail!(fmt!("No entry found for key: %?", key));
@@ -129,7 +124,7 @@ pub impl<KeyRefType   : AbstractCFTypeRef + Copy,
         return option::unwrap(value);
     }
 
-    fn each(blk: fn&(&KeyRefType, &ValueRefType) -> bool) {
+    fn each(&self, blk: &fn(&KeyRefType, &ValueRefType) -> bool) {
         unsafe {
             let len = self.len();
             let null_keys = cast::transmute::<*c_void,KeyRefType>(ptr::null());
@@ -150,8 +145,8 @@ extern {
      * CFDictionary.h
      */
 
-    const kCFTypeDictionaryKeyCallBacks: CFDictionaryKeyCallBacks;
-    const kCFTypeDictionaryValueCallBacks: CFDictionaryValueCallBacks;
+    static kCFTypeDictionaryKeyCallBacks: CFDictionaryKeyCallBacks;
+    static kCFTypeDictionaryValueCallBacks: CFDictionaryValueCallBacks;
 
     fn CFDictionaryApplyFunction(theDict: CFDictionaryRef, applier: CFDictionaryApplierFunction,
                                  context: *c_void);

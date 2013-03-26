@@ -8,7 +8,7 @@ use base::{
     CFWrapper,
     kCFAllocatorDefault,
 };
-use libc::c_void;
+use core::libc::c_void;
 
 pub type CFArrayRetainCallBack = *u8;
 pub type CFArrayReleaseCallBack = *u8;
@@ -26,21 +26,21 @@ pub struct CFArrayCallBacks {
 struct __CFArray { private: () }
 pub type CFArrayRef = *__CFArray;
 
-pub impl AbstractCFTypeRef for CFArrayRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
-    static pure fn type_id() -> CFTypeID { unsafe { CFArrayGetTypeID() } }
+impl AbstractCFTypeRef for CFArrayRef {
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    fn type_id() -> CFTypeID { unsafe { CFArrayGetTypeID() } }
 }
 
 pub type CFArray<ElemRefType> = CFWrapper<CFArrayRef, ElemRefType, ()>;
 
 pub impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
-    static fn new(elems: &[ElemRefType]) -> CFArray<ElemRefType> {
+    fn new(elems: &[ElemRefType]) -> CFArray<ElemRefType> {
         let array_ref: CFArrayRef;
         let elems_refs = do vec::map(elems) |e: &ElemRefType| { e.as_type_ref() };
 
         unsafe {
             array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                      cast::transmute(vec::raw::to_ptr(elems_refs)),
+                                      cast::transmute::<*CFTypeRef, **c_void>(vec::raw::to_ptr(elems_refs)),
                                       elems.len() as CFIndex,
                                       ptr::to_unsafe_ptr(&kCFTypeArrayCallBacks));
         }
@@ -48,42 +48,44 @@ pub impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
         CFWrapper::wrap_owned(array_ref)
     }
 
-    pub fn each_ref<A>(cb: fn&(ElemRefType) -> A) {
+    pub fn each_ref<A>(&self, cb: &fn(ElemRefType) -> A) {
         for uint::range(0, self.len()) |i| { cb(self[i]); }
     }
 
-    pub fn eachi_ref<A>(cb: fn&(uint, ElemRefType) -> A) {
+    pub fn eachi_ref<A>(&self, cb: &fn(uint, ElemRefType) -> A) {
         for uint::range(0, self.len()) |i| { cb(i, self[i]); }
     }
 
     // Careful; the callback must wrap the reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn each<A>(cb: fn&(&ElemRefType) -> A) {
+    pub fn each<A>(&self, cb: &fn(&ElemRefType) -> A) {
         for uint::range(0, self.len()) |i| { cb(&self[i]); }
     }
 
     // Careful; the callback must wrap the reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn eachi<A>(cb: fn&(uint, &ElemRefType) -> A) {
+    pub fn eachi<A>(&self, cb: &fn(uint, &ElemRefType) -> A) {
         for uint::range(0, self.len()) |i| { cb(i, &self[i]); }
     }
 
-    pub pure fn len() -> uint {
+    pub fn len(&self) -> uint {
         unsafe { return CFArrayGetCount(*self.borrow_ref()) as uint; }
     }
+}
 
+impl<ElemRefType:AbstractCFTypeRef> Index<uint,ElemRefType> for CFArray<ElemRefType> {
     // Careful; the caller must wrap any returned reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pure fn index(idx: uint) -> ElemRefType {
-        assert idx < self.len();
+    fn index(&self, idx: uint) -> ElemRefType {
+        assert!(idx < self.len());
         unsafe { 
             let elem = CFArrayGetValueAtIndex(*self.borrow_ref(), idx as CFIndex);
             // Don't return a wrapped thing, since we don't know whether
             // it needs base::wrap_shared() or base::wrap_owned()
-            return cast::transmute(elem);
+            cast::transmute::<*c_void,ElemRefType>(elem)
         }
     }
 }
@@ -94,7 +96,7 @@ extern {
     /*
      * CFArray.h
      */
-    const kCFTypeArrayCallBacks: CFArrayCallBacks;
+    static kCFTypeArrayCallBacks: CFArrayCallBacks;
 
     fn CFArrayCreate(allocator: CFAllocatorRef, values: **c_void,
                      numValues: CFIndex, callBacks: *CFArrayCallBacks) -> CFArrayRef;
@@ -134,11 +136,11 @@ fn should_box_and_unbox() {
         sum += CFWrapper::wrap_shared(*elem).to_i32();
     }
 
-    assert sum == 15;
+    assert!(sum == 15);
 
     for arr.each |elem: &CFNumberRef| {
         sum += CFWrapper::wrap_shared(*elem).to_i32();
     }
 
-    assert sum == 30;
+    assert!(sum == 30);
 }

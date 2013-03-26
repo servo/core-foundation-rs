@@ -10,10 +10,10 @@ pub type Boolean = u32;
 struct __CFBoolean { private: () }
 pub type CFBooleanRef = *__CFBoolean;
 
-pub impl AbstractCFTypeRef for CFBooleanRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+impl AbstractCFTypeRef for CFBooleanRef {
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe { CFBooleanGetTypeID() }
     }
 }
@@ -21,11 +21,11 @@ pub impl AbstractCFTypeRef for CFBooleanRef {
 pub type CFBoolean = CFWrapper<CFBooleanRef, (), ()>;
 
 pub impl CFBoolean {
-    static fn true_value() -> CFBoolean {
+    fn true_value() -> CFBoolean {
         CFWrapper::wrap_shared(kCFBooleanTrue)
     }
 
-    static fn false_value() -> CFBoolean {
+    fn false_value() -> CFBoolean {
         CFWrapper::wrap_shared(kCFBooleanFalse)
     }
 }
@@ -33,8 +33,8 @@ pub impl CFBoolean {
 #[link_args="-framework CoreFoundation"]
 #[nolink]
 extern {
-    const kCFBooleanTrue: CFBooleanRef;
-    const kCFBooleanFalse: CFBooleanRef;
+    static kCFBooleanTrue: CFBooleanRef;
+    static kCFBooleanFalse: CFBooleanRef;
 
     fn CFBooleanGetValue(boolean: CFBooleanRef) -> Boolean;
     fn CFBooleanGetTypeID() -> CFTypeID;

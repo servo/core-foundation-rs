@@ -288,7 +288,7 @@ impl ToStr for CFString {
             // initialization)
             fail_unless!(bytes_used + 1 == buffer.len() as CFIndex);
             // then, reinterpret it as as string. you have been warned!
-            let casted_str : ~str = cast::transmute(buffer);
+            let casted_str : ~str = cast::transmute::<~[u8], ~str>(buffer);
             // sanity check.
             return casted_str;
         }

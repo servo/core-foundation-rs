@@ -74,8 +74,8 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
         let dictionary_ref : CFDictionaryRef;
         unsafe {
             dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
-                                                cast::transmute(vec::raw::to_ptr(keys)),
-                                                cast::transmute(vec::raw::to_ptr(values)),
+                                                cast::transmute::<*CFTypeRef, **c_void>(vec::raw::to_ptr(keys)),
+                                                cast::transmute::<*CFTypeRef, **c_void>(vec::raw::to_ptr(values)),
                                                 keys.len() as CFIndex,
                                                 ptr::to_unsafe_ptr(&kCFTypeDictionaryKeyCallBacks),
                                                 ptr::to_unsafe_ptr(&kCFTypeDictionaryValueCallBacks));
@@ -94,7 +94,8 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
 
     fn contains_key(&self, key: &KeyRefType) -> bool {
         unsafe {
-            return CFDictionaryContainsKey(self.obj, cast::transmute(key.as_type_ref())) as bool;
+            return CFDictionaryContainsKey(self.obj, 
+                                           cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref())) as bool;
         }
     }
 
@@ -102,8 +103,8 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
         unsafe {
             let value : *c_void = ptr::null();
             let did_find_value = CFDictionaryGetValueIfPresent(self.obj,
-                                                               cast::transmute(key.as_type_ref()),
-                                                               cast::transmute(&value)) as bool;
+                                                               cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref()),
+                                                               cast::transmute::<&*c_void, **c_void>(&value)) as bool;
 
             // FIXME: this will not handle non-CF dictionary entries
             // or ptr::null() values correctly.

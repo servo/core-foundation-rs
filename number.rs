@@ -52,7 +52,7 @@ pub impl CFNumber {
         unsafe {
             let objref = CFNumberCreate(kCFAllocatorDefault,
                                         n.cf_number_type(),
-                                        cast::transmute(&n));
+                                        cast::transmute::<&T, *c_void>(&n));
             CFWrapper::wrap_owned(objref)
         }
     }
@@ -62,7 +62,7 @@ pub impl CFNumber {
         fail_unless!(self.has_number_type(ty));
         unsafe {
             let val: i8 = 0i8;
-            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+            if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i8, *c_void>(&val)) {
                 fail!(~"Error in unwrapping CFNumber to i8");
             }
             return val;
@@ -74,7 +74,7 @@ pub impl CFNumber {
         fail_unless!(self.has_number_type(ty));
         unsafe {
             let val: i16 = 0i16;
-            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+            if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i16, *c_void>(&val)) {
                 fail!(~"Error in unwrapping CFNumber to i16");
             }
             return val;
@@ -86,7 +86,7 @@ pub impl CFNumber {
         fail_unless!(self.has_number_type(ty));
         unsafe {
             let val: i32 = 0i32;
-            if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+            if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i32, *c_void>(&val)) {
                 fail!(~"Error in unwrapping CFNumber to i32");
             }
             return val;
@@ -99,14 +99,14 @@ pub impl CFNumber {
             let ty = CFNumberGetType(self.obj);
             if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
                 let mut val: libc::c_float = 0.0f as libc::c_float;
-                if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+                if !CFNumberGetValue(self.obj, ty, cast::transmute::<&libc::c_float, *c_void>(&val)) {
                     fail!(~"Error in unwrapping CFNumber to libc::c_float");
                 }
                 return val as float;
             }
             else if ty == kCFNumberFloat64Type || ty == kCFNumberDoubleType {
                 let mut val: libc::c_double = 0.0f as libc::c_double;
-                if !CFNumberGetValue(self.obj, ty, cast::transmute(&val)) {
+                if !CFNumberGetValue(self.obj, ty, cast::transmute::<&libc::c_double, *c_void>(&val)) {
                         fail!(~"Error in unwrapping CFNumber to libc::c_double");
                     }
                 return val as float;

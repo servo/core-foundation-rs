@@ -43,7 +43,7 @@ impl AbstractCFTypeRef for CFTypeRef {
 pub fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T {
     unsafe {
         fail_unless!(CFGetTypeID(r) == AbstractCFTypeRef::type_id::<T>());
-        cast::transmute(r)
+        cast::transmute::<CFTypeRef, T>(r)
     }
 }
 
@@ -62,7 +62,7 @@ impl<T,E1,E2> Drop for CFWrapper<T,E1,E2> {
             // sadly, cannot use obj.as_type_ref() here, because drop
             // cannot make virtual method calls using trait
             // types. Instead, just transmute the bugger.
-            let this: &RawCFWrapper = cast::transmute(&self);
+            let this: &RawCFWrapper = cast::transmute::<&CFWrapper<T,E1,E2>, &RawCFWrapper>(self);
             fail_unless!(CFGetRetainCount(this.obj) > 0 as CFIndex);
             CFRelease(this.obj)
         }
@@ -78,7 +78,7 @@ pub impl<T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
 
     fn borrow_type_ref(&self) -> &'self CFTypeRef {
         unsafe {
-            cast::transmute(&self.obj)
+            cast::transmute::<&T, &CFTypeRef>(&self.obj)
         }
     }
 
@@ -105,14 +105,14 @@ pub impl<T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
 
     fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType {
         unsafe {
-            cast::transmute(wrapper)
+            cast::transmute::<CFWrapper<T, E1, E2>, CFType>(wrapper)
         }
     }
 
     fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> {
         unsafe {
             fail_unless!(wrapper.type_id() == AbstractCFTypeRef::type_id::<T>());
-            cast::transmute(wrapper)
+            cast::transmute::<CFType,CFWrapper<T,E1,E2>>(wrapper)
         }
     }
 

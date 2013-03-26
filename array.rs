@@ -40,7 +40,7 @@ pub impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
 
         unsafe {
             array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                      cast::transmute(vec::raw::to_ptr(elems_refs)),
+                                      cast::transmute::<*CFTypeRef, **c_void>(vec::raw::to_ptr(elems_refs)),
                                       elems.len() as CFIndex,
                                       ptr::to_unsafe_ptr(&kCFTypeArrayCallBacks));
         }
@@ -85,7 +85,7 @@ impl<ElemRefType:AbstractCFTypeRef> Index<uint,ElemRefType> for CFArray<ElemRefT
             let elem = CFArrayGetValueAtIndex(*self.borrow_ref(), idx as CFIndex);
             // Don't return a wrapped thing, since we don't know whether
             // it needs base::wrap_shared() or base::wrap_owned()
-            return cast::transmute(elem);
+            cast::transmute::<*c_void,ElemRefType>(elem)
         }
     }
 }

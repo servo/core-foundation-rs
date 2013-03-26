@@ -48,7 +48,7 @@ impl<ElemRefType : AbstractCFTypeRef>
 
         unsafe {
             result = CFSetCreate(kCFAllocatorDefault,
-                                  cast::transmute(vec::raw::to_ptr(elems_refs)),
+                                  cast::transmute::<*CFTypeRef,**c_void>(vec::raw::to_ptr(elems_refs)),
                                   elems.len() as CFIndex,
                                   ptr::to_unsafe_ptr(&kCFTypeSetCallBacks));
         }

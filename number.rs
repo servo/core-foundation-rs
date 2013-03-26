@@ -175,10 +175,9 @@ extern {
     fn CFNumberGetTypeID() -> CFTypeID;
 }
 
+#[test]
+#[should_fail]
 fn should_fail_on_bad_downcast() {
-    #[test];
-    #[should_fail];
-    
     use base;
     use boolean::CFBooleanRef;
 

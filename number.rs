@@ -59,7 +59,7 @@ pub impl CFNumber {
 
     fn to_i8(&self) -> i8 {
         let ty = kCFNumberSInt8Type;
-        fail_unless!(self.has_number_type(ty));
+        assert!(self.has_number_type(ty));
         unsafe {
             let val: i8 = 0i8;
             if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i8, *c_void>(&val)) {
@@ -71,7 +71,7 @@ pub impl CFNumber {
 
     fn to_i16(&self) -> i16 {
         let ty = kCFNumberSInt16Type;
-        fail_unless!(self.has_number_type(ty));
+        assert!(self.has_number_type(ty));
         unsafe {
             let val: i16 = 0i16;
             if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i16, *c_void>(&val)) {
@@ -83,7 +83,7 @@ pub impl CFNumber {
 
     fn to_i32(&self) -> i32 {
         let ty = kCFNumberSInt32Type;
-        fail_unless!(self.has_number_type(ty));
+        assert!(self.has_number_type(ty));
         unsafe {
             let val: i32 = 0i32;
             if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i32, *c_void>(&val)) {
@@ -95,7 +95,7 @@ pub impl CFNumber {
 
     fn to_float(&self) -> float {
         unsafe {
-            fail_unless!(self.has_float_type());
+            assert!(self.has_float_type());
             let ty = CFNumberGetType(self.obj);
             if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
                 let mut val: libc::c_float = 0.0f as libc::c_float;

@@ -80,7 +80,7 @@ impl<ElemRefType:AbstractCFTypeRef> Index<uint,ElemRefType> for CFArray<ElemRefT
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
     fn index(&self, idx: uint) -> ElemRefType {
-        fail_unless!(idx < self.len());
+        assert!(idx < self.len());
         unsafe { 
             let elem = CFArrayGetValueAtIndex(*self.borrow_ref(), idx as CFIndex);
             // Don't return a wrapped thing, since we don't know whether
@@ -136,11 +136,11 @@ fn should_box_and_unbox() {
         sum += CFWrapper::wrap_shared(*elem).to_i32();
     }
 
-    fail_unless!(sum == 15);
+    assert!(sum == 15);
 
     for arr.each |elem: &CFNumberRef| {
         sum += CFWrapper::wrap_shared(*elem).to_i32();
     }
 
-    fail_unless!(sum == 30);
+    assert!(sum == 30);
 }

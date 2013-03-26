@@ -69,7 +69,7 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
             }
         }
 
-        fail_unless!(keys.len() == values.len());
+        assert!(keys.len() == values.len());
 
         let dictionary_ref : CFDictionaryRef;
         unsafe {

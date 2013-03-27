@@ -7,25 +7,25 @@ extern mod std;
 
 // Rust bindings to the IOSurface framework on Mac OS X.
 
-use cf = core_foundation;
-use cf::base::{
+use core_foundation::base::{
     AbstractCFTypeRef,
-    CFType,
     CFTypeID,
     CFTypeRef,
     CFWrapper,
 };
-use cf::dictionary::{CFDictionary, CFDictionaryRef, UntypedCFDictionary};
-use cf::number::CFNumber;
-use cf::string::{CFString, CFStringRef};
+use core_foundation::dictionary::{
+    CFDictionary,
+    CFDictionaryRef,
+    UntypedCFDictionary};
+use core_foundation::string::{CFString, CFStringRef};
 
 struct __IOSurface { private: () }
 pub type IOSurfaceRef = *__IOSurface;
 
 impl AbstractCFTypeRef for IOSurfaceRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             IOSurfaceGetTypeID()
         }
@@ -54,7 +54,7 @@ pub fn lookup(csid: IOSurfaceID) -> IOSurface {
     }
 }
 
-pub impl IOSurfaceMethods for IOSurface {
+impl IOSurfaceMethods for IOSurface {
     fn get_id(&self) -> IOSurfaceID {
         unsafe {
             IOSurfaceGetID(self.obj)
@@ -65,30 +65,30 @@ pub impl IOSurfaceMethods for IOSurface {
 #[link_args="-framework IOSurface"]
 #[nolink]
 extern {
-    const kIOSurfaceAllocSize: CFStringRef;
-    const kIOSurfaceWidth: CFStringRef;
-    const kIOSurfaceHeight: CFStringRef;
-    const kIOSurfaceBytesPerRow: CFStringRef;
-    const kIOSurfaceBytesPerElement: CFStringRef;
-    const kIOSurfaceElementWidth: CFStringRef;
-    const kIOSurfaceElementHeight: CFStringRef;
-    const kIOSurfaceOffset: CFStringRef;
+    static kIOSurfaceAllocSize: CFStringRef;
+    static kIOSurfaceWidth: CFStringRef;
+    static kIOSurfaceHeight: CFStringRef;
+    static kIOSurfaceBytesPerRow: CFStringRef;
+    static kIOSurfaceBytesPerElement: CFStringRef;
+    static kIOSurfaceElementWidth: CFStringRef;
+    static kIOSurfaceElementHeight: CFStringRef;
+    static kIOSurfaceOffset: CFStringRef;
 
-    const kIOSurfacePlaneInfo: CFStringRef;
-    const kIOSurfacePlaneWidth: CFStringRef;
-    const kIOSurfacePlaneHeight: CFStringRef;
-    const kIOSurfacePlaneBytesPerRow: CFStringRef;
-    const kIOSurfacePlaneOffset: CFStringRef;
-    const kIOSurfacePlaneSize: CFStringRef;
+    static kIOSurfacePlaneInfo: CFStringRef;
+    static kIOSurfacePlaneWidth: CFStringRef;
+    static kIOSurfacePlaneHeight: CFStringRef;
+    static kIOSurfacePlaneBytesPerRow: CFStringRef;
+    static kIOSurfacePlaneOffset: CFStringRef;
+    static kIOSurfacePlaneSize: CFStringRef;
 
-    const kIOSurfacePlaneBase: CFStringRef;
-    const kIOSurfacePlaneBytesPerElement: CFStringRef;
-    const kIOSurfacePlaneElementWidth: CFStringRef;
-    const kIOSurfacePlaneElementHeight: CFStringRef;
+    static kIOSurfacePlaneBase: CFStringRef;
+    static kIOSurfacePlaneBytesPerElement: CFStringRef;
+    static kIOSurfacePlaneElementWidth: CFStringRef;
+    static kIOSurfacePlaneElementHeight: CFStringRef;
 
-    const kIOSurfaceCacheMode: CFStringRef;
-    const kIOSurfaceIsGlobal: CFStringRef;
-    const kIOSurfacePixelFormat: CFStringRef;
+    static kIOSurfaceCacheMode: CFStringRef;
+    static kIOSurfaceIsGlobal: CFStringRef;
+    static kIOSurfacePixelFormat: CFStringRef;
 
     fn IOSurfaceCreate(properties: CFDictionaryRef) -> IOSurfaceRef;
     fn IOSurfaceLookup(csid: IOSurfaceID) -> IOSurfaceRef;

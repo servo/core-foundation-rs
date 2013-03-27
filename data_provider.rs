@@ -1,6 +1,6 @@
 use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFTypeID, CFTypeRef, CFWrapper};
 
-use libc::{c_void, c_char, size_t};
+use core::libc::{c_void, c_char, size_t};
 
 pub type CGDataProviderGetBytesCallback = *u8;
 pub type CGDataProviderReleaseInfoCallback = *u8;
@@ -17,10 +17,10 @@ pub type CGDataProviderGetBytesAtPositionCallback = *u8;
 struct __CGDataProvider { private: () }
 pub type CGDataProviderRef = *__CGDataProvider;
 
-pub impl AbstractCFTypeRef for CGDataProviderRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+impl AbstractCFTypeRef for CGDataProviderRef {
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CGDataProviderGetTypeID()
         }

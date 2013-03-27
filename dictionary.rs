@@ -121,7 +121,7 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
         if value.is_none() {
             fail!(fmt!("No entry found for key: %?", key));
         }
-        return option::unwrap(value);
+        return value.unwrap();
     }
 
     fn each(&self, blk: &fn(&KeyRefType, &ValueRefType) -> bool) {

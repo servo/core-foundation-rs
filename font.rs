@@ -2,17 +2,15 @@ use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFTypeID, CFTypeRef, CFW
 
 use data_provider::{CGDataProvider, CGDataProviderRef};
 
-use libc::{c_void, c_char, size_t};
-
 pub type CGGlyph = libc::c_ushort;
 
 struct __CGFont { private: () }
 pub type CGFontRef = *__CGFont;
 
-pub impl AbstractCFTypeRef for CGFontRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+impl AbstractCFTypeRef for CGFontRef {
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CGFontGetTypeID()
         }

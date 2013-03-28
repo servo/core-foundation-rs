@@ -40,7 +40,7 @@ impl AbstractCFTypeRef for CFSetRef {
 
 pub type CFSet<ElemRefType> = CFWrapper<CFSetRef, ElemRefType, ()>;
 
-impl<ElemRefType : AbstractCFTypeRef>
+pub impl<ElemRefType : AbstractCFTypeRef>
     CFSet<ElemRefType> {
     fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
         let result : CFSetRef;

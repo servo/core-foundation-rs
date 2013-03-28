@@ -79,10 +79,10 @@ impl<ElemRefType:AbstractCFTypeRef> Index<uint,ElemRefType> for CFArray<ElemRefT
     // Careful; the caller must wrap any returned reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    fn index(&self, idx: uint) -> ElemRefType {
-        assert!(idx < self.len());
+    fn index(&self, idx: &uint) -> ElemRefType {
+        assert!(*idx < self.len());
         unsafe { 
-            let elem = CFArrayGetValueAtIndex(*self.borrow_ref(), idx as CFIndex);
+            let elem = CFArrayGetValueAtIndex(*self.borrow_ref(), *idx as CFIndex);
             // Don't return a wrapped thing, since we don't know whether
             // it needs base::wrap_shared() or base::wrap_owned()
             cast::transmute::<*c_void,ElemRefType>(elem)

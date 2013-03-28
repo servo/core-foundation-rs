@@ -3,10 +3,9 @@ use font_descriptor::{CTFontAttributes, CTFontDescriptor};
 use font_descriptor::{CTFontDescriptorCreateMatchingFontDescriptors, CTFontDescriptorRef};
 use font_manager::CTFontManagerCopyAvailableFontFamilyNames;
 
-use core::libc::c_void;
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{AbstractCFTypeRef, CFAllocatorRef, CFIndex, CFRange, CFTypeID};
-use core_foundation::base::{CFTypeRef, CFWrapper, kCFAllocatorDefault};
+use core_foundation::base::{CFTypeRef, CFWrapper};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef, UntypedCFDictionary};
 use core_foundation::number::CFNumber;
 use core_foundation::set::CFSet;
@@ -16,9 +15,9 @@ struct __CTFontCollection { private: () }
 pub type CTFontCollectionRef = *__CTFontCollection;
 
 impl AbstractCFTypeRef for CTFontCollectionRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CTFontCollectionGetTypeID()
         }
@@ -28,13 +27,11 @@ impl AbstractCFTypeRef for CTFontCollectionRef {
 pub type CTFontCollection = CFWrapper<CTFontCollectionRef, (), ()>;
 
 pub trait CTFontCollectionMethods {
-    pure fn get_descriptors() -> CFArray<CTFontDescriptorRef>;
+    fn get_descriptors(&self) -> CFArray<CTFontDescriptorRef>;
 }
 
-pub impl CTFontCollectionMethods for CTFontCollection {
-    pure fn get_descriptors() -> CFArray<CTFontDescriptorRef> {
-        use core_foundation::base::CFRetain;
-
+impl CTFontCollectionMethods for CTFontCollection {
+    fn get_descriptors(&self) -> CFArray<CTFontDescriptorRef> {
         // surprise! this function follows the Get rule, despite being named *Create*.
         // So we have to addRef it to avoid CTFontCollection from double freeing it later.
         unsafe {
@@ -91,7 +88,7 @@ pub fn create_for_family(family: &str) -> CTFontCollection {
     new_from_descriptors(&matched_descs)
 }
 
-pub pure fn get_family_names() -> CFArray<CFStringRef> {
+pub fn get_family_names() -> CFArray<CFStringRef> {
     unsafe {
         CFWrapper::wrap_owned(CTFontManagerCopyAvailableFontFamilyNames())
     }
@@ -102,7 +99,7 @@ extern {
      * CTFontCollection.h
      */
 
-    const kCTFontCollectionRemoveDuplicatesOption: CFStringRef;
+    static kCTFontCollectionRemoveDuplicatesOption: CFStringRef;
 
     fn CTFontCollectionCreateCopyWithFontDescriptors(original: CTFontCollectionRef,
                                                      descriptors: CFArrayRef,

@@ -4,7 +4,6 @@ extern mod core_graphics;
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
 
-use core::libc::c_uint;
 use core_foundation::array::{CFArrayRef};
 use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFOptionFlags, CFTypeID, CFTypeRef};
 use core_foundation::base::{CFWrapper};
@@ -17,53 +16,53 @@ use core_graphics::geometry::{CGRect, CGSize};
 
 pub type CTFontUIFontType = u32;
 // kCTFontNoFontType: CTFontUIFontType = -1;
-pub const kCTFontUserFontType: CTFontUIFontType = 0;
-pub const kCTFontUserFixedPitchFontType: CTFontUIFontType = 1;
-pub const kCTFontSystemFontType: CTFontUIFontType = 2;
-pub const kCTFontEmphasizedSystemFontType: CTFontUIFontType = 3;
-pub const kCTFontSmallSystemFontType: CTFontUIFontType = 4;
-pub const kCTFontSmallEmphasizedSystemFontType: CTFontUIFontType = 5;
-pub const kCTFontMiniSystemFontType: CTFontUIFontType = 6;
-pub const kCTFontMiniEmphasizedSystemFontType: CTFontUIFontType = 7;
-pub const kCTFontViewsFontType: CTFontUIFontType = 8;
-pub const kCTFontApplicationFontType: CTFontUIFontType = 9;
-pub const kCTFontLabelFontType: CTFontUIFontType = 10;
-pub const kCTFontMenuTitleFontType: CTFontUIFontType = 11;
-pub const kCTFontMenuItemFontType: CTFontUIFontType = 12;
-pub const kCTFontMenuItemMarkFontType: CTFontUIFontType = 13;
-pub const kCTFontMenuItemCmdKeyFontType: CTFontUIFontType = 14;
-pub const kCTFontWindowTitleFontType: CTFontUIFontType = 15;
-pub const kCTFontPushButtonFontType: CTFontUIFontType = 16;
-pub const kCTFontUtilityWindowTitleFontType: CTFontUIFontType = 17;
-pub const kCTFontAlertHeaderFontType: CTFontUIFontType = 18;
-pub const kCTFontSystemDetailFontType: CTFontUIFontType = 19;
-pub const kCTFontEmphasizedSystemDetailFontType: CTFontUIFontType = 20;
-pub const kCTFontToolbarFontType: CTFontUIFontType = 21;
-pub const kCTFontSmallToolbarFontType: CTFontUIFontType = 22;
-pub const kCTFontMessageFontType: CTFontUIFontType = 23;
-pub const kCTFontPaletteFontType: CTFontUIFontType = 24;
-pub const kCTFontToolTipFontType: CTFontUIFontType = 25;
-pub const kCTFontControlContentFontType: CTFontUIFontType = 26;
+pub static kCTFontUserFontType: CTFontUIFontType = 0;
+pub static kCTFontUserFixedPitchFontType: CTFontUIFontType = 1;
+pub static kCTFontSystemFontType: CTFontUIFontType = 2;
+pub static kCTFontEmphasizedSystemFontType: CTFontUIFontType = 3;
+pub static kCTFontSmallSystemFontType: CTFontUIFontType = 4;
+pub static kCTFontSmallEmphasizedSystemFontType: CTFontUIFontType = 5;
+pub static kCTFontMiniSystemFontType: CTFontUIFontType = 6;
+pub static kCTFontMiniEmphasizedSystemFontType: CTFontUIFontType = 7;
+pub static kCTFontViewsFontType: CTFontUIFontType = 8;
+pub static kCTFontApplicationFontType: CTFontUIFontType = 9;
+pub static kCTFontLabelFontType: CTFontUIFontType = 10;
+pub static kCTFontMenuTitleFontType: CTFontUIFontType = 11;
+pub static kCTFontMenuItemFontType: CTFontUIFontType = 12;
+pub static kCTFontMenuItemMarkFontType: CTFontUIFontType = 13;
+pub static kCTFontMenuItemCmdKeyFontType: CTFontUIFontType = 14;
+pub static kCTFontWindowTitleFontType: CTFontUIFontType = 15;
+pub static kCTFontPushButtonFontType: CTFontUIFontType = 16;
+pub static kCTFontUtilityWindowTitleFontType: CTFontUIFontType = 17;
+pub static kCTFontAlertHeaderFontType: CTFontUIFontType = 18;
+pub static kCTFontSystemDetailFontType: CTFontUIFontType = 19;
+pub static kCTFontEmphasizedSystemDetailFontType: CTFontUIFontType = 20;
+pub static kCTFontToolbarFontType: CTFontUIFontType = 21;
+pub static kCTFontSmallToolbarFontType: CTFontUIFontType = 22;
+pub static kCTFontMessageFontType: CTFontUIFontType = 23;
+pub static kCTFontPaletteFontType: CTFontUIFontType = 24;
+pub static kCTFontToolTipFontType: CTFontUIFontType = 25;
+pub static kCTFontControlContentFontType: CTFontUIFontType = 26;
 
 pub type CTFontTableTag = u32;
 // TODO: create bindings for enum with 'chars' values
 
 pub type CTFontTableOptions = u32;
-pub const kCTFontTableOptionsNoOptions: CTFontTableOptions = 0;
-pub const kCTFontTableOptionsExcludeSynthetic: CTFontTableOptions = (1 << 0);
+pub static kCTFontTableOptionsNoOptions: CTFontTableOptions = 0;
+pub static kCTFontTableOptionsExcludeSynthetic: CTFontTableOptions = (1 << 0);
 
 pub type CTFontOptions = CFOptionFlags;
-pub const kCTFontOptionsDefault: CTFontOptions = 0;
-pub const kCTFontOptionsPreventAutoActivation: CTFontOptions = (1 << 0);
-pub const kCTFontOptionsPreferSystemFont: CTFontOptions = (1 << 2);
+pub static kCTFontOptionsDefault: CTFontOptions = 0;
+pub static kCTFontOptionsPreventAutoActivation: CTFontOptions = (1 << 0);
+pub static kCTFontOptionsPreferSystemFont: CTFontOptions = (1 << 2);
 
 struct __CTFont { private: () }
 pub type CTFontRef = *__CTFont;
 
 impl AbstractCFTypeRef for CTFontRef {
-    pure fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
-    static pure fn type_id() -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CTFontGetTypeID()
         }
@@ -74,27 +73,27 @@ pub type CTFont = CFWrapper<CTFontRef, (), ()>;
 
 pub trait CTFontMethods {
     // Creation methods (statics below)
-    fn copy_to_CGFont(&const self) -> CGFont;
-    fn clone_with_font_size(&const self, size: float) -> CTFont;
+    fn copy_to_CGFont(&self) -> CGFont;
+    fn clone_with_font_size(&self, size: float) -> CTFont;
 
     // Names
-    pure fn family_name(&self) -> ~str;
-    pure fn face_name(&self) -> ~str;
-    pure fn unique_name(&self) -> ~str;
-    pure fn postscript_name(&self) -> ~str;
+    fn family_name(&self) -> ~str;
+    fn face_name(&self) -> ~str;
+    fn unique_name(&self) -> ~str;
+    fn postscript_name(&self) -> ~str;
 
     // Properties
-    pure fn all_traits(&self) -> CTFontTraits;
+    fn all_traits(&self) -> CTFontTraits;
 
     // Font metrics
-    pure fn ascent(&self) -> CGFloat;
-    pure fn descent(&self) -> CGFloat;
-    pure fn underline_thickness(&self) -> CGFloat;
-    pure fn underline_position(&self) -> CGFloat;
-    pure fn bounding_box(&self) -> CGRect;
-    pure fn leading(&self) -> CGFloat;
-    pure fn x_height(&self) -> CGFloat;
-    pure fn pt_size(&self) -> CGFloat;
+    fn ascent(&self) -> CGFloat;
+    fn descent(&self) -> CGFloat;
+    fn underline_thickness(&self) -> CGFloat;
+    fn underline_position(&self) -> CGFloat;
+    fn bounding_box(&self) -> CGRect;
+    fn leading(&self) -> CGFloat;
+    fn x_height(&self) -> CGFloat;
+    fn pt_size(&self) -> CGFloat;
     fn get_glyphs_for_characters(&self,
                                  characters: *UniChar,
                                  glyphs: *CGGlyph,
@@ -139,28 +138,28 @@ pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
 }
 
 priv trait CTFontMethodsPrivate {
-    pure fn symbolic_traits() -> CTFontSymbolicTraits;
+    fn symbolic_traits(&self) -> CTFontSymbolicTraits;
 }
 
-pub impl CTFontMethodsPrivate for CTFont {
+impl CTFontMethodsPrivate for CTFont {
     // Properties
-    priv pure fn symbolic_traits() -> CTFontSymbolicTraits {
+    priv fn symbolic_traits(&self) -> CTFontSymbolicTraits {
         unsafe {
             CTFontGetSymbolicTraits(self.obj)
         }
     }
 }
 
-pub impl CTFontMethods for CTFont {
+impl CTFontMethods for CTFont {
     // Creation methods
-    fn copy_to_CGFont(&const self) -> CGFont {
+    fn copy_to_CGFont(&self) -> CGFont {
         unsafe {
             let value = CTFontCopyGraphicsFont(self.obj, ptr::null());
             CFWrapper::wrap_owned(value)
         }
     }
 
-    fn clone_with_font_size(&const self, size: float) -> CTFont {
+    fn clone_with_font_size(&self, size: float) -> CTFont {
         unsafe {
             let result = CTFontCreateCopyWithAttributes(self.obj,
                                                         size as CGFloat,
@@ -171,35 +170,35 @@ pub impl CTFontMethods for CTFont {
     }
 
     // Names
-    pure fn family_name(&self) -> ~str {
+    fn family_name(&self) -> ~str {
         unsafe {
             let value = get_string_by_name_key(self, kCTFontFamilyNameKey);
-            return option::expect(value, ~"Fonts should always have a family name.");
+            value.expect(~"Fonts should always have a family name.")
         }
     }
 
-    pure fn face_name(&self) -> ~str {
+    fn face_name(&self) -> ~str {
         unsafe {
             let value = get_string_by_name_key(self, kCTFontSubFamilyNameKey);
-            return option::expect(value, ~"Fonts should always have a face name.");
+            value.expect(~"Fonts should always have a face name.")
         }
     }
 
-    pure fn unique_name(&self) -> ~str {
+    fn unique_name(&self) -> ~str {
         unsafe {
             let value = get_string_by_name_key(self, kCTFontUniqueNameKey);
-            return option::expect(value, ~"Fonts should always have a unique name.");
+            value.expect(~"Fonts should always have a unique name.")
         }
     }
 
-    pure fn postscript_name(&self) -> ~str {
+    fn postscript_name(&self) -> ~str {
         unsafe {
             let value = get_string_by_name_key(self, kCTFontPostScriptNameKey);
-            return option::expect(value, ~"Fonts should always have a PostScript name.");
+            value.expect(~"Fonts should always have a PostScript name.")
         }
     }
 
-    pure fn all_traits(&self) -> CTFontTraits {
+    fn all_traits(&self) -> CTFontTraits {
         unsafe {
             let result = CTFontCopyTraits(self.obj);
             CFWrapper::wrap_owned(result)
@@ -207,49 +206,49 @@ pub impl CTFontMethods for CTFont {
     }
 
     // Font metrics
-    pure fn ascent(&self) -> CGFloat {
+    fn ascent(&self) -> CGFloat {
         unsafe {
             CTFontGetAscent(self.obj)
         }
     }
 
-    pure fn descent(&self) -> CGFloat {
+    fn descent(&self) -> CGFloat {
         unsafe {
             CTFontGetDescent(self.obj)
         }
     }
 
-    pure fn underline_thickness(&self) -> CGFloat {
+    fn underline_thickness(&self) -> CGFloat {
         unsafe {
             CTFontGetUnderlineThickness(self.obj)
         }
     }
 
-    pure fn underline_position(&self) -> CGFloat {
+    fn underline_position(&self) -> CGFloat {
         unsafe {
             CTFontGetUnderlinePosition(self.obj)
         }
     }
 
-    pure fn bounding_box(&self) -> CGRect {
+    fn bounding_box(&self) -> CGRect {
         unsafe {
             CTFontGetBoundingBox(self.obj)
         }
     }
 
-    pure fn leading(&self) -> CGFloat {
+    fn leading(&self) -> CGFloat {
         unsafe {
             CTFontGetLeading(self.obj)
         }
     }
 
-    pure fn x_height(&self) -> CGFloat {
+    fn x_height(&self) -> CGFloat {
         unsafe {
             CTFontGetXHeight(self.obj)
         }
     }
 
-    pure fn pt_size(&self) -> CGFloat {
+    fn pt_size(&self) -> CGFloat {
         unsafe {
             CTFontGetSize(self.obj)
         }
@@ -301,7 +300,7 @@ priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~
 
 pub fn debug_font_names(font: &CTFont) {
     fn get_key(font: &CTFont, key: CFStringRef) -> ~str {
-        option::unwrap(get_string_by_name_key(font, key))
+        get_string_by_name_key(font, key).unwrap()
     }
 
     io::println(fmt!("kCTFontFamilyNameKey: %s", get_key(font, kCTFontFamilyNameKey)));
@@ -334,39 +333,39 @@ extern {
      */
 
     /* Name Specifier Constants */
-    const kCTFontCopyrightNameKey: CFStringRef;
-    const kCTFontFamilyNameKey: CFStringRef;
-    const kCTFontSubFamilyNameKey: CFStringRef;
-    const kCTFontStyleNameKey: CFStringRef;
-    const kCTFontUniqueNameKey: CFStringRef;
-    const kCTFontFullNameKey: CFStringRef;
-    const kCTFontVersionNameKey: CFStringRef;
-    const kCTFontPostScriptNameKey: CFStringRef;
-    const kCTFontTrademarkNameKey: CFStringRef;
-    const kCTFontManufacturerNameKey: CFStringRef;
-    const kCTFontDesignerNameKey: CFStringRef;
-    const kCTFontDescriptionNameKey: CFStringRef;
-    const kCTFontVendorURLNameKey: CFStringRef;
-    const kCTFontDesignerURLNameKey: CFStringRef;
-    const kCTFontLicenseNameKey: CFStringRef;
-    const kCTFontLicenseURLNameKey: CFStringRef;
-    const kCTFontSampleTextNameKey: CFStringRef;
-    const kCTFontPostScriptCIDNameKey: CFStringRef;
+    static kCTFontCopyrightNameKey: CFStringRef;
+    static kCTFontFamilyNameKey: CFStringRef;
+    static kCTFontSubFamilyNameKey: CFStringRef;
+    static kCTFontStyleNameKey: CFStringRef;
+    static kCTFontUniqueNameKey: CFStringRef;
+    static kCTFontFullNameKey: CFStringRef;
+    static kCTFontVersionNameKey: CFStringRef;
+    static kCTFontPostScriptNameKey: CFStringRef;
+    static kCTFontTrademarkNameKey: CFStringRef;
+    static kCTFontManufacturerNameKey: CFStringRef;
+    static kCTFontDesignerNameKey: CFStringRef;
+    static kCTFontDescriptionNameKey: CFStringRef;
+    static kCTFontVendorURLNameKey: CFStringRef;
+    static kCTFontDesignerURLNameKey: CFStringRef;
+    static kCTFontLicenseNameKey: CFStringRef;
+    static kCTFontLicenseURLNameKey: CFStringRef;
+    static kCTFontSampleTextNameKey: CFStringRef;
+    static kCTFontPostScriptCIDNameKey: CFStringRef;
 
-    const kCTFontVariationAxisIdentifierKey: CFStringRef;
-    const kCTFontVariationAxisMinimumValueKey: CFStringRef;
-    const kCTFontVariationAxisMaximumValueKey: CFStringRef;
-    const kCTFontVariationAxisDefaultValueKey: CFStringRef;
-    const kCTFontVariationAxisNameKey: CFStringRef;
+    static kCTFontVariationAxisIdentifierKey: CFStringRef;
+    static kCTFontVariationAxisMinimumValueKey: CFStringRef;
+    static kCTFontVariationAxisMaximumValueKey: CFStringRef;
+    static kCTFontVariationAxisDefaultValueKey: CFStringRef;
+    static kCTFontVariationAxisNameKey: CFStringRef;
 
-    const kCTFontFeatureTypeIdentifierKey: CFStringRef;
-    const kCTFontFeatureTypeNameKey: CFStringRef;
-    const kCTFontFeatureTypeExclusiveKey: CFStringRef;
-    const kCTFontFeatureTypeSelectorsKey: CFStringRef;
-    const kCTFontFeatureSelectorIdentifierKey: CFStringRef;
-    const kCTFontFeatureSelectorNameKey: CFStringRef;
-    const kCTFontFeatureSelectorDefaultKey: CFStringRef;
-    const kCTFontFeatureSelectorSettingKey: CFStringRef;
+    static kCTFontFeatureTypeIdentifierKey: CFStringRef;
+    static kCTFontFeatureTypeNameKey: CFStringRef;
+    static kCTFontFeatureTypeExclusiveKey: CFStringRef;
+    static kCTFontFeatureTypeSelectorsKey: CFStringRef;
+    static kCTFontFeatureSelectorIdentifierKey: CFStringRef;
+    static kCTFontFeatureSelectorNameKey: CFStringRef;
+    static kCTFontFeatureSelectorDefaultKey: CFStringRef;
+    static kCTFontFeatureSelectorSettingKey: CFStringRef;
 
     // N.B. Unlike most Cocoa bindings, this extern block is organized according
     // to the documentation's Functions By Task listing, because there so many functions.

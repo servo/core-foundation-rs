@@ -137,13 +137,13 @@ pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
     }
 }
 
-priv trait CTFontMethodsPrivate {
+pub trait CTFontMethodsPrivate {
     fn symbolic_traits(&self) -> CTFontSymbolicTraits;
 }
 
 impl CTFontMethodsPrivate for CTFont {
     // Properties
-    priv fn symbolic_traits(&self) -> CTFontSymbolicTraits {
+    fn symbolic_traits(&self) -> CTFontSymbolicTraits {
         unsafe {
             CTFontGetSymbolicTraits(self.obj)
         }

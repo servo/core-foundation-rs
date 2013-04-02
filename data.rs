@@ -26,7 +26,7 @@ impl AbstractCFTypeRef for CFDataRef {
 
 type CFData = CFWrapper<CFDataRef, (), ()>;
 
-impl CFData {
+pub impl CFData {
     fn new_from_buf(buf: &[u8]) -> CFData {
         let result;
         unsafe {

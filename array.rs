@@ -2,7 +2,6 @@ use base::{
     AbstractCFTypeRef,
     CFAllocatorRef,
     CFIndex,
-    CFRange,
     CFTypeID,
     CFTypeRef,
     CFWrapper,

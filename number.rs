@@ -2,14 +2,13 @@ use base::{
     AbstractCFTypeRef,
     Boolean,
     CFAllocatorRef,
-    CFIndex,
     CFTypeID,
     CFTypeRef,
     CFWrapper,
     kCFAllocatorDefault
 };
 
-use core::libc::{c_int, c_void};
+use core::libc::c_void;
 
 pub type CFNumberType = u32;
 

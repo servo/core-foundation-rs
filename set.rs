@@ -8,7 +8,7 @@ use base::{
     CFWrapper,
     kCFAllocatorDefault,
 };
-use core::libc::{c_char, c_void};
+use core::libc::c_void;
 
 pub type CFSetRetainCallBack = *u8;
 pub type CFSetReleaseCallBack = *u8;

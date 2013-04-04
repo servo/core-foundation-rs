@@ -1,7 +1,7 @@
-use boolean::{CFBoolean, CFBooleanRef};
-use number::{CFNumber, CFNumberRef};
+use boolean::CFBoolean;
+use number::CFNumber;
 use dictionary::CFDictionary;
-use string::{CFString, CFStringRef};
+use string::CFString;
 
 fn main() {
     /*let n = CFNumber::new_number(42 as i32);

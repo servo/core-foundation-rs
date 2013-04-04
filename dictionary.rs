@@ -3,13 +3,12 @@ use base::{
     Boolean,
     CFAllocatorRef,
     CFIndex,
-    CFType,
     CFTypeID,
     CFTypeRef,
     CFWrapper,
     kCFAllocatorDefault
 };
-use string::{CFString, CFStringRef};
+use string::CFStringRef;
 
 use core::libc::c_void;
 

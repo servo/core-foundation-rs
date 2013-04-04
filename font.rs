@@ -1,4 +1,4 @@
-use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFTypeID, CFTypeRef, CFWrapper};
+use core_foundation::base::{AbstractCFTypeRef, CFTypeID, CFTypeRef, CFWrapper};
 
 use data_provider::{CGDataProvider, CGDataProviderRef};
 

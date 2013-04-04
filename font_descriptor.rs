@@ -1,12 +1,12 @@
 use core_foundation;
 use core_foundation::array::CFArrayRef;
-use core_foundation::base::{AbstractCFTypeRef, CFAllocatorRef, CFIndex, CFGetTypeID, CFRange};
-use core_foundation::base::{CFType, CFTypeID, CFTypeRef, CFWrapper};
-use core_foundation::dictionary::{CFDictionary, CFDictionaryRef, UntypedCFDictionary};
+use core_foundation::base::AbstractCFTypeRef;
+use core_foundation::base::{CFTypeID, CFTypeRef, CFWrapper};
+use core_foundation::dictionary::{CFDictionaryRef, UntypedCFDictionary};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
-use core_foundation::string::{CFString, CFStringRef, CFStringGetTypeID};
-use core_foundation::url::{CFURL, CFURLRef, CFURLGetTypeID};
+use core_foundation::string::CFStringRef;
+use core_foundation::url::{CFURLRef};
 use core_graphics::base::CGFloat;
 
 /*

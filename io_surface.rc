@@ -14,10 +14,9 @@ use core_foundation::base::{
     CFWrapper,
 };
 use core_foundation::dictionary::{
-    CFDictionary,
     CFDictionaryRef,
     UntypedCFDictionary};
-use core_foundation::string::{CFString, CFStringRef};
+use core_foundation::string::CFStringRef;
 
 struct __IOSurface { private: () }
 pub type IOSurfaceRef = *__IOSurface;

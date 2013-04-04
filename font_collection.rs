@@ -1,12 +1,12 @@
 use font_descriptor;
-use font_descriptor::{CTFontAttributes, CTFontDescriptor};
+use font_descriptor::CTFontDescriptor;
 use font_descriptor::{CTFontDescriptorCreateMatchingFontDescriptors, CTFontDescriptorRef};
 use font_manager::CTFontManagerCopyAvailableFontFamilyNames;
 
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{AbstractCFTypeRef, CFAllocatorRef, CFIndex, CFRange, CFTypeID};
+use core_foundation::base::{AbstractCFTypeRef, CFTypeID};
 use core_foundation::base::{CFTypeRef, CFWrapper};
-use core_foundation::dictionary::{CFDictionary, CFDictionaryRef, UntypedCFDictionary};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
 use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};

@@ -80,8 +80,8 @@ impl<T,E1,E2> Drop for CFWrapper<T,E1,E2> {
 
 pub type CFType = CFWrapper<CFTypeRef, (), ()>;
 
-pub impl<T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
-    fn borrow_ref(&self) -> &'self T {
+pub impl<'self, T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
+    fn borrow_ref(&'self self) -> &'self T {
         &self.obj
     }
 

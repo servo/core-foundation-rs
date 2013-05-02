@@ -26,13 +26,32 @@ impl AbstractCFTypeRef for CGFontRef {
     }
 }
 
-pub type CGFont = CFWrapper<CGFontRef, (), ()>;
+pub struct CGFont {
+    contents: CFWrapper<CGFontRef, (), ()>
+}
+
+impl CGFont {
+    /// Convenience method to make it easier to wrap external `CGFont` instances.
+    pub fn wrap_shared(font: CGFontRef) -> CGFont {
+        CGFont {
+            contents: CFWrapper::wrap_shared(font)
+        }
+    }
+}
+
+impl Clone for CGFont {
+    fn clone(&self) -> CGFont {
+        CGFont::wrap_shared(*self.contents.borrow_ref())
+    }
+}
 
 pub fn create_with_data_provider(provider: &CGDataProvider) -> CGFont {
     // TODO: error handling
     unsafe {
         let value = CGFontCreateWithDataProvider(*provider.borrow_ref());
-        CFWrapper::wrap_owned(value)
+        CGFont {
+            contents: CFWrapper::wrap_owned(value)
+        }
     }
 }
 

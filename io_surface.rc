@@ -50,7 +50,7 @@ pub trait IOSurfaceMethods {
 
 pub fn new(properties: &UntypedCFDictionary) -> IOSurface {
     unsafe {
-        let result = IOSurfaceCreate(*properties.borrow_ref());
+        let result = IOSurfaceCreate(*properties.contents.borrow_ref());
         CFWrapper::wrap_owned(result)
     }
 }

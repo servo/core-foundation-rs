@@ -47,21 +47,30 @@ impl AbstractCFTypeRef for CFSetRef {
     }
 }
 
-pub type CFSet<ElemRefType> = CFWrapper<CFSetRef, ElemRefType, ()>;
+// FIXME: Should be a newtype struct, but that fails due to a Rust compiler
+// bug.
+pub struct CFSet<ElemRefType> {
+    contents: CFWrapper<CFSetRef, ElemRefType, ()>
+}
 
-pub impl<ElemRefType : AbstractCFTypeRef>
-    CFSet<ElemRefType> {
+pub impl<ElemRefType : AbstractCFTypeRef> CFSet<ElemRefType> {
     fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
-        let result : CFSetRef;
-        let elems_refs = do vec::map(elems) |e: &ElemRefType| { e.as_type_ref() };
+        let result: CFSetRef;
+        let elems_refs = do vec::map(elems) |e: &ElemRefType| {
+            e.as_type_ref() 
+        };
 
         unsafe {
             result = CFSetCreate(kCFAllocatorDefault,
-                                  cast::transmute::<*CFTypeRef,**c_void>(vec::raw::to_ptr(elems_refs)),
+                                  cast::transmute::<*CFTypeRef,**c_void>(
+                                    vec::raw::to_ptr(elems_refs)),
                                   elems.len() as CFIndex,
-                                  ptr::to_unsafe_ptr(&kCFTypeSetCallBacks));
+                                  &kCFTypeSetCallBacks);
         }
-        CFWrapper::wrap_owned(result)
+
+        CFSet {
+            contents: CFWrapper::wrap_owned(result)
+        }
     }
 }
 

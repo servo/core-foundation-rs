@@ -7,21 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{
-    AbstractCFTypeRef,
-    Boolean,
-    CFAllocatorRef,
-    CFIndex,
-    CFOptionFlags,
-    CFRange,
-    CFRangeMake,
-    CFTypeRef,
-    CFTypeID,
-    CFWrapper,
-
-    kCFAllocatorDefault,
-    kCFAllocatorNull,
-};
+use base::{AbstractCFTypeRef, Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange};
+use base::{CFRangeMake, CFTypeRef, CFTypeID, CFWrapper, kCFAllocatorDefault, kCFAllocatorNull};
 
 pub type UniChar = libc::c_ushort;
 
@@ -215,13 +202,26 @@ impl AbstractCFTypeRef for CFStringRef {
     }
 }
 
-pub type CFString = CFWrapper<CFStringRef, (), ()>;
+// FIXME: Should be a newtype struct, but that fails due to a Rust compiler bug.
+pub struct CFString {
+    contents: CFWrapper<CFStringRef, (), ()>
+}
 
 pub impl CFString {
     // convenience method to make it easier to wrap extern
     // CFStringRefs without providing explicit typarams to base::wrap()
-    fn wrap_extern(string: CFStringRef) -> CFString {
-        CFWrapper::wrap_shared(string)
+    fn wrap_owned(string: CFStringRef) -> CFString {
+        CFString {
+            contents: CFWrapper::wrap_owned(string)
+        }
+    }
+
+    // convenience method to make it easier to wrap extern
+    // CFStringRefs without providing explicit typarams to base::wrap()
+    fn wrap_shared(string: CFStringRef) -> CFString {
+        CFString {
+            contents: CFWrapper::wrap_shared(string)
+        }
     }
 
     // like CFString::new, but references a string that can be used as
@@ -237,7 +237,10 @@ pub impl CFString {
                                               kCFAllocatorNull)
             }
         };
-        CFWrapper::wrap_owned(string_ref)
+
+        CFString {
+            contents: CFWrapper::wrap_owned(string_ref)
+        }
     }
 
     fn new(string: &str) -> CFString {
@@ -251,16 +254,17 @@ pub impl CFString {
                                         kCFAllocatorNull)
             }
         };
-        CFWrapper::wrap_owned(string_ref)
+
+        CFString {
+            contents: CFWrapper::wrap_owned(string_ref)
+        }
     }
 
     pub fn char_len(&self) -> uint {
         unsafe {
-            CFStringGetLength(self.obj) as uint
+            CFStringGetLength(self.contents.obj) as uint
         }
     }
-
-    
 }
 
 impl ToStr for CFString {
@@ -271,7 +275,7 @@ impl ToStr for CFString {
             let encoding = kCFStringEncodingUTF8;
             let mut bytes_required: CFIndex = 0 as CFIndex;
             // first, ask how big the buffer ought to be.
-            CFStringGetBytes(self.obj,
+            CFStringGetBytes(self.contents.obj,
                              range,
                              encoding,
                              0,
@@ -283,7 +287,7 @@ impl ToStr for CFString {
             let buffer : ~[u8] = vec::from_elem(1+bytes_required as uint, '\x00' as u8);
             let mut bytes_used: CFIndex = 0 as CFIndex;
             // then, allocate the buffer and actually copy.
-            let chars_written = CFStringGetBytes(self.obj,
+            let chars_written = CFStringGetBytes(self.contents.obj,
                                                  range,
                                                  encoding,
                                                  0,
@@ -320,19 +324,19 @@ extern {
     //fn CFStringCreateCopy
     //fn CFStringCreateFromExternalRepresentation
     fn CFStringCreateWithBytes(alloc: CFAllocatorRef,
-                                     bytes: *u8,
-                                     numBytes: CFIndex,
-                                     encoding: CFStringEncoding,
-                                     isExternalRepresentation: Boolean,
-                                     contentsDeallocator: CFAllocatorRef)
-                                  -> CFStringRef;
+                               bytes: *u8,
+                               numBytes: CFIndex,
+                               encoding: CFStringEncoding,
+                               isExternalRepresentation: Boolean,
+                               contentsDeallocator: CFAllocatorRef)
+                               -> CFStringRef;
     fn CFStringCreateWithBytesNoCopy(alloc: CFAllocatorRef,
                                      bytes: *u8,
                                      numBytes: CFIndex,
                                      encoding: CFStringEncoding,
                                      isExternalRepresentation: Boolean,
                                      contentsDeallocator: CFAllocatorRef)
-                                  -> CFStringRef;
+                                     -> CFStringRef;
     //fn CFStringCreateWithCharacters
     //fn CFStringCreateWithCharactersNoCopy
     //fn CFStringCreateWithCString
@@ -360,9 +364,15 @@ extern {
 
     /* Accessing Characters */
     //fn CFStringCreateExternalRepresentation
-    fn CFStringGetBytes(theString: CFStringRef, ++range: CFRange, encoding: CFStringEncoding, 
-                        lossByte: u8, isExternalRepresentation: Boolean,
-                        buffer: *u8, maxBufLen: CFIndex, usedBufLen: *CFIndex) -> CFIndex;
+    fn CFStringGetBytes(theString: CFStringRef,
+                        range: CFRange,
+                        encoding: CFStringEncoding, 
+                        lossByte: u8,
+                        isExternalRepresentation: Boolean,
+                        buffer: *u8,
+                        maxBufLen: CFIndex,
+                        usedBufLen: *CFIndex)
+                        -> CFIndex;
     //fn CFStringGetCharacterAtIndex
     //fn CFStringGetCharacters
     //fn CFStringGetCharactersPtr

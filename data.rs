@@ -33,29 +33,42 @@ impl AbstractCFTypeRef for CFDataRef {
     }
 }
 
-type CFData = CFWrapper<CFDataRef, (), ()>;
+// FIXME: Should be a newtype struct, but that fails due to a Rust compiler
+// bug.
+pub struct CFData {
+    contents: CFWrapper<CFDataRef, (), ()>
+}
 
 pub impl CFData {
+    fn wrap_owned(data: CFDataRef) -> CFData {
+        CFData {
+            contents: CFWrapper::wrap_owned(data)
+        }
+    }
+
     fn new_from_buf(buf: &[u8]) -> CFData {
         let result;
         unsafe {
             result = CFDataCreate(kCFAllocatorDefault, 
-                                  vec::raw::to_ptr(buf), buf.len() as CFIndex);
+                                  vec::raw::to_ptr(buf),
+                                  buf.len() as CFIndex);
         }
 
-        CFWrapper::wrap_owned(result)
+        CFData {
+            contents: CFWrapper::wrap_owned(result)
+        }
     }
 
     // tread with caution; read-only
     fn bytes(&self) -> *u8 {
         unsafe {
-            CFDataGetBytePtr(self.obj)
+            CFDataGetBytePtr(self.contents.obj)
         }
     }
 
     fn len(&self) -> uint {
         unsafe {
-            CFDataGetLength(self.obj) as uint
+            CFDataGetLength(self.contents.obj) as uint
         }
     }
 

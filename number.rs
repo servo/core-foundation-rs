@@ -7,15 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{
-    AbstractCFTypeRef,
-    Boolean,
-    CFAllocatorRef,
-    CFTypeID,
-    CFTypeRef,
-    CFWrapper,
-    kCFAllocatorDefault
-};
+use base::{AbstractCFTypeRef, Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, CFWrapper};
+use base::{kCFAllocatorDefault};
 
 use core::libc::c_void;
 
@@ -53,15 +46,31 @@ impl AbstractCFTypeRef for CFNumberRef {
     }
 }
 
-pub type CFNumber = CFWrapper<CFNumberRef, (), ()>;
+pub struct CFNumber {
+    contents: CFWrapper<CFNumberRef, (), ()>
+}
 
 pub impl CFNumber {
+    fn wrap_owned(number: CFNumberRef) -> CFNumber {
+        CFNumber {
+            contents: CFWrapper::wrap_owned(number)
+        }
+    }
+
+    fn wrap_shared(number: CFNumberRef) -> CFNumber {
+        CFNumber {
+            contents: CFWrapper::wrap_shared(number)
+        }
+    }
+
     fn new<T:Copy + ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             let objref = CFNumberCreate(kCFAllocatorDefault,
                                         n.cf_number_type(),
                                         cast::transmute::<&T, *c_void>(&n));
-            CFWrapper::wrap_owned(objref)
+            CFNumber {
+                contents: CFWrapper::wrap_owned(objref)
+            }
         }
     }
 
@@ -70,7 +79,7 @@ pub impl CFNumber {
         assert!(self.has_number_type(ty));
         unsafe {
             let val: i8 = 0i8;
-            if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i8, *c_void>(&val)) {
+            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&i8, *c_void>(&val)) {
                 fail!(~"Error in unwrapping CFNumber to i8");
             }
             return val;
@@ -82,7 +91,7 @@ pub impl CFNumber {
         assert!(self.has_number_type(ty));
         unsafe {
             let val: i16 = 0i16;
-            if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i16, *c_void>(&val)) {
+            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&i16, *c_void>(&val)) {
                 fail!(~"Error in unwrapping CFNumber to i16");
             }
             return val;
@@ -94,7 +103,7 @@ pub impl CFNumber {
         assert!(self.has_number_type(ty));
         unsafe {
             let val: i32 = 0i32;
-            if !CFNumberGetValue(self.obj, ty, cast::transmute::<&i32, *c_void>(&val)) {
+            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&i32, *c_void>(&val)) {
                 fail!(~"Error in unwrapping CFNumber to i32");
             }
             return val;
@@ -104,17 +113,21 @@ pub impl CFNumber {
     fn to_float(&self) -> float {
         unsafe {
             assert!(self.has_float_type());
-            let ty = CFNumberGetType(self.obj);
+            let ty = CFNumberGetType(self.contents.obj);
             if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
                 let mut val: libc::c_float = 0.0f as libc::c_float;
-                if !CFNumberGetValue(self.obj, ty, cast::transmute::<&libc::c_float, *c_void>(&val)) {
+                if !CFNumberGetValue(self.contents.obj,
+                                     ty,
+                                     cast::transmute::<&libc::c_float, *c_void>(&val)) {
                     fail!(~"Error in unwrapping CFNumber to libc::c_float");
                 }
                 return val as float;
             }
             else if ty == kCFNumberFloat64Type || ty == kCFNumberDoubleType {
                 let mut val: libc::c_double = 0.0f as libc::c_double;
-                if !CFNumberGetValue(self.obj, ty, cast::transmute::<&libc::c_double, *c_void>(&val)) {
+                if !CFNumberGetValue(self.contents.obj,
+                                     ty,
+                                     cast::transmute::<&libc::c_double, *c_void>(&val)) {
                         fail!(~"Error in unwrapping CFNumber to libc::c_double");
                     }
                 return val as float;
@@ -126,13 +139,13 @@ pub impl CFNumber {
 
     priv fn has_float_type(&self) -> bool {
         unsafe {
-            CFNumberIsFloatType(self.obj) as bool
+            CFNumberIsFloatType(self.contents.obj) as bool
         }
     }
 
     priv fn has_number_type(&self, ty: CFNumberType) -> bool {
         unsafe {
-            CFNumberGetType(self.obj) == ty
+            CFNumberGetType(self.contents.obj) == ty
         }
     }
 }
@@ -143,23 +156,33 @@ pub trait ConvertibleToCFNumber {
 }
 
 impl ConvertibleToCFNumber for i8 {
-    fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt8Type as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType {
+        kCFNumberSInt8Type as CFNumberType
+    }
 }
 
 impl ConvertibleToCFNumber for i16 {
-    fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt16Type as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType {
+        kCFNumberSInt16Type as CFNumberType
+    }
 }
 
 impl ConvertibleToCFNumber for i32 {
-    fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt32Type as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType {
+        kCFNumberSInt32Type as CFNumberType
+    }
 }
 
 impl ConvertibleToCFNumber for i64 {
-    fn cf_number_type(&self) -> CFNumberType { kCFNumberSInt64Type as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType {
+        kCFNumberSInt64Type as CFNumberType
+    }
 }
 
 impl ConvertibleToCFNumber for float {
-    fn cf_number_type(&self) -> CFNumberType { kCFNumberFloatType as CFNumberType }
+    fn cf_number_type(&self) -> CFNumberType {
+        kCFNumberFloatType as CFNumberType
+    }
 }
 
 #[link_args="-framework CoreFoundation"]

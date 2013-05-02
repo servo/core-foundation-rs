@@ -25,9 +25,9 @@ fn main() {
     let n42 = CFNumber::new(42 as i32);
 
     let d = CFDictionary::new([
-        (*bar.borrow_ref(), *boo.borrow_type_ref()),
-        (*baz.borrow_ref(), *tru.borrow_type_ref()),
-        (*foo.borrow_ref(), *n42.borrow_type_ref()),
+        (*bar.contents.borrow_ref(), *boo.contents.borrow_type_ref()),
+        (*baz.contents.borrow_ref(), *tru.contents.borrow_type_ref()),
+        (*foo.contents.borrow_ref(), *n42.contents.borrow_type_ref()),
     ]);
-    d.show();
+    d.contents.show();
 }

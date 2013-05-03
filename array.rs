@@ -169,13 +169,13 @@ fn should_box_and_unbox() {
     let mut sum = 0i32;
 
     for arr.each |elem: &CFNumberRef| {
-        sum += CFWrapper::wrap_shared(*elem).to_i32();
+        sum += CFNumber::wrap_shared(*elem).to_i32();
     }
 
     assert!(sum == 15);
 
     for arr.each |elem: &CFNumberRef| {
-        sum += CFWrapper::wrap_shared(*elem).to_i32();
+        sum += CFNumber::wrap_shared(*elem).to_i32();
     }
 
     assert!(sum == 30);

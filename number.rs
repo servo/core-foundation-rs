@@ -212,6 +212,7 @@ fn should_fail_on_bad_downcast() {
     use base;
     use boolean::CFBooleanRef;
 
-    let one = CFWrapper::to_CFType(CFNumber::new(1_i32));
+    let CFNumber { contents: one } = CFNumber::new(1_i32);
+    let one = CFWrapper::to_CFType(one);
     base::downcast::<CFBooleanRef>(*one.borrow_ref());
 }

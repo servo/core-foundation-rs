@@ -27,15 +27,23 @@ impl AbstractCFTypeRef for CFBooleanRef {
     }
 }
 
-pub type CFBoolean = CFWrapper<CFBooleanRef, (), ()>;
+// FIXME: Should be a newtype struct, but that fails due to a Rust compiler
+// bug.
+pub struct CFBoolean {
+    contents: CFWrapper<CFBooleanRef, (), ()>
+}
 
 pub impl CFBoolean {
     fn true_value() -> CFBoolean {
-        CFWrapper::wrap_shared(kCFBooleanTrue)
+        CFBoolean {
+            contents: CFWrapper::wrap_shared(kCFBooleanTrue)
+        }
     }
 
     fn false_value() -> CFBoolean {
-        CFWrapper::wrap_shared(kCFBooleanFalse)
+        CFBoolean {
+            contents: CFWrapper::wrap_shared(kCFBooleanFalse)
+        }
     }
 }
 

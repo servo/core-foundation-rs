@@ -7,22 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{
-    AbstractCFTypeRef,
-    CFAllocatorRef,
-    CFOptionFlags,
-    CFTypeID,
-    CFTypeRef,
-    CFWrapper,
-};
-use data::{
-    CFDataRef,
-};
-use string::{
-    CFString,
-    CFStringRef,
-    CFStringEncoding,
-};
+use base::{AbstractCFTypeRef, CFAllocatorRef, CFOptionFlags, CFTypeID, CFTypeRef, CFWrapper};
+use data::{CFDataRef};
+use string::{CFString, CFStringRef, CFStringEncoding};
 
 struct __CFURL { private: () }
 pub type CFURLRef = *__CFURL;
@@ -42,7 +29,9 @@ pub type CFURL = CFWrapper<CFURLRef, (), ()>;
 impl ToStr for CFURL {
     fn to_str(&self) -> ~str {
         unsafe {
-            let cfstr: CFString = CFWrapper::wrap_shared(CFURLGetString(self.obj));
+            let cfstr: CFString = CFString {
+                contents: CFWrapper::wrap_shared(CFURLGetString(self.obj))
+            };
             cfstr.to_str()
         }
     }

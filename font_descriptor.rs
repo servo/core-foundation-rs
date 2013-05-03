@@ -14,7 +14,7 @@ use core_foundation::base::{CFTypeID, CFTypeRef, CFWrapper};
 use core_foundation::dictionary::{CFDictionaryRef, UntypedCFDictionary};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
-use core_foundation::string::CFStringRef;
+use core_foundation::string::{CFString, CFStringRef};
 use core_foundation::url::{CFURLRef};
 use core_graphics::base::CGFloat;
 
@@ -127,7 +127,7 @@ priv trait TraitAccessorPrivate {
 impl TraitAccessorPrivate for CTFontTraits {
     priv fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
         let value = self.get(&key);
-        CFWrapper::wrap_shared(core_foundation::base::downcast::<CFNumberRef>(value))
+        CFNumber::wrap_shared(core_foundation::base::downcast::<CFNumberRef>(value))
     }
 
 }
@@ -213,7 +213,7 @@ impl CTFontDescriptorMethodsPrivate for CTFontDescriptor {
                 return None;
             }
 
-            Some(CFWrapper::wrap_owned(core_foundation::base::downcast::<CFStringRef>(
+            Some(CFString::wrap_owned(core_foundation::base::downcast::<CFStringRef>(
                     value)).to_str())
         }
     }

@@ -17,7 +17,7 @@ use core_foundation::array::{CFArrayRef};
 use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFOptionFlags, CFTypeID, CFTypeRef};
 use core_foundation::base::{CFWrapper};
 use core_foundation::data::{CFData, CFDataRef};
-use core_foundation::dictionary::CFDictionaryRef;
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef, UniChar};
 use core_graphics::base::{CGAffineTransform, CGFloat};
 use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
@@ -119,7 +119,7 @@ pub trait CTFontMethods {
 
 pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
     unsafe {
-        let result = CTFontCreateWithGraphicsFont(*cgfont.borrow_ref(),
+        let result = CTFontCreateWithGraphicsFont(*cgfont.contents.borrow_ref(),
                                                   pt_size as CGFloat,
                                                   ptr::null(),
                                                   ptr::null());
@@ -139,8 +139,12 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
 pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
     unsafe {
         let cfname = CFString::new(name);
-        let result = CTFontCreateWithName(*cfname.borrow_ref(), pt_size as CGFloat, ptr::null());
-        if result.is_null() { return Err(()); }
+        let result = CTFontCreateWithName(*cfname.contents.borrow_ref(),
+                                          pt_size as CGFloat,
+                                          ptr::null());
+        if result.is_null() {
+            return Err(());
+        }
 
         return Ok(CFWrapper::wrap_owned(result));
     }
@@ -164,7 +168,7 @@ impl CTFontMethods for CTFont {
     fn copy_to_CGFont(&self) -> CGFont {
         unsafe {
             let value = CTFontCopyGraphicsFont(self.obj, ptr::null());
-            CFWrapper::wrap_owned(value)
+            CGFont::wrap_owned(value)
         }
     }
 
@@ -210,7 +214,7 @@ impl CTFontMethods for CTFont {
     fn all_traits(&self) -> CTFontTraits {
         unsafe {
             let result = CTFontCopyTraits(self.obj);
-            CFWrapper::wrap_owned(result)
+            CFDictionary::wrap_owned(result)
         }
     }
 
@@ -291,7 +295,7 @@ impl CTFontMethods for CTFont {
                                          kCTFontTableOptionsExcludeSynthetic);
             return match result.is_null() {
                 true => None,
-                false => Some(CFWrapper::wrap_owned(result)),
+                false => Some(CFData::wrap_owned(result)),
             }
         }
     }
@@ -303,7 +307,7 @@ priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~
         let result = CTFontCopyName(*font.borrow_ref(), name_key);
         if result.is_null() { return None; }
 
-        return Some(CFWrapper::wrap_owned(result).to_str());
+        return Some(CFString::wrap_owned(result).to_str());
     }
 }
 

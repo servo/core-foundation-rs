@@ -32,6 +32,13 @@ pub struct CGFont {
 
 impl CGFont {
     /// Convenience method to make it easier to wrap external `CGFont` instances.
+    pub fn wrap_owned(font: CGFontRef) -> CGFont {
+        CGFont {
+            contents: CFWrapper::wrap_owned(font)
+        }
+    }
+
+    /// Convenience method to make it easier to wrap external `CGFont` instances.
     pub fn wrap_shared(font: CGFontRef) -> CGFont {
         CGFont {
             contents: CFWrapper::wrap_shared(font)

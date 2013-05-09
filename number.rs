@@ -78,8 +78,8 @@ pub impl CFNumber {
         let ty = kCFNumberSInt8Type;
         assert!(self.has_number_type(ty));
         unsafe {
-            let val: i8 = 0i8;
-            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&i8, *c_void>(&val)) {
+            let mut val: i8 = 0i8;
+            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&mut i8, *mut c_void>(&mut val)) {
                 fail!(~"Error in unwrapping CFNumber to i8");
             }
             return val;
@@ -90,8 +90,8 @@ pub impl CFNumber {
         let ty = kCFNumberSInt16Type;
         assert!(self.has_number_type(ty));
         unsafe {
-            let val: i16 = 0i16;
-            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&i16, *c_void>(&val)) {
+            let mut val: i16 = 0i16;
+            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&mut i16, *mut c_void>(&mut val)) {
                 fail!(~"Error in unwrapping CFNumber to i16");
             }
             return val;
@@ -102,8 +102,8 @@ pub impl CFNumber {
         let ty = kCFNumberSInt32Type;
         assert!(self.has_number_type(ty));
         unsafe {
-            let val: i32 = 0i32;
-            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&i32, *c_void>(&val)) {
+            let mut val: i32 = 0i32;
+            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&mut i32, *mut c_void>(&mut val)) {
                 fail!(~"Error in unwrapping CFNumber to i32");
             }
             return val;
@@ -118,7 +118,7 @@ pub impl CFNumber {
                 let mut val: libc::c_float = 0.0f as libc::c_float;
                 if !CFNumberGetValue(self.contents.obj,
                                      ty,
-                                     cast::transmute::<&libc::c_float, *c_void>(&val)) {
+                                     cast::transmute::<&mut libc::c_float, *mut c_void>(&mut val)) {
                     fail!(~"Error in unwrapping CFNumber to libc::c_float");
                 }
                 return val as float;
@@ -127,7 +127,7 @@ pub impl CFNumber {
                 let mut val: libc::c_double = 0.0f as libc::c_double;
                 if !CFNumberGetValue(self.contents.obj,
                                      ty,
-                                     cast::transmute::<&libc::c_double, *c_void>(&val)) {
+                                     cast::transmute::<&mut libc::c_double, *mut c_void>(&mut val)) {
                         fail!(~"Error in unwrapping CFNumber to libc::c_double");
                     }
                 return val as float;
@@ -200,7 +200,7 @@ extern {
                    -> CFNumberRef;
     //fn CFNumberGetByteSize
     fn CFNumberGetType(number: CFNumberRef) -> CFNumberType;
-    fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *c_void) -> bool;
+    fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *mut c_void) -> bool;
     fn CFNumberIsFloatType(number: CFNumberRef) -> Boolean;
     //fn CFNumberCompare
     fn CFNumberGetTypeID() -> CFTypeID;

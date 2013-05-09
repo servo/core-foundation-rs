@@ -282,7 +282,7 @@ impl ToStr for CFString {
                              false as Boolean, 
                              ptr::null(),
                              0,
-                             &bytes_required);
+                             &mut bytes_required);
 
             let buffer : ~[u8] = vec::from_elem(1+bytes_required as uint, '\x00' as u8);
             let mut bytes_used: CFIndex = 0 as CFIndex;
@@ -294,7 +294,7 @@ impl ToStr for CFString {
                                                  false as Boolean, 
                                                  vec::raw::to_ptr(buffer),
                                                  buffer.len() as CFIndex,
-                                                 ptr::to_unsafe_ptr(&bytes_used)) as uint;
+                                                 ptr::to_mut_unsafe_ptr(&mut bytes_used)) as uint;
 
             assert!(chars_written == char_len);
             // this is dangerous; we over-allocate and nul-terminate the string (during
@@ -371,7 +371,7 @@ extern {
                         isExternalRepresentation: Boolean,
                         buffer: *u8,
                         maxBufLen: CFIndex,
-                        usedBufLen: *CFIndex)
+                        usedBufLen: *mut CFIndex)
                         -> CFIndex;
     //fn CFStringGetCharacterAtIndex
     //fn CFStringGetCharacters

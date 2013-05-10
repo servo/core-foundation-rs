@@ -184,31 +184,23 @@ impl CTFontMethods for CTFont {
 
     // Names
     fn family_name(&self) -> ~str {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontFamilyNameKey);
-            value.expect(~"Fonts should always have a family name.")
-        }
+        let value = get_string_by_name_key(self, kCTFontFamilyNameKey);
+        value.expect(~"Fonts should always have a family name.")
     }
 
     fn face_name(&self) -> ~str {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontSubFamilyNameKey);
-            value.expect(~"Fonts should always have a face name.")
-        }
+        let value = get_string_by_name_key(self, kCTFontSubFamilyNameKey);
+        value.expect(~"Fonts should always have a face name.")
     }
 
     fn unique_name(&self) -> ~str {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontUniqueNameKey);
-            value.expect(~"Fonts should always have a unique name.")
-        }
+        let value = get_string_by_name_key(self, kCTFontUniqueNameKey);
+        value.expect(~"Fonts should always have a unique name.")
     }
 
     fn postscript_name(&self) -> ~str {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontPostScriptNameKey);
-            value.expect(~"Fonts should always have a PostScript name.")
-        }
+        let value = get_string_by_name_key(self, kCTFontPostScriptNameKey);
+        value.expect(~"Fonts should always have a PostScript name.")
     }
 
     fn all_traits(&self) -> CTFontTraits {

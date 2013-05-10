@@ -81,16 +81,14 @@ pub trait StylisticClassAccessors {
 
 impl StylisticClassAccessors for CTFontStylisticClass {
     fn is_serif(&self) -> bool {
-        unsafe {
-            let any_serif_class = kCTFontOldStyleSerifsClass 
-                | kCTFontTransitionalSerifsClass
-                | kCTFontModernSerifsClass
-                | kCTFontClarendonSerifsClass
-                | kCTFontSlabSerifsClass
-                | kCTFontFreeformSerifsClass;
+        let any_serif_class = kCTFontOldStyleSerifsClass 
+            | kCTFontTransitionalSerifsClass
+            | kCTFontModernSerifsClass
+            | kCTFontClarendonSerifsClass
+            | kCTFontSlabSerifsClass
+            | kCTFontFreeformSerifsClass;
 
-            return (*self & any_serif_class) != 0;
-        }
+        return (*self & any_serif_class) != 0;
     }
 
     fn is_sans_serif(&self) -> bool {

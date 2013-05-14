@@ -7,13 +7,3 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-
-fn msgSend1Id(theReceiver: base::id, theSelector: base::SEL, id: base::id) {
-    msgsend::msgSend1IdHACK(theReceiver, theSelector, id);
-}
-
-#[link_args = "-L. -lmsgsend"]
-#[nolink]
-extern mod msgsend {
-    fn msgSend1IdHACK(theReceiver: base::id, theSelector: base::SEL, id: base::id);
-}

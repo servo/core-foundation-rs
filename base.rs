@@ -7,6 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use appkit::NSRect;
+
+use core::libc::c_long;
+
 pub type id = libc::intptr_t;
 pub type Class = libc::intptr_t;
 pub type IMP = *u8;
@@ -15,11 +19,8 @@ pub type Ivar = libc::intptr_t;
 
 pub static nil : id = 0 as id;
 
-pub extern mod objc {
-    fn class_addMethod(cls : Class,
-                       name : SEL,
-                       imp : IMP,
-                       types : *libc::c_char) -> bool;
+pub extern {
+    fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *libc::c_char) -> bool;
     fn class_addIvar(cls : Class,
                      name : *libc::c_char,
                      size : libc::size_t,
@@ -44,18 +45,18 @@ pub extern mod objc {
 pub fn test_nsapp() {
     let klass = str::as_c_str(~"NSApplication", |s|
         unsafe {
-            objc::objc_getClass(s)
+            objc_getClass(s)
         }
     );
 
     let sel = str::as_c_str(~"sharedApplication", |s|
         unsafe {
-            objc::sel_registerName(s)
+            sel_registerName(s)
         }
     );
 
     unsafe {
-        let nsapp = objc::objc_msgSend(klass, sel);
+        let nsapp = objc_msgSend(klass, sel);
         io::println(fmt!("nsapp: %d", (nsapp as int)));
     }
 }
@@ -69,22 +70,22 @@ pub fn test_custom_obj() {
 
     let NSObject = str::as_c_str(~"NSObject", |s|
         unsafe {
-            objc::objc_getClass(s)
+            objc_getClass(s)
         }
     );
     let MyObject = str::as_c_str(~"MyObject", |s|
         unsafe {
-            objc::objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
+            objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
         }
     );
     let doSomething = str::as_c_str(~"doSomething", |s|
         unsafe {
-            objc::sel_registerName(s)
+            sel_registerName(s)
         }
     );
     let _ = str::as_c_str(~"@@:", |types|
         unsafe {
-            objc::class_addMethod(MyObject,
+            class_addMethod(MyObject,
                                   doSomething,
                                   MyObject_doSomething,
                                   types)
@@ -92,16 +93,105 @@ pub fn test_custom_obj() {
     );
 
     unsafe {
-        objc::objc_registerClassPair(MyObject);
+        objc_registerClassPair(MyObject);
     }
 
-    let alloc = str::as_c_str(~"alloc", |s| unsafe { objc::sel_registerName(s) });
-    let init = str::as_c_str(~"init", |s| unsafe { objc::sel_registerName(s) });
+    let alloc = str::as_c_str(~"alloc", |s| unsafe { sel_registerName(s) });
+    let init = str::as_c_str(~"init", |s| unsafe { sel_registerName(s) });
 
     unsafe {
-        let mut obj = objc::objc_msgSend(MyObject, alloc);
-        obj = objc::objc_msgSend(obj, init);
-        objc::objc_msgSend(obj, doSomething);
+        let mut obj = objc_msgSend(MyObject, alloc);
+        obj = objc_msgSend(obj, init);
+        objc_msgSend(obj, doSomething);
     }
+}
+
+/// Invokes the given selector, which must have the signature:
+///
+///     id f();
+pub fn msg_send_id(theReceiver: id, theSelector: SEL) -> id {
+    unsafe {
+        invoke_msg_id(theReceiver, theSelector)
+    }
+}
+
+/// Invokes the given selector, which must have the signature:
+///
+///     id f(NSRect a);
+pub fn msg_send_id_NSRect(theReceiver: id, theSelector: SEL, a: NSRect) -> id {
+    unsafe {
+        invoke_msg_id_NSRect(theReceiver, theSelector, &a)
+    }
+}
+
+/// Invokes the given selector, which must have the signature:
+///
+///     id f(id a, id b, id c, id e, id f);
+pub fn msg_send_id_id_id_id_id_id(theReceiver: id,
+                                  theSelector: SEL,
+                                  a: id,
+                                  b: id,
+                                  c: id,
+                                  d: id,
+                                  e: id)
+                                  -> id {
+    unsafe {
+        invoke_msg_id_id_id_id_id_id(theReceiver, theSelector, a, b, c, d, e)
+    }
+}
+
+/// Invokes the given selector, which must have the signature:
+///
+///     long f();
+pub fn msg_send_long(theReceiver: id, theSelector: SEL) -> c_long {
+    unsafe {
+        invoke_msg_long(theReceiver, theSelector)
+    }
+}
+
+/// Invokes the given selector, which must have the signature:
+///
+///     void f();
+pub fn msg_send_void(theReceiver: id, theSelector: SEL) {
+    unsafe {
+        invoke_msg_void(theReceiver, theSelector)
+    }
+}
+
+/// Invokes the given selector, which must have the signature:
+///
+///     void f(BOOL a);
+pub fn msg_send_void_bool(theReceiver: id, theSelector: SEL, a: bool) {
+    unsafe {
+        invoke_msg_void_bool(theReceiver, theSelector, a)
+    }
+}
+
+/// Invokes the given selector, which must have the signature:
+///
+///     void f(id a);
+pub fn msg_send_void_id(theReceiver: id, theSelector: SEL, a: id) {
+    unsafe {
+        invoke_msg_void_id(theReceiver, theSelector, a)
+    }
+}
+
+#[link_args = "-L. -lmsgsend"]
+#[nolink]
+extern {
+    fn invoke_msg_id(theReceiver: id, theSelector: SEL) -> id;
+    fn invoke_msg_id_id_id_id_id_id(theReceiver: id,
+                                    theSelector: SEL,
+                                    a: id,
+                                    b: id,
+                                    c: id,
+                                    d: id,
+                                    e: id)
+                                    -> id;
+    fn invoke_msg_id_NSRect(theReceiver: id, theSelector: SEL, a: &NSRect) -> id;
+    fn invoke_msg_long(theReceiver: id, theSelector: SEL) -> c_long;
+    fn invoke_msg_void(theReceiver: id, theSelector: SEL);
+    fn invoke_msg_void_bool(theReceiver: id, theSelector: SEL, a: bool);
+    fn invoke_msg_void_id(theReceiver: id, theSelector: SEL, a: id);
 }
 

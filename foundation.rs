@@ -7,7 +7,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::objc;
 use base;
 
 #[nolink]
@@ -22,14 +21,14 @@ enum NSAutoreleasePool {
 fn NSAutoreleasePool() -> base::id {
     unsafe {
         let klass = str::as_c_str(~"NSAutoreleasePool", |s|
-            objc::objc_getClass(s)
+            base::objc_getClass(s)
         );
 
-        let alloc_sel = str::as_c_str(~"alloc", |s| objc::sel_registerName(s));
-        let init_sel = str::as_c_str(~"init", |s| objc::sel_registerName(s));
+        let alloc_sel = str::as_c_str(~"alloc", |s| base::sel_registerName(s));
+        let init_sel = str::as_c_str(~"init", |s| base::sel_registerName(s));
 
-        let pool = objc::objc_msgSend(klass, alloc_sel);
-        objc::objc_msgSend(pool, init_sel)
+        let pool = base::objc_msgSend(klass, alloc_sel);
+        base::objc_msgSend(pool, init_sel)
     }
 }
 

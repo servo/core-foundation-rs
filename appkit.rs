@@ -7,8 +7,42 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::objc;
 use base;
+
+pub type CGFloat = f32;
+
+pub struct NSPoint {
+    x: float,
+    y: float,
+}
+
+impl NSPoint {
+    pub fn new(x: float, y: float) -> NSPoint {
+        NSPoint {
+            x: x,
+            y: y,
+        }
+    }
+}
+
+pub struct NSSize {
+    width: float,
+    height: float,
+}
+
+impl NSSize {
+    pub fn new(width: float, height: float) -> NSSize {
+        NSSize {
+            width: width,
+            height: height,
+        }
+    }
+}
+
+pub struct NSRect {
+    origin: NSPoint,
+    size: NSSize,
+}
 
 #[nolink]
 #[link_args="-framework AppKit"]
@@ -18,9 +52,9 @@ pub extern mod appkit {
 
 pub fn NSApp() -> base::id {
     unsafe {
-        let klass = str::as_c_str(~"NSApplication", |s| objc::objc_getClass(s));
-        let sel = str::as_c_str(~"sharedApplication", |s| objc::sel_registerName(s));
-        objc::objc_msgSend(klass, sel)
+        let klass = str::as_c_str(~"NSApplication", |s| base::objc_getClass(s));
+        let sel = str::as_c_str(~"sharedApplication", |s| base::sel_registerName(s));
+        base::objc_msgSend(klass, sel)
     }
 }
 

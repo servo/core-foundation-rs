@@ -73,34 +73,46 @@ pub impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
         }
     }
 
-    pub fn each_ref<A>(&self, cb: &fn(ElemRefType) -> A) {
+    pub fn each_ref(&self, callback: &fn(ElemRefType) -> bool) -> bool {
         for uint::range(0, self.len()) |i| {
-            cb(self[i]);
+            if !callback(self[i]) {
+                break
+            }
         }
+        true
     }
 
-    pub fn eachi_ref<A>(&self, cb: &fn(uint, ElemRefType) -> A) {
+    pub fn eachi_ref(&self, callback: &fn(uint, ElemRefType) -> bool) -> bool {
         for uint::range(0, self.len()) |i| {
-            cb(i, self[i]);
+            if !callback(i, self[i]) {
+                break
+            }
         }
-    }
-
-    // Careful; the callback must wrap the reference properly.
-    // Generally, when array elements are Core Foundation objects (not
-    // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn each<A>(&self, cb: &fn(&ElemRefType) -> A) {
-        for uint::range(0, self.len()) |i| {
-            cb(&self[i]);
-        }
+        true
     }
 
     // Careful; the callback must wrap the reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn eachi<A>(&self, cb: &fn(uint, &ElemRefType) -> A) {
+    pub fn each(&self, callback: &fn(&ElemRefType) -> bool) -> bool {
         for uint::range(0, self.len()) |i| {
-            cb(i, &self[i]);
+            if !callback(&self[i]) {
+                break
+            }
         }
+        true
+    }
+
+    // Careful; the callback must wrap the reference properly.
+    // Generally, when array elements are Core Foundation objects (not
+    // always true), they need to be wrapped with CFWrapper::wrap_shared.
+    pub fn eachi(&self, callback: &fn(uint, &ElemRefType) -> bool) -> bool {
+        for uint::range(0, self.len()) |i| {
+            if !callback(i, &self[i]) {
+                break
+            }
+        }
+        true
     }
 
     pub fn len(&self) -> uint {

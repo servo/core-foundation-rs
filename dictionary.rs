@@ -150,7 +150,7 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
         return value.unwrap();
     }
 
-    fn each(&self, blk: &fn(&KeyRefType, &ValueRefType) -> bool) {
+    fn each(&self, blk: &fn(&KeyRefType, &ValueRefType) -> bool) -> bool {
         unsafe {
             let len = self.len();
             let null_keys = cast::transmute::<*c_void,KeyRefType>(ptr::null());

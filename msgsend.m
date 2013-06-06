@@ -9,8 +9,14 @@
 
 #include <AppKit/AppKit.h>
 #include <Foundation/Foundation.h>
+#include <objc/message.h>
 #include <stdint.h>
 #include <stdio.h>
+
+double invoke_msg_double(id theReceiver, SEL theSelector) {
+    double (*f)(id self, SEL op, ...) = (void *)objc_msgSend_fpret;
+    return f(theReceiver, theSelector);
+}
 
 id invoke_msg_id(id theReceiver, SEL theSelector) {
     return objc_msgSend(theReceiver, theSelector);

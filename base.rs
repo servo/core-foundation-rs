@@ -108,6 +108,15 @@ pub fn test_custom_obj() {
 
 /// Invokes the given selector, which must have the signature:
 ///
+///     double f();
+pub fn msg_send_double(theReceiver: id, theSelector: SEL) -> f64 {
+    unsafe {
+        invoke_msg_double(theReceiver, theSelector)
+    }
+}
+
+/// Invokes the given selector, which must have the signature:
+///
 ///     id f();
 pub fn msg_send_id(theReceiver: id, theSelector: SEL) -> id {
     unsafe {
@@ -179,6 +188,7 @@ pub fn msg_send_void_id(theReceiver: id, theSelector: SEL, a: id) {
 #[link_args = "-L. -lmsgsend"]
 #[nolink]
 extern {
+    fn invoke_msg_double(theReceiver: id, theSelector: SEL) -> f64;
     fn invoke_msg_id(theReceiver: id, theSelector: SEL) -> id;
     fn invoke_msg_id_id_id_id_id_id(theReceiver: id,
                                     theSelector: SEL,

@@ -19,7 +19,11 @@ use base::{
 };
 use string::CFStringRef;
 
-use core::libc::c_void;
+use std::cast;
+use std::libc::c_void;
+use std::ptr;
+use std::uint;
+use std::vec;
 
 pub type CFDictionaryApplierFunction = *u8;
 pub type CFDictionaryCopyDescriptionCallBack = *u8;
@@ -66,21 +70,21 @@ pub struct CFDictionary<KeyRefType, ValueRefType> {
 
 pub type UntypedCFDictionary = CFDictionary<CFStringRef, CFTypeRef>;
 
-pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRef>
+impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRef>
          CFDictionary<KeyRefType, ValueRefType> {
-    fn wrap_owned(dictionary: CFDictionaryRef) -> CFDictionary<KeyRefType, ValueRefType> {
+    pub fn wrap_owned(dictionary: CFDictionaryRef) -> CFDictionary<KeyRefType, ValueRefType> {
         CFDictionary {
             contents: CFWrapper::wrap_owned(dictionary)
         }
     }
 
-    fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
+    pub fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
         let mut keys : ~[CFTypeRef] = ~[];
         let mut values : ~[CFTypeRef] = ~[];
         for pairs.each |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
             match *pair {
-                (key, value) => {
+                (ref key, ref value) => {
                     keys.push(key.as_type_ref());
                     values.push(value.as_type_ref());
                 }
@@ -106,17 +110,17 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
         }
     }
 
-    fn len(&self) -> uint {
+    pub fn len(&self) -> uint {
         unsafe {
             CFDictionaryGetCount(self.contents.obj) as uint
         }
     }
 
-    fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    fn contains_key(&self, key: &KeyRefType) -> bool {
+    pub fn contains_key(&self, key: &KeyRefType) -> bool {
         unsafe {
             CFDictionaryContainsKey(self.contents.obj, 
                                     cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref()))
@@ -124,7 +128,7 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
         }
     }
 
-    fn find(&self, key: &KeyRefType) -> Option<ValueRefType> {
+    pub fn find(&self, key: &KeyRefType) -> Option<ValueRefType> {
         unsafe {
             let value : *c_void = ptr::null();
             let did_find_value = CFDictionaryGetValueIfPresent(
@@ -142,7 +146,7 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
         }
     }
 
-    fn get(&self, key: &KeyRefType) -> ValueRefType {
+    pub fn get(&self, key: &KeyRefType) -> ValueRefType {
         let value = self.find(key);
         if value.is_none() {
             fail!(fmt!("No entry found for key: %?", key));
@@ -150,7 +154,7 @@ pub impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTy
         return value.unwrap();
     }
 
-    fn each(&self, blk: &fn(&KeyRefType, &ValueRefType) -> bool) -> bool {
+    pub fn each(&self, blk: &fn(&KeyRefType, &ValueRefType) -> bool) -> bool {
         unsafe {
             let len = self.len();
             let null_keys = cast::transmute::<*c_void,KeyRefType>(ptr::null());

@@ -10,6 +10,12 @@
 use base::{AbstractCFTypeRef, Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange};
 use base::{CFRangeMake, CFTypeRef, CFTypeID, CFWrapper, kCFAllocatorDefault, kCFAllocatorNull};
 
+use std::cast;
+use std::libc;
+use std::ptr;
+use std::str;
+use std::vec;
+
 pub type UniChar = libc::c_ushort;
 
 /*
@@ -207,10 +213,10 @@ pub struct CFString {
     contents: CFWrapper<CFStringRef, (), ()>
 }
 
-pub impl CFString {
+impl CFString {
     // convenience method to make it easier to wrap extern
     // CFStringRefs without providing explicit typarams to base::wrap()
-    fn wrap_owned(string: CFStringRef) -> CFString {
+    pub fn wrap_owned(string: CFStringRef) -> CFString {
         CFString {
             contents: CFWrapper::wrap_owned(string)
         }
@@ -218,7 +224,7 @@ pub impl CFString {
 
     // convenience method to make it easier to wrap extern
     // CFStringRefs without providing explicit typarams to base::wrap()
-    fn wrap_shared(string: CFStringRef) -> CFString {
+    pub fn wrap_shared(string: CFStringRef) -> CFString {
         CFString {
             contents: CFWrapper::wrap_shared(string)
         }
@@ -226,7 +232,7 @@ pub impl CFString {
 
     // like CFString::new, but references a string that can be used as
     // a backing store by virtue of being statically allocated.
-    fn new_static(string: &'static str) -> CFString {
+    pub fn new_static(string: &'static str) -> CFString {
         let string_ref = do str::as_buf(string) |bytes, len| {
             unsafe {
                 CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
@@ -243,7 +249,7 @@ pub impl CFString {
         }
     }
 
-    fn new(string: &str) -> CFString {
+    pub fn new(string: &str) -> CFString {
         let string_ref = do str::as_buf(string) |bytes, len| {
             unsafe {
                 CFStringCreateWithBytes(kCFAllocatorDefault,

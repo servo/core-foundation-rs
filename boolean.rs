@@ -33,14 +33,14 @@ pub struct CFBoolean {
     contents: CFWrapper<CFBooleanRef, (), ()>
 }
 
-pub impl CFBoolean {
-    fn true_value() -> CFBoolean {
+impl CFBoolean {
+    pub fn true_value() -> CFBoolean {
         CFBoolean {
             contents: CFWrapper::wrap_shared(kCFBooleanTrue)
         }
     }
 
-    fn false_value() -> CFBoolean {
+    pub fn false_value() -> CFBoolean {
         CFBoolean {
             contents: CFWrapper::wrap_shared(kCFBooleanFalse)
         }

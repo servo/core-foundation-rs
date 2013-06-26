@@ -17,7 +17,9 @@ use base::{
     CFWrapper,
     kCFAllocatorDefault,
 };
-use core::libc::c_void;
+use std::cast;
+use std::libc::c_void;
+use std::vec;
 
 pub type CFSetRetainCallBack = *u8;
 pub type CFSetReleaseCallBack = *u8;
@@ -53,8 +55,8 @@ pub struct CFSet<ElemRefType> {
     contents: CFWrapper<CFSetRef, ElemRefType, ()>
 }
 
-pub impl<ElemRefType : AbstractCFTypeRef> CFSet<ElemRefType> {
-    fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
+impl<ElemRefType : AbstractCFTypeRef> CFSet<ElemRefType> {
+    pub fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
         let result: CFSetRef;
         let elems_refs = do vec::map(elems) |e: &ElemRefType| {
             e.as_type_ref() 

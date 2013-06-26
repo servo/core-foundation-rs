@@ -16,7 +16,11 @@ use base::{
     CFWrapper,
     kCFAllocatorDefault,
 };
-use core::libc::c_void;
+use std::cast;
+use std::libc::c_void;
+use std::ptr;
+use std::uint;
+use std::vec;
 
 pub type CFArrayRetainCallBack = *u8;
 pub type CFArrayReleaseCallBack = *u8;
@@ -44,22 +48,22 @@ pub struct CFArray<ElemRefType> {
     contents: CFWrapper<CFArrayRef, ElemRefType, ()>
 }
 
-pub impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
-    fn wrap_shared(array: CFArrayRef) -> CFArray<ElemRefType> {
+impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
+    pub fn wrap_shared(array: CFArrayRef) -> CFArray<ElemRefType> {
         CFArray {
             contents: CFWrapper::wrap_shared(array)
         }
     }
 
-    fn wrap_owned(array: CFArrayRef) -> CFArray<ElemRefType> {
+    pub fn wrap_owned(array: CFArrayRef) -> CFArray<ElemRefType> {
         CFArray {
             contents: CFWrapper::wrap_owned(array)
         }
     }
 
-    fn new(elems: &[ElemRefType]) -> CFArray<ElemRefType> {
+    pub fn new(elems: &[ElemRefType]) -> CFArray<ElemRefType> {
         let array_ref: CFArrayRef;
-        let elems_refs = do vec::map(elems) |e: &ElemRefType| { e.as_type_ref() };
+        let elems_refs = do elems.map |e: &ElemRefType| { e.as_type_ref() };
 
         unsafe {
             array_ref = CFArrayCreate(kCFAllocatorDefault,

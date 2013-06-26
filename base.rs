@@ -7,7 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use core::libc::c_long;
+use std::cast;
+use std::libc;
+use std::libc::c_long;
 
 // a raw Core Foundation reference. It may or may not have been
 // CFRetain'ed, depending on whether it was obtained via ownership or
@@ -80,12 +82,12 @@ impl<T,E1,E2> Drop for CFWrapper<T,E1,E2> {
 
 pub type CFType = CFWrapper<CFTypeRef, (), ()>;
 
-pub impl<'self, T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
-    fn borrow_ref(&'self self) -> &'self T {
+impl<'self, T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
+    pub fn borrow_ref(&'self self) -> &'self T {
         &self.obj
     }
 
-    fn borrow_type_ref(&self) -> &'self CFTypeRef {
+    pub fn borrow_type_ref(&self) -> &'self CFTypeRef {
         unsafe {
             cast::transmute::<&T, &CFTypeRef>(&self.obj)
         }
@@ -93,7 +95,7 @@ pub impl<'self, T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
 
     // Use this when following Core Foundation's "Create" rule; i.e., the wrapper assumes ownership.
     // The object has already been retained, so we need not increment the retain count ourself.
-    fn wrap_owned(some_ref: T) -> CFWrapper<T,E1,E2> {
+    pub fn wrap_owned(some_ref: T) -> CFWrapper<T,E1,E2> {
         // N.B. we can't make any assertions about retain count here,
         // because returned things are only guaranteed to be already
         // retained. Strings, for example, could be interned.
@@ -102,46 +104,46 @@ pub impl<'self, T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
 
     // Use this when following Core Foundation's "Get" rule. The wrapper does not have ownership.
     // Twe need to increment object's the retain count so it isn't freed out from under our noses.
-    fn wrap_shared(some_ref: T) -> CFWrapper<T,E1,E2> {
+    pub fn wrap_shared(some_ref: T) -> CFWrapper<T,E1,E2> {
         unsafe { CFRetain(some_ref.as_type_ref()); }
         CFWrapper { obj: some_ref }
     }
 
     // Unwraps the wrapper, returning the underlying AbstractCFType.
-    fn unwrap(wrapper: CFWrapper<T,E1,E2>) -> T {
-        wrapper.obj
+    pub fn unwrap(wrapper: CFWrapper<T,E1,E2>) -> T {
+        copy wrapper.obj
     }
 
-    fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType {
+    pub fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType {
         unsafe {
             cast::transmute::<CFWrapper<T, E1, E2>, CFType>(wrapper)
         }
     }
 
-    fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> {
+    pub fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> {
         unsafe {
             assert!(wrapper.type_id() == AbstractCFTypeRef::type_id::<T>());
             cast::transmute::<CFType,CFWrapper<T,E1,E2>>(wrapper)
         }
     }
 
-    fn clone(wrapper: &CFWrapper<T,E1,E2>) -> CFWrapper<T,E1,E2> {
-        CFWrapper::wrap_shared(*wrapper.borrow_ref())
+    pub fn clone(wrapper: &CFWrapper<T,E1,E2>) -> CFWrapper<T,E1,E2> {
+        CFWrapper::wrap_shared(copy *wrapper.borrow_ref())
     }
 
-    fn retain_count(&self) -> CFIndex {
+    pub fn retain_count(&self) -> CFIndex {
         unsafe {
             CFGetRetainCount(*self.borrow_type_ref())
         }
     }
 
-    fn type_id(&self) -> CFTypeID {
+    pub fn type_id(&self) -> CFTypeID {
         unsafe {
             CFGetTypeID(*self.borrow_type_ref())
         }
     }
 
-    fn show(&self) {
+    pub fn show(&self) {
         unsafe {
             CFShow(*self.borrow_type_ref());
         }

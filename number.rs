@@ -10,7 +10,9 @@
 use base::{AbstractCFTypeRef, Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, CFWrapper};
 use base::{kCFAllocatorDefault};
 
-use core::libc::c_void;
+use std::cast;
+use std::libc;
+use std::libc::c_void;
 
 pub type CFNumberType = u32;
 
@@ -50,20 +52,20 @@ pub struct CFNumber {
     contents: CFWrapper<CFNumberRef, (), ()>
 }
 
-pub impl CFNumber {
-    fn wrap_owned(number: CFNumberRef) -> CFNumber {
+impl CFNumber {
+    pub fn wrap_owned(number: CFNumberRef) -> CFNumber {
         CFNumber {
             contents: CFWrapper::wrap_owned(number)
         }
     }
 
-    fn wrap_shared(number: CFNumberRef) -> CFNumber {
+    pub fn wrap_shared(number: CFNumberRef) -> CFNumber {
         CFNumber {
             contents: CFWrapper::wrap_shared(number)
         }
     }
 
-    fn new<T:Copy + ConvertibleToCFNumber>(n: T) -> CFNumber {
+    pub fn new<T:Copy + ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             let objref = CFNumberCreate(kCFAllocatorDefault,
                                         n.cf_number_type(),
@@ -74,7 +76,7 @@ pub impl CFNumber {
         }
     }
 
-    fn to_i8(&self) -> i8 {
+    pub fn to_i8(&self) -> i8 {
         let ty = kCFNumberSInt8Type;
         assert!(self.has_number_type(ty));
         unsafe {
@@ -86,7 +88,7 @@ pub impl CFNumber {
         }
     }
 
-    fn to_i16(&self) -> i16 {
+    pub fn to_i16(&self) -> i16 {
         let ty = kCFNumberSInt16Type;
         assert!(self.has_number_type(ty));
         unsafe {
@@ -98,7 +100,7 @@ pub impl CFNumber {
         }
     }
 
-    fn to_i32(&self) -> i32 {
+    pub fn to_i32(&self) -> i32 {
         let ty = kCFNumberSInt32Type;
         assert!(self.has_number_type(ty));
         unsafe {
@@ -110,7 +112,7 @@ pub impl CFNumber {
         }
     }
 
-    fn to_float(&self) -> float {
+    pub fn to_float(&self) -> float {
         unsafe {
             assert!(self.has_float_type());
             let ty = CFNumberGetType(self.contents.obj);

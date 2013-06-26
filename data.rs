@@ -18,7 +18,7 @@ use base::{
     kCFAllocatorDefault,
 };
 
-use core::vec;
+use std::vec;
 
 struct __CFData { private: () }
 pub type CFDataRef = *__CFData;
@@ -39,14 +39,14 @@ pub struct CFData {
     contents: CFWrapper<CFDataRef, (), ()>
 }
 
-pub impl CFData {
-    fn wrap_owned(data: CFDataRef) -> CFData {
+impl CFData {
+    pub fn wrap_owned(data: CFDataRef) -> CFData {
         CFData {
             contents: CFWrapper::wrap_owned(data)
         }
     }
 
-    fn new_from_buf(buf: &[u8]) -> CFData {
+    pub fn new_from_buf(buf: &[u8]) -> CFData {
         let result;
         unsafe {
             result = CFDataCreate(kCFAllocatorDefault, 
@@ -60,25 +60,25 @@ pub impl CFData {
     }
 
     // tread with caution; read-only
-    fn bytes(&self) -> *u8 {
+    pub fn bytes(&self) -> *u8 {
         unsafe {
             CFDataGetBytePtr(self.contents.obj)
         }
     }
 
-    fn len(&self) -> uint {
+    pub fn len(&self) -> uint {
         unsafe {
             CFDataGetLength(self.contents.obj) as uint
         }
     }
 
-    fn copy_to_buf(&self) -> ~[u8] {
+    pub fn copy_to_buf(&self) -> ~[u8] {
         unsafe {
             vec::from_buf(self.bytes(), self.len())
         }
     }
 
-    fn with_buf<U>(&self, blk: &fn(v: &[u8]) -> U) -> U {
+    pub fn with_buf<U>(&self, blk: &fn(v: &[u8]) -> U) -> U {
         unsafe {
             vec::raw::buf_as_slice(self.bytes(), self.len(), blk)
         }

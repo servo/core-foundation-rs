@@ -10,6 +10,7 @@
 use core_foundation::base::{AbstractCFTypeRef, CFTypeID, CFTypeRef, CFWrapper};
 
 use data_provider::{CGDataProvider, CGDataProviderRef};
+use std::libc;
 
 pub type CGGlyph = libc::c_ushort;
 

@@ -9,7 +9,9 @@
 
 use core_foundation::base::{AbstractCFTypeRef, CFTypeID, CFTypeRef, CFWrapper};
 
-use core::libc::{c_void, c_char, size_t};
+use std::cast;
+use std::libc::{c_void, c_char, size_t};
+use std::ptr;
 
 pub type CGDataProviderGetBytesCallback = *u8;
 pub type CGDataProviderReleaseInfoCallback = *u8;

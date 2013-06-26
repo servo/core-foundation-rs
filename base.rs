@@ -9,7 +9,10 @@
 
 use appkit::NSRect;
 
-use core::libc::c_long;
+use std::libc;
+use std::libc::c_long;
+use std::io;
+use std::str;
 
 pub type id = libc::intptr_t;
 pub type Class = libc::intptr_t;

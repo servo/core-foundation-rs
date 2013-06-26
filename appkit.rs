@@ -8,6 +8,7 @@
 // except according to those terms.
 
 use base;
+use std::str;
 
 pub type CGFloat = f32;
 
@@ -46,14 +47,14 @@ pub struct NSRect {
 
 #[nolink]
 #[link_args="-framework AppKit"]
-pub extern mod appkit {
+extern {
     fn NSBeep();
 }
 
 pub fn NSApp() -> base::id {
     unsafe {
-        let klass = str::as_c_str(~"NSApplication", |s| base::objc_getClass(s));
-        let sel = str::as_c_str(~"sharedApplication", |s| base::sel_registerName(s));
+        let klass = str::as_c_str("NSApplication", |s| base::objc_getClass(s));
+        let sel = str::as_c_str("sharedApplication", |s| base::sel_registerName(s));
         base::objc_msgSend(klass, sel)
     }
 }

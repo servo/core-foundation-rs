@@ -23,6 +23,10 @@ use core_graphics::base::{CGAffineTransform, CGFloat};
 use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
 use core_graphics::geometry::{CGRect, CGSize};
 
+use std::libc;
+use std::io;
+use std::ptr;
+
 pub type CTFontUIFontType = u32;
 // kCTFontNoFontType: CTFontUIFontType = -1;
 pub static kCTFontUserFontType: CTFontUIFontType = 0;
@@ -185,22 +189,22 @@ impl CTFontMethods for CTFont {
     // Names
     fn family_name(&self) -> ~str {
         let value = get_string_by_name_key(self, kCTFontFamilyNameKey);
-        value.expect(~"Fonts should always have a family name.")
+        value.expect("Fonts should always have a family name.")
     }
 
     fn face_name(&self) -> ~str {
         let value = get_string_by_name_key(self, kCTFontSubFamilyNameKey);
-        value.expect(~"Fonts should always have a face name.")
+        value.expect("Fonts should always have a face name.")
     }
 
     fn unique_name(&self) -> ~str {
         let value = get_string_by_name_key(self, kCTFontUniqueNameKey);
-        value.expect(~"Fonts should always have a unique name.")
+        value.expect("Fonts should always have a unique name.")
     }
 
     fn postscript_name(&self) -> ~str {
         let value = get_string_by_name_key(self, kCTFontPostScriptNameKey);
-        value.expect(~"Fonts should always have a PostScript name.")
+        value.expect("Fonts should always have a PostScript name.")
     }
 
     fn all_traits(&self) -> CTFontTraits {

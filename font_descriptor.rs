@@ -18,6 +18,9 @@ use core_foundation::string::{CFString, CFStringRef};
 use core_foundation::url::{CFURLRef};
 use core_graphics::base::CGFloat;
 
+use std::cast;
+use std::io;
+
 /*
 * CTFontTraits.h
 */
@@ -221,22 +224,22 @@ impl CTFontDescriptorMethodsPrivate for CTFontDescriptor {
 impl CTFontDescriptorMethods for CTFontDescriptor {
     fn family_name(&self) -> ~str {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
-        value.expect(~"A font must have a non-null font family name.")
+        value.expect("A font must have a non-null font family name.")
     }
 
     fn font_name(&self) -> ~str {
         let value = self.get_string_attribute(kCTFontNameAttribute);
-        value.expect(~"A font must have a non-null name.")
+        value.expect("A font must have a non-null name.")
     }
 
     fn style_name(&self) -> ~str {
         let value = self.get_string_attribute(kCTFontStyleNameAttribute);
-        value.expect(~"A font must have a non-null style name.")
+        value.expect("A font must have a non-null style name.")
     }
 
     fn display_name(&self) -> ~str {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
-        value.expect(~"A font must have a non-null display name.")
+        value.expect("A font must have a non-null display name.")
     }
 
     fn font_path(&self) -> ~str {

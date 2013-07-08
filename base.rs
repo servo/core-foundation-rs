@@ -11,8 +11,6 @@ use appkit::NSRect;
 
 use std::libc;
 use std::libc::c_long;
-use std::io;
-use std::str;
 
 pub type id = libc::intptr_t;
 pub type Class = libc::intptr_t;
@@ -20,7 +18,7 @@ pub type IMP = *u8;
 pub type SEL = libc::intptr_t;
 pub type Ivar = libc::intptr_t;
 
-pub static nil : id = 0 as id;
+pub static NIL : id = 0 as id;
 
 pub extern {
     fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *libc::c_char) -> bool;

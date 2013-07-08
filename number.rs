@@ -7,6 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#[allow(non_uppercase_statics)];
+
 use base::{AbstractCFTypeRef, Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, CFWrapper};
 use base::{kCFAllocatorDefault};
 

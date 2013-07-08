@@ -58,7 +58,7 @@ pub struct CFSet<ElemRefType> {
 impl<ElemRefType : AbstractCFTypeRef> CFSet<ElemRefType> {
     pub fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
         let result: CFSetRef;
-        let elems_refs = do vec::map(elems) |e: &ElemRefType| {
+        let elems_refs = do elems.map |e: &ElemRefType| {
             e.as_type_ref() 
         };
 

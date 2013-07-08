@@ -81,7 +81,7 @@ impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRe
     pub fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
         let mut keys : ~[CFTypeRef] = ~[];
         let mut values : ~[CFTypeRef] = ~[];
-        for pairs.each |pair| {
+        for pairs.iter().advance |pair| {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
             match *pair {
                 (ref key, ref value) => {

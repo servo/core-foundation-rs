@@ -42,68 +42,74 @@ pub extern {
     fn sel_registerName(name : *libc::c_char) -> SEL;
 }
 
-#[test]
-pub fn test_nsapp() {
-    let klass = str::as_c_str(~"NSApplication", |s|
+#[cfg(test)]
+mod test {
+    use std::{str,io,libc};
+    use super::*;
+
+    #[test]
+    pub fn test_nsapp() {
+        let klass = str::as_c_str("NSApplication", |s|
+                                  unsafe {
+                                      objc_getClass(s)
+                                  }
+                                 );
+
+        let sel = str::as_c_str("sharedApplication", |s|
+                                unsafe {
+                                    sel_registerName(s)
+                                }
+                               );
+
         unsafe {
-            objc_getClass(s)
+            let nsapp = objc_msgSend(klass, sel);
+            io::println(fmt!("nsapp: %d", (nsapp as int)));
         }
-    );
-
-    let sel = str::as_c_str(~"sharedApplication", |s|
-        unsafe {
-            sel_registerName(s)
-        }
-    );
-
-    unsafe {
-        let nsapp = objc_msgSend(klass, sel);
-        io::println(fmt!("nsapp: %d", (nsapp as int)));
-    }
-}
-
-#[test]
-pub fn test_custom_obj() {
-    extern fn MyObject_doSomething(this : id, _sel : SEL) -> id {
-        io::println(~"doSomething");
-        return this;
     }
 
-    let NSObject = str::as_c_str(~"NSObject", |s|
-        unsafe {
-            objc_getClass(s)
+    #[test]
+    pub fn test_custom_obj() {
+        extern fn MyObject_doSomething(this : id, _sel : SEL) -> id {
+            io::println("doSomething");
+            return this;
         }
-    );
-    let MyObject = str::as_c_str(~"MyObject", |s|
-        unsafe {
-            objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
-        }
-    );
-    let doSomething = str::as_c_str(~"doSomething", |s|
-        unsafe {
-            sel_registerName(s)
-        }
-    );
-    let _ = str::as_c_str(~"@@:", |types|
-        unsafe {
-            class_addMethod(MyObject,
-                                  doSomething,
-                                  MyObject_doSomething,
-                                  types)
-        }
-    );
 
-    unsafe {
-        objc_registerClassPair(MyObject);
-    }
+        let NSObject = str::as_c_str("NSObject", |s|
+                                     unsafe {
+                                         objc_getClass(s)
+                                     }
+                                    );
+        let MyObject = str::as_c_str("MyObject", |s|
+                                     unsafe {
+                                         objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
+                                     }
+                                    );
+        let doSomething = str::as_c_str("doSomething", |s|
+                                        unsafe {
+                                            sel_registerName(s)
+                                        }
+                                       );
+        let _ = str::as_c_str("@@:", |types|
+                              unsafe {
+                                  class_addMethod(MyObject,
+                                                  doSomething,
+                                                  MyObject_doSomething,
+                                                  types)
+                              }
+                             );
 
-    let alloc = str::as_c_str(~"alloc", |s| unsafe { sel_registerName(s) });
-    let init = str::as_c_str(~"init", |s| unsafe { sel_registerName(s) });
+        unsafe {
+            objc_registerClassPair(MyObject);
+        }
 
-    unsafe {
-        let mut obj = objc_msgSend(MyObject, alloc);
-        obj = objc_msgSend(obj, init);
-        objc_msgSend(obj, doSomething);
+        let alloc = str::as_c_str("alloc", |s| unsafe { sel_registerName(s) });
+        let init = str::as_c_str("init", |s| unsafe { sel_registerName(s) });
+
+        unsafe {
+            let mut obj = objc_msgSend(MyObject, alloc);
+            obj = objc_msgSend(obj, init);
+            objc_msgSend(obj, doSomething);
+        }
     }
 }
 

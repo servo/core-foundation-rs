@@ -1,8 +1,5 @@
 VPATH=%VPATH%
 
-RUSTC ?= rustc
-RUSTFLAGS ?=
-
 RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 
 .PHONY: all clean

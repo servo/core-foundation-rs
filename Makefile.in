@@ -9,11 +9,11 @@ RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 all:	librustcoregraphics.dummy
 
 librustcoregraphics.dummy: core_graphics.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
 rustcoregraphics-test: core_graphics.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir . --test
 
 check: rustcoregraphics-test
 	./rustcoregraphics-test

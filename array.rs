@@ -20,6 +20,7 @@ use std::cast;
 use std::libc::c_void;
 use std::ptr;
 use std::vec;
+use std::iterator::Enumerate;
 
 pub type CFArrayRetainCallBack = *u8;
 pub type CFArrayReleaseCallBack = *u8;
@@ -45,6 +46,23 @@ impl AbstractCFTypeRef for CFArrayRef {
 // FIXME: Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFArray<ElemRefType> {
     contents: CFWrapper<CFArrayRef, ElemRefType, ()>
+}
+
+pub struct CFArrayIterator<'self, ElemRefType> {
+    priv array: &'self CFArray<ElemRefType>,
+    priv index: uint,
+}
+
+impl<'self, ElemRefType: AbstractCFTypeRef> Iterator<ElemRefType> for CFArrayIterator<'self, ElemRefType> {
+    fn next(&mut self) -> Option<ElemRefType> {
+        if self.index >= self.array.len() {
+            None
+        } else {
+            let v = self.array[self.index];
+            self.index += 1;
+            Some(v)
+        }
+    }
 }
 
 impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
@@ -76,42 +94,21 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
         }
     }
 
-    pub fn each_ref(&self, cb: &fn(ElemRefType) -> bool) -> bool {
-        for i in range(0, self.len()) {
-            cb(self[i]);
-        }
-
-        true
-    }
-
-    pub fn eachi_ref(&self, cb: &fn(uint, ElemRefType) -> bool) -> bool {
-        for i in range(0, self.len()) {
-            cb(i, self[i]);
-        }
-
-        true
-    }
-
-    // Careful; the callback must wrap the reference properly.
+    // Careful; the loop body must wrap the reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn each(&self, cb: &fn(&ElemRefType) -> bool) -> bool {
-        for i in range(0, self.len()) {
-            cb(&self[i]);
+    pub fn each<'t>(&'t self) -> CFArrayIterator<'t, ElemRefType> {
+        CFArrayIterator {
+            array: self,
+            index: 0
         }
-
-        true
     }
 
-    // Careful; the callback must wrap the reference properly.
+    // Careful; the loop body must wrap the reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn eachi(&self, cb: &fn(uint, &ElemRefType) -> bool) -> bool{
-        for i in range(0, self.len()) {
-            cb(i, &self[i]);
-        }
-
-        true
+    pub fn eachi<'t>(&'t self) -> Enumerate<CFArrayIterator<'t, ElemRefType>> {
+        self.each().enumerate()
     }
 
     pub fn len(&self) -> uint {

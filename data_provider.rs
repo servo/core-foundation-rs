@@ -54,7 +54,7 @@ pub fn new_from_buffer(buf: *u8, len: uint) -> CGDataProvider {
 
 #[nolink]
 #[link_args="-framework ApplicationServices"]
-pub extern {
+extern {
     //fn CGDataProviderCopyData
     //fn CGDataProviderCreateDirect
     //fn CGDataProviderCreateSequential

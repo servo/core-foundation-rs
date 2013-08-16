@@ -8,7 +8,6 @@
 // except according to those terms.
 
 use base;
-use std::str;
 
 #[nolink]
 #[link_args="-framework Foundation"]
@@ -21,12 +20,12 @@ enum NSAutoreleasePool {
 
 fn NSAutoreleasePool() -> base::id {
     unsafe {
-        let klass = str::as_c_str("NSAutoreleasePool", |s|
+        let klass = do "NSAutoreleasePool".to_c_str().with_ref |s| {
             base::objc_getClass(s)
-        );
+        };
 
-        let alloc_sel = str::as_c_str("alloc", |s| base::sel_registerName(s));
-        let init_sel = str::as_c_str("init", |s| base::sel_registerName(s));
+        let alloc_sel = do "alloc".to_c_str().with_ref |s| { base::sel_registerName(s) };
+        let init_sel = do "init".to_c_str().with_ref |s| { base::sel_registerName(s) };
 
         let pool = base::objc_msgSend(klass, alloc_sel);
         base::objc_msgSend(pool, init_sel)

@@ -15,7 +15,6 @@ use base::{CFRangeMake, CFTypeRef, CFTypeID, CFWrapper, kCFAllocatorDefault, kCF
 use std::cast;
 use std::libc;
 use std::ptr;
-use std::str;
 use std::vec;
 
 pub type UniChar = libc::c_ushort;
@@ -235,7 +234,7 @@ impl CFString {
     // like CFString::new, but references a string that can be used as
     // a backing store by virtue of being statically allocated.
     pub fn new_static(string: &'static str) -> CFString {
-        let string_ref = do str::as_buf(string) |bytes, len| {
+        let string_ref = do string.as_imm_buf |bytes, len| {
             unsafe {
                 CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
                                               bytes,
@@ -252,7 +251,7 @@ impl CFString {
     }
 
     pub fn new(string: &str) -> CFString {
-        let string_ref = do str::as_buf(string) |bytes, len| {
+        let string_ref = do string.as_imm_buf |bytes, len| {
             unsafe {
                 CFStringCreateWithBytes(kCFAllocatorDefault,
                                         bytes,

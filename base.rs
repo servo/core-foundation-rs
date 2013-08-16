@@ -44,22 +44,22 @@ extern {
 
 #[cfg(test)]
 mod test {
-    use std::{str,io,libc};
+    use std::{io, libc};
     use super::*;
 
     #[test]
     pub fn test_nsapp() {
-        let klass = str::as_c_str("NSApplication", |s|
-                                  unsafe {
-                                      objc_getClass(s)
-                                  }
-                                 );
+        let klass = do "NSApplication".to_c_str().with_ref |s| {
+            unsafe {
+                objc_getClass(s)
+            }
+        };
 
-        let sel = str::as_c_str("sharedApplication", |s|
-                                unsafe {
-                                    sel_registerName(s)
-                                }
-                               );
+        let sel = do "sharedApplication".to_c_str().with_ref |s| {
+            unsafe {
+                sel_registerName(s)
+            }
+        };
 
         unsafe {
             let nsapp = objc_msgSend(klass, sel);
@@ -74,36 +74,40 @@ mod test {
             return this;
         }
 
-        let NSObject = str::as_c_str("NSObject", |s|
-                                     unsafe {
-                                         objc_getClass(s)
-                                     }
-                                    );
-        let MyObject = str::as_c_str("MyObject", |s|
-                                     unsafe {
-                                         objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
-                                     }
-                                    );
-        let doSomething = str::as_c_str("doSomething", |s|
-                                        unsafe {
-                                            sel_registerName(s)
-                                        }
-                                       );
-        let _ = str::as_c_str("@@:", |types|
-                              unsafe {
-                                  class_addMethod(MyObject,
-                                                  doSomething,
-                                                  MyObject_doSomething,
-                                                  types)
-                              }
-                             );
+        let NSObject = do "NSObject".to_c_str().with_ref |s| {
+            unsafe {
+                objc_getClass(s)
+            }
+        };
+        let MyObject = do "MyObject".to_c_str().with_ref |s| {
+            unsafe {
+                objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
+            }
+        };
+        let doSomething = do "doSomething".to_c_str().with_ref |s| {
+            unsafe {
+                sel_registerName(s)
+            }
+        };
+        let _ = do "@@:".to_c_str().with_ref |types| {
+            unsafe {
+                class_addMethod(MyObject,
+                                doSomething,
+                                MyObject_doSomething,
+                                types)
+            }
+        };
 
         unsafe {
             objc_registerClassPair(MyObject);
         }
 
-        let alloc = str::as_c_str("alloc", |s| unsafe { sel_registerName(s) });
-        let init = str::as_c_str("init", |s| unsafe { sel_registerName(s) });
+        let alloc = do "alloc".to_c_str().with_ref |s| {
+            unsafe { sel_registerName(s) }
+        };
+        let init = do "init".to_c_str().with_ref |s| {
+            unsafe { sel_registerName(s) }
+        };
 
         unsafe {
             let mut obj = objc_msgSend(MyObject, alloc);

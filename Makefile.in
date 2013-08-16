@@ -12,7 +12,7 @@ RUST_SRC = $(shell find $(VPATH)/. -type f -name '*.rs')
 all: libcocoa.dummy
 
 libcocoa.dummy: cocoa.rc $(RUST_SRC) libmsgsend.a
-	$(RUSTC) $(RUSTFLAGS) $< -o $@
+	$(RUSTC) $(RUSTFLAGS) $<
 	touch $@
 
 cocoa-test: cocoa.rc $(RUST_SRC) libmsgsend.a

@@ -9,7 +9,7 @@ RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 all:	librustcorefoundation.dummy
 
 librustcorefoundation.dummy: core_foundation.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@
+	$(RUSTC) $(RUSTFLAGS) $<
 	touch $@
 
 rustcorefoundation-test: core_foundation.rc $(RUST_SRC)

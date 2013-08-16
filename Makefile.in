@@ -13,7 +13,7 @@ librustcoretext.dummy: core_text.rc $(RUST_SRC)
 	touch $@
 
 rustcoretext-test: core_text.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< --out-dir . --test
+	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
 
 check: rustcoretext-test
 	./rustcoretext-test

@@ -13,7 +13,7 @@ librustcoregraphics.dummy: core_graphics.rc $(RUST_SRC)
 	touch $@
 
 rustcoregraphics-test: core_graphics.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< --out-dir . --test
+	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
 
 check: rustcoregraphics-test
 	./rustcoregraphics-test

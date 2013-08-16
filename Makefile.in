@@ -13,7 +13,7 @@ librustcorefoundation.dummy: core_foundation.rc $(RUST_SRC)
 	touch $@
 
 rustcorefoundation-test: core_foundation.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< --out-dir . --test
+	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
 
 check: rustcorefoundation-test
 	./rustcorefoundation-test

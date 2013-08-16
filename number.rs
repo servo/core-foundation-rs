@@ -67,7 +67,7 @@ impl CFNumber {
         }
     }
 
-    pub fn new<T:Copy + ConvertibleToCFNumber>(n: T) -> CFNumber {
+    pub fn new<T:Clone + ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             let objref = CFNumberCreate(kCFAllocatorDefault,
                                         n.cf_number_type(),
@@ -141,13 +141,13 @@ impl CFNumber {
         }
     }
 
-    priv fn has_float_type(&self) -> bool {
+    fn has_float_type(&self) -> bool {
         unsafe {
             CFNumberIsFloatType(self.contents.obj) as bool
         }
     }
 
-    priv fn has_number_type(&self, ty: CFNumberType) -> bool {
+    fn has_number_type(&self, ty: CFNumberType) -> bool {
         unsafe {
             CFNumberGetType(self.contents.obj) == ty
         }

@@ -16,11 +16,11 @@ all:	librustiosurface.dummy
 	$(CC) $< -o $@ -c $(CFLAGS)
 
 librustiosurface.dummy: io_surface.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
 rustiosurface-test: io_surface.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir . --test
 
 check: rustiosurface-test
 	./rustiosurface-test

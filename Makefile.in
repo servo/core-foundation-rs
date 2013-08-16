@@ -9,11 +9,11 @@ RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 all:	librustcoretext.dummy
 
 librustcoretext.dummy: core_text.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
 rustcoretext-test: core_text.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir . --test
 
 check: rustcoretext-test
 	./rustcoretext-test

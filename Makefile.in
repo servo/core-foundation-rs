@@ -20,7 +20,7 @@ librustiosurface.dummy: io_surface.rc $(RUST_SRC)
 	touch $@
 
 rustiosurface-test: io_surface.rc $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< --out-dir . --test
+	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
 
 check: rustiosurface-test
 	./rustiosurface-test

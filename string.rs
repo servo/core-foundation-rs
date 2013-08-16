@@ -238,7 +238,7 @@ impl CFString {
             unsafe {
                 CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
                                               bytes,
-                                              (len-1) as CFIndex, // does NOT want trailing NUL
+                                              len as CFIndex,
                                               kCFStringEncodingUTF8,
                                               false as Boolean,
                                               kCFAllocatorNull)
@@ -255,7 +255,7 @@ impl CFString {
             unsafe {
                 CFStringCreateWithBytes(kCFAllocatorDefault,
                                         bytes,
-                                        (len-1) as CFIndex, // does NOT want trailing NUL
+                                        len as CFIndex,
                                         kCFStringEncodingUTF8,
                                         false as Boolean,
                                         kCFAllocatorNull)
@@ -291,7 +291,7 @@ impl ToStr for CFString {
                              0,
                              &mut bytes_required);
 
-            let buffer : ~[u8] = vec::from_elem(1+bytes_required as uint, '\x00' as u8);
+            let buffer : ~[u8] = vec::from_elem(bytes_required as uint, '\x00' as u8);
             let mut bytes_used: CFIndex = 0 as CFIndex;
             // then, allocate the buffer and actually copy.
             let chars_written = CFStringGetBytes(self.contents.obj,
@@ -306,7 +306,7 @@ impl ToStr for CFString {
             assert!(chars_written == char_len);
             // this is dangerous; we over-allocate and nul-terminate the string (during
             // initialization)
-            assert!(bytes_used + 1 == buffer.len() as CFIndex);
+            assert!(bytes_used == buffer.len() as CFIndex);
             // then, reinterpret it as as string. you have been warned!
             let casted_str : ~str = cast::transmute::<~[u8], ~str>(buffer);
             // sanity check.

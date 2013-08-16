@@ -158,7 +158,7 @@ extern {
 
 #[test]
 fn should_box_and_unbox() {
-    use number::{CFNumber, CFNumberRef};
+    use number::CFNumber;
 
     let one = CFNumber::new(1 as i32);
     let two = CFNumber::new(2 as i32);

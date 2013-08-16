@@ -47,6 +47,23 @@ pub struct CFArray<ElemRefType> {
     contents: CFWrapper<CFArrayRef, ElemRefType, ()>
 }
 
+pub struct CFArrayIterator<'self, ElemRefType> {
+    priv array: &'self CFArray<ElemRefType>,
+    priv index: uint,
+}
+
+impl<'self, ElemRefType: AbstractCFTypeRef> Iterator<ElemRefType> for CFArrayIterator<'self, ElemRefType> {
+    fn next(&mut self) -> Option<ElemRefType> {
+        if self.index >= self.array.len() {
+            None
+        } else {
+            let v = self.array[self.index];
+            self.index += 1;
+            Some(v)
+        }
+    }
+}
+
 impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
     pub fn wrap_shared(array: CFArrayRef) -> CFArray<ElemRefType> {
         CFArray {
@@ -76,42 +93,14 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
         }
     }
 
-    pub fn each_ref(&self, cb: &fn(ElemRefType) -> bool) -> bool {
-        for i in range(0, self.len()) {
-            cb(self[i]);
-        }
-
-        true
-    }
-
-    pub fn eachi_ref(&self, cb: &fn(uint, ElemRefType) -> bool) -> bool {
-        for i in range(0, self.len()) {
-            cb(i, self[i]);
-        }
-
-        true
-    }
-
-    // Careful; the callback must wrap the reference properly.
+    // Careful; the loop body must wrap the reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn each(&self, cb: &fn(&ElemRefType) -> bool) -> bool {
-        for i in range(0, self.len()) {
-            cb(&self[i]);
+    pub fn iter<'t>(&'t self) -> CFArrayIterator<'t, ElemRefType> {
+        CFArrayIterator {
+            array: self,
+            index: 0
         }
-
-        true
-    }
-
-    // Careful; the callback must wrap the reference properly.
-    // Generally, when array elements are Core Foundation objects (not
-    // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn eachi(&self, cb: &fn(uint, &ElemRefType) -> bool) -> bool{
-        for i in range(0, self.len()) {
-            cb(i, &self[i]);
-        }
-
-        true
     }
 
     pub fn len(&self) -> uint {
@@ -161,7 +150,7 @@ extern {
 
 #[test]
 fn should_box_and_unbox() {
-    use number::{CFNumber, CFNumberRef};
+    use number::CFNumber;
 
     let one = CFNumber::new(1 as i32);
     let two = CFNumber::new(2 as i32);
@@ -180,13 +169,13 @@ fn should_box_and_unbox() {
     let mut sum = 0i32;
 
     for elem in arr.iter() {
-        sum += CFNumber::wrap_shared(*elem).to_i32();
+        sum += CFNumber::wrap_shared(elem).to_i32();
     }
 
     assert!(sum == 15);
 
     for elem in arr.iter() {
-        sum += CFNumber::wrap_shared(*elem).to_i32();
+        sum += CFNumber::wrap_shared(elem).to_i32();
     }
 
     assert!(sum == 30);

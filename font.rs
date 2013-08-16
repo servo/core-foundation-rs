@@ -300,7 +300,7 @@ impl CTFontMethods for CTFont {
 }
 
 // Helper methods
-priv fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
+fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
     unsafe {
         let result = CTFontCopyName(*font.borrow_ref(), name_key);
         if result.is_null() { return None; }

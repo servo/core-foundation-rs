@@ -10,7 +10,7 @@
 use core_foundation::array::CFArrayRef;
 use core_foundation::url::CFURLRef;
 
-pub extern {
+extern {
     /*
      * CTFontManager.h
      */

@@ -82,7 +82,7 @@ impl<T,E1,E2> Drop for CFWrapper<T,E1,E2> {
 
 pub type CFType = CFWrapper<CFTypeRef, (), ()>;
 
-impl<'self, T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
+impl<'self, T:Clone + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
     pub fn borrow_ref(&'self self) -> &'self T {
         &self.obj
     }
@@ -111,7 +111,7 @@ impl<'self, T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
 
     // Unwraps the wrapper, returning the underlying AbstractCFType.
     pub fn unwrap(wrapper: CFWrapper<T,E1,E2>) -> T {
-        copy wrapper.obj
+        wrapper.obj.clone()
     }
 
     pub fn to_CFType(wrapper: CFWrapper<T,E1,E2>) -> CFType {
@@ -128,7 +128,7 @@ impl<'self, T:Copy + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
     }
 
     pub fn clone(wrapper: &CFWrapper<T,E1,E2>) -> CFWrapper<T,E1,E2> {
-        CFWrapper::wrap_shared(copy *wrapper.borrow_ref())
+        CFWrapper::wrap_shared((*wrapper.borrow_ref()).clone())
     }
 
     pub fn retain_count(&self) -> CFIndex {

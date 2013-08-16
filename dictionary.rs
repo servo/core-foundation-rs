@@ -22,7 +22,6 @@ use string::CFStringRef;
 use std::cast;
 use std::libc::c_void;
 use std::ptr;
-use std::uint;
 use std::vec;
 
 pub type CFDictionaryApplierFunction = *u8;
@@ -70,7 +69,7 @@ pub struct CFDictionary<KeyRefType, ValueRefType> {
 
 pub type UntypedCFDictionary = CFDictionary<CFStringRef, CFTypeRef>;
 
-impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRef>
+impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFTypeRef>
          CFDictionary<KeyRefType, ValueRefType> {
     pub fn wrap_owned(dictionary: CFDictionaryRef) -> CFDictionary<KeyRefType, ValueRefType> {
         CFDictionary {
@@ -81,7 +80,7 @@ impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRe
     pub fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
         let mut keys : ~[CFTypeRef] = ~[];
         let mut values : ~[CFTypeRef] = ~[];
-        for pairs.iter().advance |pair| {
+        for pair in pairs.iter() {
             // FIXME: "let" would be much nicer here, but that doesn't work yet.
             match *pair {
                 (ref key, ref value) => {
@@ -154,6 +153,7 @@ impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRe
         return value.unwrap();
     }
 
+    // FIXME: this should be an iterator
     pub fn each(&self, blk: &fn(&KeyRefType, &ValueRefType) -> bool) -> bool {
         unsafe {
             let len = self.len();
@@ -162,9 +162,11 @@ impl<KeyRefType: Copy + AbstractCFTypeRef, ValueRefType: Copy + AbstractCFTypeRe
             let null_vals = cast::transmute::<*c_void,ValueRefType>(ptr::null());
             let values: ~[ValueRefType] = vec::from_elem(len, null_vals);
 
-            do uint::range(0,len) |i| {
-                blk(&keys[i], &values[i])
+            for i in range(0, len) {
+                if !blk(&keys[i], &values[i]) { return false; }
             }
+
+            true
         }
     }
 }

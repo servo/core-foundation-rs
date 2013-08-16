@@ -19,7 +19,6 @@ use base::{
 use std::cast;
 use std::libc::c_void;
 use std::ptr;
-use std::uint;
 use std::vec;
 
 pub type CFArrayRetainCallBack = *u8;
@@ -78,7 +77,7 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
     }
 
     pub fn each_ref(&self, cb: &fn(ElemRefType) -> bool) -> bool {
-        for uint::range(0, self.len()) |i| {
+        for i in range(0, self.len()) {
             cb(self[i]);
         }
 
@@ -86,7 +85,7 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
     }
 
     pub fn eachi_ref(&self, cb: &fn(uint, ElemRefType) -> bool) -> bool {
-        for uint::range(0, self.len()) |i| {
+        for i in range(0, self.len()) {
             cb(i, self[i]);
         }
 
@@ -97,7 +96,7 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
     pub fn each(&self, cb: &fn(&ElemRefType) -> bool) -> bool {
-        for uint::range(0, self.len()) |i| {
+        for i in range(0, self.len()) {
             cb(&self[i]);
         }
 
@@ -108,7 +107,7 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
     pub fn eachi(&self, cb: &fn(uint, &ElemRefType) -> bool) -> bool{
-        for uint::range(0, self.len()) |i| {
+        for i in range(0, self.len()) {
             cb(i, &self[i]);
         }
 
@@ -180,13 +179,13 @@ fn should_box_and_unbox() {
 
     let mut sum = 0i32;
 
-    for arr.each |elem: &CFNumberRef| {
+    for elem in arr.iter() {
         sum += CFNumber::wrap_shared(*elem).to_i32();
     }
 
     assert!(sum == 15);
 
-    for arr.each |elem: &CFNumberRef| {
+    for elem in arr.iter() {
         sum += CFNumber::wrap_shared(*elem).to_i32();
     }
 

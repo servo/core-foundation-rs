@@ -20,7 +20,6 @@ use std::cast;
 use std::libc::c_void;
 use std::ptr;
 use std::vec;
-use std::iterator::Enumerate;
 
 pub type CFArrayRetainCallBack = *u8;
 pub type CFArrayReleaseCallBack = *u8;
@@ -97,18 +96,11 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
     // Careful; the loop body must wrap the reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn each<'t>(&'t self) -> CFArrayIterator<'t, ElemRefType> {
+    pub fn iter<'t>(&'t self) -> CFArrayIterator<'t, ElemRefType> {
         CFArrayIterator {
             array: self,
             index: 0
         }
-    }
-
-    // Careful; the loop body must wrap the reference properly.
-    // Generally, when array elements are Core Foundation objects (not
-    // always true), they need to be wrapped with CFWrapper::wrap_shared.
-    pub fn eachi<'t>(&'t self) -> Enumerate<CFArrayIterator<'t, ElemRefType>> {
-        self.each().enumerate()
     }
 
     pub fn len(&self) -> uint {

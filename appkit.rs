@@ -8,7 +8,6 @@
 // except according to those terms.
 
 use base;
-use std::str;
 
 pub type CGFloat = f32;
 
@@ -53,8 +52,8 @@ extern {
 
 pub fn NSApp() -> base::id {
     unsafe {
-        let klass = str::as_c_str("NSApplication", |s| base::objc_getClass(s));
-        let sel = str::as_c_str("sharedApplication", |s| base::sel_registerName(s));
+        let klass = do "NSApplicatoin".to_c_str().with_ref |s| { base::objc_getClass(s) };
+        let sel = do "sharedApplication".to_c_str().with_ref |s| { base::sel_registerName(s) };
         base::objc_msgSend(klass, sel)
     }
 }

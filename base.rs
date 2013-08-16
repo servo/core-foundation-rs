@@ -20,7 +20,7 @@ pub type Ivar = libc::intptr_t;
 
 pub static NIL : id = 0 as id;
 
-pub extern {
+extern {
     fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *libc::c_char) -> bool;
     fn class_addIvar(cls : Class,
                      name : *libc::c_char,

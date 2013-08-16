@@ -123,12 +123,12 @@ pub trait TraitAccessors {
     fn normalized_slant(&self) -> float;
 }
 
-priv trait TraitAccessorPrivate {
+trait TraitAccessorPrivate {
     fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber;
 }
 
 impl TraitAccessorPrivate for CTFontTraits {
-    priv fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
+    fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
         let value = self.get(&key);
         CFNumber::wrap_shared(core_foundation::base::downcast::<CFNumberRef>(value))
     }
@@ -204,12 +204,12 @@ pub trait CTFontDescriptorMethods {
     fn font_path(&self) -> ~str;
 }
 
-priv trait CTFontDescriptorMethodsPrivate {
+trait CTFontDescriptorMethodsPrivate {
     fn get_string_attribute(&self, attribute: CFStringRef) -> Option<~str>;
 }
 
 impl CTFontDescriptorMethodsPrivate for CTFontDescriptor {
-    priv fn get_string_attribute(&self, attribute: CFStringRef) -> Option<~str> {
+    fn get_string_attribute(&self, attribute: CFStringRef) -> Option<~str> {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
             if value.is_null() {
@@ -334,7 +334,7 @@ extern {
     fn CTFontDescriptorGetTypeID() -> CFTypeID;
 }
 
-pub extern {
+extern {
     fn CTFontDescriptorCreateMatchingFontDescriptors(descriptor: CTFontDescriptorRef,
                                                      mandatoryAttributes: CFSetRef) -> CFArrayRef;
 }

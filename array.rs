@@ -39,6 +39,7 @@ pub type CFArrayRef = *__CFArray;
 
 impl AbstractCFTypeRef for CFArrayRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID { unsafe { CFArrayGetTypeID() } }
 }
 
@@ -77,6 +78,7 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn new(elems: &[ElemRefType]) -> CFArray<ElemRefType> {
         let array_ref: CFArrayRef;
         let elems_refs = do elems.map |e: &ElemRefType| { e.as_type_ref() };
@@ -103,6 +105,7 @@ impl<ElemRefType:AbstractCFTypeRef> CFArray<ElemRefType> {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn len(&self) -> uint {
         unsafe {
             return CFArrayGetCount(*self.contents.borrow_ref()) as uint;
@@ -114,6 +117,7 @@ impl<ElemRefType:AbstractCFTypeRef> Index<uint,ElemRefType> for CFArray<ElemRefT
     // Careful; the caller must wrap any returned reference properly.
     // Generally, when array elements are Core Foundation objects (not
     // always true), they need to be wrapped with CFWrapper::wrap_shared.
+    #[fixed_stack_segment]
     fn index(&self, idx: &uint) -> ElemRefType {
         assert!(*idx < self.len());
         unsafe { 

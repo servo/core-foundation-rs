@@ -51,6 +51,7 @@ impl AbstractCFTypeRef for CFTypeRef {
     fn type_id() -> CFTypeID { fail!(); }
 }
 
+#[fixed_stack_segment]
 pub fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T {
     unsafe {
         assert!(CFGetTypeID(r) == AbstractCFTypeRef::type_id::<T>());
@@ -68,6 +69,7 @@ pub struct CFWrapper<T, PlaceholderType1, PlaceholderType2> {
 
 #[unsafe_destructor]
 impl<T,E1,E2> Drop for CFWrapper<T,E1,E2> {
+    #[fixed_stack_segment]
     fn drop(&self) {
         unsafe {
             // sadly, cannot use obj.as_type_ref() here, because drop
@@ -104,6 +106,7 @@ impl<'self, T:Clone + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
 
     // Use this when following Core Foundation's "Get" rule. The wrapper does not have ownership.
     // Twe need to increment object's the retain count so it isn't freed out from under our noses.
+    #[fixed_stack_segment]
     pub fn wrap_shared(some_ref: T) -> CFWrapper<T,E1,E2> {
         unsafe { CFRetain(some_ref.as_type_ref()); }
         CFWrapper { obj: some_ref }
@@ -131,18 +134,21 @@ impl<'self, T:Clone + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
         CFWrapper::wrap_shared((*wrapper.borrow_ref()).clone())
     }
 
+    #[fixed_stack_segment]
     pub fn retain_count(&self) -> CFIndex {
         unsafe {
             CFGetRetainCount(*self.borrow_type_ref())
         }
     }
 
+    #[fixed_stack_segment]
     pub fn type_id(&self) -> CFTypeID {
         unsafe {
             CFGetTypeID(*self.borrow_type_ref())
         }
     }
 
+    #[fixed_stack_segment]
     pub fn show(&self) {
         unsafe {
             CFShow(*self.borrow_type_ref());

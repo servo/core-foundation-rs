@@ -54,6 +54,7 @@ pub type CFDictionaryRef = *__CFDictionary;
 impl AbstractCFTypeRef for CFDictionaryRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CFDictionaryGetTypeID()
@@ -77,6 +78,7 @@ impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFType
         }
     }
 
+    #[fixed_stack_segment]
     pub fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
         let mut keys : ~[CFTypeRef] = ~[];
         let mut values : ~[CFTypeRef] = ~[];
@@ -109,6 +111,7 @@ impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFType
         }
     }
 
+    #[fixed_stack_segment]
     pub fn len(&self) -> uint {
         unsafe {
             CFDictionaryGetCount(self.contents.obj) as uint
@@ -119,6 +122,7 @@ impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFType
         self.len() == 0
     }
 
+    #[fixed_stack_segment]
     pub fn contains_key(&self, key: &KeyRefType) -> bool {
         unsafe {
             CFDictionaryContainsKey(self.contents.obj, 
@@ -127,6 +131,7 @@ impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFType
         }
     }
 
+    #[fixed_stack_segment]
     pub fn find(&self, key: &KeyRefType) -> Option<ValueRefType> {
         unsafe {
             let value : *c_void = ptr::null();

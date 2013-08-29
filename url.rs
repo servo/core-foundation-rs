@@ -19,6 +19,7 @@ pub type CFURLRef = *__CFURL;
 impl AbstractCFTypeRef for CFURLRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CFURLGetTypeID()
@@ -29,6 +30,7 @@ impl AbstractCFTypeRef for CFURLRef {
 pub type CFURL = CFWrapper<CFURLRef, (), ()>;
 
 impl ToStr for CFURL {
+    #[fixed_stack_segment]
     fn to_str(&self) -> ~str {
         unsafe {
             let cfstr: CFString = CFString {

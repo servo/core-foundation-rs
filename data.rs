@@ -26,6 +26,7 @@ pub type CFDataRef = *__CFData;
 impl AbstractCFTypeRef for CFDataRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CFDataGetTypeID()
@@ -46,6 +47,7 @@ impl CFData {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn new_from_buf(buf: &[u8]) -> CFData {
         let result;
         unsafe {
@@ -60,12 +62,14 @@ impl CFData {
     }
 
     // tread with caution; read-only
+    #[fixed_stack_segment]
     pub fn bytes(&self) -> *u8 {
         unsafe {
             CFDataGetBytePtr(self.contents.obj)
         }
     }
 
+    #[fixed_stack_segment]
     pub fn len(&self) -> uint {
         unsafe {
             CFDataGetLength(self.contents.obj) as uint

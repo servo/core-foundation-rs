@@ -202,6 +202,7 @@ pub type CFStringRef = *__CFString;
 impl AbstractCFTypeRef for CFStringRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CFStringGetTypeID()
@@ -233,6 +234,7 @@ impl CFString {
 
     // like CFString::new, but references a string that can be used as
     // a backing store by virtue of being statically allocated.
+    #[fixed_stack_segment]
     pub fn new_static(string: &'static str) -> CFString {
         let string_ref = do string.as_imm_buf |bytes, len| {
             unsafe {
@@ -250,6 +252,7 @@ impl CFString {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn new(string: &str) -> CFString {
         let string_ref = do string.as_imm_buf |bytes, len| {
             unsafe {
@@ -267,6 +270,7 @@ impl CFString {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn char_len(&self) -> uint {
         unsafe {
             CFStringGetLength(self.contents.obj) as uint
@@ -275,6 +279,7 @@ impl CFString {
 }
 
 impl ToStr for CFString {
+    #[fixed_stack_segment]
     fn to_str(&self) -> ~str {
         unsafe {
             let char_len = self.char_len();

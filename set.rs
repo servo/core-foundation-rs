@@ -42,6 +42,7 @@ pub type CFSetRef = *__CFSet;
 impl AbstractCFTypeRef for CFSetRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CFSetGetTypeID()
@@ -56,6 +57,7 @@ pub struct CFSet<ElemRefType> {
 }
 
 impl<ElemRefType : AbstractCFTypeRef> CFSet<ElemRefType> {
+    #[fixed_stack_segment]
     pub fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
         let result: CFSetRef;
         let elems_refs = do elems.map |e: &ElemRefType| {

@@ -43,6 +43,7 @@ pub type CFNumberRef = *__CFNumber;
 impl AbstractCFTypeRef for CFNumberRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CFNumberGetTypeID()
@@ -67,6 +68,7 @@ impl CFNumber {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn new<T:Clone + ConvertibleToCFNumber>(n: T) -> CFNumber {
         unsafe {
             let objref = CFNumberCreate(kCFAllocatorDefault,
@@ -78,6 +80,7 @@ impl CFNumber {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn to_i8(&self) -> i8 {
         let ty = kCFNumberSInt8Type;
         assert!(self.has_number_type(ty));
@@ -90,6 +93,7 @@ impl CFNumber {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn to_i16(&self) -> i16 {
         let ty = kCFNumberSInt16Type;
         assert!(self.has_number_type(ty));
@@ -102,6 +106,7 @@ impl CFNumber {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn to_i32(&self) -> i32 {
         let ty = kCFNumberSInt32Type;
         assert!(self.has_number_type(ty));
@@ -114,6 +119,7 @@ impl CFNumber {
         }
     }
 
+    #[fixed_stack_segment]
     pub fn to_float(&self) -> float {
         unsafe {
             assert!(self.has_float_type());
@@ -141,12 +147,14 @@ impl CFNumber {
         }
     }
 
+    #[fixed_stack_segment]
     fn has_float_type(&self) -> bool {
         unsafe {
             CFNumberIsFloatType(self.contents.obj) as bool
         }
     }
 
+    #[fixed_stack_segment]
     fn has_number_type(&self, ty: CFNumberType) -> bool {
         unsafe {
             CFNumberGetType(self.contents.obj) == ty

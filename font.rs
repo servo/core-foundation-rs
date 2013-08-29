@@ -20,6 +20,7 @@ pub type CGFontRef = *__CGFont;
 impl AbstractCFTypeRef for CGFontRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CGFontGetTypeID()
@@ -53,6 +54,7 @@ impl Clone for CGFont {
     }
 }
 
+#[fixed_stack_segment]
 pub fn create_with_data_provider(provider: &CGDataProvider) -> CGFont {
     // TODO: error handling
     unsafe {

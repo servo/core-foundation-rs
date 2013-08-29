@@ -31,6 +31,7 @@ pub type CGDataProviderRef = *__CGDataProvider;
 impl AbstractCFTypeRef for CGDataProviderRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CGDataProviderGetTypeID()
@@ -40,6 +41,7 @@ impl AbstractCFTypeRef for CGDataProviderRef {
 
 pub type CGDataProvider = CFWrapper<CGDataProviderRef, (), ()>;
 
+#[fixed_stack_segment]
 pub fn new_from_buffer(buf: *u8, len: uint) -> CGDataProvider {
     unsafe {
         let result = CGDataProviderCreateWithData(

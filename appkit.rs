@@ -50,6 +50,7 @@ extern {
     fn NSBeep();
 }
 
+#[fixed_stack_segment]
 pub fn NSApp() -> base::id {
     unsafe {
         let klass = do "NSApplicatoin".to_c_str().with_ref |s| { base::objc_getClass(s) };

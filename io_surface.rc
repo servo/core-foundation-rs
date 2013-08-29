@@ -33,6 +33,7 @@ pub type IOSurfaceRef = *__IOSurface;
 impl AbstractCFTypeRef for IOSurfaceRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             IOSurfaceGetTypeID()
@@ -48,6 +49,7 @@ pub trait IOSurfaceMethods {
     fn get_id(&self) -> IOSurfaceID;
 }
 
+#[fixed_stack_segment]
 pub fn new(properties: &UntypedCFDictionary) -> IOSurface {
     unsafe {
         let result = IOSurfaceCreate(*properties.contents.borrow_ref());
@@ -55,6 +57,7 @@ pub fn new(properties: &UntypedCFDictionary) -> IOSurface {
     }
 }
 
+#[fixed_stack_segment]
 pub fn lookup(csid: IOSurfaceID) -> IOSurface {
     unsafe {
         let result = IOSurfaceLookup(csid);
@@ -63,6 +66,7 @@ pub fn lookup(csid: IOSurfaceID) -> IOSurface {
 }
 
 impl IOSurfaceMethods for IOSurface {
+    #[fixed_stack_segment]
     fn get_id(&self) -> IOSurfaceID {
         unsafe {
             IOSurfaceGetID(self.obj)

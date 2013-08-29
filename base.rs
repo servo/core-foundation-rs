@@ -14,7 +14,7 @@ use std::libc::c_long;
 
 pub type id = libc::intptr_t;
 pub type Class = libc::intptr_t;
-pub type IMP = *u8;
+pub type IMP = extern "C" fn(id, SEL) -> id;
 pub type SEL = libc::intptr_t;
 pub type Ivar = libc::intptr_t;
 
@@ -48,6 +48,7 @@ mod test {
     use super::*;
 
     #[test]
+    #[fixed_stack_segment]
     pub fn test_nsapp() {
         let klass = do "NSApplication".to_c_str().with_ref |s| {
             unsafe {
@@ -68,6 +69,7 @@ mod test {
     }
 
     #[test]
+    #[fixed_stack_segment]
     pub fn test_custom_obj() {
         extern fn MyObject_doSomething(this : id, _sel : SEL) -> id {
             io::println("doSomething");
@@ -120,6 +122,7 @@ mod test {
 /// Invokes the given selector, which must have the signature:
 ///
 ///     double f();
+#[fixed_stack_segment]
 pub fn msg_send_double(theReceiver: id, theSelector: SEL) -> f64 {
     unsafe {
         invoke_msg_double(theReceiver, theSelector)
@@ -129,6 +132,7 @@ pub fn msg_send_double(theReceiver: id, theSelector: SEL) -> f64 {
 /// Invokes the given selector, which must have the signature:
 ///
 ///     id f();
+#[fixed_stack_segment]
 pub fn msg_send_id(theReceiver: id, theSelector: SEL) -> id {
     unsafe {
         invoke_msg_id(theReceiver, theSelector)
@@ -138,6 +142,7 @@ pub fn msg_send_id(theReceiver: id, theSelector: SEL) -> id {
 /// Invokes the given selector, which must have the signature:
 ///
 ///     id f(NSRect a);
+#[fixed_stack_segment]
 pub fn msg_send_id_NSRect(theReceiver: id, theSelector: SEL, a: NSRect) -> id {
     unsafe {
         invoke_msg_id_NSRect(theReceiver, theSelector, &a)
@@ -147,6 +152,7 @@ pub fn msg_send_id_NSRect(theReceiver: id, theSelector: SEL, a: NSRect) -> id {
 /// Invokes the given selector, which must have the signature:
 ///
 ///     id f(id a, id b, id c, id e, id f);
+#[fixed_stack_segment]
 pub fn msg_send_id_id_id_id_id_id(theReceiver: id,
                                   theSelector: SEL,
                                   a: id,
@@ -163,6 +169,7 @@ pub fn msg_send_id_id_id_id_id_id(theReceiver: id,
 /// Invokes the given selector, which must have the signature:
 ///
 ///     long f();
+#[fixed_stack_segment]
 pub fn msg_send_long(theReceiver: id, theSelector: SEL) -> c_long {
     unsafe {
         invoke_msg_long(theReceiver, theSelector)
@@ -172,6 +179,7 @@ pub fn msg_send_long(theReceiver: id, theSelector: SEL) -> c_long {
 /// Invokes the given selector, which must have the signature:
 ///
 ///     void f();
+#[fixed_stack_segment]
 pub fn msg_send_void(theReceiver: id, theSelector: SEL) {
     unsafe {
         invoke_msg_void(theReceiver, theSelector)
@@ -181,6 +189,7 @@ pub fn msg_send_void(theReceiver: id, theSelector: SEL) {
 /// Invokes the given selector, which must have the signature:
 ///
 ///     void f(BOOL a);
+#[fixed_stack_segment]
 pub fn msg_send_void_bool(theReceiver: id, theSelector: SEL, a: bool) {
     unsafe {
         invoke_msg_void_bool(theReceiver, theSelector, a)
@@ -190,6 +199,7 @@ pub fn msg_send_void_bool(theReceiver: id, theSelector: SEL, a: bool) {
 /// Invokes the given selector, which must have the signature:
 ///
 ///     void f(id a);
+#[fixed_stack_segment]
 pub fn msg_send_void_id(theReceiver: id, theSelector: SEL, a: id) {
     unsafe {
         invoke_msg_void_id(theReceiver, theSelector, a)

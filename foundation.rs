@@ -18,6 +18,7 @@ enum NSAutoreleasePool {
     NSAutoreleasePool_priv(base::id)
 }
 
+#[fixed_stack_segment]
 fn NSAutoreleasePool() -> base::id {
     unsafe {
         let klass = do "NSAutoreleasePool".to_c_str().with_ref |s| {

@@ -77,6 +77,7 @@ pub type CTFontRef = *__CTFont;
 impl AbstractCFTypeRef for CTFontRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CTFontGetTypeID()
@@ -123,6 +124,7 @@ pub trait CTFontMethods {
     fn get_font_table(&self, tag: u32) -> Option<CFData>;
 }
 
+#[fixed_stack_segment]
 pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
     unsafe {
         let result = CTFontCreateWithGraphicsFont(*cgfont.contents.borrow_ref(),
@@ -133,6 +135,7 @@ pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
     }
 }
 
+#[fixed_stack_segment]
 pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
     unsafe {
         let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(),
@@ -142,6 +145,7 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
     }
 }
 
+#[fixed_stack_segment]
 pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
     unsafe {
         let cfname = CFString::new(name);
@@ -162,6 +166,7 @@ pub trait CTFontMethodsPrivate {
 
 impl CTFontMethodsPrivate for CTFont {
     // Properties
+    #[fixed_stack_segment]
     fn symbolic_traits(&self) -> CTFontSymbolicTraits {
         unsafe {
             CTFontGetSymbolicTraits(self.obj)
@@ -171,6 +176,7 @@ impl CTFontMethodsPrivate for CTFont {
 
 impl CTFontMethods for CTFont {
     // Creation methods
+    #[fixed_stack_segment]
     fn copy_to_CGFont(&self) -> CGFont {
         unsafe {
             let value = CTFontCopyGraphicsFont(self.obj, ptr::null());
@@ -178,6 +184,7 @@ impl CTFontMethods for CTFont {
         }
     }
 
+    #[fixed_stack_segment]
     fn clone_with_font_size(&self, size: float) -> CTFont {
         unsafe {
             let result = CTFontCreateCopyWithAttributes(self.obj,
@@ -209,6 +216,7 @@ impl CTFontMethods for CTFont {
         value.expect("Fonts should always have a PostScript name.")
     }
 
+    #[fixed_stack_segment]
     fn all_traits(&self) -> CTFontTraits {
         unsafe {
             let result = CTFontCopyTraits(self.obj);
@@ -217,54 +225,63 @@ impl CTFontMethods for CTFont {
     }
 
     // Font metrics
+    #[fixed_stack_segment]
     fn ascent(&self) -> CGFloat {
         unsafe {
             CTFontGetAscent(self.obj)
         }
     }
 
+    #[fixed_stack_segment]
     fn descent(&self) -> CGFloat {
         unsafe {
             CTFontGetDescent(self.obj)
         }
     }
 
+    #[fixed_stack_segment]
     fn underline_thickness(&self) -> CGFloat {
         unsafe {
             CTFontGetUnderlineThickness(self.obj)
         }
     }
 
+    #[fixed_stack_segment]
     fn underline_position(&self) -> CGFloat {
         unsafe {
             CTFontGetUnderlinePosition(self.obj)
         }
     }
 
+    #[fixed_stack_segment]
     fn bounding_box(&self) -> CGRect {
         unsafe {
             CTFontGetBoundingBox(self.obj)
         }
     }
 
+    #[fixed_stack_segment]
     fn leading(&self) -> CGFloat {
         unsafe {
             CTFontGetLeading(self.obj)
         }
     }
 
+    #[fixed_stack_segment]
     fn x_height(&self) -> CGFloat {
         unsafe {
             CTFontGetXHeight(self.obj)
         }
     }
 
+    #[fixed_stack_segment]
     fn pt_size(&self) -> CGFloat {
         unsafe {
             CTFontGetSize(self.obj)
         }
     }
 
+    #[fixed_stack_segment]
     fn get_glyphs_for_characters(&self,
                                  characters: *UniChar,
                                  glyphs: *CGGlyph,
@@ -275,6 +292,7 @@ impl CTFontMethods for CTFont {
         }
     }
 
+    #[fixed_stack_segment]
     fn get_advances_for_glyphs(&self,
                                orientation: CTFontOrientation,
                                glyphs: *CGGlyph,
@@ -286,6 +304,7 @@ impl CTFontMethods for CTFont {
         }
     }
 
+    #[fixed_stack_segment]
     fn get_font_table(&self, tag: u32) -> Option<CFData> {
         unsafe {
             let result = CTFontCopyTable(self.obj,
@@ -300,6 +319,7 @@ impl CTFontMethods for CTFont {
 }
 
 // Helper methods
+#[fixed_stack_segment]
 fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
     unsafe {
         let result = CTFontCopyName(*font.borrow_ref(), name_key);

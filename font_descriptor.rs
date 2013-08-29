@@ -187,6 +187,7 @@ pub type CTFontDescriptorRef = *__CTFontDescriptor;
 impl AbstractCFTypeRef for CTFontDescriptorRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CTFontDescriptorGetTypeID()
@@ -209,6 +210,7 @@ trait CTFontDescriptorMethodsPrivate {
 }
 
 impl CTFontDescriptorMethodsPrivate for CTFontDescriptor {
+    #[fixed_stack_segment]
     fn get_string_attribute(&self, attribute: CFStringRef) -> Option<~str> {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
@@ -244,6 +246,7 @@ impl CTFontDescriptorMethods for CTFontDescriptor {
         value.expect("A font must have a non-null display name.")
     }
 
+    #[fixed_stack_segment]
     fn font_path(&self) -> ~str {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
@@ -254,6 +257,7 @@ impl CTFontDescriptorMethods for CTFontDescriptor {
     }
 }
 
+#[fixed_stack_segment]
 pub fn new_from_attributes(attributes: &CFWrapper<CFDictionaryRef, CFStringRef, CFTypeRef>)
                         -> CTFontDescriptor {
     unsafe {

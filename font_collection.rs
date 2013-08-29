@@ -26,6 +26,7 @@ pub type CTFontCollectionRef = *__CTFontCollection;
 impl AbstractCFTypeRef for CTFontCollectionRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
+    #[fixed_stack_segment]
     fn type_id() -> CFTypeID {
         unsafe {
             CTFontCollectionGetTypeID()
@@ -40,6 +41,7 @@ pub trait CTFontCollectionMethods {
 }
 
 impl CTFontCollectionMethods for CTFontCollection {
+    #[fixed_stack_segment]
     fn get_descriptors(&self) -> CFArray<CTFontDescriptorRef> {
         // surprise! this function follows the Get rule, despite being named *Create*.
         // So we have to addRef it to avoid CTFontCollection from double freeing it later.
@@ -49,6 +51,7 @@ impl CTFontCollectionMethods for CTFontCollection {
     }
 }
 
+#[fixed_stack_segment]
 pub fn new_from_descriptors(descs: &CFArray<CTFontDescriptorRef>) -> CTFontCollection {
     let key = CFString::wrap_shared(kCTFontCollectionRemoveDuplicatesOption);
     let value = CFNumber::new(1_i8);
@@ -62,6 +65,7 @@ pub fn new_from_descriptors(descs: &CFArray<CTFontDescriptorRef>) -> CTFontColle
     }
 }
 
+#[fixed_stack_segment]
 pub fn create_for_all_families() -> CTFontCollection {
     let key = CFString::wrap_shared(kCTFontCollectionRemoveDuplicatesOption);
     let value = CFNumber::new(1_i8);
@@ -74,6 +78,7 @@ pub fn create_for_all_families() -> CTFontCollection {
     }
 }
 
+#[fixed_stack_segment]
 pub fn create_for_family(family: &str) -> CTFontCollection {
     use font_descriptor::kCTFontFamilyNameAttribute;
    
@@ -101,6 +106,7 @@ pub fn create_for_family(family: &str) -> CTFontCollection {
     new_from_descriptors(&matched_descs)
 }
 
+#[fixed_stack_segment]
 pub fn get_family_names() -> CFArray<CFStringRef> {
     unsafe {
         CFArray::wrap_owned(CTFontManagerCopyAvailableFontFamilyNames())

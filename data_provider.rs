@@ -32,7 +32,7 @@ impl AbstractCFTypeRef for CGDataProviderRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     #[fixed_stack_segment]
-    fn type_id() -> CFTypeID {
+    fn type_id(_dummy: Option<CGDataProviderRef>) -> CFTypeID {
         unsafe {
             CGDataProviderGetTypeID()
         }

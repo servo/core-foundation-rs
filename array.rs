@@ -40,7 +40,7 @@ pub type CFArrayRef = *__CFArray;
 impl AbstractCFTypeRef for CFArrayRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
     #[fixed_stack_segment]
-    fn type_id() -> CFTypeID { unsafe { CFArrayGetTypeID() } }
+    fn type_id(_dummy: Option<CFArrayRef>) -> CFTypeID { unsafe { CFArrayGetTypeID() } }
 }
 
 // FIXME: Should be a newtype struct, but that fails due to a Rust compiler bug.

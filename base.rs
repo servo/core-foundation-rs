@@ -16,7 +16,9 @@ use std::libc::c_long;
 // borrow semantics. 
 pub trait AbstractCFTypeRef {
     fn as_type_ref(&self) -> CFTypeRef;
-    fn type_id() -> CFTypeID;
+
+    // FIXME https://github.com/mozilla-servo/rust-core-foundation/issues/17
+    fn type_id(_dummy: Option<Self>) -> CFTypeID;
 }
 
 pub type Boolean = u8;
@@ -48,13 +50,14 @@ pub type CFTypeRef = *__CFType;
 impl AbstractCFTypeRef for CFTypeRef {
     fn as_type_ref(&self) -> CFTypeRef { *self }
     // this can't be used, because CFType is the supertype and has no type id.
-    fn type_id() -> CFTypeID { fail!(); }
+    fn type_id(_dummy: Option<CFTypeRef>) -> CFTypeID { fail!(); }
 }
 
 #[fixed_stack_segment]
 pub fn downcast<T:AbstractCFTypeRef>(r: CFTypeRef) -> T {
     unsafe {
-        assert!(CFGetTypeID(r) == AbstractCFTypeRef::type_id::<T>());
+        let dummy: Option<T> = None;
+        assert!(CFGetTypeID(r) == AbstractCFTypeRef::type_id(dummy));
         cast::transmute::<CFTypeRef, T>(r)
     }
 }
@@ -125,7 +128,8 @@ impl<'self, T:Clone + AbstractCFTypeRef, E1, E2> CFWrapper<T,E1,E2> {
 
     pub fn from_CFType(wrapper: CFType) -> CFWrapper<T,E1,E2> {
         unsafe {
-            assert!(wrapper.type_id() == AbstractCFTypeRef::type_id::<T>());
+            let dummy: Option<T> = None;
+            assert!(wrapper.type_id() == AbstractCFTypeRef::type_id(dummy));
             cast::transmute::<CFType,CFWrapper<T,E1,E2>>(wrapper)
         }
     }

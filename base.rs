@@ -16,6 +16,8 @@ use std::libc::c_long;
 // borrow semantics. 
 pub trait AbstractCFTypeRef {
     fn as_type_ref(&self) -> CFTypeRef;
+
+    // FIXME https://github.com/mozilla-servo/rust-core-foundation/issues/17
     fn type_id(_dummy: Option<Self>) -> CFTypeID;
 }
 

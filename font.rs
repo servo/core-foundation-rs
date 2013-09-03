@@ -21,7 +21,7 @@ impl AbstractCFTypeRef for CGFontRef {
     fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
 
     #[fixed_stack_segment]
-    fn type_id() -> CFTypeID {
+    fn type_id(_dummy: Option<CGFontRef>) -> CFTypeID {
         unsafe {
             CGFontGetTypeID()
         }

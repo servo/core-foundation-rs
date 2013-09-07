@@ -150,7 +150,7 @@ impl CFNumber {
     #[fixed_stack_segment]
     fn has_float_type(&self) -> bool {
         unsafe {
-            CFNumberIsFloatType(self.contents.obj) as bool
+            CFNumberIsFloatType(self.contents.obj) != 0
         }
     }
 

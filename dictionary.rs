@@ -127,7 +127,7 @@ impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFType
         unsafe {
             CFDictionaryContainsKey(self.contents.obj, 
                                     cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref()))
-                                        as bool
+                                        != 0
         }
     }
 
@@ -138,7 +138,7 @@ impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFType
             let did_find_value = CFDictionaryGetValueIfPresent(
                 self.contents.obj,
                 cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref()),
-                cast::transmute::<&*c_void, **c_void>(&value)) as bool;
+                cast::transmute::<&*c_void, **c_void>(&value)) != 0;
 
             // FIXME: this will not handle non-CF dictionary entries
             // or ptr::null() values correctly.

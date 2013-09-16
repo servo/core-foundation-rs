@@ -7,14 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[link(name = "core_text",
-       vers = "0.1")];
-#[crate_type = "lib"];
-
 extern mod std;
 
-extern mod core_foundation;
-extern mod core_graphics;
+extern mod core_foundation = "rust-core-foundation";
+extern mod core_graphics = "rust-core-graphics";
 
 pub mod font;
 pub mod font_collection;

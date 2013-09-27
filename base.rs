@@ -73,7 +73,7 @@ pub struct CFWrapper<T, PlaceholderType1, PlaceholderType2> {
 #[unsafe_destructor]
 impl<T,E1,E2> Drop for CFWrapper<T,E1,E2> {
     #[fixed_stack_segment]
-    fn drop(&self) {
+    fn drop(&mut self) {
         unsafe {
             // sadly, cannot use obj.as_type_ref() here, because drop
             // cannot make virtual method calls using trait

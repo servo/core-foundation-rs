@@ -120,27 +120,27 @@ impl CFNumber {
     }
 
     #[fixed_stack_segment]
-    pub fn to_float(&self) -> float {
+    pub fn to_float(&self) -> f64 {
         unsafe {
             assert!(self.has_float_type());
             let ty = CFNumberGetType(self.contents.obj);
             if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
-                let mut val: libc::c_float = 0.0f as libc::c_float;
+                let mut val: libc::c_float = 0.0;
                 if !CFNumberGetValue(self.contents.obj,
                                      ty,
                                      cast::transmute::<&mut libc::c_float, *mut c_void>(&mut val)) {
                     fail!(~"Error in unwrapping CFNumber to libc::c_float");
                 }
-                return val as float;
+                return val as f64;
             }
             else if ty == kCFNumberFloat64Type || ty == kCFNumberDoubleType {
-                let mut val: libc::c_double = 0.0f as libc::c_double;
+                let mut val: libc::c_double = 0.0;
                 if !CFNumberGetValue(self.contents.obj,
                                      ty,
                                      cast::transmute::<&mut libc::c_double, *mut c_void>(&mut val)) {
                         fail!(~"Error in unwrapping CFNumber to libc::c_double");
                     }
-                return val as float;
+                return val as f64;
             }
 
             fail!(fmt!("Unable to wrap CFNumber into float: with type tag=%?", ty))
@@ -191,7 +191,7 @@ impl ConvertibleToCFNumber for i64 {
     }
 }
 
-impl ConvertibleToCFNumber for float {
+impl ConvertibleToCFNumber for f64 {
     fn cf_number_type(&self) -> CFNumberType {
         kCFNumberFloatType as CFNumberType
     }

@@ -118,9 +118,9 @@ pub type CTFontTraits = UntypedCFDictionary;
 
 pub trait TraitAccessors {
     fn symbolic_traits(&self) -> CTFontSymbolicTraits;
-    fn normalized_weight(&self) -> float;
-    fn normalized_width(&self) -> float;
-    fn normalized_slant(&self) -> float;
+    fn normalized_weight(&self) -> f64;
+    fn normalized_width(&self) -> f64;
+    fn normalized_slant(&self) -> f64;
 }
 
 trait TraitAccessorPrivate {
@@ -143,21 +143,21 @@ impl TraitAccessors for CTFontTraits {
         }
     }
 
-    fn normalized_weight(&self) -> float {
+    fn normalized_weight(&self) -> f64 {
         unsafe {
             let number = self.extract_number_for_key(kCTFontWeightTrait);
             cast::transmute(number.to_float())
         }
     }
 
-    fn normalized_width(&self) -> float {
+    fn normalized_width(&self) -> f64 {
         unsafe {
             let number = self.extract_number_for_key(kCTFontWidthTrait);
             cast::transmute(number.to_float())
         }
     }
 
-    fn normalized_slant(&self) -> float {
+    fn normalized_slant(&self) -> f64 {
         unsafe {
             let number = self.extract_number_for_key(kCTFontSlantTrait);
             cast::transmute(number.to_float())

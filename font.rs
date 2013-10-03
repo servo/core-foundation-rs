@@ -90,7 +90,7 @@ pub type CTFont = CFWrapper<CTFontRef, (), ()>;
 pub trait CTFontMethods {
     // Creation methods (statics below)
     fn copy_to_CGFont(&self) -> CGFont;
-    fn clone_with_font_size(&self, size: float) -> CTFont;
+    fn clone_with_font_size(&self, size: f64) -> CTFont;
 
     // Names
     fn family_name(&self) -> ~str;
@@ -120,12 +120,12 @@ pub trait CTFontMethods {
                                glyphs: *CGGlyph,
                                advances: *CGSize,
                                count: CFIndex)
-                            -> float;
+                            -> f64;
     fn get_font_table(&self, tag: u32) -> Option<CFData>;
 }
 
 #[fixed_stack_segment]
-pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
+pub fn new_from_CGFont(cgfont: &CGFont, pt_size: f64) -> CTFont {
     unsafe {
         let result = CTFontCreateWithGraphicsFont(*cgfont.contents.borrow_ref(),
                                                   pt_size as CGFloat,
@@ -136,7 +136,7 @@ pub fn new_from_CGFont(cgfont: &CGFont, pt_size: float) -> CTFont {
 }
 
 #[fixed_stack_segment]
-pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
+pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
     unsafe {
         let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(),
                                                     pt_size as CGFloat,
@@ -146,7 +146,7 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: float) -> CTFont {
 }
 
 #[fixed_stack_segment]
-pub fn new_from_name(name: ~str, pt_size: float) -> Result<CTFont, ()> {
+pub fn new_from_name(name: ~str, pt_size: f64) -> Result<CTFont, ()> {
     unsafe {
         let cfname = CFString::new(name);
         let result = CTFontCreateWithName(*cfname.contents.borrow_ref(),
@@ -185,7 +185,7 @@ impl CTFontMethods for CTFont {
     }
 
     #[fixed_stack_segment]
-    fn clone_with_font_size(&self, size: float) -> CTFont {
+    fn clone_with_font_size(&self, size: f64) -> CTFont {
         unsafe {
             let result = CTFontCreateCopyWithAttributes(self.obj,
                                                         size as CGFloat,
@@ -298,9 +298,9 @@ impl CTFontMethods for CTFont {
                                glyphs: *CGGlyph,
                                advances: *CGSize,
                                count: CFIndex)
-                            -> float {
+                            -> f64 {
         unsafe {
-            CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as float
+            CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as f64
         }
     }
 

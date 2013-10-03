@@ -12,12 +12,12 @@ use base;
 pub type CGFloat = f32;
 
 pub struct NSPoint {
-    x: float,
-    y: float,
+    x: f64,
+    y: f64,
 }
 
 impl NSPoint {
-    pub fn new(x: float, y: float) -> NSPoint {
+    pub fn new(x: f64, y: f64) -> NSPoint {
         NSPoint {
             x: x,
             y: y,
@@ -26,12 +26,12 @@ impl NSPoint {
 }
 
 pub struct NSSize {
-    width: float,
-    height: float,
+    width: f64,
+    height: f64,
 }
 
 impl NSSize {
-    pub fn new(width: float, height: float) -> NSSize {
+    pub fn new(width: f64, height: f64) -> NSSize {
         NSSize {
             width: width,
             height: height,

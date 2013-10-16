@@ -16,6 +16,8 @@
 #[license = "MIT"];
 #[crate_type = "lib"];
 
+#[feature(globs)];
+
 extern mod std;
 
 pub mod appkit;

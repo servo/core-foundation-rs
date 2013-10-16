@@ -21,25 +21,25 @@ pub type Ivar = libc::intptr_t;
 pub static NIL : id = 0 as id;
 
 extern {
-    fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *libc::c_char) -> bool;
-    fn class_addIvar(cls : Class,
-                     name : *libc::c_char,
-                     size : libc::size_t,
-                     alignment: u8,
-		             types: *libc::c_char) -> bool;
-    fn object_setInstanceVariable(obj : id,
+    pub fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *libc::c_char) -> bool;
+    pub fn class_addIvar(cls : Class,
+                         name : *libc::c_char,
+                         size : libc::size_t,
+                         alignment: u8,
+		         types: *libc::c_char) -> bool;
+    pub fn object_setInstanceVariable(obj : id,
+                                      name : *libc::c_char,
+                                      value : *libc::c_void);
+    pub fn object_getInstanceVariable(obj : id,
+                                      name : *libc::c_char,
+                                      outValue : **libc::c_void);
+    pub fn objc_allocateClassPair(superclass : Class,
                                   name : *libc::c_char,
-                                  value : *libc::c_void);
-    fn object_getInstanceVariable(obj : id,
-                                  name : *libc::c_char,
-                                  outValue : **libc::c_void);
-    fn objc_allocateClassPair(superclass : Class,
-                              name : *libc::c_char,
-                              extraBytes : libc::size_t) -> Class;
-    fn objc_getClass(name : *libc::c_char) -> id;
-    fn objc_msgSend(theReceiver : id, theSelector : SEL) -> id;
-    fn objc_registerClassPair(cls : Class);
-    fn sel_registerName(name : *libc::c_char) -> SEL;
+                                  extraBytes : libc::size_t) -> Class;
+    pub fn objc_getClass(name : *libc::c_char) -> id;
+    pub fn objc_msgSend(theReceiver : id, theSelector : SEL) -> id;
+    pub fn objc_registerClassPair(cls : Class);
+    pub fn sel_registerName(name : *libc::c_char) -> SEL;
 }
 
 #[cfg(test)]

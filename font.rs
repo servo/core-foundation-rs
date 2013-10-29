@@ -334,26 +334,26 @@ pub fn debug_font_names(font: &CTFont) {
         get_string_by_name_key(font, key).unwrap()
     }
 
-    io::println(fmt!("kCTFontFamilyNameKey: %s", get_key(font, kCTFontFamilyNameKey)));
-    io::println(fmt!("kCTFontSubFamilyNameKey: %s", get_key(font, kCTFontSubFamilyNameKey)));
-    io::println(fmt!("kCTFontStyleNameKey: %s", get_key(font, kCTFontStyleNameKey)));
-    io::println(fmt!("kCTFontUniqueNameKey: %s", get_key(font, kCTFontUniqueNameKey)));
-    io::println(fmt!("kCTFontFullNameKey: %s", get_key(font, kCTFontFullNameKey)));
-    io::println(fmt!("kCTFontPostScriptNameKey: %s", get_key(font, kCTFontPostScriptNameKey)));
+    io::println(format!("kCTFontFamilyNameKey: {:s}", get_key(font, kCTFontFamilyNameKey)));
+    io::println(format!("kCTFontSubFamilyNameKey: {:s}", get_key(font, kCTFontSubFamilyNameKey)));
+    io::println(format!("kCTFontStyleNameKey: {:s}", get_key(font, kCTFontStyleNameKey)));
+    io::println(format!("kCTFontUniqueNameKey: {:s}", get_key(font, kCTFontUniqueNameKey)));
+    io::println(format!("kCTFontFullNameKey: {:s}", get_key(font, kCTFontFullNameKey)));
+    io::println(format!("kCTFontPostScriptNameKey: {:s}", get_key(font, kCTFontPostScriptNameKey)));
 }
 
 pub fn debug_font_traits(font: &CTFont) {
     let sym = font.symbolic_traits();
-    io::println(fmt!("kCTFontItalicTrait: %b", sym.is_italic()));
-    io::println(fmt!("kCTFontBoldTrait: %b", sym.is_bold()));
-    io::println(fmt!("kCTFontExpandedTrait: %b", sym.is_expanded()));
-    io::println(fmt!("kCTFontCondensedTrait: %b", sym.is_condensed()));
-    io::println(fmt!("kCTFontMonoSpaceTrait: %b", sym.is_monospace()));
+    io::println(format!("kCTFontItalicTrait: {:b}", sym.is_italic()));
+    io::println(format!("kCTFontBoldTrait: {:b}", sym.is_bold()));
+    io::println(format!("kCTFontExpandedTrait: {:b}", sym.is_expanded()));
+    io::println(format!("kCTFontCondensedTrait: {:b}", sym.is_condensed()));
+    io::println(format!("kCTFontMonoSpaceTrait: {:b}", sym.is_monospace()));
 
     let traits = font.all_traits();
-    io::println(fmt!("kCTFontWeightTrait: %f", traits.normalized_weight()));
-//    io::println(fmt!("kCTFontWidthTrait: %f", traits.normalized_width()));
-//    io::println(fmt!("kCTFontSlantTrait: %f", traits.normalized_slant()));
+    io::println(format!("kCTFontWeightTrait: :{f}", traits.normalized_weight()));
+//    io::println(format!("kCTFontWidthTrait: {:f}", traits.normalized_width()));
+//    io::println(format!("kCTFontSlantTrait: {:f}", traits.normalized_slant()));
 }
 
 #[nolink]

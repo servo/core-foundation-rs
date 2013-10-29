@@ -14,7 +14,7 @@ use string::CFString;
 
 fn main() {
     /*let n = CFNumber::new_number(42 as i32);
-    io::println(fmt!("%d", (&n).retain_count() as int));
+    io::println(format!("{:d}", (&n).retain_count() as int));
     (&n).show();*/
 
     let bar = CFString::new_static("Bar");

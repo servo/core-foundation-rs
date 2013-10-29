@@ -64,7 +64,7 @@ mod test {
 
         unsafe {
             let nsapp = objc_msgSend(klass, sel);
-            io::println(fmt!("nsapp: %d", (nsapp as int)));
+            io::println(format!("nsapp: {:d}", (nsapp as int)));
         }
     }
 

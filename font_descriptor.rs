@@ -268,11 +268,11 @@ pub fn new_from_attributes(attributes: &CFWrapper<CFDictionaryRef, CFStringRef, 
 }
 
 pub fn debug_descriptor(desc: &CTFontDescriptor) {
-    io::println(fmt!("family: %s", desc.family_name()));
-    io::println(fmt!("name: %s", desc.font_name()));
-    io::println(fmt!("style: %s", desc.style_name()));
-    io::println(fmt!("display: %s", desc.display_name()));
-    io::println(fmt!("path: %s", desc.font_path()));
+    io::println(format!("family: {:s}", desc.family_name()));
+    io::println(format!("name: {:s}", desc.font_name()));
+    io::println(format!("style: {:s}", desc.style_name()));
+    io::println(format!("display: {:s}", desc.display_name()));
+    io::println(format!("path: {:s}", desc.font_path()));
     desc.show();
 }
 

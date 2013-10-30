@@ -143,7 +143,7 @@ impl CFNumber {
                 return val as f64;
             }
 
-            fail!(fmt!("Unable to wrap CFNumber into float: with type tag=%?", ty))
+            fail!("Unable to wrap CFNumber into float: with type tag={}", ty)
         }
     }
 

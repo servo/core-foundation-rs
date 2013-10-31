@@ -44,7 +44,7 @@ extern {
 
 #[cfg(test)]
 mod test {
-    use std::{io, libc};
+    use std::libc;
     use super::*;
 
     #[test]
@@ -64,7 +64,7 @@ mod test {
 
         unsafe {
             let nsapp = objc_msgSend(klass, sel);
-            io::println(format!("nsapp: {:d}", (nsapp as int)));
+            println!("nsapp: {:d}", (nsapp as int));
         }
     }
 
@@ -72,7 +72,7 @@ mod test {
     #[fixed_stack_segment]
     pub fn test_custom_obj() {
         extern fn MyObject_doSomething(this : id, _sel : SEL) -> id {
-            io::println("doSomething");
+            println!("doSomething");
             return this;
         }
 

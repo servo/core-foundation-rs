@@ -153,7 +153,7 @@ impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFType
     pub fn get(&self, key: &KeyRefType) -> ValueRefType {
         let value = self.find(key);
         if value.is_none() {
-            fail!("No entry found for key: {}", key);
+            fail!("No entry found for key: {:?}", key);
         }
         return value.unwrap();
     }

@@ -21,7 +21,6 @@ use core_foundation::url::{CFURLRef};
 use core_graphics::base::CGFloat;
 
 use std::cast;
-use std::io;
 
 /*
 * CTFontTraits.h
@@ -268,11 +267,11 @@ pub fn new_from_attributes(attributes: &CFWrapper<CFDictionaryRef, CFStringRef, 
 }
 
 pub fn debug_descriptor(desc: &CTFontDescriptor) {
-    io::println(format!("family: {:s}", desc.family_name()));
-    io::println(format!("name: {:s}", desc.font_name()));
-    io::println(format!("style: {:s}", desc.style_name()));
-    io::println(format!("display: {:s}", desc.display_name()));
-    io::println(format!("path: {:s}", desc.font_path()));
+    println!("family: {:s}", desc.family_name());
+    println!("name: {:s}", desc.font_name());
+    println!("style: {:s}", desc.style_name());
+    println!("display: {:s}", desc.display_name());
+    println!("path: {:s}", desc.font_path());
     desc.show();
 }
 

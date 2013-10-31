@@ -26,7 +26,6 @@ use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
 use core_graphics::geometry::{CGRect, CGSize};
 
 use std::libc;
-use std::io;
 use std::ptr;
 
 pub type CTFontUIFontType = u32;
@@ -334,26 +333,26 @@ pub fn debug_font_names(font: &CTFont) {
         get_string_by_name_key(font, key).unwrap()
     }
 
-    io::println(format!("kCTFontFamilyNameKey: {:s}", get_key(font, kCTFontFamilyNameKey)));
-    io::println(format!("kCTFontSubFamilyNameKey: {:s}", get_key(font, kCTFontSubFamilyNameKey)));
-    io::println(format!("kCTFontStyleNameKey: {:s}", get_key(font, kCTFontStyleNameKey)));
-    io::println(format!("kCTFontUniqueNameKey: {:s}", get_key(font, kCTFontUniqueNameKey)));
-    io::println(format!("kCTFontFullNameKey: {:s}", get_key(font, kCTFontFullNameKey)));
-    io::println(format!("kCTFontPostScriptNameKey: {:s}", get_key(font, kCTFontPostScriptNameKey)));
+    println!("kCTFontFamilyNameKey: {:s}", get_key(font, kCTFontFamilyNameKey));
+    println!("kCTFontSubFamilyNameKey: {:s}", get_key(font, kCTFontSubFamilyNameKey));
+    println!("kCTFontStyleNameKey: {:s}", get_key(font, kCTFontStyleNameKey));
+    println!("kCTFontUniqueNameKey: {:s}", get_key(font, kCTFontUniqueNameKey));
+    println!("kCTFontFullNameKey: {:s}", get_key(font, kCTFontFullNameKey));
+    println!("kCTFontPostScriptNameKey: {:s}", get_key(font, kCTFontPostScriptNameKey));
 }
 
 pub fn debug_font_traits(font: &CTFont) {
     let sym = font.symbolic_traits();
-    io::println(format!("kCTFontItalicTrait: {:b}", sym.is_italic()));
-    io::println(format!("kCTFontBoldTrait: {:b}", sym.is_bold()));
-    io::println(format!("kCTFontExpandedTrait: {:b}", sym.is_expanded()));
-    io::println(format!("kCTFontCondensedTrait: {:b}", sym.is_condensed()));
-    io::println(format!("kCTFontMonoSpaceTrait: {:b}", sym.is_monospace()));
+    println!("kCTFontItalicTrait: {:b}", sym.is_italic());
+    println!("kCTFontBoldTrait: {:b}", sym.is_bold());
+    println!("kCTFontExpandedTrait: {:b}", sym.is_expanded());
+    println!("kCTFontCondensedTrait: {:b}", sym.is_condensed());
+    println!("kCTFontMonoSpaceTrait: {:b}", sym.is_monospace());
 
     let traits = font.all_traits();
-    io::println(format!("kCTFontWeightTrait: :{f}", traits.normalized_weight()));
-//    io::println(format!("kCTFontWidthTrait: {:f}", traits.normalized_width()));
-//    io::println(format!("kCTFontSlantTrait: {:f}", traits.normalized_slant()));
+    println!("kCTFontWeightTrait: {:f}", traits.normalized_weight());
+//    println!("kCTFontWidthTrait: {:f}", traits.normalized_width());
+//    println!("kCTFontSlantTrait: {:f}", traits.normalized_slant());
 }
 
 #[nolink]

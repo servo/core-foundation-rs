@@ -7,11 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use core_foundation::base::{AbstractCFTypeRef, CFTypeID, CFTypeRef, CFWrapper};
+use core_foundation::base::{CFRelease, CFTypeID, TCFType};
 
 use std::cast;
 use std::libc::{c_void, c_char, size_t};
 use std::ptr;
+use std::vec;
 
 pub type CGDataProviderGetBytesCallback = *u8;
 pub type CGDataProviderReleaseInfoCallback = *u8;
@@ -25,32 +26,53 @@ pub type CGDataProviderReleaseBytePointerCallback = *u8;
 pub type CGDataProviderReleaseDataCallback = *u8;
 pub type CGDataProviderGetBytesAtPositionCallback = *u8;
 
-struct __CGDataProvider { private: () }
+struct __CGDataProvider;
+
 pub type CGDataProviderRef = *__CGDataProvider;
 
-impl AbstractCFTypeRef for CGDataProviderRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+pub struct CGDataProvider {
+    obj: CGDataProviderRef,
+}
+
+impl Drop for CGDataProvider {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CGDataProviderRef> for CGDataProvider {
+    fn as_concrete_TypeRef(&self) -> CGDataProviderRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CGDataProviderRef) -> CGDataProvider {
+        CGDataProvider {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CGDataProviderRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CGDataProvider>) -> CFTypeID {
         unsafe {
             CGDataProviderGetTypeID()
         }
     }
 }
 
-pub type CGDataProvider = CFWrapper<CGDataProviderRef, (), ()>;
-
-#[fixed_stack_segment]
-pub fn new_from_buffer(buf: *u8, len: uint) -> CGDataProvider {
-    unsafe {
-        let result = CGDataProviderCreateWithData(
-            ptr::null(),
-            cast::transmute(buf),
-            len as size_t,
-            ptr::null());
-
-        CFWrapper::wrap_owned(result)
+impl CGDataProvider {
+    #[fixed_stack_segment]
+    pub fn from_buffer(buffer: &[u8]) -> CGDataProvider {
+        unsafe {
+            let result = CGDataProviderCreateWithData(ptr::null(),
+                                                      cast::transmute(vec::raw::to_ptr(buffer)),
+                                                      buffer.len() as u64,
+                                                      ptr::null());
+            TCFType::wrap_under_create_rule(result)
+        }
     }
 }
 

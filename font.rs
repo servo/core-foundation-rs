@@ -16,10 +16,9 @@ use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
 
 use core_foundation::array::{CFArrayRef};
-use core_foundation::base::{AbstractCFTypeRef, CFIndex, CFOptionFlags, CFTypeID, CFTypeRef};
-use core_foundation::base::{CFWrapper};
+use core_foundation::base::{CFIndex, CFOptionFlags, CFTypeID, CFRelease, CFTypeRef, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
-use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
+use core_foundation::dictionary::CFDictionaryRef;
 use core_foundation::string::{CFString, CFStringRef, UniChar};
 use core_graphics::base::{CGAffineTransform, CGFloat};
 use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
@@ -70,248 +69,225 @@ pub static kCTFontOptionsDefault: CTFontOptions = 0;
 pub static kCTFontOptionsPreventAutoActivation: CTFontOptions = (1 << 0);
 pub static kCTFontOptionsPreferSystemFont: CTFontOptions = (1 << 2);
 
-struct __CTFont { private: () }
+struct __CTFont;
+
 pub type CTFontRef = *__CTFont;
 
-impl AbstractCFTypeRef for CTFontRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+pub struct CTFont {
+    priv obj: CTFontRef,
+}
+
+impl Drop for CTFont {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CTFontRef> for CTFont {
+    fn as_concrete_TypeRef(&self) -> CTFontRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CTFontRef) -> CTFont {
+        CTFont {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CTFontRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CTFont>) -> CFTypeID {
         unsafe {
             CTFontGetTypeID()
         }
     }
 }
 
-pub type CTFont = CFWrapper<CTFontRef, (), ()>;
-
-pub trait CTFontMethods {
-    // Creation methods (statics below)
-    fn copy_to_CGFont(&self) -> CGFont;
-    fn clone_with_font_size(&self, size: f64) -> CTFont;
-
-    // Names
-    fn family_name(&self) -> ~str;
-    fn face_name(&self) -> ~str;
-    fn unique_name(&self) -> ~str;
-    fn postscript_name(&self) -> ~str;
-
-    // Properties
-    fn all_traits(&self) -> CTFontTraits;
-
-    // Font metrics
-    fn ascent(&self) -> CGFloat;
-    fn descent(&self) -> CGFloat;
-    fn underline_thickness(&self) -> CGFloat;
-    fn underline_position(&self) -> CGFloat;
-    fn bounding_box(&self) -> CGRect;
-    fn leading(&self) -> CGFloat;
-    fn x_height(&self) -> CGFloat;
-    fn pt_size(&self) -> CGFloat;
-    fn get_glyphs_for_characters(&self,
-                                 characters: *UniChar,
-                                 glyphs: *CGGlyph,
-                                 count: CFIndex)
-                              -> bool;
-    fn get_advances_for_glyphs(&self,
-                               orientation: CTFontOrientation,
-                               glyphs: *CGGlyph,
-                               advances: *CGSize,
-                               count: CFIndex)
-                            -> f64;
-    fn get_font_table(&self, tag: u32) -> Option<CFData>;
-}
-
 #[fixed_stack_segment]
 pub fn new_from_CGFont(cgfont: &CGFont, pt_size: f64) -> CTFont {
     unsafe {
-        let result = CTFontCreateWithGraphicsFont(*cgfont.contents.borrow_ref(),
-                                                  pt_size as CGFloat,
-                                                  ptr::null(),
-                                                  ptr::null());
-        CFWrapper::wrap_owned(result)
+        let font_ref = CTFontCreateWithGraphicsFont(cgfont.as_concrete_TypeRef(),
+                                                    pt_size as CGFloat,
+                                                    ptr::null(),
+                                                    ptr::null());
+        TCFType::wrap_under_create_rule(font_ref)
     }
 }
 
 #[fixed_stack_segment]
 pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
     unsafe {
-        let result = CTFontCreateWithFontDescriptor(*desc.borrow_ref(),
-                                                    pt_size as CGFloat,
-                                                    ptr::null());
-        CFWrapper::wrap_owned(result)
+        let font_ref = CTFontCreateWithFontDescriptor(desc.as_concrete_TypeRef(),
+                                                      pt_size as CGFloat,
+                                                      ptr::null());
+        TCFType::wrap_under_create_rule(font_ref)
     }
 }
 
 #[fixed_stack_segment]
 pub fn new_from_name(name: ~str, pt_size: f64) -> Result<CTFont, ()> {
     unsafe {
-        let cfname = CFString::new(name);
-        let result = CTFontCreateWithName(*cfname.contents.borrow_ref(),
-                                          pt_size as CGFloat,
-                                          ptr::null());
-        if result.is_null() {
-            return Err(());
+        let name: CFString = from_str(name).unwrap();
+        let font_ref = CTFontCreateWithName(name.as_concrete_TypeRef(),
+                                            pt_size as CGFloat,
+                                            ptr::null());
+        if font_ref.is_null() {
+            Err(())
+        } else {
+            Ok(TCFType::wrap_under_create_rule(font_ref))
         }
-
-        return Ok(CFWrapper::wrap_owned(result));
     }
 }
 
-pub trait CTFontMethodsPrivate {
-    fn symbolic_traits(&self) -> CTFontSymbolicTraits;
-}
-
-impl CTFontMethodsPrivate for CTFont {
+impl CTFont {
     // Properties
     #[fixed_stack_segment]
-    fn symbolic_traits(&self) -> CTFontSymbolicTraits {
+    pub fn symbolic_traits(&self) -> CTFontSymbolicTraits {
         unsafe {
             CTFontGetSymbolicTraits(self.obj)
         }
     }
 }
 
-impl CTFontMethods for CTFont {
+impl CTFont {
     // Creation methods
     #[fixed_stack_segment]
-    fn copy_to_CGFont(&self) -> CGFont {
+    pub fn copy_to_CGFont(&self) -> CGFont {
         unsafe {
-            let value = CTFontCopyGraphicsFont(self.obj, ptr::null());
-            CGFont::wrap_owned(value)
+            let CGFont_ref = CTFontCopyGraphicsFont(self.obj, ptr::null());
+            TCFType::wrap_under_create_rule(CGFont_ref)
         }
     }
 
     #[fixed_stack_segment]
-    fn clone_with_font_size(&self, size: f64) -> CTFont {
+    pub fn clone_with_font_size(&self, size: f64) -> CTFont {
         unsafe {
-            let result = CTFontCreateCopyWithAttributes(self.obj,
-                                                        size as CGFloat,
-                                                        ptr::null(),
-                                                        ptr::null());
-            CFWrapper::wrap_owned(result)
+            let font_ref = CTFontCreateCopyWithAttributes(self.obj,
+                                                          size as CGFloat,
+                                                          ptr::null(),
+                                                          ptr::null());
+            TCFType::wrap_under_create_rule(font_ref)
         }
     }
 
     // Names
-    fn family_name(&self) -> ~str {
+    pub fn family_name(&self) -> ~str {
         let value = get_string_by_name_key(self, kCTFontFamilyNameKey);
         value.expect("Fonts should always have a family name.")
     }
 
-    fn face_name(&self) -> ~str {
+    pub fn face_name(&self) -> ~str {
         let value = get_string_by_name_key(self, kCTFontSubFamilyNameKey);
         value.expect("Fonts should always have a face name.")
     }
 
-    fn unique_name(&self) -> ~str {
+    pub fn unique_name(&self) -> ~str {
         let value = get_string_by_name_key(self, kCTFontUniqueNameKey);
         value.expect("Fonts should always have a unique name.")
     }
 
-    fn postscript_name(&self) -> ~str {
+    pub fn postscript_name(&self) -> ~str {
         let value = get_string_by_name_key(self, kCTFontPostScriptNameKey);
         value.expect("Fonts should always have a PostScript name.")
     }
 
     #[fixed_stack_segment]
-    fn all_traits(&self) -> CTFontTraits {
+    pub fn all_traits(&self) -> CTFontTraits {
         unsafe {
-            let result = CTFontCopyTraits(self.obj);
-            CFDictionary::wrap_owned(result)
+            TCFType::wrap_under_create_rule(CTFontCopyTraits(self.obj))
         }
     }
 
     // Font metrics
     #[fixed_stack_segment]
-    fn ascent(&self) -> CGFloat {
+    pub fn ascent(&self) -> CGFloat {
         unsafe {
             CTFontGetAscent(self.obj)
         }
     }
 
     #[fixed_stack_segment]
-    fn descent(&self) -> CGFloat {
+    pub fn descent(&self) -> CGFloat {
         unsafe {
             CTFontGetDescent(self.obj)
         }
     }
 
     #[fixed_stack_segment]
-    fn underline_thickness(&self) -> CGFloat {
+    pub fn underline_thickness(&self) -> CGFloat {
         unsafe {
             CTFontGetUnderlineThickness(self.obj)
         }
     }
 
     #[fixed_stack_segment]
-    fn underline_position(&self) -> CGFloat {
+    pub fn underline_position(&self) -> CGFloat {
         unsafe {
             CTFontGetUnderlinePosition(self.obj)
         }
     }
 
     #[fixed_stack_segment]
-    fn bounding_box(&self) -> CGRect {
+    pub fn bounding_box(&self) -> CGRect {
         unsafe {
             CTFontGetBoundingBox(self.obj)
         }
     }
 
     #[fixed_stack_segment]
-    fn leading(&self) -> CGFloat {
+    pub fn leading(&self) -> CGFloat {
         unsafe {
             CTFontGetLeading(self.obj)
         }
     }
 
     #[fixed_stack_segment]
-    fn x_height(&self) -> CGFloat {
+    pub fn x_height(&self) -> CGFloat {
         unsafe {
             CTFontGetXHeight(self.obj)
         }
     }
 
     #[fixed_stack_segment]
-    fn pt_size(&self) -> CGFloat {
+    pub fn pt_size(&self) -> CGFloat {
         unsafe {
             CTFontGetSize(self.obj)
         }
     }
 
     #[fixed_stack_segment]
-    fn get_glyphs_for_characters(&self,
-                                 characters: *UniChar,
-                                 glyphs: *CGGlyph,
-                                 count: CFIndex)
-                              -> bool {
+    pub fn get_glyphs_for_characters(&self, characters: *UniChar, glyphs: *CGGlyph, count: CFIndex)
+                                     -> bool {
         unsafe {
             CTFontGetGlyphsForCharacters(self.obj, characters, glyphs, count)
         }
     }
 
     #[fixed_stack_segment]
-    fn get_advances_for_glyphs(&self,
-                               orientation: CTFontOrientation,
-                               glyphs: *CGGlyph,
-                               advances: *CGSize,
-                               count: CFIndex)
-                            -> f64 {
+    pub fn get_advances_for_glyphs(&self,
+                                   orientation: CTFontOrientation,
+                                   glyphs: *CGGlyph,
+                                   advances: *CGSize,
+                                   count: CFIndex)
+                                   -> f64 {
         unsafe {
             CTFontGetAdvancesForGlyphs(self.obj, orientation, glyphs, advances, count) as f64
         }
     }
 
     #[fixed_stack_segment]
-    fn get_font_table(&self, tag: u32) -> Option<CFData> {
+    pub fn get_font_table(&self, tag: u32) -> Option<CFData> {
         unsafe {
             let result = CTFontCopyTable(self.obj,
                                          tag as CTFontTableTag,
                                          kCTFontTableOptionsExcludeSynthetic);
-            return match result.is_null() {
-                true => None,
-                false => Some(CFData::wrap_owned(result)),
+            if result.is_null() {
+                None
+            } else {
+                Some(TCFType::wrap_under_create_rule(result))
             }
         }
     }
@@ -321,10 +297,13 @@ impl CTFontMethods for CTFont {
 #[fixed_stack_segment]
 fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
     unsafe {
-        let result = CTFontCopyName(*font.borrow_ref(), name_key);
-        if result.is_null() { return None; }
-
-        return Some(CFString::wrap_owned(result).to_str());
+        let result = CTFontCopyName(font.as_concrete_TypeRef(), name_key);
+        if result.is_null() {
+            None
+        } else {
+            let string: CFString = TCFType::wrap_under_create_rule(result);
+            Some(string.to_str())
+        }
     }
 }
 

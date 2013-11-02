@@ -9,15 +9,13 @@
 
 #[allow(non_uppercase_statics)];
 
-use core_foundation;
 use core_foundation::array::CFArrayRef;
-use core_foundation::base::AbstractCFTypeRef;
-use core_foundation::base::{CFTypeID, CFTypeRef, CFWrapper};
-use core_foundation::dictionary::{CFDictionaryRef, UntypedCFDictionary};
+use core_foundation::base::{CFRelease, CFType, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
 use core_foundation::string::{CFString, CFStringRef};
-use core_foundation::url::{CFURLRef};
+use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::CGFloat;
 
 use std::cast;
@@ -112,8 +110,9 @@ impl StylisticClassAccessors for CTFontStylisticClass {
     }
 }
 
-pub type CTFontAttributes = UntypedCFDictionary;
-pub type CTFontTraits = UntypedCFDictionary;
+pub type CTFontAttributes = CFDictionary;
+
+pub type CTFontTraits = CFDictionary;
 
 pub trait TraitAccessors {
     fn symbolic_traits(&self) -> CTFontSymbolicTraits;
@@ -123,13 +122,12 @@ pub trait TraitAccessors {
 }
 
 trait TraitAccessorPrivate {
-    fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber;
+    unsafe fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber;
 }
 
 impl TraitAccessorPrivate for CTFontTraits {
-    fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
-        let value = self.get(&key);
-        CFNumber::wrap_shared(core_foundation::base::downcast::<CFNumberRef>(value))
+    unsafe fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
+        self.get_CFType(cast::transmute(key)).cast::<CFNumberRef,CFNumber>()
     }
 
 }
@@ -138,28 +136,28 @@ impl TraitAccessors for CTFontTraits {
     fn symbolic_traits(&self) -> CTFontSymbolicTraits {
         unsafe {
             let number = self.extract_number_for_key(kCTFontSymbolicTrait);
-            cast::transmute(number.to_i32())
+            number.to_u32().unwrap()
         }
     }
 
     fn normalized_weight(&self) -> f64 {
         unsafe {
             let number = self.extract_number_for_key(kCTFontWeightTrait);
-            cast::transmute(number.to_float())
+            number.to_f64().unwrap()
         }
     }
 
     fn normalized_width(&self) -> f64 {
         unsafe {
             let number = self.extract_number_for_key(kCTFontWidthTrait);
-            cast::transmute(number.to_float())
+            number.to_f64().unwrap()
         }
     }
 
     fn normalized_slant(&self) -> f64 {
         unsafe {
             let number = self.extract_number_for_key(kCTFontSlantTrait);
-            cast::transmute(number.to_float())
+            number.to_f64().unwrap()
         }
     }
 }
@@ -180,89 +178,98 @@ pub static kCTFontPriorityUser: CTFontPriority = 40000;
 pub static kCTFontPriorityDynamic: CTFontPriority = 50000;
 pub static kCTFontPriorityProcess: CTFontPriority = 60000;
 
-struct __CTFontDescriptor { private: () }
+struct __CTFontDescriptor;
+
 pub type CTFontDescriptorRef = *__CTFontDescriptor;
 
-impl AbstractCFTypeRef for CTFontDescriptorRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+pub struct CTFontDescriptor {
+    priv obj: CTFontDescriptorRef,
+}
+
+impl Drop for CTFontDescriptor {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CTFontDescriptorRef> for CTFontDescriptor {
+    fn as_concrete_TypeRef(&self) -> CTFontDescriptorRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CTFontDescriptorRef) -> CTFontDescriptor {
+        CTFontDescriptor {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CTFontDescriptorRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CTFontDescriptor>) -> CFTypeID {
         unsafe {
             CTFontDescriptorGetTypeID()
         }
     }
 }
 
-pub type CTFontDescriptor = CFWrapper<CTFontDescriptorRef, (), ()>;
-
-pub trait CTFontDescriptorMethods {
-    fn family_name(&self) -> ~str;
-    fn font_name(&self) -> ~str;
-    fn style_name(&self) -> ~str;
-    fn display_name(&self) -> ~str;
-    fn font_path(&self) -> ~str;
-}
-
-trait CTFontDescriptorMethodsPrivate {
-    fn get_string_attribute(&self, attribute: CFStringRef) -> Option<~str>;
-}
-
-impl CTFontDescriptorMethodsPrivate for CTFontDescriptor {
+impl CTFontDescriptor {
     #[fixed_stack_segment]
     fn get_string_attribute(&self, attribute: CFStringRef) -> Option<~str> {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
             if value.is_null() {
-                return None;
+                return None
             }
 
-            Some(CFString::wrap_owned(core_foundation::base::downcast::<CFStringRef>(
-                    value)).to_str())
+            let value: CFType = TCFType::wrap_under_get_rule(value);
+            Some(value.cast::<CFStringRef,CFString>().to_str())
         }
     }
 
 }
 
-impl CTFontDescriptorMethods for CTFontDescriptor {
-    fn family_name(&self) -> ~str {
+impl CTFontDescriptor {
+    pub fn family_name(&self) -> ~str {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
         value.expect("A font must have a non-null font family name.")
     }
 
-    fn font_name(&self) -> ~str {
+    pub fn font_name(&self) -> ~str {
         let value = self.get_string_attribute(kCTFontNameAttribute);
         value.expect("A font must have a non-null name.")
     }
 
-    fn style_name(&self) -> ~str {
+    pub fn style_name(&self) -> ~str {
         let value = self.get_string_attribute(kCTFontStyleNameAttribute);
         value.expect("A font must have a non-null style name.")
     }
 
-    fn display_name(&self) -> ~str {
+    pub fn display_name(&self) -> ~str {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
         value.expect("A font must have a non-null display name.")
     }
 
     #[fixed_stack_segment]
-    fn font_path(&self) -> ~str {
+    pub fn font_path(&self) -> ~str {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
             assert!(value.is_not_null());
 
-            CFWrapper::wrap_owned(core_foundation::base::downcast::<CFURLRef>(value)).to_str()
+            let value: CFType = TCFType::wrap_under_get_rule(value);
+            value.cast::<CFURLRef,CFURL>().to_str()
         }
     }
 }
 
 #[fixed_stack_segment]
-pub fn new_from_attributes(attributes: &CFWrapper<CFDictionaryRef, CFStringRef, CFTypeRef>)
-                        -> CTFontDescriptor {
+pub fn new_from_attributes(attributes: &CFDictionary) -> CTFontDescriptor {
     unsafe {
         let result: CTFontDescriptorRef =
-            CTFontDescriptorCreateWithAttributes(*attributes.borrow_ref());
-        CFWrapper::wrap_owned(result)
+            CTFontDescriptorCreateWithAttributes(attributes.as_concrete_TypeRef());
+        TCFType::wrap_under_create_rule(result)
     }
 }
 

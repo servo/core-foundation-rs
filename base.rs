@@ -9,38 +9,204 @@
 
 use appkit::NSRect;
 
+use std::libc::{c_double, c_long};
 use std::libc;
-use std::libc::c_long;
 
-pub type id = libc::intptr_t;
 pub type Class = libc::intptr_t;
 pub type IMP = extern "C" fn(id, SEL) -> id;
-pub type SEL = libc::intptr_t;
 pub type Ivar = libc::intptr_t;
+pub type SEL = libc::intptr_t;
+pub type id = libc::intptr_t;
 
-pub static NIL : id = 0 as id;
+pub static nil: id = 0 as id;
 
 extern {
     pub fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *libc::c_char) -> bool;
-    pub fn class_addIvar(cls : Class,
-                         name : *libc::c_char,
-                         size : libc::size_t,
+    pub fn class_addIvar(cls: Class,
+                         name: *libc::c_char,
+                         size: libc::size_t,
                          alignment: u8,
-		         types: *libc::c_char) -> bool;
-    pub fn object_setInstanceVariable(obj : id,
-                                      name : *libc::c_char,
-                                      value : *libc::c_void);
-    pub fn object_getInstanceVariable(obj : id,
-                                      name : *libc::c_char,
-                                      outValue : **libc::c_void);
-    pub fn objc_allocateClassPair(superclass : Class,
-                                  name : *libc::c_char,
-                                  extraBytes : libc::size_t) -> Class;
-    pub fn objc_getClass(name : *libc::c_char) -> id;
-    pub fn objc_msgSend(theReceiver : id, theSelector : SEL) -> id;
-    pub fn objc_registerClassPair(cls : Class);
-    pub fn sel_registerName(name : *libc::c_char) -> SEL;
+		                 types: *libc::c_char)
+                         -> bool;
+    pub fn object_setInstanceVariable(obj: id, name: *libc::c_char, value: *libc::c_void);
+    pub fn object_getInstanceVariable(obj: id, name: *libc::c_char, outValue: **libc::c_void);
+    pub fn objc_allocateClassPair(superclass: Class, name: *libc::c_char, extraBytes: libc::size_t)
+                                  -> Class;
+    pub fn objc_getClass(name: *libc::c_char) -> id;
+    pub fn objc_msgSend(theReceiver: id, theSelector: SEL) -> id;
+    pub fn objc_registerClassPair(cls: Class);
+    pub fn sel_registerName(name: *libc::c_char) -> SEL;
 }
+
+/// A convenience method to convert the name of a class to the class object itself.
+#[inline]
+#[fixed_stack_segment]
+pub fn class(name: &str) -> id {
+    unsafe {
+        name.to_c_str().with_ref(|c_string| objc_getClass(c_string))
+    }
+}
+
+/// A convenience method to convert the name of a selector to the selector object.
+#[inline]
+#[fixed_stack_segment]
+pub fn selector(name: &str) -> SEL {
+    unsafe {
+        name.to_c_str().with_ref(|c_string| sel_registerName(c_string))
+    }
+}
+
+/// A trait that allows syntax like:
+///
+///     let string = "NSString".send("alloc").send("initWithCString:", "Hello world!");
+pub trait ObjCMethodCall {
+    unsafe fn send<S:ObjCSelector,A:ObjCMethodArgs>(self, selector: S, args: A) -> id;
+    unsafe fn send_double<S:ObjCSelector,A:ObjCMethodDoubleArgs>(self, selector: S, args: A)
+                          -> c_double;
+    unsafe fn send_long<S:ObjCSelector,A:ObjCMethodLongArgs>(self, selector: S, args: A) -> c_long;
+    unsafe fn send_void<S:ObjCSelector,A:ObjCMethodVoidArgs>(self, selector: S, args: A);
+}
+
+impl ObjCMethodCall for id {
+    unsafe fn send<S:ObjCSelector,A:ObjCMethodArgs>(self, selector: S, args: A) -> id {
+        args.send_args(self, selector.as_selector())
+    }
+    unsafe fn send_double<S:ObjCSelector,A:ObjCMethodDoubleArgs>(self, selector: S, args: A)
+                          -> c_double {
+        args.send_double_args(self, selector.as_selector())
+    }
+    unsafe fn send_long<S:ObjCSelector,A:ObjCMethodLongArgs>(self, selector: S, args: A)
+                        -> c_long {
+        args.send_long_args(self, selector.as_selector())
+    }
+    unsafe fn send_void<S:ObjCSelector,A:ObjCMethodVoidArgs>(self, selector: S, args: A) {
+        args.send_void_args(self, selector.as_selector())
+    }
+}
+
+/// A convenience implementation that allows methods on class names to be called directly, as in:
+/// 
+///     "NSString".send("alloc")
+impl<'self> ObjCMethodCall for &'self str {
+    unsafe fn send<S:ObjCSelector,A:ObjCMethodArgs>(self, selector: S, args: A) -> id {
+        args.send_args(class(self), selector.as_selector())
+    }
+    unsafe fn send_double<S:ObjCSelector,A:ObjCMethodDoubleArgs>(self, selector: S, args: A)
+                          -> c_double {
+        args.send_double_args(class(self), selector.as_selector())
+    }
+    unsafe fn send_long<S:ObjCSelector,A:ObjCMethodLongArgs>(self, selector: S, args: A)
+                        -> c_long {
+        args.send_long_args(class(self), selector.as_selector())
+    }
+    unsafe fn send_void<S:ObjCSelector,A:ObjCMethodVoidArgs>(self, selector: S, args: A) {
+        args.send_void_args(class(self), selector.as_selector())
+    }
+}
+
+/// A trait that allows C strings to be used as selectors without having to convert them first.
+pub trait ObjCSelector {
+    fn as_selector(self) -> SEL;
+}
+
+impl<'self> ObjCSelector for &'self str {
+    #[inline]
+    #[fixed_stack_segment]
+    fn as_selector(self) -> SEL {
+        // TODO(pcwalton): Cache somehow.
+        unsafe {
+            self.to_c_str().with_ref(|c_string| sel_registerName(c_string))
+        }
+    }
+}
+
+impl ObjCSelector for SEL {
+    #[inline]
+    fn as_selector(self) -> SEL {
+        self
+    }
+}
+
+/// Traits that simulate variadic parameters for convenience when sending messages.
+trait ObjCMethodArgs {
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id;
+}
+trait ObjCMethodDoubleArgs {
+    unsafe fn send_double_args(self, receiver: id, selector: SEL) -> c_double;
+}
+trait ObjCMethodLongArgs {
+    unsafe fn send_long_args(self, receiver: id, selector: SEL) -> c_long;
+}
+trait ObjCMethodVoidArgs {
+    unsafe fn send_void_args(self, receiver: id, selector: SEL);
+}
+
+impl ObjCMethodArgs for () {
+    #[inline]
+    #[fixed_stack_segment]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        invoke_msg_id(receiver, selector)
+    }
+}
+
+impl ObjCMethodArgs for (id, id, id, id, id) {
+    #[inline]
+    #[fixed_stack_segment]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        let (first, second, third, fourth, fifth) = self;
+        invoke_msg_id_id_id_id_id_id(receiver, selector, first, second, third, fourth, fifth)
+    }
+}
+
+impl ObjCMethodArgs for NSRect {
+    #[inline]
+    #[fixed_stack_segment]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        invoke_msg_id_NSRect(receiver, selector, &self)
+    }
+}
+
+impl ObjCMethodDoubleArgs for () {
+    #[inline]
+    #[fixed_stack_segment]
+    unsafe fn send_double_args(self, receiver: id, selector: SEL) -> f64 {
+        invoke_msg_double(receiver, selector)
+    }
+}
+
+impl ObjCMethodLongArgs for () {
+    #[inline]
+    #[fixed_stack_segment]
+    unsafe fn send_long_args(self, receiver: id, selector: SEL) -> c_long {
+        invoke_msg_long(receiver, selector)
+    }
+}
+
+impl ObjCMethodVoidArgs for () {
+    #[inline]
+    #[fixed_stack_segment]
+    unsafe fn send_void_args(self, receiver: id, selector: SEL) {
+        invoke_msg_void(receiver, selector)
+    }
+}
+
+impl ObjCMethodVoidArgs for bool {
+    #[inline]
+    #[fixed_stack_segment]
+    unsafe fn send_void_args(self, receiver: id, selector: SEL) {
+        invoke_msg_void_bool(receiver, selector, self)
+    }
+}
+
+impl ObjCMethodVoidArgs for id {
+    #[inline]
+    #[fixed_stack_segment]
+    unsafe fn send_void_args(self, receiver: id, selector: SEL) {
+        invoke_msg_void_id(receiver, selector, self)
+    }
+}
+
+/// A trait that simulates variadic parameters for method calls.
 
 #[cfg(test)]
 mod test {
@@ -50,159 +216,37 @@ mod test {
     #[test]
     #[fixed_stack_segment]
     pub fn test_nsapp() {
-        let klass = do "NSApplication".to_c_str().with_ref |s| {
-            unsafe {
-                objc_getClass(s)
-            }
-        };
-
-        let sel = do "sharedApplication".to_c_str().with_ref |s| {
-            unsafe {
-                sel_registerName(s)
-            }
-        };
-
         unsafe {
-            let nsapp = objc_msgSend(klass, sel);
-            println!("nsapp: {:d}", (nsapp as int));
+            let nsApp = "NSApplication".send("sharedApplication", ());
         }
     }
 
     #[test]
     #[fixed_stack_segment]
     pub fn test_custom_obj() {
-        extern fn MyObject_doSomething(this : id, _sel : SEL) -> id {
-            println!("doSomething");
+        extern fn MyObject_doSomething(this: id, _: SEL) -> id {
+            println("doSomething");
             return this;
         }
 
-        let NSObject = do "NSObject".to_c_str().with_ref |s| {
-            unsafe {
-                objc_getClass(s)
-            }
-        };
+        let NSObject = class("NSObject");
         let MyObject = do "MyObject".to_c_str().with_ref |s| {
             unsafe {
                 objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
             }
         };
-        let doSomething = do "doSomething".to_c_str().with_ref |s| {
-            unsafe {
-                sel_registerName(s)
-            }
-        };
-        let _ = do "@@:".to_c_str().with_ref |types| {
-            unsafe {
-                class_addMethod(MyObject,
-                                doSomething,
-                                MyObject_doSomething,
-                                types)
-            }
-        };
-
         unsafe {
+            let doSomething = selector("doSomething");
+            let _ = do "@@:".to_c_str().with_ref |types| {
+                class_addMethod(MyObject, doSomething, MyObject_doSomething, types)
+            };
+
             objc_registerClassPair(MyObject);
+
+            let mut obj: id = MyObject.send("alloc", ());
+            obj = obj.send("init", ());
+            obj.send_void("doSomething", ());
         }
-
-        let alloc = do "alloc".to_c_str().with_ref |s| {
-            unsafe { sel_registerName(s) }
-        };
-        let init = do "init".to_c_str().with_ref |s| {
-            unsafe { sel_registerName(s) }
-        };
-
-        unsafe {
-            let mut obj = objc_msgSend(MyObject, alloc);
-            obj = objc_msgSend(obj, init);
-            objc_msgSend(obj, doSomething);
-        }
-    }
-}
-
-/// Invokes the given selector, which must have the signature:
-///
-///     double f();
-#[fixed_stack_segment]
-pub fn msg_send_double(theReceiver: id, theSelector: SEL) -> f64 {
-    unsafe {
-        invoke_msg_double(theReceiver, theSelector)
-    }
-}
-
-/// Invokes the given selector, which must have the signature:
-///
-///     id f();
-#[fixed_stack_segment]
-pub fn msg_send_id(theReceiver: id, theSelector: SEL) -> id {
-    unsafe {
-        invoke_msg_id(theReceiver, theSelector)
-    }
-}
-
-/// Invokes the given selector, which must have the signature:
-///
-///     id f(NSRect a);
-#[fixed_stack_segment]
-pub fn msg_send_id_NSRect(theReceiver: id, theSelector: SEL, a: NSRect) -> id {
-    unsafe {
-        invoke_msg_id_NSRect(theReceiver, theSelector, &a)
-    }
-}
-
-/// Invokes the given selector, which must have the signature:
-///
-///     id f(id a, id b, id c, id e, id f);
-#[fixed_stack_segment]
-pub fn msg_send_id_id_id_id_id_id(theReceiver: id,
-                                  theSelector: SEL,
-                                  a: id,
-                                  b: id,
-                                  c: id,
-                                  d: id,
-                                  e: id)
-                                  -> id {
-    unsafe {
-        invoke_msg_id_id_id_id_id_id(theReceiver, theSelector, a, b, c, d, e)
-    }
-}
-
-/// Invokes the given selector, which must have the signature:
-///
-///     long f();
-#[fixed_stack_segment]
-pub fn msg_send_long(theReceiver: id, theSelector: SEL) -> c_long {
-    unsafe {
-        invoke_msg_long(theReceiver, theSelector)
-    }
-}
-
-/// Invokes the given selector, which must have the signature:
-///
-///     void f();
-#[fixed_stack_segment]
-pub fn msg_send_void(theReceiver: id, theSelector: SEL) {
-    unsafe {
-        invoke_msg_void(theReceiver, theSelector)
-    }
-}
-
-/// Invokes the given selector, which must have the signature:
-///
-///     void f(BOOL a);
-#[fixed_stack_segment]
-pub fn msg_send_void_bool(theReceiver: id, theSelector: SEL, a: bool) {
-    unsafe {
-        invoke_msg_void_bool(theReceiver, theSelector, a)
-    }
-}
-
-/// Invokes the given selector, which must have the signature:
-///
-///     void f(id a);
-#[fixed_stack_segment]
-pub fn msg_send_void_id(theReceiver: id, theSelector: SEL, a: id) {
-    unsafe {
-        invoke_msg_void_id(theReceiver, theSelector, a)
     }
 }
 

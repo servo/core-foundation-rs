@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base;
+use base::{ObjCMethodCall, id};
 
 pub type CGFloat = f32;
 
@@ -51,11 +51,7 @@ extern {
 }
 
 #[fixed_stack_segment]
-pub fn NSApp() -> base::id {
-    unsafe {
-        let klass = do "NSApplicatoin".to_c_str().with_ref |s| { base::objc_getClass(s) };
-        let sel = do "sharedApplication".to_c_str().with_ref |s| { base::sel_registerName(s) };
-        base::objc_msgSend(klass, sel)
-    }
+pub unsafe fn NSApp() -> id {
+    "NSApplication".send("sharedApplication", ())
 }
 

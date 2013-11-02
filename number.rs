@@ -7,13 +7,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! Immutable numbers.
+
 #[allow(non_uppercase_statics)];
 
-use base::{AbstractCFTypeRef, Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, CFWrapper};
-use base::{kCFAllocatorDefault};
+use base::{Boolean, CFAllocatorRef, CFRelease, CFTypeID, TCFType, kCFAllocatorDefault};
 
 use std::cast;
-use std::libc;
 use std::libc::c_void;
 
 pub type CFNumberType = u32;
@@ -37,164 +37,113 @@ static kCFNumberNSIntegerType: CFNumberType = 15;
 static kCFNumberCGFloatType:   CFNumberType = 16;
 static kCFNumberMaxType:       CFNumberType = 16;
 
-struct __CFNumber { private: () }
+struct __CFNumber;
+
 pub type CFNumberRef = *__CFNumber;
 
-impl AbstractCFTypeRef for CFNumberRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+/// An immutable numeric value.
+///
+/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
+pub struct CFNumber {
+    priv obj: CFNumberRef,
+}
+
+impl Drop for CFNumber {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CFNumberRef> for CFNumber {
+    fn as_concrete_TypeRef(&self) -> CFNumberRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CFNumberRef) -> CFNumber {
+        CFNumber {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CFNumberRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CFNumber>) -> CFTypeID {
         unsafe {
             CFNumberGetTypeID()
         }
     }
 }
 
-pub struct CFNumber {
-    contents: CFWrapper<CFNumberRef, (), ()>
-}
-
-impl CFNumber {
-    pub fn wrap_owned(number: CFNumberRef) -> CFNumber {
-        CFNumber {
-            contents: CFWrapper::wrap_owned(number)
-        }
-    }
-
-    pub fn wrap_shared(number: CFNumberRef) -> CFNumber {
-        CFNumber {
-            contents: CFWrapper::wrap_shared(number)
+// TODO(pcwalton): Floating point.
+impl ToPrimitive for CFNumber {
+    #[fixed_stack_segment]
+    #[inline]
+    fn to_i64(&self) -> Option<i64> {
+        unsafe {
+            let mut value: i64 = 0;
+            let ok = CFNumberGetValue(self.obj, kCFNumberSInt64Type, cast::transmute(&mut value));
+            assert!(ok);
+            Some(value)
         }
     }
 
     #[fixed_stack_segment]
-    pub fn new<T:Clone + ConvertibleToCFNumber>(n: T) -> CFNumber {
-        unsafe {
-            let objref = CFNumberCreate(kCFAllocatorDefault,
-                                        n.cf_number_type(),
-                                        cast::transmute::<&T, *c_void>(&n));
-            CFNumber {
-                contents: CFWrapper::wrap_owned(objref)
-            }
-        }
+    #[inline]
+    fn to_u64(&self) -> Option<u64> {
+        // CFNumber does not support unsigned 64-bit values.
+        None
     }
 
     #[fixed_stack_segment]
-    pub fn to_i8(&self) -> i8 {
-        let ty = kCFNumberSInt8Type;
-        assert!(self.has_number_type(ty));
+    #[inline]
+    fn to_f64(&self) -> Option<f64> {
         unsafe {
-            let mut val: i8 = 0i8;
-            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&mut i8, *mut c_void>(&mut val)) {
-                fail!(~"Error in unwrapping CFNumber to i8");
-            }
-            return val;
-        }
-    }
-
-    #[fixed_stack_segment]
-    pub fn to_i16(&self) -> i16 {
-        let ty = kCFNumberSInt16Type;
-        assert!(self.has_number_type(ty));
-        unsafe {
-            let mut val: i16 = 0i16;
-            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&mut i16, *mut c_void>(&mut val)) {
-                fail!(~"Error in unwrapping CFNumber to i16");
-            }
-            return val;
-        }
-    }
-
-    #[fixed_stack_segment]
-    pub fn to_i32(&self) -> i32 {
-        let ty = kCFNumberSInt32Type;
-        assert!(self.has_number_type(ty));
-        unsafe {
-            let mut val: i32 = 0i32;
-            if !CFNumberGetValue(self.contents.obj, ty, cast::transmute::<&mut i32, *mut c_void>(&mut val)) {
-                fail!(~"Error in unwrapping CFNumber to i32");
-            }
-            return val;
-        }
-    }
-
-    #[fixed_stack_segment]
-    pub fn to_float(&self) -> f64 {
-        unsafe {
-            assert!(self.has_float_type());
-            let ty = CFNumberGetType(self.contents.obj);
-            if ty == kCFNumberFloat32Type || ty == kCFNumberFloatType {
-                let mut val: libc::c_float = 0.0;
-                if !CFNumberGetValue(self.contents.obj,
-                                     ty,
-                                     cast::transmute::<&mut libc::c_float, *mut c_void>(&mut val)) {
-                    fail!(~"Error in unwrapping CFNumber to libc::c_float");
-                }
-                return val as f64;
-            }
-            else if ty == kCFNumberFloat64Type || ty == kCFNumberDoubleType {
-                let mut val: libc::c_double = 0.0;
-                if !CFNumberGetValue(self.contents.obj,
-                                     ty,
-                                     cast::transmute::<&mut libc::c_double, *mut c_void>(&mut val)) {
-                        fail!(~"Error in unwrapping CFNumber to libc::c_double");
-                    }
-                return val as f64;
-            }
-
-            fail!("Unable to wrap CFNumber into float: with type tag={}", ty)
-        }
-    }
-
-    #[fixed_stack_segment]
-    fn has_float_type(&self) -> bool {
-        unsafe {
-            CFNumberIsFloatType(self.contents.obj) != 0
-        }
-    }
-
-    #[fixed_stack_segment]
-    fn has_number_type(&self, ty: CFNumberType) -> bool {
-        unsafe {
-            CFNumberGetType(self.contents.obj) == ty
+            let mut value: f64 = 0.0;
+            let ok = CFNumberGetValue(self.obj, kCFNumberFloat64Type, cast::transmute(&mut value));
+            assert!(ok);
+            Some(value)
         }
     }
 }
 
-pub trait ConvertibleToCFNumber {
-    // FIXME: Should be static, but that breaks.
-    fn cf_number_type(&self) -> CFNumberType;
-}
+// TODO(pcwalton): Floating point.
+impl FromPrimitive for CFNumber {
+    #[fixed_stack_segment]
+    #[inline]
+    fn from_i64(value: i64) -> Option<CFNumber> {
+        unsafe {
+            let number_ref = CFNumberCreate(kCFAllocatorDefault,
+                                            kCFNumberSInt64Type,
+                                            cast::transmute(&value));
+            Some(TCFType::wrap_under_create_rule(number_ref))
+        }
+    }
 
-impl ConvertibleToCFNumber for i8 {
-    fn cf_number_type(&self) -> CFNumberType {
-        kCFNumberSInt8Type as CFNumberType
+    #[fixed_stack_segment]
+    #[inline]
+    fn from_u64(_: u64) -> Option<CFNumber> {
+        // CFNumber does not support unsigned 64-bit values.
+        None
+    }
+
+    #[fixed_stack_segment]
+    #[inline]
+    fn from_f64(value: f64) -> Option<CFNumber> {
+        unsafe {
+            let number_ref = CFNumberCreate(kCFAllocatorDefault,
+                                            kCFNumberFloat64Type,
+                                            cast::transmute(&value));
+            Some(TCFType::wrap_under_create_rule(number_ref))
+        }
     }
 }
 
-impl ConvertibleToCFNumber for i16 {
-    fn cf_number_type(&self) -> CFNumberType {
-        kCFNumberSInt16Type as CFNumberType
-    }
-}
-
-impl ConvertibleToCFNumber for i32 {
-    fn cf_number_type(&self) -> CFNumberType {
-        kCFNumberSInt32Type as CFNumberType
-    }
-}
-
-impl ConvertibleToCFNumber for i64 {
-    fn cf_number_type(&self) -> CFNumberType {
-        kCFNumberSInt64Type as CFNumberType
-    }
-}
-
-impl ConvertibleToCFNumber for f64 {
-    fn cf_number_type(&self) -> CFNumberType {
-        kCFNumberFloatType as CFNumberType
-    }
+/// A convenience function to create CFNumbers.
+pub fn number(value: i64) -> CFNumber {
+    FromPrimitive::from_i64(value).unwrap()
 }
 
 #[link_args="-framework CoreFoundation"]
@@ -218,13 +167,3 @@ extern {
     fn CFNumberGetTypeID() -> CFTypeID;
 }
 
-#[test]
-#[should_fail]
-fn should_fail_on_bad_downcast() {
-    use base;
-    use boolean::CFBooleanRef;
-
-    let CFNumber { contents: one } = CFNumber::new(1_i32);
-    let one = CFWrapper::to_CFType(one);
-    base::downcast::<CFBooleanRef>(*one.borrow_ref());
-}

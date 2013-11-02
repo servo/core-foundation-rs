@@ -7,10 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! Immutable strings.
+
 #[allow(non_uppercase_statics)];
 
-use base::{AbstractCFTypeRef, Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange};
-use base::{CFRangeMake, CFTypeRef, CFTypeID, CFWrapper, kCFAllocatorDefault, kCFAllocatorNull};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFOptionFlags, CFRange};
+use base::{CFRelease, CFTypeID, TCFType, kCFAllocatorDefault, kCFAllocatorNull};
 
 use std::cast;
 use std::libc;
@@ -19,9 +21,8 @@ use std::vec;
 
 pub type UniChar = libc::c_ushort;
 
-/*
- * CFString.h
- */
+// CFString.h
+
 pub type CFStringCompareFlags = CFOptionFlags;
 static kCFCompareCaseInsensitive: CFStringCompareFlags = 1;
 static kCFCompareBackwards: CFStringCompareFlags = 4;
@@ -35,8 +36,9 @@ static kCFCompareForcedOrdering: CFStringCompareFlags = 512;
 
 pub type CFStringEncoding = u32;
 
-/* OSX built-in encodings. */
-//static kCFStringEncodingMacRoman: CFStringEncoding = 0;
+// OS X built-in encodings.
+
+static kCFStringEncodingMacRoman: CFStringEncoding = 0;
 static kCFStringEncodingWindowsLatin1: CFStringEncoding = 0x0500;
 static kCFStringEncodingISOLatin1: CFStringEncoding = 0x0201;
 static kCFStringEncodingNextStepLatin: CFStringEncoding = 0x0B01;
@@ -53,14 +55,12 @@ static kCFStringEncodingUTF32BE: CFStringEncoding = 0x18000100;
 static kCFStringEncodingUTF32LE: CFStringEncoding = 0x1c000100;
 
 
-/*
- * CFStringEncodingExt.h
- */
+// CFStringEncodingExt.h
 
 type CFStringEncodings = CFIndex;
 
-/* External encodings, except those defined above. */
-//static kCFStringEncodingMacRoman: CFStringEncoding = 0;
+// External encodings, except those defined above.
+// Defined above: kCFStringEncodingMacRoman = 0
 static kCFStringEncodingMacJapanese: CFStringEncoding = 1;
 static kCFStringEncodingMacChineseTrad: CFStringEncoding = 2;
 static kCFStringEncodingMacKorean: CFStringEncoding = 3;
@@ -104,7 +104,7 @@ static kCFStringEncodingMacUkrainian: CFStringEncoding = 0x98;
 static kCFStringEncodingMacInuit: CFStringEncoding = 0xEC;
 static kCFStringEncodingMacVT100: CFStringEncoding = 0xFC;
 static kCFStringEncodingMacHFS: CFStringEncoding = 0xFF;
-//static kCFStringEncodingISOLatin1: CFStringEncoding = 0x0201;
+// Defined above: kCFStringEncodingISOLatin1 = 0x0201
 static kCFStringEncodingISOLatin2: CFStringEncoding = 0x0202;
 static kCFStringEncodingISOLatin3: CFStringEncoding = 0x0203;
 static kCFStringEncodingISOLatin4: CFStringEncoding = 0x0204;
@@ -140,7 +140,7 @@ static kCFStringEncodingDOSJapanese: CFStringEncoding = 0x0420;
 static kCFStringEncodingDOSChineseSimplif: CFStringEncoding = 0x0421;
 static kCFStringEncodingDOSKorean: CFStringEncoding = 0x0422;
 static kCFStringEncodingDOSChineseTrad: CFStringEncoding = 0x0423;
-//static kCFStringEncodingWindowsLatin1: CFStringEncoding = 0x0500;
+// Defined above: kCFStringEncodingWindowsLatin1 = 0x0500
 static kCFStringEncodingWindowsLatin2: CFStringEncoding = 0x0501;
 static kCFStringEncodingWindowsCyrillic: CFStringEncoding = 0x0502;
 static kCFStringEncodingWindowsGreek: CFStringEncoding = 0x0503;
@@ -150,7 +150,7 @@ static kCFStringEncodingWindowsArabic: CFStringEncoding = 0x0506;
 static kCFStringEncodingWindowsBalticRim: CFStringEncoding = 0x0507;
 static kCFStringEncodingWindowsVietnamese: CFStringEncoding = 0x0508;
 static kCFStringEncodingWindowsKoreanJohab: CFStringEncoding = 0x0510;
-//static kCFStringEncodingASCII: CFStringEncoding = 0x0600;
+// Defined above: kCFStringEncodingASCII = 0x0600
 static kCFStringEncodingANSEL: CFStringEncoding = 0x0601;
 static kCFStringEncodingJIS_X0201_76: CFStringEncoding = 0x0620;
 static kCFStringEncodingJIS_X0208_83: CFStringEncoding = 0x0621;
@@ -187,7 +187,7 @@ static kCFStringEncodingBig5_HKSCS_1999: CFStringEncoding = 0x0A06;
 static kCFStringEncodingVISCII: CFStringEncoding = 0x0A07;
 static kCFStringEncodingKOI8_U: CFStringEncoding = 0x0A08;
 static kCFStringEncodingBig5_E: CFStringEncoding = 0x0A09;
-//static kCFStringEncodingNextStepLatin: CFStringEncoding = 0x0B01;
+// Defined above: kCFStringEncodingNextStepLatin = 0x0B01
 static kCFStringEncodingNextStepJapanese: CFStringEncoding = 0x0B02;
 static kCFStringEncodingEBCDIC_US: CFStringEncoding = 0x0C01;
 static kCFStringEncodingEBCDIC_CP037: CFStringEncoding = 0x0C02;
@@ -195,85 +195,72 @@ static kCFStringEncodingUTF7: CFStringEncoding = 0x04000100;
 static kCFStringEncodingUTF7_IMAP: CFStringEncoding = 0x0A10;
 static kCFStringEncodingShiftJIS_X0213_00: CFStringEncoding = 0x0628; /* Deprecated */
 
-struct __CFString { private: () }
+struct __CFString;
 
 pub type CFStringRef = *__CFString;
 
-impl AbstractCFTypeRef for CFStringRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+/// An immutable string in one of a variety of encodings.
+///
+/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
+pub struct CFString {
+    priv obj: CFStringRef,
+}
+
+impl Clone for CFString {
+    #[fixed_stack_segment]
+    #[inline]
+    fn clone(&self) -> CFString {
+        unsafe {
+            TCFType::wrap_under_get_rule(self.obj)
+        }
+    }
+}
+
+impl Drop for CFString {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+
+impl TCFType<CFStringRef> for CFString {
+    fn as_concrete_TypeRef(&self) -> CFStringRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CFStringRef) -> CFString {
+        CFString {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CFStringRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CFString>) -> CFTypeID {
         unsafe {
             CFStringGetTypeID()
         }
     }
 }
 
-// FIXME: Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFString {
-    contents: CFWrapper<CFStringRef, (), ()>
-}
-
-impl CFString {
-    // convenience method to make it easier to wrap extern
-    // CFStringRefs without providing explicit typarams to base::wrap()
-    pub fn wrap_owned(string: CFStringRef) -> CFString {
-        CFString {
-            contents: CFWrapper::wrap_owned(string)
-        }
-    }
-
-    // convenience method to make it easier to wrap extern
-    // CFStringRefs without providing explicit typarams to base::wrap()
-    pub fn wrap_shared(string: CFStringRef) -> CFString {
-        CFString {
-            contents: CFWrapper::wrap_shared(string)
-        }
-    }
-
-    // like CFString::new, but references a string that can be used as
-    // a backing store by virtue of being statically allocated.
+impl FromStr for CFString {
+    /// Creates a new `CFString` instance from a Rust string.
     #[fixed_stack_segment]
-    pub fn new_static(string: &'static str) -> CFString {
-        let string_ref = do string.as_imm_buf |bytes, len| {
-            unsafe {
-                CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
-                                              bytes,
-                                              len as CFIndex,
-                                              kCFStringEncodingUTF8,
-                                              false as Boolean,
-                                              kCFAllocatorNull)
-            }
-        };
-
-        CFString {
-            contents: CFWrapper::wrap_owned(string_ref)
-        }
-    }
-
-    #[fixed_stack_segment]
-    pub fn new(string: &str) -> CFString {
-        let string_ref = do string.as_imm_buf |bytes, len| {
-            unsafe {
+    #[inline]
+    fn from_str(string: &str) -> Option<CFString> {
+        unsafe {
+            let string_ref = string.as_imm_buf(|bytes, len| {
                 CFStringCreateWithBytes(kCFAllocatorDefault,
                                         bytes,
-                                        len as CFIndex,
+                                        len.to_CFIndex(),
                                         kCFStringEncodingUTF8,
                                         false as Boolean,
                                         kCFAllocatorNull)
-            }
-        };
-
-        CFString {
-            contents: CFWrapper::wrap_owned(string_ref)
-        }
-    }
-
-    #[fixed_stack_segment]
-    pub fn char_len(&self) -> uint {
-        unsafe {
-            CFStringGetLength(self.contents.obj) as uint
+            });
+            Some(TCFType::wrap_under_create_rule(string_ref))
         }
     }
 }
@@ -283,39 +270,67 @@ impl ToStr for CFString {
     fn to_str(&self) -> ~str {
         unsafe {
             let char_len = self.char_len();
-            let range : CFRange = CFRangeMake(0 as CFIndex, char_len as CFIndex);
-            let encoding = kCFStringEncodingUTF8;
-            let mut bytes_required: CFIndex = 0 as CFIndex;
-            // first, ask how big the buffer ought to be.
-            CFStringGetBytes(self.contents.obj,
+            let range = CFRange::init(0, char_len);
+
+            // First, ask how big the buffer ought to be.
+            let mut bytes_required: CFIndex = 0;
+            CFStringGetBytes(self.obj,
                              range,
-                             encoding,
+                             kCFStringEncodingUTF8,
                              0,
                              false as Boolean, 
                              ptr::null(),
                              0,
                              &mut bytes_required);
 
-            let buffer : ~[u8] = vec::from_elem(bytes_required as uint, '\x00' as u8);
-            let mut bytes_used: CFIndex = 0 as CFIndex;
-            // then, allocate the buffer and actually copy.
-            let chars_written = CFStringGetBytes(self.contents.obj,
+            // Then, allocate the buffer and actually copy.
+            let buffer: ~[u8] = vec::from_elem(bytes_required as uint, '\x00' as u8);
+            let mut bytes_used: CFIndex = 0;
+            let chars_written = CFStringGetBytes(self.obj,
                                                  range,
-                                                 encoding,
+                                                 kCFStringEncodingUTF8,
                                                  0,
-                                                 false as Boolean, 
+                                                 false as Boolean,
                                                  vec::raw::to_ptr(buffer),
-                                                 buffer.len() as CFIndex,
-                                                 ptr::to_mut_unsafe_ptr(&mut bytes_used)) as uint;
+                                                 buffer.len().to_CFIndex(),
+                                                 &mut bytes_used) as uint;
+            assert!(chars_written.to_CFIndex() == char_len);
 
-            assert!(chars_written == char_len);
-            // this is dangerous; we over-allocate and nul-terminate the string (during
-            // initialization)
-            assert!(bytes_used == buffer.len() as CFIndex);
-            // then, reinterpret it as as string. you have been warned!
-            let casted_str : ~str = cast::transmute::<~[u8], ~str>(buffer);
-            // sanity check.
-            return casted_str;
+            // This is dangerous; we over-allocate and null-terminate the string (during
+            // initialization).
+            assert!(bytes_used == buffer.len().to_CFIndex());
+
+            // Then, reinterpret it as as string. You have been warned!
+            cast::transmute(buffer)
+        }
+    }
+}
+
+impl CFString {
+    /// Like `CFString::from_string`, but references a string that can be used as a backing store
+    /// by virtue of being statically allocated.
+    #[fixed_stack_segment]
+    #[inline]
+    pub fn from_static_string(string: &'static str) -> CFString {
+        unsafe {
+            let string_ref = string.as_imm_buf(|bytes, len| {
+                CFStringCreateWithBytesNoCopy(kCFAllocatorDefault,
+                                              bytes,
+                                              len.to_CFIndex(),
+                                              kCFStringEncodingUTF8,
+                                              false as Boolean,
+                                              kCFAllocatorNull)
+            });
+            TCFType::wrap_under_create_rule(string_ref)
+        }
+    }
+
+    /// Returns the number of characters in the string.
+    #[fixed_stack_segment]
+    #[inline]
+    pub fn char_len(&self) -> CFIndex {
+        unsafe {
+            CFStringGetLength(self.obj)
         }
     }
 }
@@ -443,7 +458,8 @@ extern {
 #[test]
 fn string_and_back() {
     let original = "The quick brown fox jumped over the slow lazy dog.";
-    let cfstr = CFString::new_static(original);
+    let cfstr = CFString::from_static_string(original);
     let converted = cfstr.to_str();
     assert!(original == converted);
 }
+

@@ -7,17 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{
-    AbstractCFTypeRef,
-    Boolean,
-    CFAllocatorRef,
-    CFIndex,
-    CFTypeID,
-    CFTypeRef,
-    CFWrapper,
-    kCFAllocatorDefault
-};
-use string::CFStringRef;
+//! Dictionaries of key-value pairs.
+
+use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID};
+use base::{CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use std::cast;
 use std::libc::c_void;
@@ -48,134 +41,114 @@ pub struct CFDictionaryValueCallBacks {
     equal: CFDictionaryEqualCallBack
 }
 
-struct __CFDictionary { private: () }
+struct __CFDictionary;
+
 pub type CFDictionaryRef = *__CFDictionary;
 
-impl AbstractCFTypeRef for CFDictionaryRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+/// An immutable dictionary of key-value pairs.
+///
+/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
+pub struct CFDictionary {
+    priv obj: CFDictionaryRef,
+}
+
+impl Drop for CFDictionary {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CFDictionaryRef> for CFDictionary {
+    fn as_concrete_TypeRef(&self) -> CFDictionaryRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CFDictionaryRef) -> CFDictionary {
+        CFDictionary {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CFDictionaryRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CFDictionary>) -> CFTypeID {
         unsafe {
             CFDictionaryGetTypeID()
         }
     }
 }
 
-// FIXME: Should be a newtype struct, but that fails due to a Rust compiler
-// bug.
-pub struct CFDictionary<KeyRefType, ValueRefType> {
-    contents: CFWrapper<CFDictionaryRef, KeyRefType, ValueRefType>
-}
-
-pub type UntypedCFDictionary = CFDictionary<CFStringRef, CFTypeRef>;
-
-impl<KeyRefType: Clone + AbstractCFTypeRef, ValueRefType: Clone + AbstractCFTypeRef>
-         CFDictionary<KeyRefType, ValueRefType> {
-    pub fn wrap_owned(dictionary: CFDictionaryRef) -> CFDictionary<KeyRefType, ValueRefType> {
-        CFDictionary {
-            contents: CFWrapper::wrap_owned(dictionary)
-        }
-    }
-
+impl CFDictionary {
     #[fixed_stack_segment]
-    pub fn new(pairs: &[(KeyRefType,ValueRefType)]) -> CFDictionary<KeyRefType, ValueRefType> {
-        let mut keys : ~[CFTypeRef] = ~[];
-        let mut values : ~[CFTypeRef] = ~[];
-        for pair in pairs.iter() {
-            // FIXME: "let" would be much nicer here, but that doesn't work yet.
-            match *pair {
-                (ref key, ref value) => {
-                    keys.push(key.as_type_ref());
-                    values.push(value.as_type_ref());
-                }
-            }
-        }
-
-        assert!(keys.len() == values.len());
-
-        let dictionary_ref: CFDictionaryRef;
+    pub fn from_CFType_pairs(pairs: &[(CFType, CFType)]) -> CFDictionary {
+        let (keys, values) =
+            vec::unzip(pairs.iter()
+                            .map(|&(ref key, ref value)| (key.as_CFTypeRef(),
+                                                          value.as_CFTypeRef())));
         unsafe {
-            dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
-                                                cast::transmute::<*CFTypeRef, **c_void>(
-                                                    vec::raw::to_ptr(keys)),
-                                                cast::transmute::<*CFTypeRef, **c_void>(
-                                                    vec::raw::to_ptr(values)),
-                                                keys.len() as CFIndex,
-                                                &kCFTypeDictionaryKeyCallBacks,
-                                                &kCFTypeDictionaryValueCallBacks);
-        }
-
-        CFDictionary {
-            contents: CFWrapper::wrap_owned(dictionary_ref)
+            let dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
+                                                    cast::transmute(vec::raw::to_ptr(keys)),
+                                                    cast::transmute(vec::raw::to_ptr(values)),
+                                                    keys.len().to_CFIndex(),
+                                                    &kCFTypeDictionaryKeyCallBacks,
+                                                    &kCFTypeDictionaryValueCallBacks);
+            TCFType::wrap_under_create_rule(dictionary_ref)
         }
     }
 
     #[fixed_stack_segment]
+    #[inline]
     pub fn len(&self) -> uint {
         unsafe {
-            CFDictionaryGetCount(self.contents.obj) as uint
+            CFDictionaryGetCount(self.obj) as uint
         }
     }
 
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
     #[fixed_stack_segment]
-    pub fn contains_key(&self, key: &KeyRefType) -> bool {
+    #[inline]
+    pub fn contains_key(&self, key: *c_void) -> bool {
         unsafe {
-            CFDictionaryContainsKey(self.contents.obj, 
-                                    cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref()))
-                                        != 0
+            CFDictionaryContainsKey(self.obj, key) != 0
         }
     }
 
     #[fixed_stack_segment]
-    pub fn find(&self, key: &KeyRefType) -> Option<ValueRefType> {
+    #[inline]
+    pub fn find(&self, key: *c_void) -> Option<*c_void> {
         unsafe {
-            let value : *c_void = ptr::null();
-            let did_find_value = CFDictionaryGetValueIfPresent(
-                self.contents.obj,
-                cast::transmute::<CFTypeRef, *c_void>(key.as_type_ref()),
-                cast::transmute::<&*c_void, **c_void>(&value)) != 0;
-
-            // FIXME: this will not handle non-CF dictionary entries
-            // or ptr::null() values correctly.
-            if did_find_value {
-                Some(cast::transmute::<*c_void, ValueRefType>(value))
+            let mut value: *c_void = ptr::null();
+            if CFDictionaryGetValueIfPresent(self.obj, key, &mut value) != 0 {
+                Some(value)
             } else {
                 None
             }
         }
     }
 
-    pub fn get(&self, key: &KeyRefType) -> ValueRefType {
+    #[inline]
+    pub fn get(&self, key: *c_void) -> *c_void {
         let value = self.find(key);
         if value.is_none() {
             fail!("No entry found for key: {:?}", key);
         }
-        return value.unwrap();
+        value.unwrap()
     }
 
-    // FIXME: this should be an iterator
-    pub fn each(&self, blk: &fn(&KeyRefType, &ValueRefType) -> bool) -> bool {
-        unsafe {
-            let len = self.len();
-            let null_keys = cast::transmute::<*c_void,KeyRefType>(ptr::null());
-            let keys: ~[KeyRefType] = vec::from_elem(len, null_keys);
-            let null_vals = cast::transmute::<*c_void,ValueRefType>(ptr::null());
-            let values: ~[ValueRefType] = vec::from_elem(len, null_vals);
-
-            for i in range(0, len) {
-                if !blk(&keys[i], &values[i]) { return false; }
-            }
-
-            true
-        }
+    /// A convenience function to retrieve `CFType` instances.
+    #[inline]
+    pub unsafe fn get_CFType(&self, key: *c_void) -> CFType {
+        let value: CFTypeRef = cast::transmute(self.get(key));
+        TCFType::wrap_under_get_rule(value)
     }
 }
-
 
 #[link_args="-framework CoreFoundation"]
 #[nolink]
@@ -204,9 +177,7 @@ extern {
     fn CFDictionaryGetKeysAndValues(theDict: CFDictionaryRef, keys: **c_void, values: **c_void);
     fn CFDictionaryGetTypeID() -> CFTypeID;
     fn CFDictionaryGetValue(theDict: CFDictionaryRef, key: *c_void) -> *c_void;
-    fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef,
-                                     key: *c_void,
-                                     value: **c_void)
-                                  -> Boolean;
+    fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *c_void, value: *mut *c_void)
+                                     -> Boolean;
 }
 

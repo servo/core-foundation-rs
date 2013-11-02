@@ -7,84 +7,81 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{
-    AbstractCFTypeRef,
-    CFAllocatorRef,
-    CFIndex,
-    CFRange,
-    CFTypeRef,
-    CFTypeID,
-    CFWrapper,
-    kCFAllocatorDefault,
-};
+//! Core Foundation byte buffers.
 
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRange, CFRelease, CFTypeID, TCFType};
+use base::{kCFAllocatorDefault};
+
+use std::cast;
 use std::vec;
 
-struct __CFData { private: () }
+struct __CFData;
+
 pub type CFDataRef = *__CFData;
 
-impl AbstractCFTypeRef for CFDataRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+/// A byte buffer.
+///
+/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
+pub struct CFData {
+    priv obj: CFDataRef,
+}
+
+impl Drop for CFData {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CFDataRef> for CFData {
+    fn as_concrete_TypeRef(&self) -> CFDataRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CFDataRef) -> CFData {
+        CFData {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CFDataRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CFData>) -> CFTypeID {
         unsafe {
             CFDataGetTypeID()
         }
     }
 }
 
-// FIXME: Should be a newtype struct, but that fails due to a Rust compiler
-// bug.
-pub struct CFData {
-    contents: CFWrapper<CFDataRef, (), ()>
-}
-
 impl CFData {
-    pub fn wrap_owned(data: CFDataRef) -> CFData {
-        CFData {
-            contents: CFWrapper::wrap_owned(data)
-        }
-    }
-
     #[fixed_stack_segment]
-    pub fn new_from_buf(buf: &[u8]) -> CFData {
-        let result;
+    pub fn from_buffer(buffer: &[u8]) -> CFData {
         unsafe {
-            result = CFDataCreate(kCFAllocatorDefault, 
-                                  vec::raw::to_ptr(buf),
-                                  buf.len() as CFIndex);
-        }
-
-        CFData {
-            contents: CFWrapper::wrap_owned(result)
+            let data_ref = CFDataCreate(kCFAllocatorDefault, 
+                                        vec::raw::to_ptr(buffer),
+                                        buffer.len().to_CFIndex());
+            TCFType::wrap_under_create_rule(data_ref)
         }
     }
 
-    // tread with caution; read-only
+    /// Returns a pointer to the underlying bytes in this data. Note that this byte buffer is
+    /// read-only.
     #[fixed_stack_segment]
-    pub fn bytes(&self) -> *u8 {
+    #[inline]
+    pub fn bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
-            CFDataGetBytePtr(self.contents.obj)
+            cast::transmute((CFDataGetBytePtr(self.obj), self.len() as uint))
         }
     }
 
+    /// Returns the length of this byte buffer.
     #[fixed_stack_segment]
-    pub fn len(&self) -> uint {
+    #[inline]
+    pub fn len(&self) -> CFIndex {
         unsafe {
-            CFDataGetLength(self.contents.obj) as uint
-        }
-    }
-
-    pub fn copy_to_buf(&self) -> ~[u8] {
-        unsafe {
-            vec::from_buf(self.bytes(), self.len())
-        }
-    }
-
-    pub fn with_buf<U>(&self, blk: &fn(v: &[u8]) -> U) -> U {
-        unsafe {
-            vec::raw::buf_as_slice(self.bytes(), self.len(), blk)
+            CFDataGetLength(self.obj)
         }
     }
 }

@@ -9,9 +9,6 @@
 
 #[allow(non_uppercase_statics)];
 
-extern mod core_foundation;
-extern mod core_graphics;
-
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
 

@@ -14,8 +14,8 @@ extern mod opengles = "rust-opengles";
 
 // Rust bindings to the IOSurface framework on Mac OS X.
 
-use core_foundation::base::{AbstractCFTypeRef, CFTypeID, CFTypeRef, CFWrapper};
-use core_foundation::dictionary::{CFDictionaryRef, UntypedCFDictionary};
+use core_foundation::base::{CFRelease, CFTypeID, TCFType};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFStringRef;
 use geom::size::Size2D;
 use opengles::cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
@@ -29,55 +29,69 @@ static kIOSurfaceLockAvoidSync: u32 = 0x2;
 
 type IOReturn = c_int;
 
-struct __IOSurface { private: () }
+struct __IOSurface;
 
 pub type IOSurfaceRef = *__IOSurface;
 
-impl AbstractCFTypeRef for IOSurfaceRef {
-    fn as_type_ref(&self) -> CFTypeRef {
-        *self as CFTypeRef
+pub struct IOSurface {
+    obj: IOSurfaceRef,
+}
+
+impl Drop for IOSurface {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+pub type IOSurfaceID = u32;
+
+impl Clone for IOSurface {
+    #[fixed_stack_segment]
+    #[inline]
+    fn clone(&self) -> IOSurface {
+        unsafe {
+            TCFType::wrap_under_get_rule(self.obj)
+        }
+    }
+}
+
+impl TCFType<IOSurfaceRef> for IOSurface {
+    fn as_concrete_TypeRef(&self) -> IOSurfaceRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: IOSurfaceRef) -> IOSurface {
+        IOSurface {
+            obj: obj,
+        }
     }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<IOSurfaceRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<IOSurface>) -> CFTypeID {
         unsafe {
             IOSurfaceGetTypeID()
         }
     }
 }
 
-pub struct IOSurface {
-    contents: CFWrapper<IOSurfaceRef, (), ()>,
-}
-
-pub type IOSurfaceID = u32;
-
-impl Clone for IOSurface {
-    fn clone(&self) -> IOSurface {
-        IOSurface {
-            contents: CFWrapper::clone(&self.contents),
-        }
-    }
-}
-
 #[fixed_stack_segment]
-pub fn new(properties: &UntypedCFDictionary) -> IOSurface {
+pub fn new(properties: &CFDictionary) -> IOSurface {
     unsafe {
-        let result = IOSurfaceCreate(*properties.contents.borrow_ref());
-        let result = IOSurface {
-            contents: CFWrapper::wrap_owned(result),
-        };
-        result
+        TCFType::wrap_under_create_rule(IOSurfaceCreate(properties.as_concrete_TypeRef()))
     }
 }
 
+/// Looks up an `IOSurface` by its global ID.
+///
+/// FIXME(pcwalton): This should return an `Option`.
 #[fixed_stack_segment]
 pub fn lookup(csid: IOSurfaceID) -> IOSurface {
     unsafe {
-        let result = IOSurfaceLookup(csid);
-        IOSurface {
-            contents: CFWrapper::wrap_owned(result),
-        }
+        TCFType::wrap_under_create_rule(IOSurfaceLookup(csid))
     }
 }
 
@@ -85,7 +99,7 @@ impl IOSurface {
     #[fixed_stack_segment]
     pub fn get_id(&self) -> IOSurfaceID {
         unsafe {
-            IOSurfaceGetID(*self.contents.borrow_ref())
+            IOSurfaceGetID(self.as_concrete_TypeRef())
         }
     }
 
@@ -101,7 +115,7 @@ impl IOSurface {
                                                   size.height as GLsizei,
                                                   BGRA as GLenum,
                                                   UNSIGNED_INT_8_8_8_8_REV,
-                                                  cast::transmute(*self.contents.borrow_ref()),
+                                                  cast::transmute(self.as_concrete_TypeRef()),
                                                   0);
 
             assert_eq!(gl_error, kCGLNoError);
@@ -111,7 +125,7 @@ impl IOSurface {
     #[fixed_stack_segment]
     pub fn upload(&self, data: &[u8]) {
         unsafe {
-            let surface = *self.contents.borrow_ref();
+            let surface = self.as_concrete_TypeRef();
             let mut seed = 0;
 
             IOSurfaceLock(surface, 0, &mut seed);

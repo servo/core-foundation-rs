@@ -7,60 +7,66 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use core_foundation::base::{AbstractCFTypeRef, CFTypeID, CFTypeRef, CFWrapper};
+use core_foundation::base::{CFRelease, CFTypeID, TCFType};
 
 use data_provider::{CGDataProvider, CGDataProviderRef};
 use std::libc;
 
 pub type CGGlyph = libc::c_ushort;
 
-struct __CGFont { private: () }
+struct __CGFont;
+
 pub type CGFontRef = *__CGFont;
 
-impl AbstractCFTypeRef for CGFontRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+pub struct CGFont {
+    obj: CGFontRef,
+}
+
+impl Clone for CGFont {
+    #[fixed_stack_segment]
+    #[inline]
+    fn clone(&self) -> CGFont {
+        unsafe {
+            TCFType::wrap_under_get_rule(self.obj)
+        }
+    }
+}
+
+impl Drop for CGFont {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CGFontRef> for CGFont {
+    fn as_concrete_TypeRef(&self) -> CGFontRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CGFontRef) -> CGFont {
+        CGFont {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CGFontRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CGFont>) -> CFTypeID {
         unsafe {
             CGFontGetTypeID()
         }
     }
 }
 
-pub struct CGFont {
-    contents: CFWrapper<CGFontRef, (), ()>
-}
-
 impl CGFont {
-    /// Convenience method to make it easier to wrap external `CGFont` instances.
-    pub fn wrap_owned(font: CGFontRef) -> CGFont {
-        CGFont {
-            contents: CFWrapper::wrap_owned(font)
-        }
-    }
-
-    /// Convenience method to make it easier to wrap external `CGFont` instances.
-    pub fn wrap_shared(font: CGFontRef) -> CGFont {
-        CGFont {
-            contents: CFWrapper::wrap_shared(font)
-        }
-    }
-}
-
-impl Clone for CGFont {
-    fn clone(&self) -> CGFont {
-        CGFont::wrap_shared(*self.contents.borrow_ref())
-    }
-}
-
-#[fixed_stack_segment]
-pub fn create_with_data_provider(provider: &CGDataProvider) -> CGFont {
-    // TODO: error handling
-    unsafe {
-        let value = CGFontCreateWithDataProvider(*provider.borrow_ref());
-        CGFont {
-            contents: CFWrapper::wrap_owned(value)
+    #[fixed_stack_segment]
+    pub fn from_data_provider(provider: CGDataProvider) -> CGFont {
+        unsafe {
+            let font_ref = CGFontCreateWithDataProvider(provider.as_concrete_TypeRef());
+            TCFType::wrap_under_create_rule(font_ref)
         }
     }
 }

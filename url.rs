@@ -7,41 +7,64 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! A URL type for Core Foundation.
+
 #[allow(non_uppercase_statics)];
 
-use base::{AbstractCFTypeRef, CFAllocatorRef, CFOptionFlags, CFTypeID, CFTypeRef, CFWrapper};
-use data::{CFDataRef};
+use base::{CFAllocatorRef, CFOptionFlags, CFRelease, CFTypeID, TCFType};
+use data::CFDataRef;
 use string::{CFString, CFStringRef, CFStringEncoding};
 
-struct __CFURL { private: () }
+struct __CFURL;
+
 pub type CFURLRef = *__CFURL;
 
-impl AbstractCFTypeRef for CFURLRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+pub struct CFURL {
+    priv obj: CFURLRef,
+}
+
+impl Drop for CFURL {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CFURLRef> for CFURL {
+    fn as_concrete_TypeRef(&self) -> CFURLRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CFURLRef) -> CFURL {
+        CFURL {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CFURLRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CFURL>) -> CFTypeID {
         unsafe {
             CFURLGetTypeID()
         }
     }
 }
 
-pub type CFURL = CFWrapper<CFURLRef, (), ()>;
-
 impl ToStr for CFURL {
     #[fixed_stack_segment]
+    #[inline]
     fn to_str(&self) -> ~str {
         unsafe {
-            let cfstr: CFString = CFString {
-                contents: CFWrapper::wrap_shared(CFURLGetString(self.obj))
-            };
-            cfstr.to_str()
+            let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.obj));
+            string.to_str()
         }
     }
 }
 
 type CFURLBookmarkCreationOptions = CFOptionFlags;
+
 static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
     (1 << 8) as u32;
 static kCFURLBookmarkCreationMinimalBookmarkMask: CFURLBookmarkCreationOptions =

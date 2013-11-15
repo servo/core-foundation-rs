@@ -7,43 +7,62 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{
-    AbstractCFTypeRef,
-    CFTypeRef,
-    CFTypeID,
-    CFWrapper,
-};
+//! A Boolean type.
+
+use base::{CFRelease, CFTypeID, TCFType};
 
 pub type Boolean = u32;
 
-struct __CFBoolean { private: () }
+struct __CFBoolean;
+
 pub type CFBooleanRef = *__CFBoolean;
 
-impl AbstractCFTypeRef for CFBooleanRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+/// A Boolean type.
+///
+/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
+pub struct CFBoolean {
+    priv obj: CFBooleanRef,
+}
 
+impl Drop for CFBoolean {
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CFBooleanRef>) -> CFTypeID {
-        unsafe { CFBooleanGetTypeID() }
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
     }
 }
 
-// FIXME: Should be a newtype struct, but that fails due to a Rust compiler
-// bug.
-pub struct CFBoolean {
-    contents: CFWrapper<CFBooleanRef, (), ()>
+impl TCFType<CFBooleanRef> for CFBoolean {
+    fn as_concrete_TypeRef(&self) -> CFBooleanRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CFBooleanRef) -> CFBoolean {
+        CFBoolean {
+            obj: obj,
+        }
+    }
+
+    #[fixed_stack_segment]
+    #[inline]
+    fn type_id(_: Option<CFBoolean>) -> CFTypeID {
+        unsafe {
+            CFBooleanGetTypeID()
+        }
+    }
 }
 
 impl CFBoolean {
     pub fn true_value() -> CFBoolean {
-        CFBoolean {
-            contents: CFWrapper::wrap_shared(kCFBooleanTrue)
+        unsafe {
+            TCFType::wrap_under_get_rule(kCFBooleanTrue)
         }
     }
 
     pub fn false_value() -> CFBoolean {
-        CFBoolean {
-            contents: CFWrapper::wrap_shared(kCFBooleanFalse)
+        unsafe {
+            TCFType::wrap_under_get_rule(kCFBooleanFalse)
         }
     }
 }

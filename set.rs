@@ -7,16 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{
-    AbstractCFTypeRef,
-    Boolean,
-    CFAllocatorRef,
-    CFIndex,
-    CFTypeRef,
-    CFTypeID,
-    CFWrapper,
-    kCFAllocatorDefault,
-};
+//! An immutable bag of elements.
+
+use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID};
+use base::{TCFType, kCFAllocatorDefault};
+
 use std::cast;
 use std::libc::c_void;
 use std::vec;
@@ -36,44 +31,57 @@ pub struct CFSetCallBacks {
     hash: CFSetHashCallBack,
 }
 
-struct __CFSet { private: () }
+struct __CFSet;
+
 pub type CFSetRef = *__CFSet;
 
-impl AbstractCFTypeRef for CFSetRef {
-    fn as_type_ref(&self) -> CFTypeRef { *self as CFTypeRef }
+/// An immutable bag of elements.
+///
+/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
+pub struct CFSet {
+    priv obj: CFSetRef,
+}
+
+impl Drop for CFSet {
+    #[fixed_stack_segment]
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl TCFType<CFSetRef> for CFSet {
+    fn as_concrete_TypeRef(&self) -> CFSetRef {
+        self.obj
+    }
+
+    unsafe fn wrap_under_create_rule(obj: CFSetRef) -> CFSet {
+        CFSet {
+            obj: obj,
+        }
+    }
 
     #[fixed_stack_segment]
-    fn type_id(_dummy: Option<CFSetRef>) -> CFTypeID {
+    #[inline]
+    fn type_id(_: Option<CFSet>) -> CFTypeID {
         unsafe {
             CFSetGetTypeID()
         }
     }
 }
 
-// FIXME: Should be a newtype struct, but that fails due to a Rust compiler
-// bug.
-pub struct CFSet<ElemRefType> {
-    contents: CFWrapper<CFSetRef, ElemRefType, ()>
-}
-
-impl<ElemRefType : AbstractCFTypeRef> CFSet<ElemRefType> {
+impl CFSet {
+    /// Creates a new set from a list of `CFType` instances.
     #[fixed_stack_segment]
-    pub fn new(elems: &[ElemRefType]) -> CFSet<ElemRefType> {
-        let result: CFSetRef;
-        let elems_refs = do elems.map |e: &ElemRefType| {
-            e.as_type_ref() 
-        };
-
+    pub fn from_slice(elems: &[CFType]) -> CFSet {
         unsafe {
-            result = CFSetCreate(kCFAllocatorDefault,
-                                  cast::transmute::<*CFTypeRef,**c_void>(
-                                    vec::raw::to_ptr(elems_refs)),
-                                  elems.len() as CFIndex,
-                                  &kCFTypeSetCallBacks);
-        }
-
-        CFSet {
-            contents: CFWrapper::wrap_owned(result)
+            let elems = elems.map(|elem| elem.as_CFTypeRef());
+            let set_ref = CFSetCreate(kCFAllocatorDefault,
+                                      cast::transmute(vec::raw::to_ptr(elems)),
+                                      elems.len().to_CFIndex(),
+                                      &kCFTypeSetCallBacks);
+            TCFType::wrap_under_create_rule(set_ref)
         }
     }
 }

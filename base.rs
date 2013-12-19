@@ -40,7 +40,6 @@ extern {
 
 /// A convenience method to convert the name of a class to the class object itself.
 #[inline]
-#[fixed_stack_segment]
 pub fn class(name: &str) -> id {
     unsafe {
         name.to_c_str().with_ref(|c_string| objc_getClass(c_string))
@@ -49,7 +48,6 @@ pub fn class(name: &str) -> id {
 
 /// A convenience method to convert the name of a selector to the selector object.
 #[inline]
-#[fixed_stack_segment]
 pub fn selector(name: &str) -> SEL {
     unsafe {
         name.to_c_str().with_ref(|c_string| sel_registerName(c_string))
@@ -87,7 +85,7 @@ impl ObjCMethodCall for id {
 /// A convenience implementation that allows methods on class names to be called directly, as in:
 /// 
 ///     "NSString".send("alloc")
-impl<'self> ObjCMethodCall for &'self str {
+impl<'a> ObjCMethodCall for &'a str {
     unsafe fn send<S:ObjCSelector,A:ObjCMethodArgs>(self, selector: S, args: A) -> id {
         args.send_args(class(self), selector.as_selector())
     }
@@ -109,9 +107,8 @@ pub trait ObjCSelector {
     fn as_selector(self) -> SEL;
 }
 
-impl<'self> ObjCSelector for &'self str {
+impl<'a> ObjCSelector for &'a str {
     #[inline]
-    #[fixed_stack_segment]
     fn as_selector(self) -> SEL {
         // TODO(pcwalton): Cache somehow.
         unsafe {
@@ -143,7 +140,6 @@ trait ObjCMethodVoidArgs {
 
 impl ObjCMethodArgs for () {
     #[inline]
-    #[fixed_stack_segment]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         invoke_msg_id(receiver, selector)
     }
@@ -151,7 +147,6 @@ impl ObjCMethodArgs for () {
 
 impl ObjCMethodArgs for (id, id, id, id, id) {
     #[inline]
-    #[fixed_stack_segment]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         let (first, second, third, fourth, fifth) = self;
         invoke_msg_id_id_id_id_id_id(receiver, selector, first, second, third, fourth, fifth)
@@ -160,7 +155,6 @@ impl ObjCMethodArgs for (id, id, id, id, id) {
 
 impl ObjCMethodArgs for NSRect {
     #[inline]
-    #[fixed_stack_segment]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         invoke_msg_id_NSRect(receiver, selector, &self)
     }
@@ -168,7 +162,6 @@ impl ObjCMethodArgs for NSRect {
 
 impl ObjCMethodDoubleArgs for () {
     #[inline]
-    #[fixed_stack_segment]
     unsafe fn send_double_args(self, receiver: id, selector: SEL) -> f64 {
         invoke_msg_double(receiver, selector)
     }
@@ -176,7 +169,6 @@ impl ObjCMethodDoubleArgs for () {
 
 impl ObjCMethodLongArgs for () {
     #[inline]
-    #[fixed_stack_segment]
     unsafe fn send_long_args(self, receiver: id, selector: SEL) -> c_long {
         invoke_msg_long(receiver, selector)
     }
@@ -184,7 +176,6 @@ impl ObjCMethodLongArgs for () {
 
 impl ObjCMethodVoidArgs for () {
     #[inline]
-    #[fixed_stack_segment]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
         invoke_msg_void(receiver, selector)
     }
@@ -192,7 +183,6 @@ impl ObjCMethodVoidArgs for () {
 
 impl ObjCMethodVoidArgs for bool {
     #[inline]
-    #[fixed_stack_segment]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
         invoke_msg_void_bool(receiver, selector, self)
     }
@@ -200,7 +190,6 @@ impl ObjCMethodVoidArgs for bool {
 
 impl ObjCMethodVoidArgs for id {
     #[inline]
-    #[fixed_stack_segment]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
         invoke_msg_void_id(receiver, selector, self)
     }
@@ -214,15 +203,13 @@ mod test {
     use super::*;
 
     #[test]
-    #[fixed_stack_segment]
     pub fn test_nsapp() {
         unsafe {
-            let nsApp = "NSApplication".send("sharedApplication", ());
+            let _nsApp = "NSApplication".send("sharedApplication", ());
         }
     }
 
     #[test]
-    #[fixed_stack_segment]
     pub fn test_custom_obj() {
         extern fn MyObject_doSomething(this: id, _: SEL) -> id {
             println("doSomething");
@@ -230,16 +217,16 @@ mod test {
         }
 
         let NSObject = class("NSObject");
-        let MyObject = do "MyObject".to_c_str().with_ref |s| {
+        let MyObject = "MyObject".to_c_str().with_ref(|s| {
             unsafe {
                 objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
             }
-        };
+        });
         unsafe {
             let doSomething = selector("doSomething");
-            let _ = do "@@:".to_c_str().with_ref |types| {
+            let _ = "@@:".to_c_str().with_ref(|types| {
                 class_addMethod(MyObject, doSomething, MyObject_doSomething, types)
-            };
+            });
 
             objc_registerClassPair(MyObject);
 
@@ -250,8 +237,7 @@ mod test {
     }
 }
 
-#[link_args = "-L. -lmsgsend"]
-#[nolink]
+#[link(name = "msgsend")]
 extern {
     fn invoke_msg_double(theReceiver: id, theSelector: SEL) -> f64;
     fn invoke_msg_id(theReceiver: id, theSelector: SEL) -> id;

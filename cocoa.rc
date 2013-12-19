@@ -7,14 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[link(name = "cocoa",
-       vers = "0.1",
-       uuid = "5b7b7262-780d-465d-892c-15eab956dedc",
-       url = "http://github.com/pcwalton/cocoa")];
+#[crate_id = "github.com/mozilla-servo/rust-cocoa#cocoa:0.1"];
+#[crate_type = "lib"];
 
 #[comment = "The Servo Parallel Browser Project"];
 #[license = "MIT"];
-#[crate_type = "lib"];
 
 #[feature(globs)];
 

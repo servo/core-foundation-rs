@@ -27,7 +27,6 @@ pub struct CTFontCollection {
 }
 
 impl Drop for CTFontCollection {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -46,7 +45,6 @@ impl TCFType<CTFontCollectionRef> for CTFontCollection {
         }
     }
 
-    #[fixed_stack_segment]
     fn type_id(_: Option<CTFontCollection>) -> CFTypeID {
         unsafe {
             CTFontCollectionGetTypeID()
@@ -55,7 +53,6 @@ impl TCFType<CTFontCollectionRef> for CTFontCollection {
 }
 
 impl CTFontCollection {
-    #[fixed_stack_segment]
     pub fn get_descriptors(&self) -> CFArray {
         // surprise! this function follows the Get rule, despite being named *Create*.
         // So we have to addRef it to avoid CTFontCollection from double freeing it later.
@@ -65,7 +62,6 @@ impl CTFontCollection {
     }
 }
 
-#[fixed_stack_segment]
 pub fn new_from_descriptors(descs: &CFArray) -> CTFontCollection {
     unsafe {
         let key: CFString = TCFType::wrap_under_get_rule(kCTFontCollectionRemoveDuplicatesOption);
@@ -78,7 +74,6 @@ pub fn new_from_descriptors(descs: &CFArray) -> CTFontCollection {
     }
 }
 
-#[fixed_stack_segment]
 pub fn create_for_all_families() -> CTFontCollection {
     unsafe {
         let key: CFString = TCFType::wrap_under_get_rule(kCTFontCollectionRemoveDuplicatesOption);
@@ -90,7 +85,6 @@ pub fn create_for_all_families() -> CTFontCollection {
     }
 }
 
-#[fixed_stack_segment]
 pub fn create_for_family(family: &str) -> CTFontCollection {
     use font_descriptor::kCTFontFamilyNameAttribute;
 
@@ -115,7 +109,6 @@ pub fn create_for_family(family: &str) -> CTFontCollection {
     }
 }
 
-#[fixed_stack_segment]
 pub fn get_family_names() -> CFArray {
     unsafe {
         TCFType::wrap_under_create_rule(CTFontManagerCopyAvailableFontFamilyNames())
@@ -129,9 +122,9 @@ extern {
 
     static kCTFontCollectionRemoveDuplicatesOption: CFStringRef;
 
-    fn CTFontCollectionCreateCopyWithFontDescriptors(original: CTFontCollectionRef,
-                                                     descriptors: CFArrayRef,
-                                                     options: CFDictionaryRef) -> CTFontCollectionRef;
+    //fn CTFontCollectionCreateCopyWithFontDescriptors(original: CTFontCollectionRef,
+    //                                                 descriptors: CFArrayRef,
+    //                                                 options: CFDictionaryRef) -> CTFontCollectionRef;
     fn CTFontCollectionCreateFromAvailableFonts(options: CFDictionaryRef) -> CTFontCollectionRef;
     // this stupid function doesn't actually do any wildcard expansion; 
     // it just chooses the best match. Use

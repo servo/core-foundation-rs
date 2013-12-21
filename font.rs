@@ -23,7 +23,6 @@ pub struct CGFont {
 }
 
 impl Clone for CGFont {
-    #[fixed_stack_segment]
     #[inline]
     fn clone(&self) -> CGFont {
         unsafe {
@@ -33,7 +32,6 @@ impl Clone for CGFont {
 }
 
 impl Drop for CGFont {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -52,7 +50,6 @@ impl TCFType<CGFontRef> for CGFont {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CGFont>) -> CFTypeID {
         unsafe {
@@ -62,7 +59,6 @@ impl TCFType<CGFontRef> for CGFont {
 }
 
 impl CGFont {
-    #[fixed_stack_segment]
     pub fn from_data_provider(provider: CGDataProvider) -> CGFont {
         unsafe {
             let font_ref = CGFontCreateWithDataProvider(provider.as_concrete_TypeRef());
@@ -71,8 +67,7 @@ impl CGFont {
     }
 }
 
-#[nolink]
-#[link_args="-framework ApplicationServices"]
+#[link(name = "ApplicationServices", kind = "framework")]
 extern {
 
     // TODO: basically nothing has bindings (even commented-out)  besides what we use.
@@ -81,6 +76,6 @@ extern {
 
     // These do the same thing as CFRetain/CFRelease, except
     // gracefully handle a NULL argument. We don't use them.
-    fn CGFontRetain(font: CGFontRef);
-    fn CGFontRelease(font: CGFontRef);
+    //fn CGFontRetain(font: CGFontRef);
+    //fn CGFontRelease(font: CGFontRef);
 }

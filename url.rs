@@ -11,9 +11,8 @@
 
 #[allow(non_uppercase_statics)];
 
-use base::{CFAllocatorRef, CFOptionFlags, CFRelease, CFTypeID, TCFType};
-use data::CFDataRef;
-use string::{CFString, CFStringRef, CFStringEncoding};
+use base::{CFOptionFlags, CFRelease, CFTypeID, TCFType};
+use string::{CFString, CFStringRef};
 
 struct __CFURL;
 
@@ -24,7 +23,6 @@ pub struct CFURL {
 }
 
 impl Drop for CFURL {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -43,7 +41,6 @@ impl TCFType<CFURLRef> for CFURL {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CFURL>) -> CFTypeID {
         unsafe {
@@ -53,7 +50,6 @@ impl TCFType<CFURLRef> for CFURL {
 }
 
 impl ToStr for CFURL {
-    #[fixed_stack_segment]
     #[inline]
     fn to_str(&self) -> ~str {
         unsafe {
@@ -65,61 +61,60 @@ impl ToStr for CFURL {
 
 type CFURLBookmarkCreationOptions = CFOptionFlags;
 
-static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
-    (1 << 8) as u32;
-static kCFURLBookmarkCreationMinimalBookmarkMask: CFURLBookmarkCreationOptions =
-    (1 << 9) as u32;
-static kCFURLBookmarkCreationSuitableForBookmarkFile: CFURLBookmarkCreationOptions =
-    (1 << 10) as u32;
-static kCFURLBookmarkCreationWithSecurityScope: CFURLBookmarkCreationOptions =
-    (1 << 11) as u32;
-static kCFURLBookmarkCreationSecurityScopeAllowOnlyReadAccess: CFURLBookmarkCreationOptions =
-    (1 << 12) as u32;
+// static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
+//     (1 << 8) as u32;
+// static kCFURLBookmarkCreationMinimalBookmarkMask: CFURLBookmarkCreationOptions =
+//     (1 << 9) as u32;
+// static kCFURLBookmarkCreationSuitableForBookmarkFile: CFURLBookmarkCreationOptions =
+//     (1 << 10) as u32;
+// static kCFURLBookmarkCreationWithSecurityScope: CFURLBookmarkCreationOptions =
+//     (1 << 11) as u32;
+// static kCFURLBookmarkCreationSecurityScopeAllowOnlyReadAccess: CFURLBookmarkCreationOptions =
+//     (1 << 12) as u32;
 
 // TODO: there are a lot of missing keys and constants. Add if you are bored or need them.
 
-#[link_args="-framework CoreFoundation"]
-#[nolink]
+#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
      * CFURL.h
      */
 
     /* Common File System Resource Keys */
-    static kCFURLAttributeModificationDateKey: CFStringRef;
-    static kCFURLContentAccessDateKey: CFStringRef;
-    static kCFURLContentModificationDateKey: CFStringRef;
-    static kCFURLCreationDateKey: CFStringRef;
-    static kCFURLCustomIconKey: CFStringRef;
-    static kCFURLEffectiveIconKey: CFStringRef;
-    static kCFURLFileResourceIdentifierKey: CFStringRef;
-    static kCFURLFileSecurityKey: CFStringRef;
-    static kCFURLHasHiddenExtensionKey: CFStringRef;
-    static kCFURLIsDirectoryKey: CFStringRef;
-    static kCFURLIsExecutableKey: CFStringRef;
-    static kCFURLIsHiddenKey: CFStringRef;
-    static kCFURLIsPackageKey: CFStringRef;
-    static kCFURLIsReadableKey: CFStringRef;
-    static kCFURLIsRegularFileKey: CFStringRef;
-    static kCFURLIsSymbolicLinkKey: CFStringRef;
-    static kCFURLIsSystemImmutableKey: CFStringRef;
-    static kCFURLIsUserImmutableKey: CFStringRef;
-    static kCFURLIsVolumeKey: CFStringRef;
-    static kCFURLIsWritableKey: CFStringRef;
-    static kCFURLLabelColorKey: CFStringRef;
-    static kCFURLLabelNumberKey: CFStringRef;
-    static kCFURLLinkCountKey: CFStringRef;
-    static kCFURLLocalizedLabelKey: CFStringRef;
-    static kCFURLLocalizedNameKey: CFStringRef;
-    static kCFURLLocalizedTypeDescriptionKey: CFStringRef;
-    static kCFURLNameKey: CFStringRef;
-    static kCFURLParentDirectoryURLKey: CFStringRef;
-    static kCFURLPreferredIOBlockSizeKey: CFStringRef;
-    static kCFURLTypeIdentifierKey: CFStringRef;
-    static kCFURLVolumeIdentifierKey: CFStringRef;
-    static kCFURLVolumeURLKey: CFStringRef;
-    static kCFURLIsExcludedFromBackupKey: CFStringRef;
-    static kCFURLFileResourceTypeKey: CFStringRef;
+    // static kCFURLAttributeModificationDateKey: CFStringRef;
+    // static kCFURLContentAccessDateKey: CFStringRef;
+    // static kCFURLContentModificationDateKey: CFStringRef;
+    // static kCFURLCreationDateKey: CFStringRef;
+    // static kCFURLCustomIconKey: CFStringRef;
+    // static kCFURLEffectiveIconKey: CFStringRef;
+    // static kCFURLFileResourceIdentifierKey: CFStringRef;
+    // static kCFURLFileSecurityKey: CFStringRef;
+    // static kCFURLHasHiddenExtensionKey: CFStringRef;
+    // static kCFURLIsDirectoryKey: CFStringRef;
+    // static kCFURLIsExecutableKey: CFStringRef;
+    // static kCFURLIsHiddenKey: CFStringRef;
+    // static kCFURLIsPackageKey: CFStringRef;
+    // static kCFURLIsReadableKey: CFStringRef;
+    // static kCFURLIsRegularFileKey: CFStringRef;
+    // static kCFURLIsSymbolicLinkKey: CFStringRef;
+    // static kCFURLIsSystemImmutableKey: CFStringRef;
+    // static kCFURLIsUserImmutableKey: CFStringRef;
+    // static kCFURLIsVolumeKey: CFStringRef;
+    // static kCFURLIsWritableKey: CFStringRef;
+    // static kCFURLLabelColorKey: CFStringRef;
+    // static kCFURLLabelNumberKey: CFStringRef;
+    // static kCFURLLinkCountKey: CFStringRef;
+    // static kCFURLLocalizedLabelKey: CFStringRef;
+    // static kCFURLLocalizedNameKey: CFStringRef;
+    // static kCFURLLocalizedTypeDescriptionKey: CFStringRef;
+    // static kCFURLNameKey: CFStringRef;
+    // static kCFURLParentDirectoryURLKey: CFStringRef;
+    // static kCFURLPreferredIOBlockSizeKey: CFStringRef;
+    // static kCFURLTypeIdentifierKey: CFStringRef;
+    // static kCFURLVolumeIdentifierKey: CFStringRef;
+    // static kCFURLVolumeURLKey: CFStringRef;
+    // static kCFURLIsExcludedFromBackupKey: CFStringRef;
+    // static kCFURLFileResourceTypeKey: CFStringRef;
 
     /* Creating a CFURL */
     //fn CFURLCopyAbsoluteURL
@@ -137,8 +132,8 @@ extern {
     //fn CFURLCreateWithBytes
     //fn CFURLCreateWithFileSystemPath
     //fn CFURLCreateWithFileSystemPathRelativeToBase
-    fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
-                             baseURL: CFURLRef) -> CFURLRef;
+    //fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
+    //                         baseURL: CFURLRef) -> CFURLRef;
 
     /* Accessing the Parts of a URL */
     //fn CFURLCanBeDecomposed
@@ -160,8 +155,8 @@ extern {
     //fn CFURLHasDirectoryPath
 
     /* Converting URLs to Other Representations */
-    fn CFURLCreateData(allocator: CFAllocatorRef, url: CFURLRef, 
-                       encoding: CFStringEncoding, escapeWhitespace: bool) -> CFDataRef;
+    //fn CFURLCreateData(allocator: CFAllocatorRef, url: CFURLRef, 
+    //                   encoding: CFStringEncoding, escapeWhitespace: bool) -> CFDataRef;
     //fn CFURLCreateStringByAddingPercentEscapes
     //fn CFURLCreateStringByReplacingPercentEscapes
     //fn CFURLCreateStringByReplacingPercentEscapesUsingEncoding
@@ -170,7 +165,7 @@ extern {
     fn CFURLGetString(anURL: CFURLRef) -> CFStringRef;
 
     /* Getting URL Properties */
-    fn CFURLGetBaseURL(anURL: CFURLRef) -> CFURLRef;
+    //fn CFURLGetBaseURL(anURL: CFURLRef) -> CFURLRef;
     //fn CFURLGetBytes
     //fn CFURLGetByteRangeForComponent
     fn CFURLGetTypeID() -> CFTypeID;

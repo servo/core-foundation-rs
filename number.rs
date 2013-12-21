@@ -11,7 +11,7 @@
 
 #[allow(non_uppercase_statics)];
 
-use base::{Boolean, CFAllocatorRef, CFRelease, CFTypeID, TCFType, kCFAllocatorDefault};
+use base::{CFAllocatorRef, CFRelease, CFTypeID, TCFType, kCFAllocatorDefault};
 
 use std::cast;
 use std::libc::c_void;
@@ -19,23 +19,23 @@ use std::libc::c_void;
 pub type CFNumberType = u32;
 
 // members of enum CFNumberType
-static kCFNumberSInt8Type:     CFNumberType = 1;
-static kCFNumberSInt16Type:    CFNumberType = 2;
-static kCFNumberSInt32Type:    CFNumberType = 3;
+// static kCFNumberSInt8Type:     CFNumberType = 1;
+// static kCFNumberSInt16Type:    CFNumberType = 2;
+// static kCFNumberSInt32Type:    CFNumberType = 3;
 static kCFNumberSInt64Type:    CFNumberType = 4;
-static kCFNumberFloat32Type:   CFNumberType = 5;
+// static kCFNumberFloat32Type:   CFNumberType = 5;
 static kCFNumberFloat64Type:   CFNumberType = 6;
-static kCFNumberCharType:      CFNumberType = 7;
-static kCFNumberShortType:     CFNumberType = 8;
-static kCFNumberIntType:       CFNumberType = 9;
-static kCFNumberLongType:      CFNumberType = 10;
-static kCFNumberLongLongType:  CFNumberType = 11;
-static kCFNumberFloatType:     CFNumberType = 12;
-static kCFNumberDoubleType:    CFNumberType = 13;
-static kCFNumberCFIndexType:   CFNumberType = 14;
-static kCFNumberNSIntegerType: CFNumberType = 15;
-static kCFNumberCGFloatType:   CFNumberType = 16;
-static kCFNumberMaxType:       CFNumberType = 16;
+// static kCFNumberCharType:      CFNumberType = 7;
+// static kCFNumberShortType:     CFNumberType = 8;
+// static kCFNumberIntType:       CFNumberType = 9;
+// static kCFNumberLongType:      CFNumberType = 10;
+// static kCFNumberLongLongType:  CFNumberType = 11;
+// static kCFNumberFloatType:     CFNumberType = 12;
+// static kCFNumberDoubleType:    CFNumberType = 13;
+// static kCFNumberCFIndexType:   CFNumberType = 14;
+// static kCFNumberNSIntegerType: CFNumberType = 15;
+// static kCFNumberCGFloatType:   CFNumberType = 16;
+// static kCFNumberMaxType:       CFNumberType = 16;
 
 struct __CFNumber;
 
@@ -49,7 +49,6 @@ pub struct CFNumber {
 }
 
 impl Drop for CFNumber {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -68,7 +67,6 @@ impl TCFType<CFNumberRef> for CFNumber {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CFNumber>) -> CFTypeID {
         unsafe {
@@ -79,7 +77,6 @@ impl TCFType<CFNumberRef> for CFNumber {
 
 // TODO(pcwalton): Floating point.
 impl ToPrimitive for CFNumber {
-    #[fixed_stack_segment]
     #[inline]
     fn to_i64(&self) -> Option<i64> {
         unsafe {
@@ -90,14 +87,12 @@ impl ToPrimitive for CFNumber {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn to_u64(&self) -> Option<u64> {
         // CFNumber does not support unsigned 64-bit values.
         None
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn to_f64(&self) -> Option<f64> {
         unsafe {
@@ -111,7 +106,6 @@ impl ToPrimitive for CFNumber {
 
 // TODO(pcwalton): Floating point.
 impl FromPrimitive for CFNumber {
-    #[fixed_stack_segment]
     #[inline]
     fn from_i64(value: i64) -> Option<CFNumber> {
         unsafe {
@@ -122,14 +116,12 @@ impl FromPrimitive for CFNumber {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn from_u64(_: u64) -> Option<CFNumber> {
         // CFNumber does not support unsigned 64-bit values.
         None
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn from_f64(value: f64) -> Option<CFNumber> {
         unsafe {
@@ -146,23 +138,17 @@ pub fn number(value: i64) -> CFNumber {
     FromPrimitive::from_i64(value).unwrap()
 }
 
-#[link_args="-framework CoreFoundation"]
-#[nolink]
+#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
      * CFNumber.h
      */
 
-    static kCFNumberNaN: CFNumberRef;
-    static kCFNumberNegativeInfinity: CFNumberRef;
-    static kCFNumberPositiveInfinity: CFNumberRef;
 
     fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *c_void)
                    -> CFNumberRef;
     //fn CFNumberGetByteSize
-    fn CFNumberGetType(number: CFNumberRef) -> CFNumberType;
     fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *mut c_void) -> bool;
-    fn CFNumberIsFloatType(number: CFNumberRef) -> Boolean;
     //fn CFNumberCompare
     fn CFNumberGetTypeID() -> CFTypeID;
 }

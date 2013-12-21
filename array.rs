@@ -13,7 +13,6 @@ use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTyp
 use base::{kCFAllocatorDefault};
 use std::cast;
 use std::libc::c_void;
-use std::vec;
 
 /// FIXME(pcwalton): This is wrong.
 pub type CFArrayRetainCallBack = *u8;
@@ -47,7 +46,6 @@ pub struct CFArray {
 }
 
 impl Drop for CFArray {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -55,12 +53,12 @@ impl Drop for CFArray {
     }
 }
 
-pub struct CFArrayIterator<'self> {
-    priv array: &'self CFArray,
+pub struct CFArrayIterator<'a> {
+    priv array: &'a CFArray,
     priv index: CFIndex,
 }
 
-impl<'self> Iterator<*c_void> for CFArrayIterator<'self> {
+impl<'a> Iterator<*c_void> for CFArrayIterator<'a> {
     fn next(&mut self) -> Option<*c_void> {
         if self.index >= self.array.len() {
             None
@@ -85,7 +83,6 @@ impl TCFType<CFArrayRef> for CFArray {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CFArray>) -> CFTypeID {
         unsafe {
@@ -96,12 +93,11 @@ impl TCFType<CFArrayRef> for CFArray {
 
 impl CFArray {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    #[fixed_stack_segment]
     pub fn from_CFTypes(elems: &[CFType]) -> CFArray {
         unsafe {
             let elems = elems.map(|elem| elem.as_CFTypeRef());
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                          cast::transmute(vec::raw::to_ptr(elems)),
+                                          cast::transmute(elems.as_ptr()),
                                           elems.len().to_CFIndex(),
                                           &kCFTypeArrayCallBacks);
             TCFType::wrap_under_create_rule(array_ref)
@@ -121,7 +117,6 @@ impl CFArray {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     pub fn len(&self) -> CFIndex {
         unsafe {
@@ -134,7 +129,6 @@ impl Index<i64,*c_void> for CFArray {
     /// Careful; the loop body must wrap the reference properly. Generally, when array elements are
     /// Core Foundation objects (not always true), they need to be wrapped with
     /// `TCFType::wrap_under_get_rule()`. The safer `iter_CFTypes` method will do this for you.
-    #[fixed_stack_segment]
     #[inline]
     fn index(&self, index: &CFIndex) -> *c_void {
         assert!(*index < self.len());
@@ -144,8 +138,7 @@ impl Index<i64,*c_void> for CFArray {
     }
 }
 
-#[link_args="-framework CoreFoundation"]
-#[nolink]
+#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
      * CFArray.h

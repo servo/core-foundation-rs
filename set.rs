@@ -9,12 +9,11 @@
 
 //! An immutable bag of elements.
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID};
 use base::{TCFType, kCFAllocatorDefault};
 
 use std::cast;
 use std::libc::c_void;
-use std::vec;
 
 pub type CFSetRetainCallBack = *u8;
 pub type CFSetReleaseCallBack = *u8;
@@ -43,7 +42,6 @@ pub struct CFSet {
 }
 
 impl Drop for CFSet {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -62,7 +60,6 @@ impl TCFType<CFSetRef> for CFSet {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CFSet>) -> CFTypeID {
         unsafe {
@@ -73,12 +70,11 @@ impl TCFType<CFSetRef> for CFSet {
 
 impl CFSet {
     /// Creates a new set from a list of `CFType` instances.
-    #[fixed_stack_segment]
     pub fn from_slice(elems: &[CFType]) -> CFSet {
         unsafe {
             let elems = elems.map(|elem| elem.as_CFTypeRef());
             let set_ref = CFSetCreate(kCFAllocatorDefault,
-                                      cast::transmute(vec::raw::to_ptr(elems)),
+                                      cast::transmute(elems.as_ptr()),
                                       elems.len().to_CFIndex(),
                                       &kCFTypeSetCallBacks);
             TCFType::wrap_under_create_rule(set_ref)
@@ -86,28 +82,17 @@ impl CFSet {
     }
 }
 
-#[link_args="-framework CoreFoundation"]
-#[nolink]
+#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
      * CFSet.h
      */
 
     static kCFTypeSetCallBacks: CFSetCallBacks;
-    static kCFTypeCopyStringSetCallBacks: CFSetCallBacks;
 
     /* Creating Sets */
     fn CFSetCreate(allocator: CFAllocatorRef, values: **c_void, numValues: CFIndex, 
                    callBacks: *CFSetCallBacks) -> CFSetRef;
-    fn CFSetCreateCopy(allocator: CFAllocatorRef, theSet: CFSetRef) -> CFSetRef;
-
-    /* Examining a Set */
-    fn CFSetContainsValue(theSet: CFSetRef, value: *c_void) -> Boolean;
-    fn CFSetGetCount(theSet: CFSetRef) -> CFIndex;
-    fn CFSetGetCountOfValue(theSet: CFSetRef, value: *c_void) -> CFIndex;
-    fn CFSetGetValue(theSet: CFSetRef, value: *c_void) -> *c_void;
-    fn CFSetGetValueIfPresent(theSet: CFSetRef, candidate: *c_void, value: **c_void) -> Boolean;
-    fn CFSetGetValues(theSet: CFSetRef, values: **c_void);
 
     /* Applying a Function to Set Members */
     //fn CFSetApplyFunction

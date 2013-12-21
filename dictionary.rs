@@ -53,7 +53,6 @@ pub struct CFDictionary {
 }
 
 impl Drop for CFDictionary {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -72,7 +71,6 @@ impl TCFType<CFDictionaryRef> for CFDictionary {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CFDictionary>) -> CFTypeID {
         unsafe {
@@ -82,7 +80,6 @@ impl TCFType<CFDictionaryRef> for CFDictionary {
 }
 
 impl CFDictionary {
-    #[fixed_stack_segment]
     pub fn from_CFType_pairs(pairs: &[(CFType, CFType)]) -> CFDictionary {
         let (keys, values) =
             vec::unzip(pairs.iter()
@@ -90,8 +87,8 @@ impl CFDictionary {
                                                           value.as_CFTypeRef())));
         unsafe {
             let dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
-                                                    cast::transmute(vec::raw::to_ptr(keys)),
-                                                    cast::transmute(vec::raw::to_ptr(values)),
+                                                    cast::transmute(keys.as_ptr()),
+                                                    cast::transmute(values.as_ptr()),
                                                     keys.len().to_CFIndex(),
                                                     &kCFTypeDictionaryKeyCallBacks,
                                                     &kCFTypeDictionaryValueCallBacks);
@@ -99,7 +96,6 @@ impl CFDictionary {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     pub fn len(&self) -> uint {
         unsafe {
@@ -112,7 +108,6 @@ impl CFDictionary {
         self.len() == 0
     }
 
-    #[fixed_stack_segment]
     #[inline]
     pub fn contains_key(&self, key: *c_void) -> bool {
         unsafe {
@@ -120,7 +115,6 @@ impl CFDictionary {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     pub fn find(&self, key: *c_void) -> Option<*c_void> {
         unsafe {
@@ -150,8 +144,7 @@ impl CFDictionary {
     }
 }
 
-#[link_args="-framework CoreFoundation"]
-#[nolink]
+#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
      * CFDictionary.h
@@ -160,23 +153,13 @@ extern {
     static kCFTypeDictionaryKeyCallBacks: CFDictionaryKeyCallBacks;
     static kCFTypeDictionaryValueCallBacks: CFDictionaryValueCallBacks;
 
-    fn CFDictionaryApplyFunction(theDict: CFDictionaryRef, applier: CFDictionaryApplierFunction,
-                                 context: *c_void);
     fn CFDictionaryContainsKey(theDict: CFDictionaryRef, key: *c_void) -> Boolean;
-    fn CFDictionaryContainsValue(theDict: CFDictionaryRef, value: *c_void) -> Boolean;
     fn CFDictionaryCreate(allocator: CFAllocatorRef, keys: **c_void, values: **c_void,
                           numValues: CFIndex, keyCallBacks: *CFDictionaryKeyCallBacks,
                           valueCallBacks: *CFDictionaryValueCallBacks)
                        -> CFDictionaryRef;
-    fn CFDictionaryCreateCopy(allocator: CFAllocatorRef,
-                              theDict: CFDictionaryRef)
-                           -> CFDictionaryRef;
     fn CFDictionaryGetCount(theDict: CFDictionaryRef) -> CFIndex;
-    fn CFDictionaryGetCountOfKey(theDict: CFDictionaryRef, key: *c_void) -> CFIndex;
-    fn CFDictionaryGetCountOfValue(theDict: CFDictionaryRef, value: *c_void) -> CFIndex;
-    fn CFDictionaryGetKeysAndValues(theDict: CFDictionaryRef, keys: **c_void, values: **c_void);
     fn CFDictionaryGetTypeID() -> CFTypeID;
-    fn CFDictionaryGetValue(theDict: CFDictionaryRef, key: *c_void) -> *c_void;
     fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *c_void, value: *mut *c_void)
                                      -> Boolean;
 }

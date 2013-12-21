@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[link(name = "io_surface", vers = "0.1")];
+#[crate_id = "github.com/mozilla-servo/rust-io-surface#io_surface:0.1"];
 
 extern mod std;
 extern mod core_foundation;
@@ -24,10 +24,9 @@ use opengles::cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
 use opengles::gl2::{BGRA, GLenum, GLsizei, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 use std::cast;
 use std::libc::{c_int, c_void, size_t};
-use std::vec::bytes;
 
-static kIOSurfaceLockReadOnly: u32 = 0x1;
-static kIOSurfaceLockAvoidSync: u32 = 0x2;
+//static kIOSurfaceLockReadOnly: u32 = 0x1;
+//static kIOSurfaceLockAvoidSync: u32 = 0x2;
 
 type IOReturn = c_int;
 
@@ -40,7 +39,6 @@ pub struct IOSurface {
 }
 
 impl Drop for IOSurface {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -51,7 +49,6 @@ impl Drop for IOSurface {
 pub type IOSurfaceID = u32;
 
 impl Clone for IOSurface {
-    #[fixed_stack_segment]
     #[inline]
     fn clone(&self) -> IOSurface {
         unsafe {
@@ -71,7 +68,6 @@ impl TCFType<IOSurfaceRef> for IOSurface {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<IOSurface>) -> CFTypeID {
         unsafe {
@@ -80,7 +76,6 @@ impl TCFType<IOSurfaceRef> for IOSurface {
     }
 }
 
-#[fixed_stack_segment]
 pub fn new(properties: &CFDictionary) -> IOSurface {
     unsafe {
         TCFType::wrap_under_create_rule(IOSurfaceCreate(properties.as_concrete_TypeRef()))
@@ -90,7 +85,6 @@ pub fn new(properties: &CFDictionary) -> IOSurface {
 /// Looks up an `IOSurface` by its global ID.
 ///
 /// FIXME(pcwalton): This should return an `Option`.
-#[fixed_stack_segment]
 pub fn lookup(csid: IOSurfaceID) -> IOSurface {
     unsafe {
         TCFType::wrap_under_create_rule(IOSurfaceLookup(csid))
@@ -98,7 +92,6 @@ pub fn lookup(csid: IOSurfaceID) -> IOSurface {
 }
 
 impl IOSurface {
-    #[fixed_stack_segment]
     pub fn get_id(&self) -> IOSurfaceID {
         unsafe {
             IOSurfaceGetID(self.as_concrete_TypeRef())
@@ -106,7 +99,6 @@ impl IOSurface {
     }
 
     /// Binds to the current GL texture.
-    #[fixed_stack_segment]
     pub fn bind_to_gl_texture(&self, size: Size2D<int>) {
         unsafe {
             let context = CGLGetCurrentContext();
@@ -124,7 +116,6 @@ impl IOSurface {
         }
     }
 
-    #[fixed_stack_segment]
     pub fn upload(&self, data: &[u8]) {
         unsafe {
             let surface = self.as_concrete_TypeRef();
@@ -136,7 +127,7 @@ impl IOSurface {
             let stride = IOSurfaceGetBytesPerRow(surface);
             let size = (height * stride) as uint;
             let dest: &mut [u8] = cast::transmute((IOSurfaceGetBaseAddress(surface), size));
-            bytes::copy_memory(dest, data, data.len());
+            dest.copy_memory(data);
 
             // FIXME(pcwalton): RAII
             IOSurfaceUnlock(surface, 0, &mut seed);
@@ -144,8 +135,7 @@ impl IOSurface {
     }
 }
 
-#[link_args="-framework IOSurface"]
-#[nolink]
+#[link(name = "IOSurface", kind = "framework")]
 extern {
     pub static kIOSurfaceAllocSize: CFStringRef;
     pub static kIOSurfaceWidth: CFStringRef;

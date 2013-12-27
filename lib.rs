@@ -7,6 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#[link(name = "core_foundation", vers = "0.1")];
+
 extern mod std;
 
 pub mod array;

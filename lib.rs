@@ -26,7 +26,7 @@ pub mod test {
     #[test]
     fn test_stuff() {
         use boolean::CFBoolean;
-        use number::CFNumber;
+        use number::number;
         use dictionary::CFDictionary;
         use string::CFString;
 
@@ -34,17 +34,17 @@ pub mod test {
         io::println(format!("%d", (&n).retain_count() as int));
         (&n).show();*/
 
-        let bar = CFString::new_static("Bar");
-        let baz = CFString::new_static("Baz");
-        let boo = CFString::new_static("Boo");
-        let foo = CFString::new_static("Foo");
+        let bar = CFString::from_static_string("Bar");
+        let baz = CFString::from_static_string("Baz");
+        let boo = CFString::from_static_string("Boo");
+        let foo = CFString::from_static_string("Foo");
         let tru = CFBoolean::true_value();
-        let n42 = CFNumber::new(42 as i32);
+        let n42 = number(42);
 
-        let d = CFDictionary::new([
-            (*bar.contents.borrow_ref(), *boo.contents.borrow_type_ref()),
-            (*baz.contents.borrow_ref(), *tru.contents.borrow_type_ref()),
-            (*foo.contents.borrow_ref(), *n42.contents.borrow_type_ref()),
+        let d = CFDictionary::from_CFType_pairs([
+            (bar.as_CFType(), boo.as_CFType()),
+            (baz.as_CFType(), tru.as_CFType()),
+            (foo.as_CFType(), n42.as_CFType()),
         ]);
         d.contents.show();
     }

@@ -7,8 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#[link(name = "core_graphics", vers = "0.1")];
+
 extern mod std;
-extern mod core_foundation = "rust-core-foundation";
+extern mod core_foundation;
 
 pub mod base;
 pub mod data_provider;

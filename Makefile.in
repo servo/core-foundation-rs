@@ -1,0 +1,24 @@
+VPATH=%VPATH%
+
+RUSTC ?= rustc
+RUSTFLAGS ?=
+
+RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
+
+.PHONY: all
+all:    libcore_text.dummy
+
+libcore_text.dummy: lib.rs $(RUST_SRC)
+	$(RUSTC) $(RUSTFLAGS) $< --lib --out-dir .
+	touch $@
+
+core_text-test: lib.rs $(RUST_SRC)
+	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
+
+.PHONY: check
+check: core_text-test
+	./core_text-test $(TEST)
+
+.PHONY: clean
+clean:
+	rm -f *.o *.a *.so *.dylib *.dll *.dummy *-test

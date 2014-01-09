@@ -69,7 +69,6 @@ pub struct CFType {
 }
 
 impl Clone for CFType {
-    #[fixed_stack_segment]
     #[inline]
     fn clone(&self) -> CFType {
         unsafe {
@@ -79,7 +78,6 @@ impl Clone for CFType {
 }
 
 impl Drop for CFType {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.obj)
@@ -122,7 +120,6 @@ pub trait TCFType<ConcreteTypeRef> {
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
     /// when following Core Foundation's "Get Rule". The reference count *is* bumped.
-    #[fixed_stack_segment]
     #[inline]
     unsafe fn wrap_under_get_rule(reference: ConcreteTypeRef) -> Self {
         let reference: ConcreteTypeRef = cast::transmute(CFRetain(cast::transmute(reference)));
@@ -131,7 +128,6 @@ pub trait TCFType<ConcreteTypeRef> {
 
     /// Returns the reference count of the object. It is unwise to do anything other than test
     /// whether the return value of this method is greater than zero.
-    #[fixed_stack_segment]
     #[inline]
     fn retain_count(&self) -> CFIndex {
         unsafe {
@@ -140,7 +136,6 @@ pub trait TCFType<ConcreteTypeRef> {
     }
 
     /// Returns the type ID of this object.
-    #[fixed_stack_segment]
     #[inline]
     fn type_of(&self) -> CFTypeID {
         unsafe {
@@ -149,7 +144,6 @@ pub trait TCFType<ConcreteTypeRef> {
     }
 
     /// Writes a debugging version of this object on standard error.
-    #[fixed_stack_segment]
     fn show(&self) {
         unsafe {
             CFShow(self.as_CFTypeRef())
@@ -199,8 +193,7 @@ impl TCFType<CFTypeRef> for CFType {
     }
 }
 
-#[link_args="-framework CoreFoundation"]
-#[nolink]
+#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
      * CFBase.h

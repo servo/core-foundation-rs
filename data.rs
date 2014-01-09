@@ -9,11 +9,10 @@
 
 //! Core Foundation byte buffers.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRange, CFRelease, CFTypeID, TCFType};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFTypeID, TCFType};
 use base::{kCFAllocatorDefault};
 
 use std::cast;
-use std::vec;
 
 struct __CFData;
 
@@ -27,7 +26,6 @@ pub struct CFData {
 }
 
 impl Drop for CFData {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -46,7 +44,6 @@ impl TCFType<CFDataRef> for CFData {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CFData>) -> CFTypeID {
         unsafe {
@@ -56,11 +53,10 @@ impl TCFType<CFDataRef> for CFData {
 }
 
 impl CFData {
-    #[fixed_stack_segment]
     pub fn from_buffer(buffer: &[u8]) -> CFData {
         unsafe {
             let data_ref = CFDataCreate(kCFAllocatorDefault, 
-                                        vec::raw::to_ptr(buffer),
+                                        buffer.as_ptr(),
                                         buffer.len().to_CFIndex());
             TCFType::wrap_under_create_rule(data_ref)
         }
@@ -68,7 +64,6 @@ impl CFData {
 
     /// Returns a pointer to the underlying bytes in this data. Note that this byte buffer is
     /// read-only.
-    #[fixed_stack_segment]
     #[inline]
     pub fn bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
@@ -77,7 +72,6 @@ impl CFData {
     }
 
     /// Returns the length of this byte buffer.
-    #[fixed_stack_segment]
     #[inline]
     pub fn len(&self) -> CFIndex {
         unsafe {
@@ -86,8 +80,7 @@ impl CFData {
     }
 }
 
-#[link_args="-framework CoreFoundation"]
-#[nolink]
+#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
      * CFData.h
@@ -95,13 +88,8 @@ extern {
 
     fn CFDataCreate(allocator: CFAllocatorRef, 
                     bytes: *u8, length: CFIndex) -> CFDataRef;
-    fn CFDataCreateCopy(allocator: CFAllocatorRef, theData: CFDataRef) -> CFDataRef;
-    fn CFDataCreateWithBytesNoCopy(allocator: CFAllocatorRef, 
-                                   bytes: *u8, length: CFIndex, 
-                                   bytesDeallocator: CFAllocatorRef) -> CFDataRef;
     //fn CFDataFind
     fn CFDataGetBytePtr(theData: CFDataRef) -> *u8;
-    fn CFDataGetBytes(theData: CFDataRef, range: CFRange, buffer: *u8);
     fn CFDataGetLength(theData: CFDataRef) -> CFIndex;
 
     fn CFDataGetTypeID() -> CFTypeID;

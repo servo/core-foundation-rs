@@ -25,7 +25,6 @@ pub struct CFBoolean {
 }
 
 impl Drop for CFBoolean {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -44,7 +43,6 @@ impl TCFType<CFBooleanRef> for CFBoolean {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CFBoolean>) -> CFTypeID {
         unsafe {
@@ -67,13 +65,11 @@ impl CFBoolean {
     }
 }
 
-#[link_args="-framework CoreFoundation"]
-#[nolink]
+#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     static kCFBooleanTrue: CFBooleanRef;
     static kCFBooleanFalse: CFBooleanRef;
 
-    fn CFBooleanGetValue(boolean: CFBooleanRef) -> Boolean;
     fn CFBooleanGetTypeID() -> CFTypeID;
 }
 

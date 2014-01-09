@@ -44,13 +44,9 @@ pub struct NSRect {
     size: NSSize,
 }
 
-#[nolink]
-#[link_args="-framework AppKit"]
-extern {
-    fn NSBeep();
-}
+#[link(name = "AppKit", kind = "framework")]
+extern {}
 
-#[fixed_stack_segment]
 pub unsafe fn NSApp() -> id {
     "NSApplication".send("sharedApplication", ())
 }

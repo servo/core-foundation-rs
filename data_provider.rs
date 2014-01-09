@@ -10,9 +10,8 @@
 use core_foundation::base::{CFRelease, CFTypeID, TCFType};
 
 use std::cast;
-use std::libc::{c_void, c_char, size_t};
+use std::libc::{c_void, size_t};
 use std::ptr;
-use std::vec;
 
 pub type CGDataProviderGetBytesCallback = *u8;
 pub type CGDataProviderReleaseInfoCallback = *u8;
@@ -35,7 +34,6 @@ pub struct CGDataProvider {
 }
 
 impl Drop for CGDataProvider {
-    #[fixed_stack_segment]
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -54,7 +52,6 @@ impl TCFType<CGDataProviderRef> for CGDataProvider {
         }
     }
 
-    #[fixed_stack_segment]
     #[inline]
     fn type_id(_: Option<CGDataProvider>) -> CFTypeID {
         unsafe {
@@ -64,11 +61,10 @@ impl TCFType<CGDataProviderRef> for CGDataProvider {
 }
 
 impl CGDataProvider {
-    #[fixed_stack_segment]
     pub fn from_buffer(buffer: &[u8]) -> CGDataProvider {
         unsafe {
             let result = CGDataProviderCreateWithData(ptr::null(),
-                                                      cast::transmute(vec::raw::to_ptr(buffer)),
+                                                      cast::transmute(buffer.as_ptr()),
                                                       buffer.len() as u64,
                                                       ptr::null());
             TCFType::wrap_under_create_rule(result)
@@ -76,8 +72,7 @@ impl CGDataProvider {
     }
 }
 
-#[nolink]
-#[link_args="-framework ApplicationServices"]
+#[link(name = "ApplicationServices", kind = "framework")]
 extern {
     //fn CGDataProviderCopyData
     //fn CGDataProviderCreateDirect
@@ -88,9 +83,9 @@ extern {
                                     size: size_t,
                                     releaseData: CGDataProviderReleaseDataCallback
                                    ) -> CGDataProviderRef;
-    fn CGDataProviderCreateWithFilename(filename: *c_char) -> CGDataProviderRef;
+    //fn CGDataProviderCreateWithFilename(filename: *c_char) -> CGDataProviderRef;
     //fn CGDataProviderCreateWithURL
     fn CGDataProviderGetTypeID() -> CFTypeID;
-    fn CGDataProviderRelease(provider: CGDataProviderRef);
-    fn CGDataProviderRetain(provider: CGDataProviderRef) -> CGDataProviderRef;
+    //fn CGDataProviderRelease(provider: CGDataProviderRef);
+    //fn CGDataProviderRetain(provider: CGDataProviderRef) -> CGDataProviderRef;
 }

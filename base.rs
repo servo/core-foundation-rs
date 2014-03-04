@@ -9,6 +9,7 @@
 
 use std::cast;
 use std::libc::{c_long, c_ulong};
+use std::num::Bounded;
 
 pub type Boolean = u8;
 

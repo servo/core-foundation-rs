@@ -9,7 +9,7 @@
 
 #[crate_id = "github.com/mozilla-servo/rust-core-foundation#core_foundation:0.1"];
 
-extern mod std;
+extern crate std;
 
 pub mod array;
 pub mod base;

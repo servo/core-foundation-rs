@@ -12,6 +12,7 @@
 #[allow(non_uppercase_statics)];
 
 use base::{CFOptionFlags, CFRelease, CFTypeID, TCFType};
+use std::fmt;
 use string::{CFString, CFStringRef};
 
 struct __CFURL;
@@ -49,12 +50,13 @@ impl TCFType<CFURLRef> for CFURL {
     }
 }
 
-impl ToStr for CFURL {
+impl fmt::Show for CFURL {
     #[inline]
-    fn to_str(&self) -> ~str {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
             let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.obj));
-            string.to_str()
+            let s: ~str = string.to_str();
+            write!(f.buf, "{}", s)
         }
     }
 }

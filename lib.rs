@@ -9,8 +9,8 @@
 
 #[crate_id = "github.com/mozilla-servo/rust-core-graphics#core_graphics:0.1"];
 
-extern mod std;
-extern mod core_foundation;
+extern crate std;
+extern crate core_foundation;
 
 pub mod base;
 pub mod data_provider;

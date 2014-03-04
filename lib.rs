@@ -9,10 +9,10 @@
 
 #[crate_id = "github.com/mozilla-servo/rust-io-surface#io_surface:0.1"];
 
-extern mod std;
-extern mod core_foundation;
-extern mod geom;
-extern mod opengles;
+extern crate std;
+extern crate core_foundation;
+extern crate geom;
+extern crate opengles;
 
 // Rust bindings to the IOSurface framework on Mac OS X.
 

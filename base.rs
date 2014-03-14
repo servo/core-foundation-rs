@@ -212,7 +212,7 @@ mod test {
     #[test]
     pub fn test_custom_obj() {
         extern fn MyObject_doSomething(this: id, _: SEL) -> id {
-            println("doSomething");
+            println!("doSomething");
             return this;
         }
 

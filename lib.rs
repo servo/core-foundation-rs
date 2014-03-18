@@ -9,10 +9,10 @@
 
 #[crate_id = "github.com/mozilla-servo/rust-core-text#core_text:0.1"];
 
-extern mod std;
+extern crate std;
 
-extern mod core_foundation;
-extern mod core_graphics;
+extern crate core_foundation;
+extern crate core_graphics;
 
 pub mod font;
 pub mod font_collection;

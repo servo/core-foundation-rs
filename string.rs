@@ -15,6 +15,7 @@ use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFOptionFlags, 
 use base::{CFRelease, CFTypeID, TCFType, kCFAllocatorDefault, kCFAllocatorNull};
 
 use std::cast;
+use std::fmt;
 use std::libc;
 use std::ptr;
 use std::vec;
@@ -259,8 +260,8 @@ impl FromStr for CFString {
     }
 }
 
-impl ToStr for CFString {
-    fn to_str(&self) -> ~str {
+impl fmt::Show for CFString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
             let char_len = self.char_len();
             let range = CFRange::init(0, char_len);
@@ -294,10 +295,13 @@ impl ToStr for CFString {
             assert!(bytes_used == buffer.len().to_CFIndex());
 
             // Then, reinterpret it as as string. You have been warned!
-            cast::transmute(buffer)
+            let s: ~str = cast::transmute(buffer);
+
+            write!(f.buf, "{}", s)
         }
     }
 }
+
 
 impl CFString {
     /// Like `CFString::from_string`, but references a string that can be used as a backing store

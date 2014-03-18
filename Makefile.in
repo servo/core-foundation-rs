@@ -9,7 +9,7 @@ RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 all:    libcore_foundation.dummy
 
 libcore_foundation.dummy: lib.rs $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< --lib --out-dir .
+	$(RUSTC) $(RUSTFLAGS) $< --crate-type=lib --out-dir .
 	touch $@
 
 core_foundation-test: lib.rs $(RUST_SRC)

@@ -15,7 +15,7 @@
 
 #[feature(globs)];
 
-extern mod std;
+extern crate std;
 
 pub mod appkit;
 pub mod base;

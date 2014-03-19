@@ -21,4 +21,4 @@ check: core_foundation-test
 
 .PHONY: clean
 clean:
-	rm -f *.o *.a *.so *.dylib *.dll *.dummy *-test
+	rm -f *.o *.a *.so *.dylib *.rlib *.dll *.dummy *-test

@@ -16,9 +16,10 @@ use base::{CFRelease, CFTypeID, TCFType, kCFAllocatorDefault, kCFAllocatorNull};
 
 use std::cast;
 use std::fmt;
+use std::from_str::FromStr;
 use std::libc;
 use std::ptr;
-use std::vec;
+use std::slice;
 
 pub type UniChar = libc::c_ushort;
 
@@ -278,7 +279,7 @@ impl fmt::Show for CFString {
                              &mut bytes_required);
 
             // Then, allocate the buffer and actually copy.
-            let buffer: ~[u8] = vec::from_elem(bytes_required as uint, '\x00' as u8);
+            let buffer: ~[u8] = slice::from_elem(bytes_required as uint, '\x00' as u8);
             let mut bytes_used: CFIndex = 0;
             let chars_written = CFStringGetBytes(self.obj,
                                                  range,

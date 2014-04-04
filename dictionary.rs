@@ -15,7 +15,7 @@ use base::{CFTypeRef, TCFType, kCFAllocatorDefault};
 use std::cast;
 use std::libc::c_void;
 use std::ptr;
-use std::vec;
+use std::slice;
 
 pub type CFDictionaryApplierFunction = *u8;
 pub type CFDictionaryCopyDescriptionCallBack = *u8;
@@ -82,7 +82,7 @@ impl TCFType<CFDictionaryRef> for CFDictionary {
 impl CFDictionary {
     pub fn from_CFType_pairs(pairs: &[(CFType, CFType)]) -> CFDictionary {
         let (keys, values) =
-            vec::unzip(pairs.iter()
+            slice::unzip(pairs.iter()
                             .map(|&(ref key, ref value)| (key.as_CFTypeRef(),
                                                           value.as_CFTypeRef())));
         unsafe {

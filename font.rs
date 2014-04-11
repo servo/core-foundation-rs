@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[allow(non_uppercase_statics)];
+#![allow(non_uppercase_statics)]
 
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
@@ -20,7 +20,7 @@ use core_graphics::base::{CGAffineTransform, CGFloat};
 use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
 use core_graphics::geometry::{CGRect, CGSize};
 
-use std::libc;
+use libc;
 use std::ptr;
 
 pub type CTFontUIFontType = u32;
@@ -70,7 +70,7 @@ struct __CTFont;
 pub type CTFontRef = *__CTFont;
 
 pub struct CTFont {
-    priv obj: CTFontRef,
+    obj: CTFontRef,
 }
 
 impl Drop for CTFont {

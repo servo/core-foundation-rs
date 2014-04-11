@@ -10,7 +10,7 @@
 use core_foundation::base::{CFRelease, CFTypeID, TCFType};
 
 use data_provider::{CGDataProvider, CGDataProviderRef};
-use std::libc;
+use libc;
 
 pub type CGGlyph = libc::c_ushort;
 

@@ -9,7 +9,7 @@
 
 //! A URL type for Core Foundation.
 
-#[allow(non_uppercase_statics)];
+#![allow(non_uppercase_statics)]
 
 use base::{CFOptionFlags, CFRelease, CFTypeID, TCFType};
 use std::fmt;
@@ -20,7 +20,7 @@ struct __CFURL;
 pub type CFURLRef = *__CFURL;
 
 pub struct CFURL {
-    priv obj: CFURLRef,
+    obj: CFURLRef,
 }
 
 impl Drop for CFURL {

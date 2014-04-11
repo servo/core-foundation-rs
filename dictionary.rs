@@ -12,8 +12,8 @@
 use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID};
 use base::{CFTypeRef, TCFType, kCFAllocatorDefault};
 
+use libc::c_void;
 use std::cast;
-use std::libc::c_void;
 use std::ptr;
 use std::slice;
 
@@ -49,7 +49,7 @@ pub type CFDictionaryRef = *__CFDictionary;
 ///
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFDictionary {
-    priv obj: CFDictionaryRef,
+    obj: CFDictionaryRef,
 }
 
 impl Drop for CFDictionary {

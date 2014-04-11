@@ -9,15 +9,15 @@
 
 //! Immutable strings.
 
-#[allow(non_uppercase_statics)];
+#![allow(non_uppercase_statics)]
 
 use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFOptionFlags, CFRange};
 use base::{CFRelease, CFTypeID, TCFType, kCFAllocatorDefault, kCFAllocatorNull};
 
+use libc;
 use std::cast;
 use std::fmt;
 use std::from_str::FromStr;
-use std::libc;
 use std::ptr;
 use std::slice;
 
@@ -205,7 +205,7 @@ pub type CFStringRef = *__CFString;
 ///
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFString {
-    priv obj: CFStringRef,
+    obj: CFStringRef,
 }
 
 impl Clone for CFString {

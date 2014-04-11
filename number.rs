@@ -9,12 +9,12 @@
 
 //! Immutable numbers.
 
-#[allow(non_uppercase_statics)];
+#![allow(non_uppercase_statics)]
 
 use base::{CFAllocatorRef, CFRelease, CFTypeID, TCFType, kCFAllocatorDefault};
 
+use libc::c_void;
 use std::cast;
-use std::libc::c_void;
 
 pub type CFNumberType = u32;
 
@@ -45,7 +45,7 @@ pub type CFNumberRef = *__CFNumber;
 ///
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFNumber {
-    priv obj: CFNumberRef,
+    obj: CFNumberRef,
 }
 
 impl Drop for CFNumber {

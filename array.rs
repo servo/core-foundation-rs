@@ -9,10 +9,10 @@
 
 //! Heterogeneous immutable arrays.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID, TCFType};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID, CFTypeRef, TCFType};
 use base::{kCFAllocatorDefault};
+use libc::c_void;
 use std::cast;
-use std::libc::c_void;
 
 /// FIXME(pcwalton): This is wrong.
 pub type CFArrayRetainCallBack = *u8;
@@ -42,7 +42,7 @@ pub type CFArrayRef = *__CFArray;
 ///
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFArray {
-    priv obj: CFArrayRef,
+    obj: CFArrayRef,
 }
 
 impl Drop for CFArray {
@@ -54,8 +54,8 @@ impl Drop for CFArray {
 }
 
 pub struct CFArrayIterator<'a> {
-    priv array: &'a CFArray,
-    priv index: CFIndex,
+    array: &'a CFArray,
+    index: CFIndex,
 }
 
 impl<'a> Iterator<*c_void> for CFArrayIterator<'a> {
@@ -95,7 +95,7 @@ impl CFArray {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
     pub fn from_CFTypes(elems: &[CFType]) -> CFArray {
         unsafe {
-            let elems = elems.map(|elem| elem.as_CFTypeRef());
+            let elems: ~[CFTypeRef] = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
                                           cast::transmute(elems.as_ptr()),
                                           elems.len().to_CFIndex(),

@@ -9,11 +9,11 @@
 
 //! An immutable bag of elements.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID, CFTypeRef};
 use base::{TCFType, kCFAllocatorDefault};
 
+use libc::c_void;
 use std::cast;
-use std::libc::c_void;
 
 pub type CFSetRetainCallBack = *u8;
 pub type CFSetReleaseCallBack = *u8;
@@ -38,7 +38,7 @@ pub type CFSetRef = *__CFSet;
 ///
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFSet {
-    priv obj: CFSetRef,
+    obj: CFSetRef,
 }
 
 impl Drop for CFSet {
@@ -72,7 +72,7 @@ impl CFSet {
     /// Creates a new set from a list of `CFType` instances.
     pub fn from_slice(elems: &[CFType]) -> CFSet {
         unsafe {
-            let elems = elems.map(|elem| elem.as_CFTypeRef());
+            let elems: ~[CFTypeRef] = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let set_ref = CFSetCreate(kCFAllocatorDefault,
                                       cast::transmute(elems.as_ptr()),
                                       elems.len().to_CFIndex(),

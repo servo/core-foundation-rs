@@ -21,7 +21,7 @@ pub type CFBooleanRef = *__CFBoolean;
 ///
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFBoolean {
-    priv obj: CFBooleanRef,
+    obj: CFBooleanRef,
 }
 
 impl Drop for CFBoolean {

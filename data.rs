@@ -22,7 +22,7 @@ pub type CFDataRef = *__CFData;
 ///
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFData {
-    priv obj: CFDataRef,
+    obj: CFDataRef,
 }
 
 impl Drop for CFData {

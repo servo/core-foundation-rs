@@ -7,8 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use libc::{c_long, c_ulong};
 use std::cast;
-use std::libc::{c_long, c_ulong};
 use std::num::Bounded;
 
 pub type Boolean = u8;
@@ -66,7 +66,7 @@ pub type CFTypeRef = *__CFType;
 
 /// Superclass of all Core Foundation objects.
 pub struct CFType {
-    priv obj: CFTypeRef,
+    obj: CFTypeRef,
 }
 
 impl Clone for CFType {

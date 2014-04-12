@@ -7,11 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[crate_id = "github.com/mozilla-servo/rust-io-surface#io_surface:0.1"];
-#[crate_type = "lib"];
-#[crate_type = "dylib"];
-#[crate_type = "rlib"];
+#![crate_id = "github.com/mozilla-servo/rust-io-surface#io_surface:0.1"]
+#![crate_type = "lib"]
+#![crate_type = "dylib"]
+#![crate_type = "rlib"]
 
+extern crate libc;
 extern crate std;
 extern crate core_foundation;
 extern crate geom;
@@ -25,8 +26,8 @@ use core_foundation::string::CFStringRef;
 use geom::size::Size2D;
 use opengles::cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
 use opengles::gl2::{BGRA, GLenum, GLsizei, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
+use libc::{c_int, c_void, size_t};
 use std::cast;
-use std::libc::{c_int, c_void, size_t};
 
 //static kIOSurfaceLockReadOnly: u32 = 0x1;
 //static kIOSurfaceLockAvoidSync: u32 = 0x2;

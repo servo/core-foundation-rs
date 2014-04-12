@@ -9,8 +9,8 @@
 
 use core_foundation::base::{CFRelease, CFTypeID, TCFType};
 
+use libc::{c_void, size_t};
 use std::cast;
-use std::libc::{c_void, size_t};
 use std::ptr;
 
 pub type CGDataProviderGetBytesCallback = *u8;

@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[allow(non_uppercase_statics)];
+#![allow(non_uppercase_statics)]
 
 use core_foundation::array::CFArrayRef;
 use core_foundation::base::{CFRelease, CFType, CFTypeID, CFTypeRef, TCFType};
@@ -183,7 +183,7 @@ struct __CTFontDescriptor;
 pub type CTFontDescriptorRef = *__CTFontDescriptor;
 
 pub struct CTFontDescriptor {
-    priv obj: CTFontDescriptorRef,
+    obj: CTFontDescriptorRef,
 }
 
 impl Drop for CTFontDescriptor {

@@ -7,16 +7,17 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#[crate_id = "github.com/mozilla-servo/rust-cocoa#cocoa:0.1"];
-#[crate_type = "lib"];
-#[crate_type = "dylib"];
-#[crate_type = "rlib"];
+#![crate_id = "github.com/mozilla-servo/rust-cocoa#cocoa:0.1"]
+#![crate_type = "lib"]
+#![crate_type = "dylib"]
+#![crate_type = "rlib"]
 
-#[comment = "The Servo Parallel Browser Project"];
-#[license = "MIT"];
+#![comment = "The Servo Parallel Browser Project"]
+#![license = "MIT"]
 
-#[feature(globs)];
+#![feature(globs)]
 
+extern crate libc;
 extern crate std;
 
 pub mod appkit;

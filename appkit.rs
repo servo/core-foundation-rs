@@ -40,8 +40,8 @@ impl NSSize {
 }
 
 pub struct NSRect {
-    origin: NSPoint,
-    size: NSSize,
+    pub origin: NSPoint,
+    pub size: NSSize,
 }
 
 #[link(name = "AppKit", kind = "framework")]

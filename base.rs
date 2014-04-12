@@ -9,8 +9,8 @@
 
 use appkit::NSRect;
 
-use std::libc::{c_double, c_long};
-use std::libc;
+use libc::{c_double, c_long};
+use libc;
 
 pub type Class = libc::intptr_t;
 pub type IMP = extern "C" fn(id, SEL) -> id;

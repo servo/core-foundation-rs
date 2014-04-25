@@ -10,16 +10,16 @@
 use base::CGFloat;
 
 pub struct CGSize {
-    width: CGFloat,
-    height: CGFloat,
+    pub width: CGFloat,
+    pub height: CGFloat,
 }
 
 pub struct CGPoint {
-    x: CGFloat,
-    y: CGFloat,
+    pub x: CGFloat,
+    pub y: CGFloat,
 }
 
 pub struct CGRect {
-    origin: CGPoint,
-    size: CGSize
+    pub origin: CGPoint,
+    pub size: CGSize
 }

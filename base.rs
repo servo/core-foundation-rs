@@ -199,7 +199,7 @@ impl ObjCMethodVoidArgs for id {
 
 #[cfg(test)]
 mod test {
-    use std::libc;
+    use libc;
     use super::*;
 
     #[test]

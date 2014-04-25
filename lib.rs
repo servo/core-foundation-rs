@@ -39,7 +39,7 @@ struct __IOSurface;
 pub type IOSurfaceRef = *__IOSurface;
 
 pub struct IOSurface {
-    obj: IOSurfaceRef,
+    pub obj: IOSurfaceRef,
 }
 
 impl Drop for IOSurface {

@@ -9,7 +9,7 @@ RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 all:    libcore_graphics.dummy
 
 libcore_graphics.dummy: lib.rs $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< --crate-type=lib --out-dir .
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
 core_graphics-test: lib.rs $(RUST_SRC)

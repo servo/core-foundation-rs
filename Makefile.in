@@ -9,7 +9,7 @@ RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 all:    libio_surface.dummy
 
 libio_surface.dummy: lib.rs $(RUST_SRC)
-	$(RUSTC) $(RUSTFLAGS) $< --crate-type=lib --out-dir .
+	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
 io_surface-test: lib.rs $(RUST_SRC)

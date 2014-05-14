@@ -15,11 +15,10 @@ use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFOptionFlags, 
 use base::{CFRelease, CFTypeID, TCFType, kCFAllocatorDefault, kCFAllocatorNull};
 
 use libc;
-use std::cast;
 use std::fmt;
 use std::from_str::FromStr;
 use std::ptr;
-use std::slice;
+use std::vec::Vec;
 
 pub type UniChar = libc::c_ushort;
 
@@ -279,7 +278,7 @@ impl fmt::Show for CFString {
                              &mut bytes_required);
 
             // Then, allocate the buffer and actually copy.
-            let buffer: ~[u8] = slice::from_elem(bytes_required as uint, '\x00' as u8);
+            let buffer: Vec<u8> = Vec::from_elem(bytes_required as uint, '\x00' as u8);
             let mut bytes_used: CFIndex = 0;
             let chars_written = CFStringGetBytes(self.obj,
                                                  range,
@@ -294,11 +293,7 @@ impl fmt::Show for CFString {
             // This is dangerous; we over-allocate and null-terminate the string (during
             // initialization).
             assert!(bytes_used == buffer.len().to_CFIndex());
-
-            // Then, reinterpret it as as string. You have been warned!
-            let s: ~str = cast::transmute(buffer);
-
-            write!(f.buf, "{}", s)
+            write!(f.buf, "{}", StrBuf::from_utf8(buffer).unwrap())
         }
     }
 }

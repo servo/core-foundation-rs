@@ -2,17 +2,18 @@ VPATH=%VPATH%
 
 RUSTC ?= rustc
 RUSTFLAGS ?=
+EXT_DEPS ?=
 
 RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 
 .PHONY: all
 all:    libcore_text.dummy
 
-libcore_text.dummy: lib.rs $(RUST_SRC)
+libcore_text.dummy: lib.rs $(RUST_SRC) $(EXT_DEPS)
 	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
-core_text-test: lib.rs $(RUST_SRC)
+core_text-test: lib.rs $(RUST_SRC) $(EXT_DEPS)
 	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
 
 .PHONY: check

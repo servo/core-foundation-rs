@@ -119,7 +119,7 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
     }
 }
 
-pub fn new_from_name(name: ~str, pt_size: f64) -> Result<CTFont, ()> {
+pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {
     unsafe {
         let name: CFString = from_str(name).unwrap();
         let font_ref = CTFontCreateWithName(name.as_concrete_TypeRef(),
@@ -146,8 +146,8 @@ impl CTFont {
     // Creation methods
     pub fn copy_to_CGFont(&self) -> CGFont {
         unsafe {
-            let CGFont_ref = CTFontCopyGraphicsFont(self.obj, ptr::null());
-            TCFType::wrap_under_create_rule(CGFont_ref)
+            let cgfont_ref = CTFontCopyGraphicsFont(self.obj, ptr::null());
+            TCFType::wrap_under_create_rule(cgfont_ref)
         }
     }
 
@@ -162,22 +162,22 @@ impl CTFont {
     }
 
     // Names
-    pub fn family_name(&self) -> ~str {
+    pub fn family_name(&self) -> String {
         let value = get_string_by_name_key(self, kCTFontFamilyNameKey);
         value.expect("Fonts should always have a family name.")
     }
 
-    pub fn face_name(&self) -> ~str {
+    pub fn face_name(&self) -> String {
         let value = get_string_by_name_key(self, kCTFontSubFamilyNameKey);
         value.expect("Fonts should always have a face name.")
     }
 
-    pub fn unique_name(&self) -> ~str {
+    pub fn unique_name(&self) -> String {
         let value = get_string_by_name_key(self, kCTFontUniqueNameKey);
         value.expect("Fonts should always have a unique name.")
     }
 
-    pub fn postscript_name(&self) -> ~str {
+    pub fn postscript_name(&self) -> String {
         let value = get_string_by_name_key(self, kCTFontPostScriptNameKey);
         value.expect("Fonts should always have a PostScript name.")
     }
@@ -270,7 +270,7 @@ impl CTFont {
 }
 
 // Helper methods
-fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> {
+fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<String> {
     unsafe {
         let result = CTFontCopyName(font.as_concrete_TypeRef(), name_key);
         if result.is_null() {
@@ -283,7 +283,7 @@ fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<~str> 
 }
 
 pub fn debug_font_names(font: &CTFont) {
-    fn get_key(font: &CTFont, key: CFStringRef) -> ~str {
+    fn get_key(font: &CTFont, key: CFStringRef) -> String {
         get_string_by_name_key(font, key).unwrap()
     }
 

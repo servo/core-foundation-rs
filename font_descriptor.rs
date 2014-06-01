@@ -18,7 +18,7 @@ use core_foundation::string::{CFString, CFStringRef};
 use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::CGFloat;
 
-use std::cast;
+use std::mem;
 
 /*
 * CTFontTraits.h
@@ -127,7 +127,7 @@ trait TraitAccessorPrivate {
 
 impl TraitAccessorPrivate for CTFontTraits {
     unsafe fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
-        self.get_CFType(cast::transmute(key)).cast::<CFNumberRef,CFNumber>()
+        self.get_CFType(mem::transmute(key)).cast::<CFNumberRef,CFNumber>()
     }
 
 }
@@ -214,7 +214,7 @@ impl TCFType<CTFontDescriptorRef> for CTFontDescriptor {
 }
 
 impl CTFontDescriptor {
-    fn get_string_attribute(&self, attribute: CFStringRef) -> Option<~str> {
+    fn get_string_attribute(&self, attribute: CFStringRef) -> Option<String> {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
             if value.is_null() {
@@ -229,27 +229,27 @@ impl CTFontDescriptor {
 }
 
 impl CTFontDescriptor {
-    pub fn family_name(&self) -> ~str {
+    pub fn family_name(&self) -> String {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
-        value.expect("A font must have a non-null font family name.")
+        value.expect("A font2 must have a non-null font family name.")
     }
 
-    pub fn font_name(&self) -> ~str {
+    pub fn font_name(&self) -> String {
         let value = self.get_string_attribute(kCTFontNameAttribute);
         value.expect("A font must have a non-null name.")
     }
 
-    pub fn style_name(&self) -> ~str {
+    pub fn style_name(&self) -> String {
         let value = self.get_string_attribute(kCTFontStyleNameAttribute);
         value.expect("A font must have a non-null style name.")
     }
 
-    pub fn display_name(&self) -> ~str {
+    pub fn display_name(&self) -> String {
         let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
         value.expect("A font must have a non-null display name.")
     }
 
-    pub fn font_path(&self) -> ~str {
+    pub fn font_path(&self) -> String {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
             assert!(value.is_not_null());

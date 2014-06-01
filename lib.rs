@@ -14,6 +14,7 @@
 
 extern crate libc;
 extern crate std;
+extern crate debug;
 
 pub mod array;
 pub mod base;

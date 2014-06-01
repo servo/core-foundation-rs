@@ -14,7 +14,7 @@
 use base::{CFAllocatorRef, CFRelease, CFTypeID, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
-use std::cast;
+use std::mem;
 
 pub type CFNumberType = u32;
 
@@ -81,7 +81,7 @@ impl ToPrimitive for CFNumber {
     fn to_i64(&self) -> Option<i64> {
         unsafe {
             let mut value: i64 = 0;
-            let ok = CFNumberGetValue(self.obj, kCFNumberSInt64Type, cast::transmute(&mut value));
+            let ok = CFNumberGetValue(self.obj, kCFNumberSInt64Type, mem::transmute(&mut value));
             assert!(ok);
             Some(value)
         }
@@ -97,7 +97,7 @@ impl ToPrimitive for CFNumber {
     fn to_f64(&self) -> Option<f64> {
         unsafe {
             let mut value: f64 = 0.0;
-            let ok = CFNumberGetValue(self.obj, kCFNumberFloat64Type, cast::transmute(&mut value));
+            let ok = CFNumberGetValue(self.obj, kCFNumberFloat64Type, mem::transmute(&mut value));
             assert!(ok);
             Some(value)
         }
@@ -111,7 +111,7 @@ impl FromPrimitive for CFNumber {
         unsafe {
             let number_ref = CFNumberCreate(kCFAllocatorDefault,
                                             kCFNumberSInt64Type,
-                                            cast::transmute(&value));
+                                            mem::transmute(&value));
             Some(TCFType::wrap_under_create_rule(number_ref))
         }
     }
@@ -127,7 +127,7 @@ impl FromPrimitive for CFNumber {
         unsafe {
             let number_ref = CFNumberCreate(kCFAllocatorDefault,
                                             kCFNumberFloat64Type,
-                                            cast::transmute(&value));
+                                            mem::transmute(&value));
             Some(TCFType::wrap_under_create_rule(number_ref))
         }
     }

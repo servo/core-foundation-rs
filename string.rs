@@ -293,7 +293,7 @@ impl fmt::Show for CFString {
             // This is dangerous; we over-allocate and null-terminate the string (during
             // initialization).
             assert!(bytes_used == buffer.len().to_CFIndex());
-            write!(f.buf, "{}", StrBuf::from_utf8(buffer).unwrap())
+            String::from_utf8(buffer).unwrap().fmt(f)
         }
     }
 }
@@ -448,6 +448,6 @@ fn string_and_back() {
     let original = "The quick brown fox jumped over the slow lazy dog.";
     let cfstr = CFString::from_static_string(original);
     let converted = cfstr.to_str();
-    assert!(original == converted);
+    assert!(original == converted.as_slice());
 }
 

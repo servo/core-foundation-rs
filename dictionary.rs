@@ -13,9 +13,9 @@ use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFTy
 use base::{CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
-use std::cast;
+use std::mem;
 use std::ptr;
-use std::slice;
+use std::vec;
 
 pub type CFDictionaryApplierFunction = *u8;
 pub type CFDictionaryCopyDescriptionCallBack = *u8;
@@ -82,13 +82,13 @@ impl TCFType<CFDictionaryRef> for CFDictionary {
 impl CFDictionary {
     pub fn from_CFType_pairs(pairs: &[(CFType, CFType)]) -> CFDictionary {
         let (keys, values) =
-            slice::unzip(pairs.iter()
+            vec::unzip(pairs.iter()
                             .map(|&(ref key, ref value)| (key.as_CFTypeRef(),
                                                           value.as_CFTypeRef())));
         unsafe {
             let dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
-                                                    cast::transmute(keys.as_ptr()),
-                                                    cast::transmute(values.as_ptr()),
+                                                    mem::transmute(keys.as_ptr()),
+                                                    mem::transmute(values.as_ptr()),
                                                     keys.len().to_CFIndex(),
                                                     &kCFTypeDictionaryKeyCallBacks,
                                                     &kCFTypeDictionaryValueCallBacks);
@@ -139,7 +139,7 @@ impl CFDictionary {
     /// A convenience function to retrieve `CFType` instances.
     #[inline]
     pub unsafe fn get_CFType(&self, key: *c_void) -> CFType {
-        let value: CFTypeRef = cast::transmute(self.get(key));
+        let value: CFTypeRef = mem::transmute(self.get(key));
         TCFType::wrap_under_get_rule(value)
     }
 }

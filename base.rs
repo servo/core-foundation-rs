@@ -16,6 +16,7 @@ pub type Class = libc::intptr_t;
 pub type IMP = extern "C" fn(id, SEL) -> id;
 pub type Ivar = libc::intptr_t;
 pub type SEL = libc::intptr_t;
+#[allow(non_camel_case_types)]
 pub type id = libc::intptr_t;
 
 pub static nil: id = 0 as id;
@@ -216,21 +217,21 @@ mod test {
             return this;
         }
 
-        let NSObject = class("NSObject");
-        let MyObject = "MyObject".to_c_str().with_ref(|s| {
+        let ns_object = class("NSObject");
+        let my_object = "MyObject".to_c_str().with_ref(|s| {
             unsafe {
-                objc_allocateClassPair(NSObject, s, 0 as libc::size_t)
+                objc_allocateClassPair(ns_object, s, 0 as libc::size_t)
             }
         });
         unsafe {
             let doSomething = selector("doSomething");
             let _ = "@@:".to_c_str().with_ref(|types| {
-                class_addMethod(MyObject, doSomething, MyObject_doSomething, types)
+                class_addMethod(my_object, doSomething, MyObject_doSomething, types)
             });
 
-            objc_registerClassPair(MyObject);
+            objc_registerClassPair(my_object);
 
-            let mut obj: id = MyObject.send("alloc", ());
+            let mut obj: id = my_object.send("alloc", ());
             obj = obj.send("init", ());
             obj.send_void("doSomething", ());
         }

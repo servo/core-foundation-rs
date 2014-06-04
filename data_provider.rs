@@ -10,7 +10,7 @@
 use core_foundation::base::{CFRelease, CFTypeID, TCFType};
 
 use libc::{c_void, size_t};
-use std::cast;
+use std::mem;
 use std::ptr;
 
 pub type CGDataProviderGetBytesCallback = *u8;
@@ -64,7 +64,7 @@ impl CGDataProvider {
     pub fn from_buffer(buffer: &[u8]) -> CGDataProvider {
         unsafe {
             let result = CGDataProviderCreateWithData(ptr::null(),
-                                                      cast::transmute(buffer.as_ptr()),
+                                                      mem::transmute(buffer.as_ptr()),
                                                       buffer.len() as u64,
                                                       ptr::null());
             TCFType::wrap_under_create_rule(result)

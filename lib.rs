@@ -27,7 +27,7 @@ use geom::size::Size2D;
 use opengles::cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
 use opengles::gl2::{BGRA, GLenum, GLsizei, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 use libc::{c_int, c_void, size_t};
-use std::cast;
+use std::mem;
 
 //static kIOSurfaceLockReadOnly: u32 = 0x1;
 //static kIOSurfaceLockAvoidSync: u32 = 0x2;
@@ -113,7 +113,7 @@ impl IOSurface {
                                                   size.height as GLsizei,
                                                   BGRA as GLenum,
                                                   UNSIGNED_INT_8_8_8_8_REV,
-                                                  cast::transmute(self.as_concrete_TypeRef()),
+                                                  mem::transmute(self.as_concrete_TypeRef()),
                                                   0);
 
             assert_eq!(gl_error, kCGLNoError);
@@ -130,7 +130,7 @@ impl IOSurface {
             let height = IOSurfaceGetHeight(surface);
             let stride = IOSurfaceGetBytesPerRow(surface);
             let size = (height * stride) as uint;
-            let dest: &mut [u8] = cast::transmute((IOSurfaceGetBaseAddress(surface), size));
+            let dest: &mut [u8] = mem::transmute((IOSurfaceGetBaseAddress(surface), size));
             dest.copy_memory(data);
 
             // FIXME(pcwalton): RAII

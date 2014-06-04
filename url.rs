@@ -55,8 +55,8 @@ impl fmt::Show for CFURL {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
             let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.obj));
-            let s: ~str = string.to_str();
-            write!(f.buf, "{}", s)
+            let s = string.to_str();
+            s.fmt(f)
         }
     }
 }

@@ -12,7 +12,7 @@
 use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFTypeID, TCFType};
 use base::{kCFAllocatorDefault};
 
-use std::cast;
+use std::mem;
 
 struct __CFData;
 
@@ -67,7 +67,7 @@ impl CFData {
     #[inline]
     pub fn bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
-            cast::transmute((CFDataGetBytePtr(self.obj), self.len() as uint))
+            mem::transmute((CFDataGetBytePtr(self.obj), self.len() as uint))
         }
     }
 

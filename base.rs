@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use libc::{c_long, c_ulong};
-use std::cast;
+use std::mem;
 use std::num::Bounded;
 
 pub type Boolean = u8;
@@ -115,7 +115,7 @@ pub trait TCFType<ConcreteTypeRef> {
     #[inline]
     fn as_CFTypeRef(&self) -> CFTypeRef {
         unsafe {
-            cast::transmute(self.as_concrete_TypeRef())
+            mem::transmute(self.as_concrete_TypeRef())
         }
     }
 
@@ -123,7 +123,7 @@ pub trait TCFType<ConcreteTypeRef> {
     /// when following Core Foundation's "Get Rule". The reference count *is* bumped.
     #[inline]
     unsafe fn wrap_under_get_rule(reference: ConcreteTypeRef) -> Self {
-        let reference: ConcreteTypeRef = cast::transmute(CFRetain(cast::transmute(reference)));
+        let reference: ConcreteTypeRef = mem::transmute(CFRetain(mem::transmute(reference)));
         TCFType::wrap_under_create_rule(reference)
     }
 
@@ -163,7 +163,7 @@ pub trait TCFType<ConcreteTypeRef> {
     fn cast<OtherConcreteTypeRef,OtherCFType:TCFType<OtherConcreteTypeRef>>(&self) -> OtherCFType {
         unsafe {
             assert!(self.instance_of::<OtherConcreteTypeRef,OtherCFType>());
-            TCFType::wrap_under_get_rule(cast::transmute(self.as_CFTypeRef()))
+            TCFType::wrap_under_get_rule(mem::transmute(self.as_CFTypeRef()))
         }
     }
 }

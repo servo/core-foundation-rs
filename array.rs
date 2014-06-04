@@ -12,7 +12,7 @@
 use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID, CFTypeRef, TCFType};
 use base::{kCFAllocatorDefault};
 use libc::c_void;
-use std::cast;
+use std::mem;
 
 /// FIXME(pcwalton): This is wrong.
 pub type CFArrayRetainCallBack = *u8;
@@ -95,9 +95,9 @@ impl CFArray {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
     pub fn from_CFTypes(elems: &[CFType]) -> CFArray {
         unsafe {
-            let elems: ~[CFTypeRef] = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
+            let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                          cast::transmute(elems.as_ptr()),
+                                          mem::transmute(elems.as_ptr()),
                                           elems.len().to_CFIndex(),
                                           &kCFTypeArrayCallBacks);
             TCFType::wrap_under_create_rule(array_ref)
@@ -176,14 +176,14 @@ fn should_box_and_unbox() {
         let mut sum = 0i32;
 
         for elem in arr.iter() {
-            let number: CFNumber = TCFType::wrap_under_get_rule(cast::transmute(elem));
+            let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
             sum += number.to_i32().unwrap()
         }
 
         assert!(sum == 15);
 
         for elem in arr.iter() {
-            let number: CFNumber = TCFType::wrap_under_get_rule(cast::transmute(elem));
+            let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
             sum += number.to_i32().unwrap()
         }
 

@@ -11,6 +11,7 @@ use base::{ObjCMethodCall, id};
 
 pub type CGFloat = f32;
 
+#[allow(dead_code)]
 pub struct NSPoint {
     x: f64,
     y: f64,
@@ -25,6 +26,7 @@ impl NSPoint {
     }
 }
 
+#[allow(dead_code)]
 pub struct NSSize {
     width: f64,
     height: f64,

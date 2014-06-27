@@ -7,10 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use core_foundation::base::{CFRelease, CFTypeID, TCFType};
-
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use data_provider::{CGDataProvider, CGDataProviderRef};
+
 use libc;
+use std::mem;
 
 pub type CGGlyph = libc::c_ushort;
 
@@ -40,10 +41,25 @@ impl Drop for CGFont {
 }
 
 impl TCFType<CGFontRef> for CGFont {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CGFontRef {
         self.obj
     }
 
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CGFontRef) -> CGFont {
+        let reference: CGFontRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
+    }
+
+    #[inline]
     unsafe fn wrap_under_create_rule(obj: CGFontRef) -> CGFont {
         CGFont {
             obj: obj,

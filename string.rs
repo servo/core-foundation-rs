@@ -12,11 +12,13 @@
 #![allow(non_uppercase_statics)]
 
 use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFOptionFlags, CFRange};
-use base::{CFRelease, CFTypeID, TCFType, kCFAllocatorDefault, kCFAllocatorNull};
+use base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use base::{kCFAllocatorDefault, kCFAllocatorNull};
 
 use libc;
 use std::fmt;
 use std::from_str::FromStr;
+use std::mem;
 use std::ptr;
 use std::vec::Vec;
 
@@ -226,8 +228,22 @@ impl Drop for CFString {
 
 
 impl TCFType<CFStringRef> for CFString {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CFStringRef {
         self.obj
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CFStringRef) -> CFString {
+        let reference: CFStringRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
     }
 
     unsafe fn wrap_under_create_rule(obj: CFStringRef) -> CFString {

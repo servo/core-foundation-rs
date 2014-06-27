@@ -9,8 +9,8 @@
 
 //! An immutable bag of elements.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID, CFTypeRef};
-use base::{TCFType, kCFAllocatorDefault};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
+use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
 use std::mem;
@@ -21,6 +21,7 @@ pub type CFSetCopyDescriptionCallBack = *u8;
 pub type CFSetEqualCallBack = *u8;
 pub type CFSetHashCallBack = *u8;
 
+#[allow(dead_code)]
 pub struct CFSetCallBacks {
     version: CFIndex,
     retain: CFSetRetainCallBack,
@@ -50,8 +51,22 @@ impl Drop for CFSet {
 }
 
 impl TCFType<CFSetRef> for CFSet {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CFSetRef {
         self.obj
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CFSetRef) -> CFSet {
+        let reference: CFSetRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
     }
 
     unsafe fn wrap_under_create_rule(obj: CFSetRef) -> CFSet {

@@ -11,9 +11,11 @@
 
 #![allow(non_uppercase_statics)]
 
-use base::{CFOptionFlags, CFRelease, CFTypeID, TCFType};
-use std::fmt;
+use base::{CFOptionFlags, CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use string::{CFString, CFStringRef};
+
+use std::fmt;
+use std::mem;
 
 struct __CFURL;
 
@@ -32,8 +34,22 @@ impl Drop for CFURL {
 }
 
 impl TCFType<CFURLRef> for CFURL {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CFURLRef {
         self.obj
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CFURLRef) -> CFURL {
+        let reference: CFURLRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
     }
 
     unsafe fn wrap_under_create_rule(obj: CFURLRef) -> CFURL {

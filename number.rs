@@ -11,7 +11,8 @@
 
 #![allow(non_uppercase_statics)]
 
-use base::{CFAllocatorRef, CFRelease, CFTypeID, TCFType, kCFAllocatorDefault};
+use base::{CFAllocatorRef, CFRelease, CFRetain, CFTypeID, CFTypeRef};
+use base::{TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
 use std::mem;
@@ -57,8 +58,22 @@ impl Drop for CFNumber {
 }
 
 impl TCFType<CFNumberRef> for CFNumber {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CFNumberRef {
         self.obj
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CFNumberRef) -> CFNumber {
+        let reference: CFNumberRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
     }
 
     unsafe fn wrap_under_create_rule(obj: CFNumberRef) -> CFNumber {

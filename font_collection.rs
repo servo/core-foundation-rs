@@ -12,11 +12,13 @@ use font_descriptor::{CTFontDescriptor, CTFontDescriptorCreateMatchingFontDescri
 use font_manager::CTFontManagerCopyAvailableFontFamilyNames;
 
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFRelease, CFTypeID, TCFType};
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
 use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
+
+use std::mem;
 
 struct __CTFontCollection;
 
@@ -35,16 +37,32 @@ impl Drop for CTFontCollection {
 }
 
 impl TCFType<CTFontCollectionRef> for CTFontCollection {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CTFontCollectionRef {
         self.obj
     }
 
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CTFontCollectionRef) -> CTFontCollection {
+        let reference: CTFontCollectionRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
     unsafe fn wrap_under_create_rule(obj: CTFontCollectionRef) -> CTFontCollection {
         CTFontCollection {
             obj: obj,
         }
     }
 
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
+    }
+
+    #[inline]
     fn type_id(_: Option<CTFontCollection>) -> CFTypeID {
         unsafe {
             CTFontCollectionGetTypeID()

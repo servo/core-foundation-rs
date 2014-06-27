@@ -10,7 +10,7 @@
 #![allow(non_uppercase_statics)]
 
 use core_foundation::array::CFArrayRef;
-use core_foundation::base::{CFRelease, CFType, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::base::{CFRelease, CFRetain, CFType, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
@@ -127,7 +127,9 @@ trait TraitAccessorPrivate {
 
 impl TraitAccessorPrivate for CTFontTraits {
     unsafe fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
-        self.get_CFType(mem::transmute(key)).cast::<CFNumberRef,CFNumber>()
+        let cftype = self.get_CFType(mem::transmute(key));
+        assert!(cftype.instance_of::<CFNumberRef,CFNumber>());
+        TCFType::wrap_under_get_rule(mem::transmute(cftype.as_CFTypeRef()))
     }
 
 }
@@ -195,10 +197,25 @@ impl Drop for CTFontDescriptor {
 }
 
 impl TCFType<CTFontDescriptorRef> for CTFontDescriptor {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CTFontDescriptorRef {
         self.obj
     }
 
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CTFontDescriptorRef) -> CTFontDescriptor {
+        let reference: CTFontDescriptorRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
+    }
+
+    #[inline]
     unsafe fn wrap_under_create_rule(obj: CTFontDescriptorRef) -> CTFontDescriptor {
         CTFontDescriptor {
             obj: obj,
@@ -222,7 +239,9 @@ impl CTFontDescriptor {
             }
 
             let value: CFType = TCFType::wrap_under_get_rule(value);
-            Some(value.cast::<CFStringRef,CFString>().to_str())
+            assert!(value.instance_of::<CFStringRef,CFString>());
+            let s: CFString = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
+            Some(s.to_str())
         }
     }
 
@@ -255,7 +274,9 @@ impl CTFontDescriptor {
             assert!(value.is_not_null());
 
             let value: CFType = TCFType::wrap_under_get_rule(value);
-            value.cast::<CFURLRef,CFURL>().to_str()
+            assert!(value.instance_of::<CFURLRef,CFURL>());
+            let url: CFURL = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
+            url.to_str()
         }
     }
 }

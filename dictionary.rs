@@ -9,8 +9,8 @@
 
 //! Dictionaries of key-value pairs.
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID};
-use base::{CFTypeRef, TCFType, kCFAllocatorDefault};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
+use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
 use std::mem;
@@ -24,6 +24,7 @@ pub type CFDictionaryHashCallBack = *u8;
 pub type CFDictionaryReleaseCallBack = *u8;
 pub type CFDictionaryRetainCallBack = *u8;
 
+#[allow(dead_code)]
 pub struct CFDictionaryKeyCallBacks {
     version: CFIndex,
     retain: CFDictionaryRetainCallBack,
@@ -33,6 +34,7 @@ pub struct CFDictionaryKeyCallBacks {
     hash: CFDictionaryHashCallBack
 }
 
+#[allow(dead_code)]
 pub struct CFDictionaryValueCallBacks {
     version: CFIndex,
     retain: CFDictionaryRetainCallBack,
@@ -61,8 +63,22 @@ impl Drop for CFDictionary {
 }
 
 impl TCFType<CFDictionaryRef> for CFDictionary {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CFDictionaryRef {
         self.obj
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CFDictionaryRef) -> CFDictionary {
+        let reference: CFDictionaryRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
     }
 
     unsafe fn wrap_under_create_rule(obj: CFDictionaryRef) -> CFDictionary {

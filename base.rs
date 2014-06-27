@@ -8,7 +8,6 @@
 // except according to those terms.
 
 use libc::{c_long, c_ulong};
-use std::mem;
 use std::num::Bounded;
 
 pub type Boolean = u8;
@@ -34,6 +33,7 @@ impl CFIndexConvertible for uint {
 
 pub type CFOptionFlags = u32;
 
+#[allow(dead_code)]
 pub struct CFRange {
     location: CFIndex,
     length: CFIndex
@@ -112,20 +112,11 @@ pub trait TCFType<ConcreteTypeRef> {
     }
 
     /// Returns the object as a raw `CFTypeRef`. The reference count is not adjusted.
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
+    fn as_CFTypeRef(&self) -> CFTypeRef;
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
     /// when following Core Foundation's "Get Rule". The reference count *is* bumped.
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: ConcreteTypeRef) -> Self {
-        let reference: ConcreteTypeRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
+    unsafe fn wrap_under_get_rule(reference: ConcreteTypeRef) -> Self;
 
     /// Returns the reference count of the object. It is unwise to do anything other than test
     /// whether the return value of this method is greater than zero.
@@ -157,21 +148,23 @@ pub trait TCFType<ConcreteTypeRef> {
         let dummy: Option<OtherCFType> = None;
         self.type_of() == TCFType::type_id(dummy)
     }
-
-    /// Performs a checked cast to another Core Foundation type.
-    #[inline]
-    fn cast<OtherConcreteTypeRef,OtherCFType:TCFType<OtherConcreteTypeRef>>(&self) -> OtherCFType {
-        unsafe {
-            assert!(self.instance_of::<OtherConcreteTypeRef,OtherCFType>());
-            TCFType::wrap_under_get_rule(mem::transmute(self.as_CFTypeRef()))
-        }
-    }
 }
 
 impl TCFType<CFTypeRef> for CFType {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFTypeRef {
         self.obj
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CFTypeRef) -> CFType {
+        let reference: CFTypeRef = CFRetain(reference);
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        self.as_concrete_TypeRef()
     }
 
     #[inline]

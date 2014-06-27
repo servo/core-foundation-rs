@@ -9,7 +9,8 @@
 
 //! A Boolean type.
 
-use base::{CFRelease, CFTypeID, TCFType};
+use base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use std::mem;
 
 pub type Boolean = u32;
 
@@ -33,8 +34,22 @@ impl Drop for CFBoolean {
 }
 
 impl TCFType<CFBooleanRef> for CFBoolean {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CFBooleanRef {
         self.obj
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CFBooleanRef) -> CFBoolean {
+        let reference: CFBooleanRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
     }
 
     unsafe fn wrap_under_create_rule(obj: CFBooleanRef) -> CFBoolean {

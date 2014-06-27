@@ -9,7 +9,8 @@
 
 //! Heterogeneous immutable arrays.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFType, CFTypeID, CFTypeRef, TCFType};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
+use base::{CFType, CFTypeID, CFTypeRef, TCFType};
 use base::{kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
@@ -26,6 +27,7 @@ pub type CFArrayCopyDescriptionCallBack = *u8;
 /// FIXME(pcwalton): This is wrong.
 pub type CFArrayEqualCallBack = *u8;
 
+#[allow(dead_code)]
 pub struct CFArrayCallBacks {
     version: CFIndex,
     retain: CFArrayRetainCallBack,
@@ -74,6 +76,19 @@ impl TCFType<CFArrayRef> for CFArray {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFArrayRef {
         self.obj
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CFArrayRef) -> CFArray {
+        let reference: CFArrayRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
     }
 
     #[inline]

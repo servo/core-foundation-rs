@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use core_foundation::base::{CFRelease, CFTypeID, TCFType};
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 
 use libc::{c_void, size_t};
 use std::mem;
@@ -42,10 +42,25 @@ impl Drop for CGDataProvider {
 }
 
 impl TCFType<CGDataProviderRef> for CGDataProvider {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CGDataProviderRef {
         self.obj
     }
 
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CGDataProviderRef) -> CGDataProvider {
+        let reference: CGDataProviderRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
+    }
+
+    #[inline]
     unsafe fn wrap_under_create_rule(obj: CGDataProviderRef) -> CGDataProvider {
         CGDataProvider {
             obj: obj,

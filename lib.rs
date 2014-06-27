@@ -20,7 +20,7 @@ extern crate opengles;
 
 // Rust bindings to the IOSurface framework on Mac OS X.
 
-use core_foundation::base::{CFRelease, CFTypeID, TCFType};
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFStringRef;
 use geom::size::Size2D;
@@ -62,10 +62,25 @@ impl Clone for IOSurface {
 }
 
 impl TCFType<IOSurfaceRef> for IOSurface {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> IOSurfaceRef {
         self.obj
     }
 
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: IOSurfaceRef) -> IOSurface {
+        let reference: IOSurfaceRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
+        }
+    }
+
+    #[inline]
     unsafe fn wrap_under_create_rule(obj: IOSurfaceRef) -> IOSurface {
         IOSurface {
             obj: obj,

@@ -12,7 +12,7 @@
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
 
-use core_foundation::base::{CFIndex, CFOptionFlags, CFTypeID, CFRelease, TCFType};
+use core_foundation::base::{CFIndex, CFOptionFlags, CFTypeID, CFRelease, CFRetain, CFTypeRef, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
 use core_foundation::dictionary::CFDictionaryRef;
 use core_foundation::string::{CFString, CFStringRef, UniChar};
@@ -21,6 +21,7 @@ use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
 use core_graphics::geometry::{CGRect, CGSize};
 
 use libc;
+use std::mem;
 use std::ptr;
 
 pub type CTFontUIFontType = u32;
@@ -82,13 +83,28 @@ impl Drop for CTFont {
 }
 
 impl TCFType<CTFontRef> for CTFont {
+    #[inline]
     fn as_concrete_TypeRef(&self) -> CTFontRef {
         self.obj
     }
 
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: CTFontRef) -> CTFont {
+        let reference: CTFontRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        TCFType::wrap_under_create_rule(reference)
+    }
+
+    #[inline]
     unsafe fn wrap_under_create_rule(obj: CTFontRef) -> CTFont {
         CTFont {
             obj: obj,
+        }
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        unsafe {
+            mem::transmute(self.as_concrete_TypeRef())
         }
     }
 

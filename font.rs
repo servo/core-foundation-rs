@@ -12,6 +12,7 @@ use data_provider::{CGDataProvider, CGDataProviderRef};
 
 use libc;
 use std::mem;
+use std::ptr;
 
 pub type CGGlyph = libc::c_ushort;
 
@@ -35,7 +36,9 @@ impl Clone for CGFont {
 impl Drop for CGFont {
     fn drop(&mut self) {
         unsafe {
-            CFRelease(self.as_CFTypeRef())
+            let ptr = self.as_CFTypeRef();
+            assert!(ptr != ptr::null());
+            CFRelease(ptr);
         }
     }
 }
@@ -75,10 +78,14 @@ impl TCFType<CGFontRef> for CGFont {
 }
 
 impl CGFont {
-    pub fn from_data_provider(provider: CGDataProvider) -> CGFont {
+    pub fn from_data_provider(provider: CGDataProvider) -> Result<CGFont, ()> {
         unsafe {
             let font_ref = CGFontCreateWithDataProvider(provider.as_concrete_TypeRef());
-            TCFType::wrap_under_create_rule(font_ref)
+            if font_ref != ptr::null() {
+                Ok(TCFType::wrap_under_create_rule(font_ref))
+            } else {
+                Err(())
+            }
         }
     }
 }

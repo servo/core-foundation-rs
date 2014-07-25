@@ -13,21 +13,21 @@ use libc::{c_void, size_t};
 use std::mem;
 use std::ptr;
 
-pub type CGDataProviderGetBytesCallback = *u8;
-pub type CGDataProviderReleaseInfoCallback = *u8;
-pub type CGDataProviderRewindCallback = *u8;
-pub type CGDataProviderSkipBytesCallback = *u8;
-pub type CGDataProviderSkipForwardCallback = *u8;
+pub type CGDataProviderGetBytesCallback = *const u8;
+pub type CGDataProviderReleaseInfoCallback = *const u8;
+pub type CGDataProviderRewindCallback = *const u8;
+pub type CGDataProviderSkipBytesCallback = *const u8;
+pub type CGDataProviderSkipForwardCallback = *const u8;
 
-pub type CGDataProviderGetBytePointerCallback = *u8;
-pub type CGDataProviderGetBytesAtOffsetCallback = *u8;
-pub type CGDataProviderReleaseBytePointerCallback = *u8;
-pub type CGDataProviderReleaseDataCallback = *u8;
-pub type CGDataProviderGetBytesAtPositionCallback = *u8;
+pub type CGDataProviderGetBytePointerCallback = *const u8;
+pub type CGDataProviderGetBytesAtOffsetCallback = *const u8;
+pub type CGDataProviderReleaseBytePointerCallback = *const u8;
+pub type CGDataProviderReleaseDataCallback = *const u8;
+pub type CGDataProviderGetBytesAtPositionCallback = *const u8;
 
 struct __CGDataProvider;
 
-pub type CGDataProviderRef = *__CGDataProvider;
+pub type CGDataProviderRef = *const __CGDataProvider;
 
 pub struct CGDataProvider {
     obj: CGDataProviderRef,
@@ -78,8 +78,8 @@ impl TCFType<CGDataProviderRef> for CGDataProvider {
 impl CGDataProvider {
     pub fn from_buffer(buffer: &[u8]) -> CGDataProvider {
         unsafe {
-            let result = CGDataProviderCreateWithData(ptr::null(),
-                                                      mem::transmute(buffer.as_ptr()),
+            let result = CGDataProviderCreateWithData(ptr::mut_null(),
+                                                      buffer.as_ptr() as *const c_void,
                                                       buffer.len() as u64,
                                                       ptr::null());
             TCFType::wrap_under_create_rule(result)
@@ -93,8 +93,8 @@ extern {
     //fn CGDataProviderCreateDirect
     //fn CGDataProviderCreateSequential
     //fn CGDataProviderCreateWithCFData
-    fn CGDataProviderCreateWithData(info: *c_void,
-                                    data: *c_void,
+    fn CGDataProviderCreateWithData(info: *mut c_void,
+                                    data: *const c_void,
                                     size: size_t,
                                     releaseData: CGDataProviderReleaseDataCallback
                                    ) -> CGDataProviderRef;

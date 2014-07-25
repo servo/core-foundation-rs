@@ -18,7 +18,7 @@ pub type CGGlyph = libc::c_ushort;
 
 struct __CGFont;
 
-pub type CGFontRef = *__CGFont;
+pub type CGFontRef = *const __CGFont;
 
 pub struct CGFont {
     obj: CGFontRef,

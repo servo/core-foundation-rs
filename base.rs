@@ -22,28 +22,28 @@ pub type id = libc::intptr_t;
 pub static nil: id = 0 as id;
 
 extern {
-    pub fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *libc::c_char) -> bool;
+    pub fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *const libc::c_char) -> bool;
     pub fn class_addIvar(cls: Class,
-                         name: *libc::c_char,
+                         name: *const libc::c_char,
                          size: libc::size_t,
                          alignment: u8,
-		                 types: *libc::c_char)
+                         types: *const libc::c_char)
                          -> bool;
-    pub fn object_setInstanceVariable(obj: id, name: *libc::c_char, value: *libc::c_void);
-    pub fn object_getInstanceVariable(obj: id, name: *libc::c_char, outValue: **libc::c_void);
-    pub fn objc_allocateClassPair(superclass: Class, name: *libc::c_char, extraBytes: libc::size_t)
+    pub fn object_setInstanceVariable(obj: id, name: *const libc::c_char, value: *mut libc::c_void);
+    pub fn object_getInstanceVariable(obj: id, name: *const libc::c_char, outValue: *mut *mut libc::c_void);
+    pub fn objc_allocateClassPair(superclass: Class, name: *const libc::c_char, extraBytes: libc::size_t)
                                   -> Class;
-    pub fn objc_getClass(name: *libc::c_char) -> id;
+    pub fn objc_getClass(name: *const libc::c_char) -> id;
     pub fn objc_msgSend(theReceiver: id, theSelector: SEL) -> id;
     pub fn objc_registerClassPair(cls: Class);
-    pub fn sel_registerName(name: *libc::c_char) -> SEL;
+    pub fn sel_registerName(name: *const libc::c_char) -> SEL;
 }
 
 /// A convenience method to convert the name of a class to the class object itself.
 #[inline]
 pub fn class(name: &str) -> id {
     unsafe {
-        name.to_c_str().with_ref(|c_string| objc_getClass(c_string))
+        objc_getClass(name.to_c_str().as_ptr())
     }
 }
 
@@ -51,7 +51,7 @@ pub fn class(name: &str) -> id {
 #[inline]
 pub fn selector(name: &str) -> SEL {
     unsafe {
-        name.to_c_str().with_ref(|c_string| sel_registerName(c_string))
+        sel_registerName(name.to_c_str().as_ptr())
     }
 }
 
@@ -113,7 +113,7 @@ impl<'a> ObjCSelector for &'a str {
     fn as_selector(self) -> SEL {
         // TODO(pcwalton): Cache somehow.
         unsafe {
-            self.to_c_str().with_ref(|c_string| sel_registerName(c_string))
+            sel_registerName(self.to_c_str().as_ptr())
         }
     }
 }
@@ -218,16 +218,12 @@ mod test {
         }
 
         let ns_object = class("NSObject");
-        let my_object = "MyObject".to_c_str().with_ref(|s| {
-            unsafe {
-                objc_allocateClassPair(ns_object, s, 0 as libc::size_t)
-            }
-        });
+        let my_object = unsafe {
+            objc_allocateClassPair(ns_object, "MyObject".to_c_str().as_ptr(), 0 as libc::size_t)
+        };
         unsafe {
             let doSomething = selector("doSomething");
-            let _ = "@@:".to_c_str().with_ref(|types| {
-                class_addMethod(my_object, doSomething, MyObject_doSomething, types)
-            });
+            let _ = class_addMethod(my_object, doSomething, MyObject_doSomething, "@@:".to_c_str().as_ptr());
 
             objc_registerClassPair(my_object);
 
@@ -238,7 +234,7 @@ mod test {
     }
 }
 
-#[link(name = "msgsend")]
+#[link(name = "msgsend", kind = "static")]
 extern {
     fn invoke_msg_double(theReceiver: id, theSelector: SEL) -> f64;
     fn invoke_msg_id(theReceiver: id, theSelector: SEL) -> id;

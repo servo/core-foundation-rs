@@ -7,9 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#![crate_id = "github.com/mozilla-servo/rust-io-surface#io_surface:0.1"]
-#![crate_type = "lib"]
-#![crate_type = "dylib"]
+#![crate_name = "io_surface"]
 #![crate_type = "rlib"]
 
 extern crate libc;
@@ -36,7 +34,7 @@ type IOReturn = c_int;
 
 struct __IOSurface;
 
-pub type IOSurfaceRef = *__IOSurface;
+pub type IOSurfaceRef = *const __IOSurface;
 
 pub struct IOSurface {
     pub obj: IOSurfaceRef,

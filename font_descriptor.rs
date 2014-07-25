@@ -42,7 +42,7 @@ pub static kCTFontCondensedTrait: CTFontSymbolicTraits = (1 << 6);
 pub static kCTFontMonoSpaceTrait: CTFontSymbolicTraits = (1 << 10);
 pub static kCTFontVerticalTrait: CTFontSymbolicTraits = (1 << 11);
 pub static kCTFontUIOptimizedTrait: CTFontSymbolicTraits = (1 << 12);
-pub static kCTFontClassMaskTrait: CTFontSymbolicTraits = (15 << kCTFontClassMaskShift);
+pub static kCTFontClassMaskTrait: CTFontSymbolicTraits = (15 << kCTFontClassMaskShift as uint);
 
 pub trait SymbolicTraitAccessors {
     fn is_italic(&self) -> bool;
@@ -61,17 +61,17 @@ impl SymbolicTraitAccessors for CTFontSymbolicTraits {
 }
 
 pub type CTFontStylisticClass = u32;
-pub static kCTFontUnknownClass: CTFontStylisticClass = (0 << kCTFontClassMaskShift);
-pub static kCTFontOldStyleSerifsClass: CTFontStylisticClass = (1 << kCTFontClassMaskShift);
-pub static kCTFontTransitionalSerifsClass: CTFontStylisticClass = (2 << kCTFontClassMaskShift);
-pub static kCTFontModernSerifsClass: CTFontStylisticClass = (3 << kCTFontClassMaskShift);
-pub static kCTFontClarendonSerifsClass: CTFontStylisticClass = (4 << kCTFontClassMaskShift);
-pub static kCTFontSlabSerifsClass: CTFontStylisticClass = (5 << kCTFontClassMaskShift);
-pub static kCTFontFreeformSerifsClass: CTFontStylisticClass = (7 << kCTFontClassMaskShift);
-pub static kCTFontSansSerifClass: CTFontStylisticClass = (8 << kCTFontClassMaskShift);
-pub static kCTFontOrnamentalsClass: CTFontStylisticClass = (9 << kCTFontClassMaskShift);
-pub static kCTFontScriptsClass: CTFontStylisticClass = (10 << kCTFontClassMaskShift);
-pub static kCTFontSymbolicClass: CTFontStylisticClass = (12 << kCTFontClassMaskShift);
+pub static kCTFontUnknownClass: CTFontStylisticClass = (0 << kCTFontClassMaskShift as uint);
+pub static kCTFontOldStyleSerifsClass: CTFontStylisticClass = (1 << kCTFontClassMaskShift as uint);
+pub static kCTFontTransitionalSerifsClass: CTFontStylisticClass = (2 << kCTFontClassMaskShift as uint);
+pub static kCTFontModernSerifsClass: CTFontStylisticClass = (3 << kCTFontClassMaskShift as uint);
+pub static kCTFontClarendonSerifsClass: CTFontStylisticClass = (4 << kCTFontClassMaskShift as uint);
+pub static kCTFontSlabSerifsClass: CTFontStylisticClass = (5 << kCTFontClassMaskShift as uint);
+pub static kCTFontFreeformSerifsClass: CTFontStylisticClass = (7 << kCTFontClassMaskShift as uint);
+pub static kCTFontSansSerifClass: CTFontStylisticClass = (8 << kCTFontClassMaskShift as uint);
+pub static kCTFontOrnamentalsClass: CTFontStylisticClass = (9 << kCTFontClassMaskShift as uint);
+pub static kCTFontScriptsClass: CTFontStylisticClass = (10 << kCTFontClassMaskShift as uint);
+pub static kCTFontSymbolicClass: CTFontStylisticClass = (12 << kCTFontClassMaskShift as uint);
 
 pub trait StylisticClassAccessors {
     fn is_serif(&self) -> bool;
@@ -182,7 +182,7 @@ pub static kCTFontPriorityProcess: CTFontPriority = 60000;
 
 struct __CTFontDescriptor;
 
-pub type CTFontDescriptorRef = *__CTFontDescriptor;
+pub type CTFontDescriptorRef = *const __CTFontDescriptor;
 
 pub struct CTFontDescriptor {
     obj: CTFontDescriptorRef,
@@ -241,7 +241,7 @@ impl CTFontDescriptor {
             let value: CFType = TCFType::wrap_under_get_rule(value);
             assert!(value.instance_of::<CFStringRef,CFString>());
             let s: CFString = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
-            Some(s.to_str())
+            Some(s.to_string())
         }
     }
 
@@ -276,7 +276,7 @@ impl CTFontDescriptor {
             let value: CFType = TCFType::wrap_under_get_rule(value);
             assert!(value.instance_of::<CFURLRef,CFURL>());
             let url: CFURL = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
-            url.to_str()
+            url.to_string()
         }
     }
 }
@@ -344,7 +344,7 @@ extern {
     pub fn CTFontDescriptorCopyAttributes(descriptor: CTFontDescriptorRef) -> CFDictionaryRef;
     pub fn CTFontDescriptorCopyLocalizedAttribute(descriptor: CTFontDescriptorRef,
                                                   attribute: CFStringRef,
-                                                  language: *CFStringRef) -> CFTypeRef;
+                                                  language: *mut CFStringRef) -> CFTypeRef;
     pub fn CTFontDescriptorCreateCopyWithAttributes(original: CTFontDescriptorRef, 
                                                     attributes: CFDictionaryRef) -> CTFontDescriptorRef;
     pub fn CTFontDescriptorCreateCopyWithFeature(original: CTFontDescriptorRef,

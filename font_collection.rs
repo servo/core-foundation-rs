@@ -22,7 +22,7 @@ use std::mem;
 
 struct __CTFontCollection;
 
-pub type CTFontCollectionRef = *__CTFontCollection;
+pub type CTFontCollectionRef = *const __CTFontCollection;
 
 pub struct CTFontCollection {
     obj: CTFontCollectionRef,

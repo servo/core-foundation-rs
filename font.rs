@@ -68,7 +68,7 @@ pub static kCTFontOptionsPreferSystemFont: CTFontOptions = (1 << 2);
 
 struct __CTFont;
 
-pub type CTFontRef = *__CTFont;
+pub type CTFontRef = *const __CTFont;
 
 pub struct CTFont {
     obj: CTFontRef,
@@ -162,7 +162,7 @@ impl CTFont {
     // Creation methods
     pub fn copy_to_CGFont(&self) -> CGFont {
         unsafe {
-            let cgfont_ref = CTFontCopyGraphicsFont(self.obj, ptr::null());
+            let cgfont_ref = CTFontCopyGraphicsFont(self.obj, ptr::mut_null());
             TCFType::wrap_under_create_rule(cgfont_ref)
         }
     }
@@ -253,7 +253,7 @@ impl CTFont {
         }
     }
 
-    pub fn get_glyphs_for_characters(&self, characters: *UniChar, glyphs: *CGGlyph, count: CFIndex)
+    pub fn get_glyphs_for_characters(&self, characters: *const UniChar, glyphs: *mut CGGlyph, count: CFIndex)
                                      -> bool {
         unsafe {
             CTFontGetGlyphsForCharacters(self.obj, characters, glyphs, count)
@@ -262,8 +262,8 @@ impl CTFont {
 
     pub fn get_advances_for_glyphs(&self,
                                    orientation: CTFontOrientation,
-                                   glyphs: *CGGlyph,
-                                   advances: *CGSize,
+                                   glyphs: *const CGGlyph,
+                                   advances: *mut CGSize,
                                    count: CFIndex)
                                    -> f64 {
         unsafe {
@@ -293,7 +293,7 @@ fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<String
             None
         } else {
             let string: CFString = TCFType::wrap_under_create_rule(result);
-            Some(string.to_str())
+            Some(string.to_string())
         }
     }
 }
@@ -370,13 +370,13 @@ extern {
     // to the documentation's Functions By Task listing, because there so many functions.
 
     /* Creating Fonts */
-    fn CTFontCreateWithName(name: CFStringRef, size: CGFloat, matrix: *CGAffineTransform) -> CTFontRef;
+    fn CTFontCreateWithName(name: CFStringRef, size: CGFloat, matrix: *const CGAffineTransform) -> CTFontRef;
     //fn CTFontCreateWithNameAndOptions
     fn CTFontCreateWithFontDescriptor(descriptor: CTFontDescriptorRef, size: CGFloat,
-                                      matrix: *CGAffineTransform) -> CTFontRef;
+                                      matrix: *const CGAffineTransform) -> CTFontRef;
     //fn CTFontCreateWithFontDescriptorAndOptions
     //fn CTFontCreateUIFontForLanguage
-    fn CTFontCreateCopyWithAttributes(font: CTFontRef, size: CGFloat, matrix: *CGAffineTransform, 
+    fn CTFontCreateCopyWithAttributes(font: CTFontRef, size: CGFloat, matrix: *const CGAffineTransform, 
                                       attributes: CTFontDescriptorRef) -> CTFontRef;
     //fn CTFontCreateCopyWithSymbolicTraits
     //fn CTFontCreateCopyWithFamily
@@ -421,7 +421,7 @@ extern {
     //fn CTFontCreatePathForGlyph
     //fn CTFontGetGlyphWithName
     //fn CTFontGetBoundingRectsForGlyphs
-    fn CTFontGetAdvancesForGlyphs(font: CTFontRef, orientation: CTFontOrientation, glyphs: *CGGlyph, advances: *CGSize, count: CFIndex) -> libc::c_double;
+    fn CTFontGetAdvancesForGlyphs(font: CTFontRef, orientation: CTFontOrientation, glyphs: *const CGGlyph, advances: *mut CGSize, count: CFIndex) -> libc::c_double;
     //fn CTFontGetVerticalTranslationsForGlyphs
 
     /* Working With Font Variations */
@@ -433,14 +433,14 @@ extern {
     //fn CTFontCopyFeatureSettings
 
     /* Working with Glyphs */
-    fn CTFontGetGlyphsForCharacters(font: CTFontRef, characters: *UniChar, glyphs: *CGGlyph, count: CFIndex) -> bool;
+    fn CTFontGetGlyphsForCharacters(font: CTFontRef, characters: *const UniChar, glyphs: *mut CGGlyph, count: CFIndex) -> bool;
     //fn CTFontDrawGlyphs
     //fn CTFontGetLigatureCaretPositions
 
     /* Converting Fonts */
-    fn CTFontCopyGraphicsFont(font: CTFontRef, attributes: *CTFontDescriptorRef) -> CGFontRef;
+    fn CTFontCopyGraphicsFont(font: CTFontRef, attributes: *mut CTFontDescriptorRef) -> CGFontRef;
     fn CTFontCreateWithGraphicsFont(graphicsFont: CGFontRef, size: CGFloat, 
-                                    matrix: *CGAffineTransform, 
+                                    matrix: *const CGAffineTransform, 
                                     attributes: CTFontDescriptorRef) -> CTFontRef;
     //fn CTFontGetPlatformFont
     //fn CTFontCreateWithPlatformFont

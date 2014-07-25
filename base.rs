@@ -50,11 +50,11 @@ impl CFRange {
 
 struct __CFAllocator;
 
-pub type CFAllocatorRef = *__CFAllocator;
+pub type CFAllocatorRef = *const __CFAllocator;
 
 struct __CFNull;
 
-pub type CFNullRef = *__CFNull;
+pub type CFNullRef = *const __CFNull;
 
 pub type CFHashCode = c_ulong;
 
@@ -62,7 +62,7 @@ pub type CFTypeID = c_ulong;
 
 struct __CFType;
 
-pub type CFTypeRef = *__CFType;
+pub type CFTypeRef = *const __CFType;
 
 /// Superclass of all Core Foundation objects.
 pub struct CFType {

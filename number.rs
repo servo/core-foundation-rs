@@ -40,7 +40,7 @@ static kCFNumberFloat64Type:   CFNumberType = 6;
 
 struct __CFNumber;
 
-pub type CFNumberRef = *__CFNumber;
+pub type CFNumberRef = *const __CFNumber;
 
 /// An immutable numeric value.
 ///
@@ -160,7 +160,7 @@ extern {
      */
 
 
-    fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *c_void)
+    fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *const c_void)
                    -> CFNumberRef;
     //fn CFNumberGetByteSize
     fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *mut c_void) -> bool;

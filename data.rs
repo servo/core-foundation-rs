@@ -16,7 +16,7 @@ use std::mem;
 
 struct __CFData;
 
-pub type CFDataRef = *__CFData;
+pub type CFDataRef = *const __CFData;
 
 /// A byte buffer.
 ///
@@ -101,9 +101,9 @@ extern {
      */
 
     fn CFDataCreate(allocator: CFAllocatorRef, 
-                    bytes: *u8, length: CFIndex) -> CFDataRef;
+                    bytes: *const u8, length: CFIndex) -> CFDataRef;
     //fn CFDataFind
-    fn CFDataGetBytePtr(theData: CFDataRef) -> *u8;
+    fn CFDataGetBytePtr(theData: CFDataRef) -> *const u8;
     fn CFDataGetLength(theData: CFDataRef) -> CFIndex;
 
     fn CFDataGetTypeID() -> CFTypeID;

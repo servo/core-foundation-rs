@@ -200,7 +200,7 @@ type CFStringEncodings = CFIndex;
 
 struct __CFString;
 
-pub type CFStringRef = *__CFString;
+pub type CFStringRef = *const __CFString;
 
 /// An immutable string in one of a variety of encodings.
 ///
@@ -289,19 +289,19 @@ impl fmt::Show for CFString {
                              kCFStringEncodingUTF8,
                              0,
                              false as Boolean, 
-                             ptr::null(),
+                             ptr::mut_null(),
                              0,
                              &mut bytes_required);
 
             // Then, allocate the buffer and actually copy.
-            let buffer: Vec<u8> = Vec::from_elem(bytes_required as uint, '\x00' as u8);
+            let mut buffer: Vec<u8> = Vec::from_elem(bytes_required as uint, '\x00' as u8);
             let mut bytes_used: CFIndex = 0;
             let chars_written = CFStringGetBytes(self.obj,
                                                  range,
                                                  kCFStringEncodingUTF8,
                                                  0,
                                                  false as Boolean,
-                                                 buffer.as_ptr(),
+                                                 buffer.as_mut_ptr(),
                                                  buffer.len().to_CFIndex(),
                                                  &mut bytes_used) as uint;
             assert!(chars_written.to_CFIndex() == char_len);
@@ -355,14 +355,14 @@ extern {
     //fn CFStringCreateCopy
     //fn CFStringCreateFromExternalRepresentation
     fn CFStringCreateWithBytes(alloc: CFAllocatorRef,
-                               bytes: *u8,
+                               bytes: *const u8,
                                numBytes: CFIndex,
                                encoding: CFStringEncoding,
                                isExternalRepresentation: Boolean,
                                contentsDeallocator: CFAllocatorRef)
                                -> CFStringRef;
     fn CFStringCreateWithBytesNoCopy(alloc: CFAllocatorRef,
-                                     bytes: *u8,
+                                     bytes: *const u8,
                                      numBytes: CFIndex,
                                      encoding: CFStringEncoding,
                                      isExternalRepresentation: Boolean,
@@ -400,7 +400,7 @@ extern {
                         encoding: CFStringEncoding, 
                         lossByte: u8,
                         isExternalRepresentation: Boolean,
-                        buffer: *u8,
+                        buffer: *mut u8,
                         maxBufLen: CFIndex,
                         usedBufLen: *mut CFIndex)
                         -> CFIndex;
@@ -463,7 +463,7 @@ extern {
 fn string_and_back() {
     let original = "The quick brown fox jumped over the slow lazy dog.";
     let cfstr = CFString::from_static_string(original);
-    let converted = cfstr.to_str();
+    let converted = cfstr.to_string();
     assert!(original == converted.as_slice());
 }
 

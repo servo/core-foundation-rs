@@ -17,12 +17,12 @@ use std::mem;
 use std::ptr;
 use std::vec;
 
-pub type CFDictionaryApplierFunction = *u8;
-pub type CFDictionaryCopyDescriptionCallBack = *u8;
-pub type CFDictionaryEqualCallBack = *u8;
-pub type CFDictionaryHashCallBack = *u8;
-pub type CFDictionaryReleaseCallBack = *u8;
-pub type CFDictionaryRetainCallBack = *u8;
+pub type CFDictionaryApplierFunction = *const u8;
+pub type CFDictionaryCopyDescriptionCallBack = *const u8;
+pub type CFDictionaryEqualCallBack = *const u8;
+pub type CFDictionaryHashCallBack = *const u8;
+pub type CFDictionaryReleaseCallBack = *const u8;
+pub type CFDictionaryRetainCallBack = *const u8;
 
 #[allow(dead_code)]
 pub struct CFDictionaryKeyCallBacks {
@@ -45,7 +45,7 @@ pub struct CFDictionaryValueCallBacks {
 
 struct __CFDictionary;
 
-pub type CFDictionaryRef = *__CFDictionary;
+pub type CFDictionaryRef = *const __CFDictionary;
 
 /// An immutable dictionary of key-value pairs.
 ///
@@ -125,16 +125,16 @@ impl CFDictionary {
     }
 
     #[inline]
-    pub fn contains_key(&self, key: *c_void) -> bool {
+    pub fn contains_key(&self, key: *const c_void) -> bool {
         unsafe {
             CFDictionaryContainsKey(self.obj, key) != 0
         }
     }
 
     #[inline]
-    pub fn find(&self, key: *c_void) -> Option<*c_void> {
+    pub fn find(&self, key: *const c_void) -> Option<*const c_void> {
         unsafe {
-            let mut value: *c_void = ptr::null();
+            let mut value: *const c_void = ptr::null();
             if CFDictionaryGetValueIfPresent(self.obj, key, &mut value) != 0 {
                 Some(value)
             } else {
@@ -144,7 +144,7 @@ impl CFDictionary {
     }
 
     #[inline]
-    pub fn get(&self, key: *c_void) -> *c_void {
+    pub fn get(&self, key: *const c_void) -> *const c_void {
         let value = self.find(key);
         if value.is_none() {
             fail!("No entry found for key: {:?}", key);
@@ -154,7 +154,7 @@ impl CFDictionary {
 
     /// A convenience function to retrieve `CFType` instances.
     #[inline]
-    pub unsafe fn get_CFType(&self, key: *c_void) -> CFType {
+    pub unsafe fn get_CFType(&self, key: *const c_void) -> CFType {
         let value: CFTypeRef = mem::transmute(self.get(key));
         TCFType::wrap_under_get_rule(value)
     }
@@ -169,14 +169,14 @@ extern {
     static kCFTypeDictionaryKeyCallBacks: CFDictionaryKeyCallBacks;
     static kCFTypeDictionaryValueCallBacks: CFDictionaryValueCallBacks;
 
-    fn CFDictionaryContainsKey(theDict: CFDictionaryRef, key: *c_void) -> Boolean;
-    fn CFDictionaryCreate(allocator: CFAllocatorRef, keys: **c_void, values: **c_void,
-                          numValues: CFIndex, keyCallBacks: *CFDictionaryKeyCallBacks,
-                          valueCallBacks: *CFDictionaryValueCallBacks)
+    fn CFDictionaryContainsKey(theDict: CFDictionaryRef, key: *const c_void) -> Boolean;
+    fn CFDictionaryCreate(allocator: CFAllocatorRef, keys: *const *const c_void, values: *const *const c_void,
+                          numValues: CFIndex, keyCallBacks: *const CFDictionaryKeyCallBacks,
+                          valueCallBacks: *const CFDictionaryValueCallBacks)
                        -> CFDictionaryRef;
     fn CFDictionaryGetCount(theDict: CFDictionaryRef) -> CFIndex;
     fn CFDictionaryGetTypeID() -> CFTypeID;
-    fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *c_void, value: *mut *c_void)
+    fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *const c_void, value: *mut *const c_void)
                                      -> Boolean;
 }
 

@@ -15,11 +15,11 @@ use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
 
-pub type CFSetRetainCallBack = *u8;
-pub type CFSetReleaseCallBack = *u8;
-pub type CFSetCopyDescriptionCallBack = *u8;
-pub type CFSetEqualCallBack = *u8;
-pub type CFSetHashCallBack = *u8;
+pub type CFSetRetainCallBack = *const u8;
+pub type CFSetReleaseCallBack = *const u8;
+pub type CFSetCopyDescriptionCallBack = *const u8;
+pub type CFSetEqualCallBack = *const u8;
+pub type CFSetHashCallBack = *const u8;
 
 #[allow(dead_code)]
 pub struct CFSetCallBacks {
@@ -33,7 +33,7 @@ pub struct CFSetCallBacks {
 
 struct __CFSet;
 
-pub type CFSetRef = *__CFSet;
+pub type CFSetRef = *const __CFSet;
 
 /// An immutable bag of elements.
 ///
@@ -106,8 +106,8 @@ extern {
     static kCFTypeSetCallBacks: CFSetCallBacks;
 
     /* Creating Sets */
-    fn CFSetCreate(allocator: CFAllocatorRef, values: **c_void, numValues: CFIndex, 
-                   callBacks: *CFSetCallBacks) -> CFSetRef;
+    fn CFSetCreate(allocator: CFAllocatorRef, values: *const *const c_void, numValues: CFIndex, 
+                   callBacks: *const CFSetCallBacks) -> CFSetRef;
 
     /* Applying a Function to Set Members */
     //fn CFSetApplyFunction

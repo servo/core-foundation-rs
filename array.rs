@@ -16,16 +16,16 @@ use libc::c_void;
 use std::mem;
 
 /// FIXME(pcwalton): This is wrong.
-pub type CFArrayRetainCallBack = *u8;
+pub type CFArrayRetainCallBack = *const u8;
 
 /// FIXME(pcwalton): This is wrong.
-pub type CFArrayReleaseCallBack = *u8;
+pub type CFArrayReleaseCallBack = *const u8;
 
 /// FIXME(pcwalton): This is wrong.
-pub type CFArrayCopyDescriptionCallBack = *u8;
+pub type CFArrayCopyDescriptionCallBack = *const u8;
 
 /// FIXME(pcwalton): This is wrong.
-pub type CFArrayEqualCallBack = *u8;
+pub type CFArrayEqualCallBack = *const u8;
 
 #[allow(dead_code)]
 pub struct CFArrayCallBacks {
@@ -38,7 +38,7 @@ pub struct CFArrayCallBacks {
 
 struct __CFArray;
 
-pub type CFArrayRef = *__CFArray;
+pub type CFArrayRef = *const __CFArray;
 
 /// A heterogeneous immutable array.
 ///
@@ -60,12 +60,12 @@ pub struct CFArrayIterator<'a> {
     index: CFIndex,
 }
 
-impl<'a> Iterator<*c_void> for CFArrayIterator<'a> {
-    fn next(&mut self) -> Option<*c_void> {
+impl<'a> Iterator<*const c_void> for CFArrayIterator<'a> {
+    fn next(&mut self) -> Option<*const c_void> {
         if self.index >= self.array.len() {
             None
         } else {
-            let value = self.array[self.index];
+            let value = self.array.get(self.index);
             self.index += 1;
             Some(value)
         }
@@ -138,17 +138,12 @@ impl CFArray {
             CFArrayGetCount(self.obj)
         }
     }
-}
 
-impl Index<i64,*c_void> for CFArray {
-    /// Careful; the loop body must wrap the reference properly. Generally, when array elements are
-    /// Core Foundation objects (not always true), they need to be wrapped with
-    /// `TCFType::wrap_under_get_rule()`. The safer `iter_CFTypes` method will do this for you.
     #[inline]
-    fn index(&self, index: &CFIndex) -> *c_void {
-        assert!(*index < self.len());
+    pub fn get(&self, index: CFIndex) -> *const c_void {
+        assert!(index < self.len());
         unsafe {
-            CFArrayGetValueAtIndex(self.obj, *index)
+            CFArrayGetValueAtIndex(self.obj, index)
         }
     }
 }
@@ -160,8 +155,8 @@ extern {
      */
     static kCFTypeArrayCallBacks: CFArrayCallBacks;
 
-    fn CFArrayCreate(allocator: CFAllocatorRef, values: **c_void,
-                     numValues: CFIndex, callBacks: *CFArrayCallBacks) -> CFArrayRef;
+    fn CFArrayCreate(allocator: CFAllocatorRef, values: *const *const c_void,
+                     numValues: CFIndex, callBacks: *const CFArrayCallBacks) -> CFArrayRef;
     // CFArrayCreateCopy
     // CFArrayBSearchValues
     // CFArrayContainsValue
@@ -170,7 +165,7 @@ extern {
     // CFArrayGetFirstIndexOfValue
     // CFArrayGetLastIndexOfValue
     // CFArrayGetValues
-    fn CFArrayGetValueAtIndex(theArray: CFArrayRef, idx: CFIndex) -> *c_void;
+    fn CFArrayGetValueAtIndex(theArray: CFArrayRef, idx: CFIndex) -> *const c_void;
     // CFArrayApplyFunction
     fn CFArrayGetTypeID() -> CFTypeID;
 }

@@ -16,7 +16,7 @@ pub type Boolean = u32;
 
 struct __CFBoolean;
 
-pub type CFBooleanRef = *__CFBoolean;
+pub type CFBooleanRef = *const __CFBoolean;
 
 /// A Boolean type.
 ///

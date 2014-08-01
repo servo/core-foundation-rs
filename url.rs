@@ -19,7 +19,7 @@ use std::mem;
 
 struct __CFURL;
 
-pub type CFURLRef = *__CFURL;
+pub type CFURLRef = *const __CFURL;
 
 pub struct CFURL {
     obj: CFURLRef,
@@ -71,7 +71,7 @@ impl fmt::Show for CFURL {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
             let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.obj));
-            let s = string.to_str();
+            let s = string.to_string();
             s.fmt(f)
         }
     }

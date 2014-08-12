@@ -80,7 +80,7 @@ impl CGDataProvider {
         unsafe {
             let result = CGDataProviderCreateWithData(ptr::mut_null(),
                                                       buffer.as_ptr() as *const c_void,
-                                                      buffer.len() as u64,
+                                                      buffer.len() as size_t,
                                                       ptr::null());
             TCFType::wrap_under_create_rule(result)
         }

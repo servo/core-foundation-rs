@@ -3,16 +3,16 @@ VPATH=%VPATH%
 RUSTC ?= rustc
 RUSTFLAGS ?=
 
-RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
+RUST_SRC=$(shell find $(VPATH)/src -type f -name '*.rs')
 
 .PHONY: all
 all:    libcore_foundation.dummy
 
-libcore_foundation.dummy: lib.rs $(RUST_SRC)
+libcore_foundation.dummy: src/lib.rs $(RUST_SRC)
 	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
-core_foundation-test: lib.rs $(RUST_SRC)
+core_foundation-test: src/lib.rs $(RUST_SRC)
 	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
 
 .PHONY: check

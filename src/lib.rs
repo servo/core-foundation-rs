@@ -14,7 +14,11 @@ extern crate libc;
 extern crate std;
 extern crate core_foundation;
 
+#[cfg(target_os="macos")]
 pub mod base;
+#[cfg(target_os="macos")]
 pub mod data_provider;
+#[cfg(target_os="macos")]
 pub mod font;
+#[cfg(target_os="macos")]
 pub mod geometry;

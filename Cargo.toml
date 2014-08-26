@@ -1,0 +1,10 @@
+[package]
+
+name = "core_foundation"
+version = "0.1.0"
+authors = ["The Servo Project Developers"]
+
+[lib]
+
+name = "core_foundation"
+crate-type = ["rlib"]

@@ -1,0 +1,13 @@
+[package]
+
+name = "core_text"
+version = "0.1.0"
+authors = ["The Servo Project Developers"]
+
+[dependencies.core_foundation]
+
+git = "https://github.com/servo/rust-core-foundation"
+
+[dependencies.core_graphics]
+
+git = "https://github.com/servo/rust-core-graphics"

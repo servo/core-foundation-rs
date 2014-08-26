@@ -4,16 +4,16 @@ RUSTC ?= rustc
 RUSTFLAGS ?=
 EXT_DEPS ?=
 
-RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
+RUST_SRC=$(shell find $(VPATH)/src -type f -name '*.rs')
 
 .PHONY: all
 all:    libio_surface.dummy
 
-libio_surface.dummy: lib.rs $(RUST_SRC) $(EXT_DEPS)
+libio_surface.dummy: src/lib.rs $(RUST_SRC) $(EXT_DEPS)
 	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
-io_surface-test: lib.rs $(RUST_SRC) $(EXT_DEPS)
+io_surface-test: src/lib.rs $(RUST_SRC) $(EXT_DEPS)
 	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
 
 .PHONY: check

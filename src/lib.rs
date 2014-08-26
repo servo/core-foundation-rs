@@ -20,6 +20,8 @@
 extern crate libc;
 extern crate std;
 
+#[cfg(target_os="macos")]
 pub mod appkit;
+#[cfg(target_os="macos")]
 pub mod base;
 

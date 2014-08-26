@@ -6,16 +6,16 @@ AR ?= ar
 RUSTFLAGS ?=
 CFLAGS += -Wall
 
-RUST_SRC = $(shell find $(VPATH)/. -type f -name '*.rs')
+RUST_SRC = $(shell find $(VPATH)/src -type f -name '*.rs')
 
 .PHONY: all
 all: libcocoa.dummy
 
-libcocoa.dummy: cocoa.rc $(RUST_SRC) libmsgsend.a
+libcocoa.dummy: src/lib.rs $(RUST_SRC) libmsgsend.a
 	$(RUSTC) $(RUSTFLAGS) $< --out-dir .
 	touch $@
 
-cocoa-test: cocoa.rc $(RUST_SRC) libmsgsend.a
+cocoa-test: src/lib.rs $(RUST_SRC) libmsgsend.a
 	$(RUSTC) $(RUSTFLAGS) $< -o $@ --test
 
 libmsgsend.a: msgsend.o

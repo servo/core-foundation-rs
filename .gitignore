@@ -9,3 +9,6 @@
 *.dummy
 cocoa-test
 build
+/target
+/doc
+/Cargo.lock

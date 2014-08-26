@@ -21,7 +21,7 @@ cocoa-test: src/lib.rs $(RUST_SRC) libmsgsend.a
 libmsgsend.a: msgsend.o
 	$(AR) rcs libmsgsend.a msgsend.o
 
-msgsend.o: msgsend.m
+msgsend.o: src/msgsend.m
 	$(CC) $(CFLAGS) $< -o $@ -c
 
 check: cocoa-test

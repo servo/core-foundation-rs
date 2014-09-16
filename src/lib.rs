@@ -18,7 +18,6 @@
 #![allow(non_snake_case_functions)]
 
 extern crate libc;
-extern crate std;
 
 #[cfg(target_os="macos")]
 pub mod appkit;

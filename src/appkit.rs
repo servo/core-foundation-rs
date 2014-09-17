@@ -187,6 +187,10 @@ pub mod NSWindow {
     pub unsafe fn makeKeyAndOrderFront_(this: id, sender: id) {
         this.send_void("makeKeyAndOrderFront:", sender)
     }
+
+    pub unsafe fn center(this: id) {
+        this.send_void("center", ())
+    }
 }
 
 pub mod NSString {

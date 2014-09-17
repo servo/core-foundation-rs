@@ -46,8 +46,9 @@ fn main() {
 			NSBackingStoreBuffered,
 			false
 		);
-		// segfaults in invoke_msg_NSPoint_NSPoint():
+		// this segfaults in invoke_msg_NSPoint_NSPoint():
 		// NSWindow::cascadeTopLeftFromPoint_(window, NSPoint::new(20., 20.));
+		NSWindow::center(window);
 		let title = NSString::from_str("Hello World!\0");
 		NSWindow::setTitle_(window, title);
 		NSWindow::makeKeyAndOrderFront_(window, nil);

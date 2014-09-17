@@ -15,7 +15,7 @@
 
 #![feature(globs)]
 
-#![allow(non_snake_case_functions)]
+#![allow(non_snake_case)]
 
 extern crate libc;
 

@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{ObjCMethodCall, id};
+use base::{ObjCMethodCall, id, SEL, nil, NSInteger, NSUInteger};
 
 pub type CGFloat = f32;
 
@@ -94,122 +94,164 @@ pub enum NSBackingStoreType {
     NSBackingStoreBuffered      = 2
 }
 
-pub mod NSProcessInfo {
-    use base::{id, ObjCMethodCall};
+pub trait NSAutoreleasePool {
+    unsafe fn new(_: Self) -> id {
+        "NSAutoreleasePool".send("new", ())
+    }
 
-    pub unsafe fn processInfo() -> id {
+    unsafe fn autorelease(self) -> Self;
+}
+
+impl NSAutoreleasePool for id {
+    unsafe fn autorelease(self) -> id {
+        self.send("autorelease", ())
+    }
+}
+
+pub trait NSProcessInfo {
+    unsafe fn processInfo(_: Self) -> id {
         "NSProcessInfo".send("processInfo", ())
     }
 
-    pub unsafe fn processName(this: id) -> id {
-        this.send("processName", ())
+    unsafe fn processName(self) -> id;
+}
+
+impl NSProcessInfo for id {
+    unsafe fn processName(self) -> id {
+        self.send("processName", ())
     }
 }
 
-pub mod NSApplication {
-    use base::{id, NSInteger, ObjCMethodCall};
-    use appkit::NSApplicationActivationPolicy;
-
-    pub unsafe fn setActivationPolicy_(this: id, policy: NSApplicationActivationPolicy) -> bool {
-        this.send_bool("setActivationPolicy:", policy as NSInteger)
+pub trait NSApplication {
+    unsafe fn sharedApplication(_: Self) -> id {
+        "NSApplication".send("sharedApplication", ())
     }
 
-    pub unsafe fn setMainMenu_(this: id, menu: id) {
-        this.send_void("setMainMenu:", menu)
+    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> bool;
+    unsafe fn setMainMenu_(self, menu: id);
+    unsafe fn activateIgnoringOtherApps_(self, ignore: bool);
+    unsafe fn run(self);
+}
+
+impl NSApplication for id {
+    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> bool {
+        self.send_bool("setActivationPolicy:", policy as NSInteger)
     }
 
-    pub unsafe fn activateIgnoringOtherApps_(this: id, ignore: bool) {
-        this.send_void("activateIgnoringOtherApps:", ignore);
+    unsafe fn setMainMenu_(self, menu: id) {
+        self.send_void("setMainMenu:", menu)
     }
 
-    pub unsafe fn run(this: id) {
-        this.send_void("run", ());
+    unsafe fn activateIgnoringOtherApps_(self, ignore: bool) {
+        self.send_void("activateIgnoringOtherApps:", ignore);
+    }
+
+    unsafe fn run(self) {
+        self.send_void("run", ());
     }
 }
 
-pub mod NSMenu {
-    use base::{id, ObjCMethodCall};
-
-    pub unsafe fn new() -> id {
+pub trait NSMenu {
+    unsafe fn new(_: Self) -> id {
         "NSMenu".send("new", ())
     }
 
-    pub unsafe fn addItem_(this: id, menu_item: id) {
-        this.send_void("addItem:", menu_item)
+    unsafe fn addItem_(self, menu_item: id);
+}
+
+impl NSMenu for id {
+    unsafe fn addItem_(self, menu_item: id) {
+        self.send_void("addItem:", menu_item)
     }
 }
 
-pub mod NSMenuItem {
-    use base::{id, ObjCMethodCall, SEL};
-
-    pub unsafe fn alloc() -> id {
+pub trait NSMenuItem {
+    unsafe fn alloc(_: Self) -> id {
         "NSMenuItem".send("alloc", ())
     }
 
-    pub unsafe fn new() -> id {
+    unsafe fn new(_: Self) -> id {
         "NSMenuItem".send("new", ())
     }
 
-    pub unsafe fn initWithTitle_action_keyEquivalent_(this: id, title: id, action: SEL, key: id) -> id {
-        this.send("initWithTitle:action:keyEquivalent:", (title, action, key))
+    unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id;
+    unsafe fn setSubmenu_(self, submenu: id);
+}
+
+impl NSMenuItem for id {
+    unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id {
+        self.send("initWithTitle:action:keyEquivalent:", (title, action, key))
     }
 
-    pub unsafe fn setSubmenu_(this: id, submenu: id) {
-        this.send_void("setSubmenu:", submenu)
+    unsafe fn setSubmenu_(self, submenu: id) {
+        self.send_void("setSubmenu:", submenu)
     }
 }
 
-pub mod NSWindow {
-    use base::{id, NSUInteger, ObjCMethodCall};
-    use appkit::{NSRect, NSPoint, NSBackingStoreType};
-
-    pub unsafe fn alloc() -> id {
+pub trait NSWindow {
+    unsafe fn alloc(_: Self) -> id {
         "NSWindow".send("alloc", ())
     }
 
-    pub unsafe fn initWithContentRect_styleMask_backing_defer_(this: id,
-                                                               rect: NSRect,
-                                                               style: NSUInteger,
-                                                               backing: NSBackingStoreType,
-                                                               defer: bool) -> id {
-        this.send("initWithContentRect:styleMask:backing:defer:",
+    unsafe fn initWithContentRect_styleMask_backing_defer_(self,
+                                                           rect: NSRect,
+                                                           style: NSUInteger,
+                                                           backing: NSBackingStoreType,
+                                                           defer: bool) -> id;
+    unsafe fn cascadeTopLeftFromPoint_(self, top_left: NSPoint) -> NSPoint;
+    unsafe fn setTitle_(self, title: id);
+    unsafe fn makeKeyAndOrderFront_(self, sender: id);
+    unsafe fn center(self);
+}
+
+impl NSWindow for id {
+    unsafe fn initWithContentRect_styleMask_backing_defer_(self,
+                                                           rect: NSRect,
+                                                           style: NSUInteger,
+                                                           backing: NSBackingStoreType,
+                                                           defer: bool) -> id {
+        self.send("initWithContentRect:styleMask:backing:defer:",
                   (rect, style, backing as NSUInteger, defer))
     }
 
-    pub unsafe fn cascadeTopLeftFromPoint_(this: id, top_left: NSPoint) -> NSPoint {
-        this.send_point("cascadeTopLeftFromPoint:", top_left)
+    unsafe fn cascadeTopLeftFromPoint_(self, top_left: NSPoint) -> NSPoint {
+        self.send_point("cascadeTopLeftFromPoint:", top_left)
     }
 
-    pub unsafe fn setTitle_(this: id, title: id) {
-        this.send_void("setTitle:", title);
+    unsafe fn setTitle_(self, title: id) {
+        self.send_void("setTitle:", title);
     }
 
-    pub unsafe fn makeKeyAndOrderFront_(this: id, sender: id) {
-        this.send_void("makeKeyAndOrderFront:", sender)
+    unsafe fn makeKeyAndOrderFront_(self, sender: id) {
+        self.send_void("makeKeyAndOrderFront:", sender)
     }
 
-    pub unsafe fn center(this: id) {
-        this.send_void("center", ())
+    unsafe fn center(self) {
+        self.send_void("center", ())
     }
 }
 
-pub mod NSString {
-    use base::{id, ObjCMethodCall};
-
-    pub unsafe fn alloc() -> id {
+pub trait NSString {
+    unsafe fn alloc(_: Self) -> id {
         "NSString".send("alloc", ())
     }
 
-    pub unsafe fn initWithUTF8String_(this: id, c_string: *const u8) -> id {
-        this.send("initWithUTF8String:", c_string as id)
+    unsafe fn initWithUTF8String_(self, c_string: *const u8) -> id;
+    unsafe fn stringByAppendingString_(self, other: id) -> id;
+    unsafe fn init_str(self, string: &str) -> Self;
+}
+
+impl NSString for id {
+    unsafe fn initWithUTF8String_(self, c_string: *const u8) -> id {
+        self.send("initWithUTF8String:", c_string as id)
     }
 
-    pub unsafe fn stringByAppendingString_(this: id, other: id) -> id {
-        this.send("stringByAppendingString:", other)
+    unsafe fn stringByAppendingString_(self, other: id) -> id {
+        self.send("stringByAppendingString:", other)
     }
 
-    pub unsafe fn from_str(string: &str) -> id {
-        initWithUTF8String_(alloc(), string.as_ptr())
+    unsafe fn init_str(self, string: &str) -> id {
+        self.initWithUTF8String_(string.as_ptr())
     }
 }
 

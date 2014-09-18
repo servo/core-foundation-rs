@@ -2,7 +2,7 @@ extern crate cocoa;
 
 use cocoa::base::{NSUInteger, nil, ObjCSelector};
 use cocoa::appkit::{NSApp, NSRect, NSPoint, NSSize,
-					NSProcessInfo,
+					NSAutoreleasePool, NSProcessInfo,
 					NSApplication, NSApplicationActivationPolicyRegular,
 					NSWindow, NSTitledWindowMask, NSBackingStoreBuffered,
 					NSString,
@@ -10,37 +10,35 @@ use cocoa::appkit::{NSApp, NSRect, NSPoint, NSSize,
 
 fn main() {
 	unsafe {
+		let pool = NSAutoreleasePool::new(nil);
+
 		let app = NSApp();
-		NSApplication::setActivationPolicy_(app, NSApplicationActivationPolicyRegular);
+		app.setActivationPolicy_(NSApplicationActivationPolicyRegular);
 
 		// create Menu Bar
-		let menubar = NSMenu::new();
-		let app_menu_item = NSMenuItem::new();
-		NSMenu::addItem_(menubar, app_menu_item);
-		NSApplication::setMainMenu_(app, menubar);
+		let menubar = NSMenu::new(nil);
+		let app_menu_item = NSMenuItem::new(nil);
+		menubar.addItem_(app_menu_item);
+		app.setMainMenu_(menubar);
 
 		// create Application menu
-		let app_menu = NSMenu::new();
-		let app_name = NSProcessInfo::processName(NSProcessInfo::processInfo());
-		let quit_prefix = NSString::from_str("Quit \0");
-		let quit_title = NSString::stringByAppendingString_(
-			quit_prefix,
-			app_name
+		let app_menu = NSMenu::new(nil);
+		let quit_prefix = NSString::alloc(nil).init_str("Quit \0");
+		let quit_title = quit_prefix.stringByAppendingString_(
+			NSProcessInfo::processInfo(nil).processName()
 		);
 		let quit_action = "terminate:".as_selector();
-		let quit_key = NSString::from_str("q\0");
-		let quit_item = NSMenuItem::initWithTitle_action_keyEquivalent_(
-			NSMenuItem::alloc(),
+		let quit_key = NSString::alloc(nil).init_str("q\0");
+		let quit_item = NSMenuItem::alloc(nil).initWithTitle_action_keyEquivalent_(
 			quit_title,
 			quit_action,
 			quit_key
 		);
-		NSMenu::addItem_(app_menu, quit_item);
-		NSMenuItem::setSubmenu_(app_menu_item, app_menu);
+		app_menu.addItem_(quit_item);
+		app_menu_item.setSubmenu_(app_menu);
 
 		// create Window
-		let window = NSWindow::initWithContentRect_styleMask_backing_defer_(
-			NSWindow::alloc(),
+		let window = NSWindow::alloc(nil).initWithContentRect_styleMask_backing_defer_(
 			NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
 			NSTitledWindowMask as NSUInteger,
 			NSBackingStoreBuffered,
@@ -48,12 +46,12 @@ fn main() {
 		);
 		// this segfaults in invoke_msg_NSPoint_NSPoint():
 		// NSWindow::cascadeTopLeftFromPoint_(window, NSPoint::new(20., 20.));
-		NSWindow::center(window);
-		let title = NSString::from_str("Hello World!\0");
-		NSWindow::setTitle_(window, title);
-		NSWindow::makeKeyAndOrderFront_(window, nil);
+		window.center();
+		let title = NSString::alloc(nil).init_str("Hello World!\0");
+		window.setTitle_(title);
+		window.makeKeyAndOrderFront_(nil);
 
-		NSApplication::activateIgnoringOtherApps_(app, true);
-		NSApplication::run(app);
+		app.activateIgnoringOtherApps_(true);
+		app.run();
 	}
 }

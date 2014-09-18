@@ -13,7 +13,6 @@
 #![allow(non_snake_case_functions)]
 
 extern crate libc;
-extern crate std;
 
 extern crate core_foundation;
 extern crate core_graphics;

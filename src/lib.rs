@@ -11,7 +11,6 @@
 #![crate_type = "rlib"]
 
 extern crate libc;
-extern crate std;
 extern crate core_foundation;
 extern crate geom;
 extern crate opengles;

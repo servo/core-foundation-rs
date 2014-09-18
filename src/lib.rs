@@ -11,7 +11,6 @@
 #![crate_type = "rlib"]
 
 extern crate libc;
-extern crate std;
 extern crate core_foundation;
 
 #[cfg(target_os="macos")]

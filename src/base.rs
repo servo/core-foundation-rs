@@ -276,11 +276,7 @@ impl ObjCMethodBoolArgs for c_long {
 impl ObjCMethodPointArgs for NSPoint {
     #[inline]
     unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint {
-        println!("before");
-        let stret: NSPoint = NSPoint::new(0., 0.);
-        invoke_msg_NSPoint_NSPoint(&stret, receiver, selector, self);
-        println!("after");
-        stret
+        invoke_msg_NSPoint_NSPoint(receiver, selector, self)
     }
 }
 
@@ -348,6 +344,6 @@ extern {
     pub fn invoke_msg_void_bool(theReceiver: id, theSelector: SEL, a: bool);
     pub fn invoke_msg_void_id(theReceiver: id, theSelector: SEL, a: id);
     pub fn invoke_msg_bool_long(theReceiver: id, theSelector: SEL, a: c_long) -> bool;
-    pub fn invoke_msg_NSPoint_NSPoint(stretAddr: &NSPoint, theReceiver: id, theSelector: SEL, a: NSPoint);
+    pub fn invoke_msg_NSPoint_NSPoint(theReceiver: id, theSelector: SEL, a: NSPoint) -> NSPoint;
 }
 

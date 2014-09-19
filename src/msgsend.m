@@ -62,9 +62,8 @@ char invoke_msg_bool_long(id theReceiver, SEL theSelector, long a) {
 	return objc_msgSend(theReceiver, theSelector, a);
 }
 
-/** segfaults */
-void invoke_msg_NSPoint_NSPoint(NSPoint *stretAddr, id theReceiver, SEL theSelector, NSPoint point) {
-    void (*s)(void *ret, id self, SEL op, ...) = (void *)objc_msgSend_stret;
-    return s((void *)stretAddr, theReceiver, theSelector, point);
+NSPoint invoke_msg_NSPoint_NSPoint(id theReceiver, SEL theSelector, NSPoint point) {
+    NSPoint (*f)(id self, SEL op, NSPoint p) = (NSPoint *)objc_msgSend;
+    return f(theReceiver, theSelector, point);
 }
 

@@ -236,20 +236,20 @@ mod test {
 
 #[link(name = "msgsend", kind = "static")]
 extern {
-    fn invoke_msg_double(theReceiver: id, theSelector: SEL) -> f64;
-    fn invoke_msg_id(theReceiver: id, theSelector: SEL) -> id;
-    fn invoke_msg_id_id_id_id_id_id(theReceiver: id,
-                                    theSelector: SEL,
-                                    a: id,
-                                    b: id,
-                                    c: id,
-                                    d: id,
-                                    e: id)
-                                    -> id;
-    fn invoke_msg_id_NSRect(theReceiver: id, theSelector: SEL, a: &NSRect) -> id;
-    fn invoke_msg_long(theReceiver: id, theSelector: SEL) -> c_long;
-    fn invoke_msg_void(theReceiver: id, theSelector: SEL);
-    fn invoke_msg_void_bool(theReceiver: id, theSelector: SEL, a: bool);
-    fn invoke_msg_void_id(theReceiver: id, theSelector: SEL, a: id);
+    pub fn invoke_msg_double(theReceiver: id, theSelector: SEL) -> f64;
+    pub fn invoke_msg_id(theReceiver: id, theSelector: SEL) -> id;
+    pub fn invoke_msg_id_id_id_id_id_id(theReceiver: id,
+                                        theSelector: SEL,
+                                        a: id,
+                                        b: id,
+                                        c: id,
+                                        d: id,
+                                        e: id)
+                                        -> id;
+    pub fn invoke_msg_id_NSRect(theReceiver: id, theSelector: SEL, a: &NSRect) -> id;
+    pub fn invoke_msg_long(theReceiver: id, theSelector: SEL) -> c_long;
+    pub fn invoke_msg_void(theReceiver: id, theSelector: SEL);
+    pub fn invoke_msg_void_bool(theReceiver: id, theSelector: SEL, a: bool);
+    pub fn invoke_msg_void_id(theReceiver: id, theSelector: SEL, a: id);
 }
 

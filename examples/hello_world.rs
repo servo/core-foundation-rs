@@ -16,13 +16,13 @@ fn main() {
 		app.setActivationPolicy_(NSApplicationActivationPolicyRegular);
 
 		// create Menu Bar
-		let menubar = NSMenu::new(nil);
-		let app_menu_item = NSMenuItem::new(nil);
+		let menubar = NSMenu::new(nil).autorelease();
+		let app_menu_item = NSMenuItem::new(nil).autorelease();
 		menubar.addItem_(app_menu_item);
 		app.setMainMenu_(menubar);
 
 		// create Application menu
-		let app_menu = NSMenu::new(nil);
+		let app_menu = NSMenu::new(nil).autorelease();
 		let quit_prefix = NSString::alloc(nil).init_str("Quit \0");
 		let quit_title = quit_prefix.stringByAppendingString_(
 			NSProcessInfo::processInfo(nil).processName()
@@ -33,7 +33,7 @@ fn main() {
 			quit_title,
 			quit_action,
 			quit_key
-		);
+		).autorelease();
 		app_menu.addItem_(quit_item);
 		app_menu_item.setSubmenu_(app_menu);
 
@@ -43,8 +43,7 @@ fn main() {
 			NSTitledWindowMask as NSUInteger,
 			NSBackingStoreBuffered,
 			false
-		);
-
+		).autorelease();
 		window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
 		window.center();
 		let title = NSString::alloc(nil).init_str("Hello World!\0");

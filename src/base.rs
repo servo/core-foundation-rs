@@ -126,16 +126,16 @@ impl ObjCSelector for SEL {
 }
 
 /// Traits that simulate variadic parameters for convenience when sending messages.
-trait ObjCMethodArgs {
+pub trait ObjCMethodArgs {
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id;
 }
-trait ObjCMethodDoubleArgs {
+pub trait ObjCMethodDoubleArgs {
     unsafe fn send_double_args(self, receiver: id, selector: SEL) -> c_double;
 }
-trait ObjCMethodLongArgs {
+pub trait ObjCMethodLongArgs {
     unsafe fn send_long_args(self, receiver: id, selector: SEL) -> c_long;
 }
-trait ObjCMethodVoidArgs {
+pub trait ObjCMethodVoidArgs {
     unsafe fn send_void_args(self, receiver: id, selector: SEL);
 }
 

@@ -337,6 +337,37 @@ impl ObjCMethodArgs for (NSUInteger, id, id, bool) {
     }
 }
 
+impl ObjCMethodArgs for (NSRect, id) {
+    #[inline]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        let (first, second) = self;
+        invoke_msg_id_NSRect_id(receiver, selector, first, second)
+    }
+}
+
+impl<'a> ObjCMethodArgs for &'a [uint] {
+    #[inline]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        invoke_msg_id_array(receiver, selector, self)
+    }
+}
+
+impl ObjCMethodArgs for (id, id) {
+    #[inline]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        let (first, second) = self;
+        invoke_msg_id_id_id(receiver, selector, first, second)
+    }
+}
+
+impl ObjCMethodArgs for (NSUInteger, id, id, bool) {
+    #[inline]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        let (first, second, third, fourth) = self;
+        invoke_msg_id_NSUInteger_id_id_bool(receiver, selector, first, second, third, fourth)
+    }
+}
+
 impl ObjCMethodDoubleArgs for () {
     #[inline]
     unsafe fn send_double_args(self, receiver: id, selector: SEL) -> f64 {

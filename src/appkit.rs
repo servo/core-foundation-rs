@@ -295,7 +295,11 @@ pub trait NSApplication {
     unsafe fn activateIgnoringOtherApps_(self, ignore: bool);
     unsafe fn run(self);
     unsafe fn finishLaunching(self);
-    unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue_(self, mask: NSUInteger, expiration: id, in_mode: id, dequeue: bool) -> id;
+    unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue_(self,
+                                                              mask: NSUInteger,
+                                                              expiration: id,
+                                                              in_mode: id,
+                                                              dequeue: bool) -> id;
     unsafe fn sendEvent_(self, an_event: id);
 }
 
@@ -320,8 +324,13 @@ impl NSApplication for id {
         self.send_void("finishLaunching", ())
     }
 
-    unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue_(self, mask: NSUInteger, expiration: id, in_mode: id, dequeue: bool) -> id {
-        self.send("nextEventMatchingMask:untilDate:inMode:dequeue:", (mask, expiration, in_mode, dequeue))
+    unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue_(self,
+                                                              mask: NSUInteger,
+                                                              expiration: id,
+                                                              in_mode: id,
+                                                              dequeue: bool) -> id {
+        self.send("nextEventMatchingMask:untilDate:inMode:dequeue:",
+                  (mask, expiration, in_mode, dequeue))
     }
 
     unsafe fn sendEvent_(self, an_event: id) {
@@ -713,6 +722,10 @@ impl NSWindow for id {
 
     unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id) {
         self.send_void("setMiniwindowTitle:", miniwindowTitle);
+    }
+
+    unsafe fn setContentView(self, view: id) {
+        self.send_void("setContentView:", view)
     }
 
     unsafe fn setContentView(self, view: id) {

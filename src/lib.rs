@@ -33,6 +33,8 @@ pub mod set;
 pub mod string;
 #[cfg(target_os="macos")]
 pub mod url;
+#[cfg(target_os="macos")]
+pub mod bundle;
 
 #[cfg(target_os="macos")]
 #[cfg(test)]

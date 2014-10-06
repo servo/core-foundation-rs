@@ -847,3 +847,27 @@ impl NSOpenGLContext for id {
         self.send_void("flushBuffer", ())
     }
 }
+
+pub trait NSDate {
+    unsafe fn distantPast(_: Self) -> id {
+        "NSDate".send("distantPast", ())
+    }
+
+    unsafe fn distantFuture(_: Self) -> id {
+        "NSDate".send("distantFuture", ())
+    }
+}
+
+impl NSDate for id {
+
+}
+
+pub trait NSEvent {
+    unsafe fn get_type(self) -> NSEventType;
+}
+
+impl NSEvent for id {
+    unsafe fn get_type(self) -> NSEventType {
+        self.send_event("type", ())
+    }
+}

@@ -225,6 +225,16 @@ pub enum NSEventType {
 }
 
 #[repr(u64)]
+pub enum NSEventSubtype {
+    NSWindowExposedEventType            = 0,
+    NSApplicationActivatedEventType     = 1,
+    NSApplicationDeactivatedEventType   = 2,
+    NSWindowMovedEventType              = 4,
+    NSScreenChangedEventType            = 8,
+    NSAWTEventType                      = 16,
+}
+
+#[repr(u64)]
 pub enum NSEventMask {
     NSLeftMouseDownMask         = 1 << NSLeftMouseDown as uint,
     NSLeftMouseUpMask           = 1 << NSLeftMouseUp as uint,
@@ -473,6 +483,7 @@ pub trait NSWindow {
 
     unsafe fn setContentView_(self, view: id);
     unsafe fn setAcceptsMouseMovedEvents_(self, accept: bool);
+    unsafe fn isVisible(self) -> bool;
 }
 
 impl NSWindow for id {
@@ -736,6 +747,10 @@ impl NSWindow for id {
     unsafe fn setAcceptsMouseMovedEvents_(self, accept: bool) {
         self.send_void("setAcceptsMouseMovedEvents:", accept);
     }
+
+    unsafe fn isVisible(self) -> bool {
+        self.send_bool("isVisible", ())
+    }
 }
 
 pub trait NSString {
@@ -746,6 +761,7 @@ pub trait NSString {
     unsafe fn initWithUTF8String_(self, c_string: *const u8) -> id;
     unsafe fn stringByAppendingString_(self, other: id) -> id;
     unsafe fn init_str(self, string: &str) -> Self;
+    unsafe fn UTF8String(self) -> *const libc::c_char;
 }
 
 impl NSString for id {
@@ -759,6 +775,10 @@ impl NSString for id {
 
     unsafe fn init_str(self, string: &str) -> id {
         self.initWithUTF8String_(string.as_ptr())
+    }
+
+    unsafe fn UTF8String(self) -> *const libc::c_char {
+        self.send_string("UTF8String", ())
     }
 }
 
@@ -874,7 +894,9 @@ impl NSDate for id {
 
 pub trait NSEvent {
     unsafe fn get_type(self) -> NSEventType;
+    unsafe fn get_subtype(self) -> NSEventSubtype;
     unsafe fn locationInWindow(self) -> NSPoint;
+    unsafe fn characters(self) -> id;
 }
 
 impl NSEvent for id {
@@ -882,7 +904,15 @@ impl NSEvent for id {
         self.send_event("type", ())
     }
 
+    unsafe fn get_subtype(self) -> NSEventSubtype {
+        self.send_eventSubtype("subtype", ())
+    }
+
     unsafe fn locationInWindow(self) -> NSPoint {
         self.send_point("locationInWindow", ())
+    }
+
+    unsafe fn characters(self) -> id {
+        self.send("characters", ())
     }
 }

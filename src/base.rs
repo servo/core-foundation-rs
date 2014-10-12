@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use appkit::{CGFloat, NSPoint, NSRect, NSSize, NSEventType};
+use appkit::{CGFloat, NSPoint, NSRect, NSSize, NSEventType, NSEventSubtype};
 use appkit::{NSWindowOrderingMode, NSAlignmentOptions};
 
 use libc::{c_double, c_long, c_ulong, c_char};
@@ -96,6 +96,8 @@ pub trait ObjCMethodCall {
     unsafe fn send_rect<S:ObjCSelector,A:ObjCMethodRectArgs>(self, selector: S, args: A) -> NSRect;
     unsafe fn send_size<S:ObjCSelector,A:ObjCMethodSizeArgs>(self, selector: S, args: A) -> NSSize;
     unsafe fn send_event<S:ObjCSelector,A:ObjCMethodEventArgs>(self, selector: S, args: A) -> NSEventType;
+    unsafe fn send_eventSubtype<S:ObjCSelector,A:ObjCMethodEventSubtypeArgs>(self, selector: S, args: A) -> NSEventSubtype;
+    unsafe fn send_string<S:ObjCSelector,A:ObjCMethodStringArgs>(self, selector: S, args: A) -> *const libc::c_char;
 }
 
 impl ObjCMethodCall for id {
@@ -149,6 +151,16 @@ impl ObjCMethodCall for id {
     unsafe fn send_event<S:ObjCSelector,A:ObjCMethodEventArgs>(self, selector: S, args: A)
                         -> NSEventType {
         args.send_event_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_eventSubtype<S:ObjCSelector,A:ObjCMethodEventSubtypeArgs>(self, selector: S, args: A)
+                        -> NSEventSubtype {
+        args.send_eventSubtype_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_string<S:ObjCSelector,A:ObjCMethodStringArgs>(self, selector: S, args: A)
+                        -> *const libc::c_char {
+        args.send_string_args(self, selector.as_selector())
     }
 }
 
@@ -212,6 +224,16 @@ impl<'a> ObjCMethodCall for &'a str {
                         -> NSEventType {
         args.send_event_args(class(self), selector.as_selector())
     }
+    #[inline]
+    unsafe fn send_eventSubtype<S:ObjCSelector,A:ObjCMethodEventSubtypeArgs>(self, selector: S, args: A)
+                        -> NSEventSubtype {
+        args.send_eventSubtype_args(class(self), selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_string<S:ObjCSelector,A:ObjCMethodStringArgs>(self, selector: S, args: A)
+                        -> *const libc::c_char {
+        args.send_string_args(class(self), selector.as_selector())
+    }
 }
 
 /// A trait that allows C strings to be used as selectors without having to convert them first.
@@ -268,6 +290,14 @@ pub trait ObjCMethodSizeArgs {
     unsafe fn send_size_args(self, receiver: id, selector: SEL) -> NSSize;
 pub trait ObjCMethodEventArgs {
     unsafe fn send_event_args(self, receiver: id, selector: SEL) -> NSEventType;
+}
+
+pub trait ObjCMethodEventSubtypeArgs {
+    unsafe fn send_eventSubtype_args(self, receiver: id, selector: SEL) -> NSEventSubtype;
+}
+
+pub trait ObjCMethodStringArgs {
+    unsafe fn send_string_args(self, receiver: id, selector: SEL) -> *const libc::c_char;
 }
 
 impl ObjCMethodArgs for () {
@@ -457,6 +487,13 @@ impl ObjCMethodBoolArgs for () {
     }
 }
 
+impl ObjCMethodBoolArgs for () {
+    #[inline]
+    unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool {
+        invoke_msg_bool(receiver, selector)
+    }
+}
+
 impl ObjCMethodBoolArgs for c_long {
     #[inline]
     unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool {
@@ -535,6 +572,21 @@ impl ObjCMethodPointArgs for (NSPoint, id) {
         invoke_msg_NSPoint_NSPoint_id(receiver, selector, first, second)
     }
 }
+
+impl ObjCMethodEventSubtypeArgs for () {
+    #[inline]
+    unsafe fn send_eventSubtype_args(self, receiver: id, selector: SEL) -> NSEventSubtype {
+        invoke_msg_NSEventSubtype(receiver, selector)
+    }
+}
+
+impl ObjCMethodStringArgs for () {
+    #[inline]
+    unsafe fn send_string_args(self, receiver: id, selector: SEL) -> *const libc::c_char {
+        invoke_msg_string(receiver, selector)
+    }
+}
+
 /// A trait that simulates variadic parameters for method calls.
 
 #[cfg(test)]

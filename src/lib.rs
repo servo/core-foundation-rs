@@ -36,8 +36,7 @@ pub mod url;
 #[cfg(target_os="macos")]
 pub mod bundle;
 
-#[cfg(target_os="macos")]
-#[cfg(test)]
+#[cfg(all(target_os="macos", test))]
 pub mod test {
     #[test]
     fn test_stuff() {

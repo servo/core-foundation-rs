@@ -98,6 +98,8 @@ pub trait ObjCMethodCall {
     unsafe fn send_event<S:ObjCSelector,A:ObjCMethodEventArgs>(self, selector: S, args: A) -> NSEventType;
     unsafe fn send_eventSubtype<S:ObjCSelector,A:ObjCMethodEventSubtypeArgs>(self, selector: S, args: A) -> NSEventSubtype;
     unsafe fn send_string<S:ObjCSelector,A:ObjCMethodStringArgs>(self, selector: S, args: A) -> *const libc::c_char;
+    unsafe fn send_ushort<S:ObjCSelector,A:ObjCMethodUShortArgs>(self, selector: S, args: A) -> libc::c_ushort;
+    unsafe fn send_NSUInteger<S:ObjCSelector,A:ObjCMethodNSUIntegerArgs>(self, selector: S, args: A) -> NSUInteger;
 }
 
 impl ObjCMethodCall for id {
@@ -161,6 +163,16 @@ impl ObjCMethodCall for id {
     unsafe fn send_string<S:ObjCSelector,A:ObjCMethodStringArgs>(self, selector: S, args: A)
                         -> *const libc::c_char {
         args.send_string_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_ushort<S:ObjCSelector,A:ObjCMethodUShortArgs>(self, selector: S, args: A)
+                        -> libc::c_ushort {
+        args.send_ushort_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_NSUInteger<S:ObjCSelector,A:ObjCMethodNSUIntegerArgs>(self, selector: S, args: A)
+                        -> NSUInteger {
+        args.send_NSUInteger_args(self, selector.as_selector())
     }
 }
 
@@ -234,6 +246,16 @@ impl<'a> ObjCMethodCall for &'a str {
                         -> *const libc::c_char {
         args.send_string_args(class(self), selector.as_selector())
     }
+    #[inline]
+    unsafe fn send_ushort<S:ObjCSelector,A:ObjCMethodUShortArgs>(self, selector: S, args: A)
+                        -> libc::c_ushort {
+        args.send_ushort_args(class(self), selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_NSUInteger<S:ObjCSelector,A:ObjCMethodNSUIntegerArgs>(self, selector: S, args: A)
+                        -> NSUInteger {
+        args.send_NSUInteger_args(class(self), selector.as_selector())
+    }
 }
 
 /// A trait that allows C strings to be used as selectors without having to convert them first.
@@ -298,6 +320,14 @@ pub trait ObjCMethodEventSubtypeArgs {
 
 pub trait ObjCMethodStringArgs {
     unsafe fn send_string_args(self, receiver: id, selector: SEL) -> *const libc::c_char;
+}
+
+pub trait ObjCMethodUShortArgs {
+    unsafe fn send_ushort_args(self, received: id, selector: SEL) -> libc::c_ushort;
+}
+
+pub trait ObjCMethodNSUIntegerArgs {
+    unsafe fn send_NSUInteger_args(self, received: id, selector: SEL) -> NSUInteger;
 }
 
 impl ObjCMethodArgs for () {
@@ -584,6 +614,20 @@ impl ObjCMethodStringArgs for () {
     #[inline]
     unsafe fn send_string_args(self, receiver: id, selector: SEL) -> *const libc::c_char {
         invoke_msg_string(receiver, selector)
+    }
+}
+
+impl ObjCMethodUShortArgs for () {
+    #[inline]
+    unsafe fn send_ushort_args(self, receiver: id, selector: SEL) -> libc::c_ushort {
+        invoke_msg_ushort(receiver, selector)
+    }
+}
+
+impl ObjCMethodNSUIntegerArgs for () {
+    #[inline]
+    unsafe fn send_NSUInteger_args(self, receiver: id, selector: SEL) -> NSUInteger {
+        invoke_msg_NSUInteger(receiver, selector)
     }
 }
 

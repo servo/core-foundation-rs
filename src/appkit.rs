@@ -267,6 +267,19 @@ pub enum NSEventMask {
     NSAnyEventMask              = 0xffffffff,
 }
 
+#[repr(u64)]
+pub enum NSEventModifierFlags {
+    NSAlphaShiftKeyMask                     = 1 << 16,
+    NSShiftKeyMask                          = 1 << 17,
+    NSControlKeyMask                        = 1 << 18,
+    NSAlternateKeyMask                      = 1 << 19,
+    NSCommandKeyMask                        = 1 << 20,
+    NSNumericPadKeyMask                     = 1 << 21,
+    NSHelpKeyMask                           = 1 << 22,
+    NSFunctionKeyMask                       = 1 << 23,
+    NSDeviceIndependentModifierFlagsMask    = 0xffff0000,
+}
+
 pub trait NSAutoreleasePool {
     unsafe fn new(_: Self) -> id {
         "NSAutoreleasePool".send("new", ())
@@ -897,6 +910,9 @@ pub trait NSEvent {
     unsafe fn get_subtype(self) -> NSEventSubtype;
     unsafe fn locationInWindow(self) -> NSPoint;
     unsafe fn characters(self) -> id;
+    unsafe fn charactersIgnoringModifiers(self) -> id;
+    unsafe fn keycode(self) -> libc::c_ushort;
+    unsafe fn modifierFlags(self) -> NSUInteger;
 }
 
 impl NSEvent for id {
@@ -914,5 +930,17 @@ impl NSEvent for id {
 
     unsafe fn characters(self) -> id {
         self.send("characters", ())
+    }
+
+    unsafe fn charactersIgnoringModifiers(self) -> id {
+        self.send("charactersIgnoringModifiers", ())
+    }
+
+    unsafe fn keycode(self) -> libc::c_ushort {
+        self.send_ushort("keyCode", ())
+    }
+
+    unsafe fn modifierFlags(self) -> NSUInteger {
+        self.send_NSUInteger("modifierFlags", ())
     }
 }

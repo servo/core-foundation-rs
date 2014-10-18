@@ -179,10 +179,10 @@ pub trait ObjCMethodLongArgs {
 pub trait ObjCMethodVoidArgs {
     unsafe fn send_void_args(self, receiver: id, selector: SEL);
 }
-trait ObjCMethodBoolArgs {
+pub trait ObjCMethodBoolArgs {
     unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool;
 }
-trait ObjCMethodPointArgs {
+pub trait ObjCMethodPointArgs {
     unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint;
 }
 

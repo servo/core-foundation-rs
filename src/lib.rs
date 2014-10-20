@@ -13,7 +13,6 @@
 #![allow(non_snake_case_functions)]
 
 extern crate libc;
-extern crate debug;
 
 #[cfg(target_os="macos")]
 pub mod array;

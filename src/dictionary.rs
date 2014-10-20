@@ -147,7 +147,7 @@ impl CFDictionary {
     pub fn get(&self, key: *const c_void) -> *const c_void {
         let value = self.find(key);
         if value.is_none() {
-            fail!("No entry found for key: {:?}", key);
+            fail!("No entry found for key: {}", key);
         }
         value.unwrap()
     }

@@ -19,6 +19,7 @@ use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
 
 use std::mem;
+use std::ptr;
 
 struct __CTFontCollection;
 
@@ -103,7 +104,7 @@ pub fn create_for_all_families() -> CTFontCollection {
     }
 }
 
-pub fn create_for_family(family: &str) -> CTFontCollection {
+pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
     use font_descriptor::kCTFontFamilyNameAttribute;
 
     unsafe {
@@ -119,11 +120,13 @@ pub fn create_for_family(family: &str) -> CTFontCollection {
         let matched_descs = CTFontDescriptorCreateMatchingFontDescriptors(
                 wildcard_desc.as_concrete_TypeRef(),
                 mandatory_attrs.as_concrete_TypeRef());
+        if matched_descs == ptr::null() {
+            return None;
+        }
         let matched_descs: CFArray = TCFType::wrap_under_create_rule(matched_descs);
-
         // I suppose one doesn't even need the CTFontCollection object at this point.
         // But we stick descriptors into and out of it just to provide a nice wrapper API.
-        new_from_descriptors(&matched_descs)
+        Some(new_from_descriptors(&matched_descs))
     }
 }
 

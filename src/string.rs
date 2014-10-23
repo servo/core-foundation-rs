@@ -288,8 +288,8 @@ impl fmt::Show for CFString {
                              range,
                              kCFStringEncodingUTF8,
                              0,
-                             false as Boolean, 
-                             ptr::mut_null(),
+                             false as Boolean,
+                             ptr::null_mut(),
                              0,
                              &mut bytes_required);
 
@@ -397,7 +397,7 @@ extern {
     //fn CFStringCreateExternalRepresentation
     fn CFStringGetBytes(theString: CFStringRef,
                         range: CFRange,
-                        encoding: CFStringEncoding, 
+                        encoding: CFStringEncoding,
                         lossByte: u8,
                         isExternalRepresentation: Boolean,
                         buffer: *mut u8,

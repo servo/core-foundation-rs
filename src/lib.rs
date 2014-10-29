@@ -14,6 +14,7 @@ extern crate libc;
 extern crate core_foundation;
 extern crate geom;
 extern crate opengles;
+extern crate cgl;
 
 // Rust bindings to the IOSurface framework on Mac OS X.
 
@@ -26,7 +27,7 @@ use core_foundation::string::CFStringRef;
 #[cfg(target_os="macos")]
 use geom::size::Size2D;
 #[cfg(target_os="macos")]
-use opengles::cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
+use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
 #[cfg(target_os="macos")]
 use opengles::gl2::{BGRA, GLenum, GLsizei, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 #[cfg(target_os="macos")]

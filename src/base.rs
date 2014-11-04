@@ -25,7 +25,7 @@ impl CFIndexConvertible for uint {
     fn to_CFIndex(self) -> CFIndex {
         let max_CFIndex: CFIndex = Bounded::max_value();
         if self > (max_CFIndex as uint) {
-            fail!("value out of range")
+            panic!("value out of range")
         }
         self as CFIndex
     }

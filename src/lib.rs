@@ -22,4 +22,4 @@ pub mod font;
 #[cfg(target_os="macos")]
 pub mod geometry;
 #[cfg(target_os="macos")]
-pub mod quartz_display_services;
+pub mod display;

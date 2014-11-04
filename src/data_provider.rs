@@ -78,7 +78,7 @@ impl TCFType<CGDataProviderRef> for CGDataProvider {
 impl CGDataProvider {
     pub fn from_buffer(buffer: &[u8]) -> CGDataProvider {
         unsafe {
-            let result = CGDataProviderCreateWithData(ptr::mut_null(),
+            let result = CGDataProviderCreateWithData(ptr::null_mut(),
                                                       buffer.as_ptr() as *const c_void,
                                                       buffer.len() as size_t,
                                                       ptr::null());

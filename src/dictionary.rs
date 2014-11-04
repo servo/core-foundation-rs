@@ -49,7 +49,7 @@ pub type CFDictionaryRef = *const __CFDictionary;
 
 /// An immutable dictionary of key-value pairs.
 ///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
+/// FIXME(pcwalton): Should be a newtype struct, but that panics due to a Rust compiler bug.
 pub struct CFDictionary {
     obj: CFDictionaryRef,
 }
@@ -147,7 +147,7 @@ impl CFDictionary {
     pub fn get(&self, key: *const c_void) -> *const c_void {
         let value = self.find(key);
         if value.is_none() {
-            fail!("No entry found for key: {}", key);
+            panic!("No entry found for key: {}", key);
         }
         value.unwrap()
     }

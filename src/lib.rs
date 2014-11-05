@@ -34,6 +34,9 @@ use gleam::gl::{BGRA, GLenum, GLsizei, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT
 use libc::{c_int, c_void, size_t};
 #[cfg(target_os="macos")]
 use std::mem;
+#[cfg(target_os="macos")]
+use std::slice::bytes::copy_memory;
+
 
 //static kIOSurfaceLockReadOnly: u32 = 0x1;
 //static kIOSurfaceLockAvoidSync: u32 = 0x2;
@@ -42,12 +45,14 @@ use std::mem;
 type IOReturn = c_int;
 
 #[cfg(target_os="macos")]
+#[repr(C)]
 struct __IOSurface;
 
 #[cfg(target_os="macos")]
 pub type IOSurfaceRef = *const __IOSurface;
 
 #[cfg(target_os="macos")]
+#[repr(C)]
 pub struct IOSurface {
     pub obj: IOSurfaceRef,
 }
@@ -163,7 +168,7 @@ impl IOSurface {
             let stride = IOSurfaceGetBytesPerRow(surface);
             let size = (height * stride) as uint;
             let dest: &mut [u8] = mem::transmute((IOSurfaceGetBaseAddress(surface), size));
-            dest.copy_memory(data);
+            copy_memory(dest, data);
 
             // FIXME(pcwalton): RAII
             IOSurfaceUnlock(surface, 0, &mut seed);
@@ -212,4 +217,3 @@ extern {
     fn IOSurfaceGetBytesPerRow(buffer: IOSurfaceRef) -> size_t;
     fn IOSurfaceGetBaseAddress(buffer: IOSurfaceRef) -> *mut c_void;
 }
-

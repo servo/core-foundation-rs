@@ -162,7 +162,7 @@ impl CTFont {
     // Creation methods
     pub fn copy_to_CGFont(&self) -> CGFont {
         unsafe {
-            let cgfont_ref = CTFontCopyGraphicsFont(self.obj, ptr::mut_null());
+            let cgfont_ref = CTFontCopyGraphicsFont(self.obj, ptr::null_mut());
             TCFType::wrap_under_create_rule(cgfont_ref)
         }
     }

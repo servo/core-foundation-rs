@@ -25,24 +25,24 @@ use std::mem;
 */
 // actually, these are extern enums
 pub type CTFontFormat = u32;
-pub static kCTFontFormatUnrecognized: CTFontFormat = 0;
-pub static kCTFontFormatOpenTypePostScript: CTFontFormat = 1;
-pub static kCTFontFormatOpenTypeTrueType: CTFontFormat = 2;
-pub static kCTFontFormatTrueType: CTFontFormat = 3;
-pub static kCTFontFormatPostScript: CTFontFormat = 4;
-pub static kCTFontFormatBitmap: CTFontFormat = 5;
+pub const kCTFontFormatUnrecognized: CTFontFormat = 0;
+pub const kCTFontFormatOpenTypePostScript: CTFontFormat = 1;
+pub const kCTFontFormatOpenTypeTrueType: CTFontFormat = 2;
+pub const kCTFontFormatTrueType: CTFontFormat = 3;
+pub const kCTFontFormatPostScript: CTFontFormat = 4;
+pub const kCTFontFormatBitmap: CTFontFormat = 5;
 
-pub static kCTFontClassMaskShift: u32 = 28;
+pub const kCTFontClassMaskShift: u32 = 28;
 
 pub type CTFontSymbolicTraits = u32;
-pub static kCTFontItalicTrait: CTFontSymbolicTraits = (1 << 0);
-pub static kCTFontBoldTrait: CTFontSymbolicTraits = (1 << 1);
-pub static kCTFontExpandedTrait: CTFontSymbolicTraits = (1 << 5);
-pub static kCTFontCondensedTrait: CTFontSymbolicTraits = (1 << 6);
-pub static kCTFontMonoSpaceTrait: CTFontSymbolicTraits = (1 << 10);
-pub static kCTFontVerticalTrait: CTFontSymbolicTraits = (1 << 11);
-pub static kCTFontUIOptimizedTrait: CTFontSymbolicTraits = (1 << 12);
-pub static kCTFontClassMaskTrait: CTFontSymbolicTraits = (15 << kCTFontClassMaskShift as uint);
+pub const kCTFontItalicTrait: CTFontSymbolicTraits = (1 << 0);
+pub const kCTFontBoldTrait: CTFontSymbolicTraits = (1 << 1);
+pub const kCTFontExpandedTrait: CTFontSymbolicTraits = (1 << 5);
+pub const kCTFontCondensedTrait: CTFontSymbolicTraits = (1 << 6);
+pub const kCTFontMonoSpaceTrait: CTFontSymbolicTraits = (1 << 10);
+pub const kCTFontVerticalTrait: CTFontSymbolicTraits = (1 << 11);
+pub const kCTFontUIOptimizedTrait: CTFontSymbolicTraits = (1 << 12);
+pub const kCTFontClassMaskTrait: CTFontSymbolicTraits = (15 << kCTFontClassMaskShift as uint);
 
 pub trait SymbolicTraitAccessors {
     fn is_italic(&self) -> bool;
@@ -61,17 +61,17 @@ impl SymbolicTraitAccessors for CTFontSymbolicTraits {
 }
 
 pub type CTFontStylisticClass = u32;
-pub static kCTFontUnknownClass: CTFontStylisticClass = (0 << kCTFontClassMaskShift as uint);
-pub static kCTFontOldStyleSerifsClass: CTFontStylisticClass = (1 << kCTFontClassMaskShift as uint);
-pub static kCTFontTransitionalSerifsClass: CTFontStylisticClass = (2 << kCTFontClassMaskShift as uint);
-pub static kCTFontModernSerifsClass: CTFontStylisticClass = (3 << kCTFontClassMaskShift as uint);
-pub static kCTFontClarendonSerifsClass: CTFontStylisticClass = (4 << kCTFontClassMaskShift as uint);
-pub static kCTFontSlabSerifsClass: CTFontStylisticClass = (5 << kCTFontClassMaskShift as uint);
-pub static kCTFontFreeformSerifsClass: CTFontStylisticClass = (7 << kCTFontClassMaskShift as uint);
-pub static kCTFontSansSerifClass: CTFontStylisticClass = (8 << kCTFontClassMaskShift as uint);
-pub static kCTFontOrnamentalsClass: CTFontStylisticClass = (9 << kCTFontClassMaskShift as uint);
-pub static kCTFontScriptsClass: CTFontStylisticClass = (10 << kCTFontClassMaskShift as uint);
-pub static kCTFontSymbolicClass: CTFontStylisticClass = (12 << kCTFontClassMaskShift as uint);
+pub const kCTFontUnknownClass: CTFontStylisticClass = (0 << kCTFontClassMaskShift as uint);
+pub const kCTFontOldStyleSerifsClass: CTFontStylisticClass = (1 << kCTFontClassMaskShift as uint);
+pub const kCTFontTransitionalSerifsClass: CTFontStylisticClass = (2 << kCTFontClassMaskShift as uint);
+pub const kCTFontModernSerifsClass: CTFontStylisticClass = (3 << kCTFontClassMaskShift as uint);
+pub const kCTFontClarendonSerifsClass: CTFontStylisticClass = (4 << kCTFontClassMaskShift as uint);
+pub const kCTFontSlabSerifsClass: CTFontStylisticClass = (5 << kCTFontClassMaskShift as uint);
+pub const kCTFontFreeformSerifsClass: CTFontStylisticClass = (7 << kCTFontClassMaskShift as uint);
+pub const kCTFontSansSerifClass: CTFontStylisticClass = (8 << kCTFontClassMaskShift as uint);
+pub const kCTFontOrnamentalsClass: CTFontStylisticClass = (9 << kCTFontClassMaskShift as uint);
+pub const kCTFontScriptsClass: CTFontStylisticClass = (10 << kCTFontClassMaskShift as uint);
+pub const kCTFontSymbolicClass: CTFontStylisticClass = (12 << kCTFontClassMaskShift as uint);
 
 pub trait StylisticClassAccessors {
     fn is_serif(&self) -> bool;
@@ -168,17 +168,17 @@ impl TraitAccessors for CTFontTraits {
 * CTFontDescriptor.h
 */
 pub type CTFontOrientation = u32;
-pub static kCTFontDefaultOrientation: CTFontOrientation = 0;
-pub static kCTFontHorizontalOrientation: CTFontOrientation = 1;
-pub static kCTFontVerticalOrientation: CTFontOrientation = 2;
+pub const kCTFontDefaultOrientation: CTFontOrientation = 0;
+pub const kCTFontHorizontalOrientation: CTFontOrientation = 1;
+pub const kCTFontVerticalOrientation: CTFontOrientation = 2;
 
 pub type CTFontPriority = u32;
-pub static kCTFontPrioritySystem: CTFontPriority = 10000;
-pub static kCTFontPriorityNetwork: CTFontPriority = 20000;
-pub static kCTFontPriorityComputer: CTFontPriority = 30000;
-pub static kCTFontPriorityUser: CTFontPriority = 40000;
-pub static kCTFontPriorityDynamic: CTFontPriority = 50000;
-pub static kCTFontPriorityProcess: CTFontPriority = 60000;
+pub const kCTFontPrioritySystem: CTFontPriority = 10000;
+pub const kCTFontPriorityNetwork: CTFontPriority = 20000;
+pub const kCTFontPriorityComputer: CTFontPriority = 30000;
+pub const kCTFontPriorityUser: CTFontPriority = 40000;
+pub const kCTFontPriorityDynamic: CTFontPriority = 50000;
+pub const kCTFontPriorityProcess: CTFontPriority = 60000;
 
 struct __CTFontDescriptor;
 

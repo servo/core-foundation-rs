@@ -15,6 +15,7 @@ use std::mem;
 use string::CFStringRef;
 use libc::c_void;
 
+#[repr(C)]
 struct __CFBundle;
 
 pub type CFBundleRef = *const __CFBundle;

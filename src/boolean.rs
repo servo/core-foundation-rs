@@ -14,6 +14,7 @@ use std::mem;
 
 pub type Boolean = u32;
 
+#[repr(C)]
 struct __CFBoolean;
 
 pub type CFBooleanRef = *const __CFBoolean;

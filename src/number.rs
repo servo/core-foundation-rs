@@ -9,7 +9,7 @@
 
 //! Immutable numbers.
 
-#![allow(non_uppercase_statics)]
+#![allow(non_upper_case_globals)]
 
 use base::{CFAllocatorRef, CFRelease, CFRetain, CFTypeID, CFTypeRef};
 use base::{TCFType, kCFAllocatorDefault};
@@ -38,6 +38,7 @@ static kCFNumberFloat64Type:   CFNumberType = 6;
 // static kCFNumberCGFloatType:   CFNumberType = 16;
 // static kCFNumberMaxType:       CFNumberType = 16;
 
+#[repr(C)]
 struct __CFNumber;
 
 pub type CFNumberRef = *const __CFNumber;

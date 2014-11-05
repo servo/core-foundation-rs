@@ -22,6 +22,7 @@ pub type CFSetEqualCallBack = *const u8;
 pub type CFSetHashCallBack = *const u8;
 
 #[allow(dead_code)]
+#[repr(C)]
 pub struct CFSetCallBacks {
     version: CFIndex,
     retain: CFSetRetainCallBack,
@@ -31,6 +32,7 @@ pub struct CFSetCallBacks {
     hash: CFSetHashCallBack,
 }
 
+#[repr(C)]
 struct __CFSet;
 
 pub type CFSetRef = *const __CFSet;

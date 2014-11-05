@@ -9,7 +9,7 @@
 
 //! A URL type for Core Foundation.
 
-#![allow(non_uppercase_statics)]
+#![allow(non_upper_case_globals)]
 
 use base::{CFOptionFlags, CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use string::{CFString, CFStringRef};
@@ -17,6 +17,7 @@ use string::{CFString, CFStringRef};
 use std::fmt;
 use std::mem;
 
+#[repr(C)]
 struct __CFURL;
 
 pub type CFURLRef = *const __CFURL;

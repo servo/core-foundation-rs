@@ -25,6 +25,7 @@ pub type CFDictionaryReleaseCallBack = *const u8;
 pub type CFDictionaryRetainCallBack = *const u8;
 
 #[allow(dead_code)]
+#[repr(C)]
 pub struct CFDictionaryKeyCallBacks {
     version: CFIndex,
     retain: CFDictionaryRetainCallBack,
@@ -35,6 +36,7 @@ pub struct CFDictionaryKeyCallBacks {
 }
 
 #[allow(dead_code)]
+#[repr(C)]
 pub struct CFDictionaryValueCallBacks {
     version: CFIndex,
     retain: CFDictionaryRetainCallBack,
@@ -43,6 +45,7 @@ pub struct CFDictionaryValueCallBacks {
     equal: CFDictionaryEqualCallBack
 }
 
+#[repr(C)]
 struct __CFDictionary;
 
 pub type CFDictionaryRef = *const __CFDictionary;

@@ -14,6 +14,7 @@ use base::{CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use std::mem;
 
+#[repr(C)]
 struct __CFData;
 
 pub type CFDataRef = *const __CFData;

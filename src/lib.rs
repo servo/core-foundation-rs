@@ -21,3 +21,5 @@ pub mod data_provider;
 pub mod font;
 #[cfg(target_os="macos")]
 pub mod geometry;
+#[cfg(target_os="macos")]
+pub mod display;

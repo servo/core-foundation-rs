@@ -13,6 +13,7 @@ use libc;
 
 // TODO: this is actually a libc::c_float on 32bit
 pub type CGFloat = libc::c_double;
+pub type CGError = libc::int32_t;
 
 pub type CGAffineTransform = ();
 

@@ -25,6 +25,7 @@ pub type CGDataProviderReleaseBytePointerCallback = *const u8;
 pub type CGDataProviderReleaseDataCallback = *const u8;
 pub type CGDataProviderGetBytesAtPositionCallback = *const u8;
 
+#[repr(C)]
 struct __CGDataProvider;
 
 pub type CGDataProviderRef = *const __CGDataProvider;

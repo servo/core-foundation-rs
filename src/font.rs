@@ -16,6 +16,7 @@ use std::ptr;
 
 pub type CGGlyph = libc::c_ushort;
 
+#[repr(C)]
 struct __CGFont;
 
 pub type CGFontRef = *const __CGFont;

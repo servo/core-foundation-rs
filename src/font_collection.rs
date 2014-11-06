@@ -21,6 +21,7 @@ use core_foundation::string::{CFString, CFStringRef};
 use std::mem;
 use std::ptr;
 
+#[repr(C)]
 struct __CTFontCollection;
 
 pub type CTFontCollectionRef = *const __CTFontCollection;

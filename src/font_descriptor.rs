@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#![allow(non_uppercase_statics)]
+#![allow(non_upper_case_globals)]
 
 use core_foundation::array::CFArrayRef;
 use core_foundation::base::{CFRelease, CFRetain, CFType, CFTypeID, CFTypeRef, TCFType};
@@ -180,6 +180,7 @@ pub const kCTFontPriorityUser: CTFontPriority = 40000;
 pub const kCTFontPriorityDynamic: CTFontPriority = 50000;
 pub const kCTFontPriorityProcess: CTFontPriority = 60000;
 
+#[repr(C)]
 struct __CTFontDescriptor;
 
 pub type CTFontDescriptorRef = *const __CTFontDescriptor;

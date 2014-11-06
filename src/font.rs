@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#![allow(non_uppercase_statics)]
+#![allow(non_upper_case_globals)]
 
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
@@ -26,46 +26,47 @@ use std::ptr;
 
 pub type CTFontUIFontType = u32;
 // kCTFontNoFontType: CTFontUIFontType = -1;
-pub static kCTFontUserFontType: CTFontUIFontType = 0;
-pub static kCTFontUserFixedPitchFontType: CTFontUIFontType = 1;
-pub static kCTFontSystemFontType: CTFontUIFontType = 2;
-pub static kCTFontEmphasizedSystemFontType: CTFontUIFontType = 3;
-pub static kCTFontSmallSystemFontType: CTFontUIFontType = 4;
-pub static kCTFontSmallEmphasizedSystemFontType: CTFontUIFontType = 5;
-pub static kCTFontMiniSystemFontType: CTFontUIFontType = 6;
-pub static kCTFontMiniEmphasizedSystemFontType: CTFontUIFontType = 7;
-pub static kCTFontViewsFontType: CTFontUIFontType = 8;
-pub static kCTFontApplicationFontType: CTFontUIFontType = 9;
-pub static kCTFontLabelFontType: CTFontUIFontType = 10;
-pub static kCTFontMenuTitleFontType: CTFontUIFontType = 11;
-pub static kCTFontMenuItemFontType: CTFontUIFontType = 12;
-pub static kCTFontMenuItemMarkFontType: CTFontUIFontType = 13;
-pub static kCTFontMenuItemCmdKeyFontType: CTFontUIFontType = 14;
-pub static kCTFontWindowTitleFontType: CTFontUIFontType = 15;
-pub static kCTFontPushButtonFontType: CTFontUIFontType = 16;
-pub static kCTFontUtilityWindowTitleFontType: CTFontUIFontType = 17;
-pub static kCTFontAlertHeaderFontType: CTFontUIFontType = 18;
-pub static kCTFontSystemDetailFontType: CTFontUIFontType = 19;
-pub static kCTFontEmphasizedSystemDetailFontType: CTFontUIFontType = 20;
-pub static kCTFontToolbarFontType: CTFontUIFontType = 21;
-pub static kCTFontSmallToolbarFontType: CTFontUIFontType = 22;
-pub static kCTFontMessageFontType: CTFontUIFontType = 23;
-pub static kCTFontPaletteFontType: CTFontUIFontType = 24;
-pub static kCTFontToolTipFontType: CTFontUIFontType = 25;
-pub static kCTFontControlContentFontType: CTFontUIFontType = 26;
+pub const kCTFontUserFontType: CTFontUIFontType = 0;
+pub const kCTFontUserFixedPitchFontType: CTFontUIFontType = 1;
+pub const kCTFontSystemFontType: CTFontUIFontType = 2;
+pub const kCTFontEmphasizedSystemFontType: CTFontUIFontType = 3;
+pub const kCTFontSmallSystemFontType: CTFontUIFontType = 4;
+pub const kCTFontSmallEmphasizedSystemFontType: CTFontUIFontType = 5;
+pub const kCTFontMiniSystemFontType: CTFontUIFontType = 6;
+pub const kCTFontMiniEmphasizedSystemFontType: CTFontUIFontType = 7;
+pub const kCTFontViewsFontType: CTFontUIFontType = 8;
+pub const kCTFontApplicationFontType: CTFontUIFontType = 9;
+pub const kCTFontLabelFontType: CTFontUIFontType = 10;
+pub const kCTFontMenuTitleFontType: CTFontUIFontType = 11;
+pub const kCTFontMenuItemFontType: CTFontUIFontType = 12;
+pub const kCTFontMenuItemMarkFontType: CTFontUIFontType = 13;
+pub const kCTFontMenuItemCmdKeyFontType: CTFontUIFontType = 14;
+pub const kCTFontWindowTitleFontType: CTFontUIFontType = 15;
+pub const kCTFontPushButtonFontType: CTFontUIFontType = 16;
+pub const kCTFontUtilityWindowTitleFontType: CTFontUIFontType = 17;
+pub const kCTFontAlertHeaderFontType: CTFontUIFontType = 18;
+pub const kCTFontSystemDetailFontType: CTFontUIFontType = 19;
+pub const kCTFontEmphasizedSystemDetailFontType: CTFontUIFontType = 20;
+pub const kCTFontToolbarFontType: CTFontUIFontType = 21;
+pub const kCTFontSmallToolbarFontType: CTFontUIFontType = 22;
+pub const kCTFontMessageFontType: CTFontUIFontType = 23;
+pub const kCTFontPaletteFontType: CTFontUIFontType = 24;
+pub const kCTFontToolTipFontType: CTFontUIFontType = 25;
+pub const kCTFontControlContentFontType: CTFontUIFontType = 26;
 
 pub type CTFontTableTag = u32;
 // TODO: create bindings for enum with 'chars' values
 
 pub type CTFontTableOptions = u32;
-pub static kCTFontTableOptionsNoOptions: CTFontTableOptions = 0;
-pub static kCTFontTableOptionsExcludeSynthetic: CTFontTableOptions = (1 << 0);
+pub const kCTFontTableOptionsNoOptions: CTFontTableOptions = 0;
+pub const kCTFontTableOptionsExcludeSynthetic: CTFontTableOptions = (1 << 0);
 
 pub type CTFontOptions = CFOptionFlags;
-pub static kCTFontOptionsDefault: CTFontOptions = 0;
-pub static kCTFontOptionsPreventAutoActivation: CTFontOptions = (1 << 0);
-pub static kCTFontOptionsPreferSystemFont: CTFontOptions = (1 << 2);
+pub const kCTFontOptionsDefault: CTFontOptions = 0;
+pub const kCTFontOptionsPreventAutoActivation: CTFontOptions = (1 << 0);
+pub const kCTFontOptionsPreferSystemFont: CTFontOptions = (1 << 2);
 
+#[repr(C)]
 struct __CTFont;
 
 pub type CTFontRef = *const __CTFont;

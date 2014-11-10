@@ -248,7 +248,6 @@ pub trait NSWindow {
                                                            style: NSUInteger,
                                                            backing: NSBackingStoreType,
                                                            defer: bool) -> id;
-    unsafe fn setTitle_(self, title: id);
     unsafe fn makeKeyAndOrderFront_(self, sender: id);
     unsafe fn center(self);
 
@@ -292,6 +291,15 @@ pub trait NSWindow {
     unsafe fn convertRectToBacking_(self, rect: NSRect) -> NSRect;
     unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect;
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect;
+
+    // Managing Titles
+    unsafe fn title(self) -> id;
+    unsafe fn setTitle_(self, title: id);
+    unsafe fn setTitleWithRepresentedFilename_(self, filePath: id);
+    unsafe fn representedFilename(self) -> id;
+    unsafe fn setRepresentedFilename_(self, filePath: id);
+    // skipped: representedURL
+    // skipped: setRepresentedURL_
 }
 
 impl NSWindow for id {
@@ -302,10 +310,6 @@ impl NSWindow for id {
                                                            defer: bool) -> id {
         self.send("initWithContentRect:styleMask:backing:defer:",
                   (rect, style, backing as NSUInteger, defer))
-    }
-
-    unsafe fn setTitle_(self, title: id) {
-        self.send_void("setTitle:", title);
     }
 
     unsafe fn makeKeyAndOrderFront_(self, sender: id) {
@@ -452,6 +456,28 @@ impl NSWindow for id {
 
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect {
         self.send_rect("convertRectFromScreen:", rect)
+    }
+
+    // Managing Titles
+
+    unsafe fn title(self) -> id {
+        self.send("title", ())
+    }
+
+    unsafe fn setTitle_(self, title: id) {
+        self.send_void("setTitle:", title);
+    }
+
+    unsafe fn setTitleWithRepresentedFilename_(self, filePath: id) {
+        self.send_void("setTitleWithRepresentedFilename:", filePath);
+    }
+
+    unsafe fn representedFilename(self) -> id {
+        self.send("representedFilename", ())
+    }
+
+    unsafe fn setRepresentedFilename_(self, filePath: id) {
+        self.send_void("setRepresentedFilename:", filePath);
     }
 }
 

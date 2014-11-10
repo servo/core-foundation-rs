@@ -147,6 +147,7 @@ bitflags! {
                                         | NSAlignMinYNearest.bits
                                         | NSAlignMaxYNearest.bits,
     }
+}
 
 #[repr(u64)]
 pub enum NSOpenGLPixelFormatAttribute {
@@ -747,10 +748,6 @@ impl NSWindow for id {
 
     unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id) {
         self.send_void("setMiniwindowTitle:", miniwindowTitle);
-    }
-
-    unsafe fn setContentView(self, view: id) {
-        self.send_void("setContentView:", view)
     }
 
     unsafe fn setContentView_(self, view: id) {

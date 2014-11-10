@@ -150,6 +150,8 @@ impl ObjCMethodCall for id {
     unsafe fn send_size<S:ObjCSelector,A:ObjCMethodSizeArgs>(self, selector: S, args: A)
                         -> NSSize {
         args.send_size_args(self, selector.as_selector())
+    }
+    #[inline]
     unsafe fn send_event<S:ObjCSelector,A:ObjCMethodEventArgs>(self, selector: S, args: A)
                         -> NSEventType {
         args.send_event_args(self, selector.as_selector())
@@ -232,6 +234,8 @@ impl<'a> ObjCMethodCall for &'a str {
     unsafe fn send_size<S:ObjCSelector,A:ObjCMethodSizeArgs>(self, selector: S, args: A)
                         -> NSSize {
         args.send_size_args(class(self), selector.as_selector())
+    }
+    #[inline]
     unsafe fn send_event<S:ObjCSelector,A:ObjCMethodEventArgs>(self, selector: S, args: A)
                         -> NSEventType {
         args.send_event_args(class(self), selector.as_selector())
@@ -310,6 +314,7 @@ pub trait ObjCMethodRectArgs {
 }
 pub trait ObjCMethodSizeArgs {
     unsafe fn send_size_args(self, receiver: id, selector: SEL) -> NSSize;
+}
 pub trait ObjCMethodEventArgs {
     unsafe fn send_event_args(self, receiver: id, selector: SEL) -> NSEventType;
 }
@@ -379,14 +384,14 @@ impl ObjCMethodArgs for (NSRect, id) {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         let (first, second) = self;
-        invoke_msg_id_NSRect_id(receiver, selector, first, second)
+        msg_send()(receiver, selector, first, second)
     }
 }
 
 impl<'a> ObjCMethodArgs for &'a [uint] {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
-        invoke_msg_id_array(receiver, selector, self)
+        msg_send()(receiver, selector, self)
     }
 }
 
@@ -394,7 +399,7 @@ impl ObjCMethodArgs for (id, id) {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         let (first, second) = self;
-        invoke_msg_id_id_id(receiver, selector, first, second)
+        msg_send()(receiver, selector, first, second)
     }
 }
 
@@ -402,38 +407,7 @@ impl ObjCMethodArgs for (NSUInteger, id, id, bool) {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         let (first, second, third, fourth) = self;
-        invoke_msg_id_NSUInteger_id_id_bool(receiver, selector, first, second, third, fourth)
-    }
-}
-
-impl ObjCMethodArgs for (NSRect, id) {
-    #[inline]
-    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
-        let (first, second) = self;
-        invoke_msg_id_NSRect_id(receiver, selector, first, second)
-    }
-}
-
-impl<'a> ObjCMethodArgs for &'a [uint] {
-    #[inline]
-    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
-        invoke_msg_id_array(receiver, selector, self)
-    }
-}
-
-impl ObjCMethodArgs for (id, id) {
-    #[inline]
-    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
-        let (first, second) = self;
-        invoke_msg_id_id_id(receiver, selector, first, second)
-    }
-}
-
-impl ObjCMethodArgs for (NSUInteger, id, id, bool) {
-    #[inline]
-    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
-        let (first, second, third, fourth) = self;
-        invoke_msg_id_NSUInteger_id_id_bool(receiver, selector, first, second, third, fourth)
+        msg_send()(receiver, selector, first, second, third, fourth as libc::c_int)
     }
 }
 
@@ -517,13 +491,6 @@ impl ObjCMethodBoolArgs for () {
     }
 }
 
-impl ObjCMethodBoolArgs for () {
-    #[inline]
-    unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool {
-        invoke_msg_bool(receiver, selector)
-    }
-}
-
 impl ObjCMethodBoolArgs for c_long {
     #[inline]
     unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool {
@@ -584,14 +551,14 @@ impl ObjCMethodSizeArgs for () {
 impl ObjCMethodPointArgs for () {
     #[inline]
     unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint {
-        invoke_msg_id_NSPoint(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodEventArgs for () {
     #[inline]
     unsafe fn send_event_args(self, receiver: id, selector: SEL) -> NSEventType {
-        invoke_msg_NSEventType(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
@@ -599,35 +566,35 @@ impl ObjCMethodPointArgs for (NSPoint, id) {
     #[inline]
     unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint {
         let (first, second) = self;
-        invoke_msg_NSPoint_NSPoint_id(receiver, selector, first, second)
+        msg_send()(receiver, selector, first, second)
     }
 }
 
 impl ObjCMethodEventSubtypeArgs for () {
     #[inline]
     unsafe fn send_eventSubtype_args(self, receiver: id, selector: SEL) -> NSEventSubtype {
-        invoke_msg_NSEventSubtype(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodStringArgs for () {
     #[inline]
     unsafe fn send_string_args(self, receiver: id, selector: SEL) -> *const libc::c_char {
-        invoke_msg_string(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodUShortArgs for () {
     #[inline]
     unsafe fn send_ushort_args(self, receiver: id, selector: SEL) -> libc::c_ushort {
-        invoke_msg_ushort(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodNSUIntegerArgs for () {
     #[inline]
     unsafe fn send_NSUInteger_args(self, receiver: id, selector: SEL) -> NSUInteger {
-        invoke_msg_NSUInteger(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 

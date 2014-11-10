@@ -304,6 +304,11 @@ pub trait NSWindow {
     unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool);
     unsafe fn setMovable_(self, movable: bool);
     unsafe fn center(self);
+
+    // Closing Windows
+    unsafe fn performClose_(self, sender: id);
+    unsafe fn close(self);
+    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool);
 }
 
 impl NSWindow for id {
@@ -492,6 +497,20 @@ impl NSWindow for id {
 
     unsafe fn center(self) {
         self.send_void("center", ());
+    }
+
+    // Closing Windows
+
+    unsafe fn performClose_(self, sender: id) {
+        self.send_void("performClose:", sender);
+    }
+
+    unsafe fn close(self) {
+        self.send_void("close", ());
+    }
+
+    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool) {
+        self.send_void("setReleasedWhenClosed:", releasedWhenClosed);
     }
 }
 

@@ -75,7 +75,13 @@ pub fn selector(name: &str) -> SEL {
 
 /// A trait that allows syntax like:
 ///
-///     let string = "NSString".send("alloc").send("initWithUTF8String:", "Hello world!");
+/// ~~~rust
+/// # use cocoa::base::{ObjCMethodCall, id};
+/// # unsafe {
+/// let string = "NSString".send("alloc", ())
+///                        .send("initWithUTF8String:", "Hello world!".as_ptr() as id);
+/// # }
+/// ~~~
 pub trait ObjCMethodCall {
     unsafe fn send<S:ObjCSelector,A:ObjCMethodArgs>(self, selector: S, args: A) -> id;
     unsafe fn send_double<S:ObjCSelector,A:ObjCMethodDoubleArgs>(self, selector: S, args: A)
@@ -143,7 +149,12 @@ impl ObjCMethodCall for id {
 
 /// A convenience implementation that allows methods on class names to be called directly, as in:
 ///
-///     "NSString".send("alloc")
+/// ~~~rust
+/// # use cocoa::base::ObjCMethodCall;
+/// # unsafe {
+/// "NSString".send("alloc", ())
+/// # };
+/// ~~~
 impl<'a> ObjCMethodCall for &'a str {
     #[inline]
     unsafe fn send<S:ObjCSelector,A:ObjCMethodArgs>(self, selector: S, args: A) -> id {

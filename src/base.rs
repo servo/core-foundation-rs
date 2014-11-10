@@ -32,7 +32,8 @@ pub type NSInteger = libc::c_long;
 #[cfg(target_word_size = "64")]
 pub type NSUInteger = libc::c_ulong;
 
-pub static nil: id = 0 as id;
+#[allow(non_upper_case_globals)]
+pub const nil: id = 0;
 
 extern {
     pub fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *const libc::c_char) -> bool;

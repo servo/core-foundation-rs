@@ -9,7 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{ObjCMethodCall, id, SEL, nil, NSInteger, NSUInteger};
+use base::{ObjCMethodCall, id, SEL, NSInteger, NSUInteger};
 use libc;
 
 #[cfg(target_word_size = "32")]

@@ -10,7 +10,7 @@ use cocoa::appkit::{NSApp, NSRect, NSPoint, NSSize,
 
 fn main() {
 	unsafe {
-		let pool = NSAutoreleasePool::new(nil);
+		let _pool = NSAutoreleasePool::new(nil);
 
 		let app = NSApp();
 		app.setActivationPolicy_(NSApplicationActivationPolicyRegular);

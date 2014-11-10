@@ -248,7 +248,6 @@ pub trait NSWindow {
                                                            style: NSUInteger,
                                                            backing: NSBackingStoreType,
                                                            defer: bool) -> id;
-    unsafe fn makeKeyAndOrderFront_(self, sender: id);
 
     // Sizing Windows
     unsafe fn frame(self) -> NSRect;
@@ -282,6 +281,13 @@ pub trait NSWindow {
     unsafe fn orderFrontWindow_relativeTo_(self, orderingMode: NSWindowOrderingMode, otherWindowNumber: NSInteger);
     unsafe fn level(self) -> NSInteger;
     unsafe fn setLevel_(self, level: NSInteger);
+
+    // Managing Key Status
+    unsafe fn canBecomeKeyWindow(self) -> bool;
+    unsafe fn makeKeyWindow(self);
+    unsafe fn makeKeyAndOrderFront_(self, sender: id);
+    // skipped: becomeKeyWindow (should not be invoked directly, according to Apple's documentation)
+    // skipped: resignKeyWindow (should not be invoked directly, according to Apple's documentation)
 
     // Converting Coordinates
     unsafe fn backingScaleFactor(self) -> CGFloat;
@@ -331,10 +337,6 @@ impl NSWindow for id {
                                                            defer: bool) -> id {
         self.send("initWithContentRect:styleMask:backing:defer:",
                   (rect, style, backing as NSUInteger, defer))
-    }
-
-    unsafe fn makeKeyAndOrderFront_(self, sender: id) {
-        self.send_void("makeKeyAndOrderFront:", sender)
     }
 
     // Sizing Windows
@@ -447,6 +449,20 @@ impl NSWindow for id {
 
     unsafe fn setLevel_(self, level: NSInteger) {
         self.send_void("setLevel:", level);
+    }
+
+    // Managing Key Status
+
+    unsafe fn canBecomeKeyWindow(self) -> bool {
+        self.send_bool("canBecomeKeyWindow", ())
+    }
+
+    unsafe fn makeKeyWindow(self) {
+        self.send_void("makeKeyWindow", ());
+    }
+
+    unsafe fn makeKeyAndOrderFront_(self, sender: id) {
+        self.send_void("makeKeyAndOrderFront:", sender);
     }
 
     // Converting Coordinates

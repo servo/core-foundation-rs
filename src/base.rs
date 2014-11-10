@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use appkit::{CGFloat, NSPoint, NSRect, NSSize};
+use appkit::{CGFloat, NSPoint, NSRect, NSSize, NSEventType};
 use appkit::{NSWindowOrderingMode, NSAlignmentOptions};
 
 use libc::{c_double, c_long, c_ulong, c_char};
@@ -95,6 +95,10 @@ pub trait ObjCMethodCall {
     unsafe fn send_point<S:ObjCSelector,A:ObjCMethodPointArgs>(self, selector: S, args: A) -> NSPoint;
     unsafe fn send_rect<S:ObjCSelector,A:ObjCMethodRectArgs>(self, selector: S, args: A) -> NSRect;
     unsafe fn send_size<S:ObjCSelector,A:ObjCMethodSizeArgs>(self, selector: S, args: A) -> NSSize;
+    unsafe fn send_event<S:ObjCSelector,A:ObjCMethodEventArgs>(self, selector: S, args: A) -> NSEventType;
+    unsafe fn send_string<S:ObjCSelector,A:ObjCMethodStringArgs>(self, selector: S, args: A) -> *const libc::c_char;
+    unsafe fn send_ushort<S:ObjCSelector,A:ObjCMethodUShortArgs>(self, selector: S, args: A) -> libc::c_ushort;
+    unsafe fn send_NSUInteger<S:ObjCSelector,A:ObjCMethodNSUIntegerArgs>(self, selector: S, args: A) -> NSUInteger;
 }
 
 impl ObjCMethodCall for id {
@@ -145,6 +149,26 @@ impl ObjCMethodCall for id {
     unsafe fn send_size<S:ObjCSelector,A:ObjCMethodSizeArgs>(self, selector: S, args: A)
                         -> NSSize {
         args.send_size_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_event<S:ObjCSelector,A:ObjCMethodEventArgs>(self, selector: S, args: A)
+                        -> NSEventType {
+        args.send_event_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_string<S:ObjCSelector,A:ObjCMethodStringArgs>(self, selector: S, args: A)
+                        -> *const libc::c_char {
+        args.send_string_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_ushort<S:ObjCSelector,A:ObjCMethodUShortArgs>(self, selector: S, args: A)
+                        -> libc::c_ushort {
+        args.send_ushort_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_NSUInteger<S:ObjCSelector,A:ObjCMethodNSUIntegerArgs>(self, selector: S, args: A)
+                        -> NSUInteger {
+        args.send_NSUInteger_args(self, selector.as_selector())
     }
 }
 
@@ -205,6 +229,26 @@ impl<'a> ObjCMethodCall for &'a str {
                         -> NSSize {
         args.send_size_args(class(self), selector.as_selector())
     }
+    #[inline]
+    unsafe fn send_event<S:ObjCSelector,A:ObjCMethodEventArgs>(self, selector: S, args: A)
+                        -> NSEventType {
+        args.send_event_args(class(self), selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_string<S:ObjCSelector,A:ObjCMethodStringArgs>(self, selector: S, args: A)
+                        -> *const libc::c_char {
+        args.send_string_args(class(self), selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_ushort<S:ObjCSelector,A:ObjCMethodUShortArgs>(self, selector: S, args: A)
+                        -> libc::c_ushort {
+        args.send_ushort_args(class(self), selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_NSUInteger<S:ObjCSelector,A:ObjCMethodNSUIntegerArgs>(self, selector: S, args: A)
+                        -> NSUInteger {
+        args.send_NSUInteger_args(class(self), selector.as_selector())
+    }
 }
 
 /// A trait that allows C strings to be used as selectors without having to convert them first.
@@ -260,6 +304,21 @@ pub trait ObjCMethodRectArgs {
 pub trait ObjCMethodSizeArgs {
     unsafe fn send_size_args(self, receiver: id, selector: SEL) -> NSSize;
 }
+pub trait ObjCMethodEventArgs {
+    unsafe fn send_event_args(self, receiver: id, selector: SEL) -> NSEventType;
+}
+
+pub trait ObjCMethodStringArgs {
+    unsafe fn send_string_args(self, receiver: id, selector: SEL) -> *const libc::c_char;
+}
+
+pub trait ObjCMethodUShortArgs {
+    unsafe fn send_ushort_args(self, received: id, selector: SEL) -> libc::c_ushort;
+}
+
+pub trait ObjCMethodNSUIntegerArgs {
+    unsafe fn send_NSUInteger_args(self, received: id, selector: SEL) -> NSUInteger;
+}
 
 impl ObjCMethodArgs for () {
     #[inline]
@@ -303,6 +362,37 @@ impl ObjCMethodArgs for (id, id, id, id, id) {
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         let (first, second, third, fourth, fifth) = self;
         msg_send()(receiver, selector, first, second, third, fourth, fifth)
+    }
+}
+
+impl ObjCMethodArgs for (NSRect, id) {
+    #[inline]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        let (first, second) = self;
+        msg_send()(receiver, selector, first, second)
+    }
+}
+
+impl<'a> ObjCMethodArgs for &'a [uint] {
+    #[inline]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        msg_send()(receiver, selector, self)
+    }
+}
+
+impl ObjCMethodArgs for (id, id) {
+    #[inline]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        let (first, second) = self;
+        msg_send()(receiver, selector, first, second)
+    }
+}
+
+impl ObjCMethodArgs for (NSUInteger, id, id, bool) {
+    #[inline]
+    unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
+        let (first, second, third, fourth) = self;
+        msg_send()(receiver, selector, first, second, third, fourth as libc::c_int)
     }
 }
 
@@ -439,6 +529,49 @@ impl ObjCMethodRectArgs for NSRect {
 impl ObjCMethodSizeArgs for () {
     #[inline]
     unsafe fn send_size_args(self, receiver: id, selector: SEL) -> NSSize {
+        msg_send()(receiver, selector)
+    }
+}
+
+impl ObjCMethodPointArgs for () {
+    #[inline]
+    unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint {
+        msg_send()(receiver, selector)
+    }
+}
+
+impl ObjCMethodEventArgs for () {
+    #[inline]
+    unsafe fn send_event_args(self, receiver: id, selector: SEL) -> NSEventType {
+        msg_send()(receiver, selector)
+    }
+}
+
+impl ObjCMethodPointArgs for (NSPoint, id) {
+    #[inline]
+    unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint {
+        let (first, second) = self;
+        msg_send()(receiver, selector, first, second)
+    }
+}
+
+impl ObjCMethodStringArgs for () {
+    #[inline]
+    unsafe fn send_string_args(self, receiver: id, selector: SEL) -> *const libc::c_char {
+        msg_send()(receiver, selector)
+    }
+}
+
+impl ObjCMethodUShortArgs for () {
+    #[inline]
+    unsafe fn send_ushort_args(self, receiver: id, selector: SEL) -> libc::c_ushort {
+        msg_send()(receiver, selector)
+    }
+}
+
+impl ObjCMethodNSUIntegerArgs for () {
+    #[inline]
+    unsafe fn send_NSUInteger_args(self, receiver: id, selector: SEL) -> NSUInteger {
         msg_send()(receiver, selector)
     }
 }

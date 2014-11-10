@@ -7,9 +7,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{ObjCMethodCall, id, SEL, nil, NSInteger, NSUInteger};
+#![allow(non_upper_case_globals)]
 
+use base::{ObjCMethodCall, id, SEL, NSInteger, NSUInteger};
+use libc;
+
+#[cfg(target_word_size = "32")]
 pub type CGFloat = f32;
+#[cfg(target_word_size = "64")]
+pub type CGFloat = f64;
 
 #[repr(C)]
 pub struct NSPoint {
@@ -92,6 +98,50 @@ pub enum NSBackingStoreType {
     NSBackingStoreRetained      = 0,
     NSBackingStoreNonretained   = 1,
     NSBackingStoreBuffered      = 2
+}
+
+bitflags! {
+    flags NSWindowOrderingMode: NSInteger {
+        const NSWindowAbove =  1,
+        const NSWindowBelow = -1,
+        const NSWindowOut   =  0,
+    }
+}
+
+bitflags! {
+    flags NSAlignmentOptions: libc::c_ulonglong {
+        const NSAlignMinXInward         = 1 << 0,
+        const NSAlignMinYInward         = 1 << 1,
+        const NSAlignMaxXInward         = 1 << 2,
+        const NSAlignMaxYInward         = 1 << 3,
+        const NSAlignWidthInward        = 1 << 4,
+        const NSAlignHeightInward       = 1 << 5,
+        const NSAlignMinXOutward        = 1 << 8,
+        const NSAlignMinYOutward        = 1 << 9,
+        const NSAlignMaxXOutward        = 1 << 10,
+        const NSAlignMaxYOutward        = 1 << 11,
+        const NSAlignWidthOutward       = 1 << 12,
+        const NSAlignHeightOutward      = 1 << 13,
+        const NSAlignMinXNearest        = 1 << 16,
+        const NSAlignMinYNearest        = 1 << 17,
+        const NSAlignMaxXNearest        = 1 << 18,
+        const NSAlignMaxYNearest        = 1 << 19,
+        const NSAlignWidthNearest       = 1 << 20,
+        const NSAlignHeightNearest      = 1 << 21,
+        const NSAlignRectFlipped        = 1 << 63,
+        const NSAlignAllEdgesInward     = NSAlignMinXInward.bits
+                                        | NSAlignMaxXInward.bits
+                                        | NSAlignMinYInward.bits
+                                        | NSAlignMaxYInward.bits,
+        const NSAlignAllEdgesOutward    = NSAlignMinXOutward.bits
+                                        | NSAlignMaxXOutward.bits
+                                        | NSAlignMinYOutward.bits
+                                        | NSAlignMaxYOutward.bits,
+        const NSAlignAllEdgesNearest    = NSAlignMinXNearest.bits
+                                        | NSAlignMaxXNearest.bits
+                                        | NSAlignMinYNearest.bits
+                                        | NSAlignMaxYNearest.bits,
+    }
 }
 
 pub trait NSAutoreleasePool {
@@ -198,10 +248,91 @@ pub trait NSWindow {
                                                            style: NSUInteger,
                                                            backing: NSBackingStoreType,
                                                            defer: bool) -> id;
-    unsafe fn cascadeTopLeftFromPoint_(self, top_left: NSPoint) -> NSPoint;
-    unsafe fn setTitle_(self, title: id);
+
+    // Sizing Windows
+    unsafe fn frame(self) -> NSRect;
+    unsafe fn setFrameOrigin_(self, point: NSPoint);
+    unsafe fn setFrameTopLeftPoint_(self, point: NSPoint);
+    // skipped: constrainFrameRect_toScreen_
+    unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint;
+    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool);
+    unsafe fn aspectRatio(self) -> NSSize;
+    unsafe fn setAspectRatio_(self, aspectRatio: NSSize);
+    unsafe fn minSize(self) -> NSSize;
+    unsafe fn setMinSize_(self, minSize: NSSize);
+    unsafe fn maxSize(self) -> NSSize;
+    unsafe fn setMaxSize_(self, maxSize: NSSize);
+    unsafe fn performZoom_(self, sender: id);
+    unsafe fn zoom_(self, sender: id);
+    // skipped: resizeFlags
+    unsafe fn showsResizeIndicator(self) -> bool;
+    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool);
+    unsafe fn resizeIncrements(self) -> NSSize;
+    unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize);
+    unsafe fn preservesContentDuringLiveResize(self) -> bool;
+    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool);
+    unsafe fn inLiveResize(self) -> bool;
+
+    // Managing Window Layers
+    unsafe fn orderOut_(self, sender: id);
+    unsafe fn orderBack_(self, sender: id);
+    unsafe fn orderFront_(self, sender: id);
+    unsafe fn orderFrontRegardless(self);
+    unsafe fn orderFrontWindow_relativeTo_(self, orderingMode: NSWindowOrderingMode, otherWindowNumber: NSInteger);
+    unsafe fn level(self) -> NSInteger;
+    unsafe fn setLevel_(self, level: NSInteger);
+
+    // Managing Key Status
+    unsafe fn canBecomeKeyWindow(self) -> bool;
+    unsafe fn makeKeyWindow(self);
     unsafe fn makeKeyAndOrderFront_(self, sender: id);
+    // skipped: becomeKeyWindow (should not be invoked directly, according to Apple's documentation)
+    // skipped: resignKeyWindow (should not be invoked directly, according to Apple's documentation)
+
+    // Managing Main Status
+    unsafe fn canBecomeMainWindow(self) -> bool;
+    unsafe fn makeMainWindow(self);
+    // skipped: becomeMainWindow (should not be invoked directly, according to Apple's documentation)
+    // skipped: resignMainWindow (should not be invoked directly, according to Apple's documentation)
+
+    // Converting Coordinates
+    unsafe fn backingScaleFactor(self) -> CGFloat;
+    unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect;
+    unsafe fn convertRectFromBacking_(self, rect: NSRect) -> NSRect;
+    unsafe fn convertRectToBacking_(self, rect: NSRect) -> NSRect;
+    unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect;
+    unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect;
+
+    // Accessing Edited Status
+    unsafe fn setDocumentEdited_(self, documentEdited: bool);
+
+    // Managing Titles
+    unsafe fn title(self) -> id;
+    unsafe fn setTitle_(self, title: id);
+    unsafe fn setTitleWithRepresentedFilename_(self, filePath: id);
+    unsafe fn representedFilename(self) -> id;
+    unsafe fn setRepresentedFilename_(self, filePath: id);
+    // skipped: representedURL
+    // skipped: setRepresentedURL_
+
+    // Moving Windows
+    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool);
+    unsafe fn setMovable_(self, movable: bool);
     unsafe fn center(self);
+
+    // Closing Windows
+    unsafe fn performClose_(self, sender: id);
+    unsafe fn close(self);
+    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool);
+
+    // Minimizing Windows
+    unsafe fn performMiniaturize_(self, sender: id);
+    unsafe fn miniaturize_(self, sender: id);
+    unsafe fn deminiaturize_(self, sender: id);
+    // skipped: miniwindowImage
+    // skipped: setMiniwindowImage
+    unsafe fn miniwindowTitle(self) -> id;
+    unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id);
 }
 
 impl NSWindow for id {
@@ -214,20 +345,244 @@ impl NSWindow for id {
                   (rect, style, backing as NSUInteger, defer))
     }
 
-    unsafe fn cascadeTopLeftFromPoint_(self, top_left: NSPoint) -> NSPoint {
-        self.send_point("cascadeTopLeftFromPoint:", top_left)
+    // Sizing Windows
+
+    unsafe fn frame(self) -> NSRect {
+        self.send_rect("frame", ())
+    }
+
+    unsafe fn setFrameOrigin_(self, point: NSPoint) {
+        self.send_void("setFrameOrigin:", point);
+    }
+
+    unsafe fn setFrameTopLeftPoint_(self, point: NSPoint) {
+        self.send_void("setFrameTopLeftPoint:", point);
+    }
+
+    unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint {
+        self.send_point("cascadeTopLeftFromPoint:", topLeft)
+    }
+
+    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool) {
+        self.send_void("setFrame:displayViews:", (windowFrame, display));
+    }
+
+    unsafe fn aspectRatio(self) -> NSSize {
+        self.send_size("aspectRatio", ())
+    }
+
+    unsafe fn setAspectRatio_(self, aspectRatio: NSSize) {
+        self.send_void("setAspectRatio:", aspectRatio);
+    }
+
+    unsafe fn minSize(self) -> NSSize {
+        self.send_size("minSize", ())
+    }
+
+    unsafe fn setMinSize_(self, minSize: NSSize) {
+        self.send_void("setMinSize:", minSize);
+    }
+
+    unsafe fn maxSize(self) -> NSSize {
+        self.send_size("maxSize", ())
+    }
+
+    unsafe fn setMaxSize_(self, maxSize: NSSize) {
+        self.send_void("setMaxSize:", maxSize);
+    }
+
+    unsafe fn performZoom_(self, sender: id) {
+        self.send_void("performZoom:", sender);
+    }
+
+    unsafe fn zoom_(self, sender: id) {
+        self.send_void("zoom:", sender);
+    }
+
+    unsafe fn showsResizeIndicator(self) -> bool {
+        self.send_bool("showsResizeIndicator", ())
+    }
+
+    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool) {
+        self.send_void("setShowsResizeIndicator:", showsResizeIndicator)
+    }
+
+    unsafe fn resizeIncrements(self) -> NSSize {
+        self.send_size("resizeIncrements", ())
+    }
+
+    unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize) {
+        self.send_void("setResizeIncrements:", resizeIncrements);
+    }
+
+    unsafe fn preservesContentDuringLiveResize(self) -> bool {
+        self.send_bool("preservesContentDuringLiveResize", ())
+    }
+
+    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool) {
+        self.send_void("setPreservesContentDuringLiveResize:", preservesContentDuringLiveResize)
+    }
+
+    unsafe fn inLiveResize(self) -> bool {
+        self.send_bool("inLiveResize", ())
+    }
+
+    // Managing Window Layers
+
+    unsafe fn orderOut_(self, sender: id) {
+        self.send_void("orderOut:", sender);
+    }
+
+    unsafe fn orderBack_(self, sender: id) {
+        self.send_void("orderBack:", sender);
+    }
+
+    unsafe fn orderFront_(self, sender: id) {
+        self.send_void("orderFront:", sender);
+    }
+
+    unsafe fn orderFrontRegardless(self) {
+        self.send_void("orderFrontRegardless", ());
+    }
+
+    unsafe fn orderFrontWindow_relativeTo_(self, ordering_mode: NSWindowOrderingMode, other_window_number: NSInteger) {
+        self.send_void("orderWindow:relativeTo:", (ordering_mode, other_window_number));
+    }
+
+    unsafe fn level(self) -> NSInteger {
+        self.send_integer("level", ())
+    }
+
+    unsafe fn setLevel_(self, level: NSInteger) {
+        self.send_void("setLevel:", level);
+    }
+
+    // Managing Key Status
+
+    unsafe fn canBecomeKeyWindow(self) -> bool {
+        self.send_bool("canBecomeKeyWindow", ())
+    }
+
+    unsafe fn makeKeyWindow(self) {
+        self.send_void("makeKeyWindow", ());
+    }
+
+    unsafe fn makeKeyAndOrderFront_(self, sender: id) {
+        self.send_void("makeKeyAndOrderFront:", sender);
+    }
+
+    // Managing Main Status
+
+    unsafe fn canBecomeMainWindow(self) -> bool {
+        self.send_bool("canBecomeMainWindow", ())
+    }
+
+    unsafe fn makeMainWindow(self) {
+        self.send_void("makeMainWindow", ());
+    }
+
+    // Converting Coordinates
+
+    unsafe fn backingScaleFactor(self) -> CGFloat {
+        self.send_float("backingScaleFactor", ())
+    }
+
+    unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect {
+        self.send_rect("backingAlignedRect:options:", (rect, options))
+    }
+
+    unsafe fn convertRectFromBacking_(self, rect: NSRect) -> NSRect {
+        self.send_rect("convertRectFromBacking:", rect)
+    }
+
+    unsafe fn convertRectToBacking_(self, rect: NSRect) -> NSRect {
+        self.send_rect("convertRectToBacking:", rect)
+    }
+
+    unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect {
+        self.send_rect("convertRectToScreen:", rect)
+    }
+
+    unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect {
+        self.send_rect("convertRectFromScreen:", rect)
+    }
+
+    // Accessing Edited Status
+
+    unsafe fn setDocumentEdited_(self, documentEdited: bool) {
+        self.send_void("setDocumentEdited:", documentEdited);
+    }
+
+    // Managing Titles
+
+    unsafe fn title(self) -> id {
+        self.send("title", ())
     }
 
     unsafe fn setTitle_(self, title: id) {
         self.send_void("setTitle:", title);
     }
 
-    unsafe fn makeKeyAndOrderFront_(self, sender: id) {
-        self.send_void("makeKeyAndOrderFront:", sender)
+    unsafe fn setTitleWithRepresentedFilename_(self, filePath: id) {
+        self.send_void("setTitleWithRepresentedFilename:", filePath);
+    }
+
+    unsafe fn representedFilename(self) -> id {
+        self.send("representedFilename", ())
+    }
+
+    unsafe fn setRepresentedFilename_(self, filePath: id) {
+        self.send_void("setRepresentedFilename:", filePath);
+    }
+
+    // Moving Windows
+
+    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool) {
+        self.send_void("setMovableByWindowBackground:", movableByWindowBackground);
+    }
+
+    unsafe fn setMovable_(self, movable: bool) {
+        self.send_void("setMovable:", movable);
     }
 
     unsafe fn center(self) {
-        self.send_void("center", ())
+        self.send_void("center", ());
+    }
+
+    // Closing Windows
+
+    unsafe fn performClose_(self, sender: id) {
+        self.send_void("performClose:", sender);
+    }
+
+    unsafe fn close(self) {
+        self.send_void("close", ());
+    }
+
+    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool) {
+        self.send_void("setReleasedWhenClosed:", releasedWhenClosed);
+    }
+
+    // Minimizing Windows
+
+    unsafe fn performMiniaturize_(self, sender: id) {
+        self.send_void("performMiniaturize:", sender);
+    }
+
+    unsafe fn miniaturize_(self, sender: id) {
+        self.send_void("miniaturize:", sender);
+    }
+
+    unsafe fn deminiaturize_(self, sender: id) {
+        self.send_void("deminiaturize:", sender);
+    }
+
+    unsafe fn miniwindowTitle(self) -> id {
+        self.send("miniwindowTitle", ())
+    }
+
+    unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id) {
+        self.send_void("setMiniwindowTitle:", miniwindowTitle);
     }
 }
 

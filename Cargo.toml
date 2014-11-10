@@ -4,8 +4,6 @@ name = "cocoa"
 version = "0.1.1"
 authors = ["The Servo Project Developers"]
 
-build = "make -f makefile.msgsend"
-
 [lib]
 
 name = "cocoa"

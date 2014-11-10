@@ -289,6 +289,12 @@ pub trait NSWindow {
     // skipped: becomeKeyWindow (should not be invoked directly, according to Apple's documentation)
     // skipped: resignKeyWindow (should not be invoked directly, according to Apple's documentation)
 
+    // Managing Main Status
+    unsafe fn canBecomeMainWindow(self) -> bool;
+    unsafe fn makeMainWindow(self);
+    // skipped: becomeMainWindow (should not be invoked directly, according to Apple's documentation)
+    // skipped: resignMainWindow (should not be invoked directly, according to Apple's documentation)
+
     // Converting Coordinates
     unsafe fn backingScaleFactor(self) -> CGFloat;
     unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect;
@@ -463,6 +469,16 @@ impl NSWindow for id {
 
     unsafe fn makeKeyAndOrderFront_(self, sender: id) {
         self.send_void("makeKeyAndOrderFront:", sender);
+    }
+
+    // Managing Main Status
+
+    unsafe fn canBecomeMainWindow(self) -> bool {
+        self.send_bool("canBecomeMainWindow", ())
+    }
+
+    unsafe fn makeMainWindow(self) {
+        self.send_void("makeMainWindow", ());
     }
 
     // Converting Coordinates

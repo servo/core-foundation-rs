@@ -291,6 +291,9 @@ pub trait NSWindow {
     unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect;
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect;
 
+    // Accessing Edited Status
+    unsafe fn setDocumentEdited_(self, documentEdited: bool);
+
     // Managing Titles
     unsafe fn title(self) -> id;
     unsafe fn setTitle_(self, title: id);
@@ -470,6 +473,12 @@ impl NSWindow for id {
 
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect {
         self.send_rect("convertRectFromScreen:", rect)
+    }
+
+    // Accessing Edited Status
+
+    unsafe fn setDocumentEdited_(self, documentEdited: bool) {
+        self.send_void("setDocumentEdited:", documentEdited);
     }
 
     // Managing Titles

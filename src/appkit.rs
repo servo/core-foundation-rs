@@ -309,6 +309,15 @@ pub trait NSWindow {
     unsafe fn performClose_(self, sender: id);
     unsafe fn close(self);
     unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool);
+
+    // Minimizing Windows
+    unsafe fn performMiniaturize_(self, sender: id);
+    unsafe fn miniaturize_(self, sender: id);
+    unsafe fn deminiaturize_(self, sender: id);
+    // skipped: miniwindowImage
+    // skipped: setMiniwindowImage
+    unsafe fn miniwindowTitle(self) -> id;
+    unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id);
 }
 
 impl NSWindow for id {
@@ -511,6 +520,28 @@ impl NSWindow for id {
 
     unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool) {
         self.send_void("setReleasedWhenClosed:", releasedWhenClosed);
+    }
+
+    // Minimizing Windows
+
+    unsafe fn performMiniaturize_(self, sender: id) {
+        self.send_void("performMiniaturize:", sender);
+    }
+
+    unsafe fn miniaturize_(self, sender: id) {
+        self.send_void("miniaturize:", sender);
+    }
+
+    unsafe fn deminiaturize_(self, sender: id) {
+        self.send_void("deminiaturize:", sender);
+    }
+
+    unsafe fn miniwindowTitle(self) -> id {
+        self.send("miniwindowTitle", ())
+    }
+
+    unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id) {
+        self.send_void("setMiniwindowTitle:", miniwindowTitle);
     }
 }
 

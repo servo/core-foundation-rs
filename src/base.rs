@@ -13,6 +13,8 @@ use appkit::{NSWindowOrderingMode, NSAlignmentOptions};
 use libc::{c_double, c_long, c_ulong, c_char};
 use libc;
 
+use std::mem;
+
 pub type Class = libc::intptr_t;
 pub type IMP = extern "C" fn(id, SEL) -> id;
 pub type Ivar = libc::intptr_t;
@@ -45,9 +47,14 @@ extern {
     pub fn objc_allocateClassPair(superclass: Class, name: *const libc::c_char, extraBytes: libc::size_t)
                                   -> Class;
     pub fn objc_getClass(name: *const libc::c_char) -> id;
-    pub fn objc_msgSend(theReceiver: id, theSelector: SEL) -> id;
+    pub fn objc_msgSend(theReceiver: id, theSelector: SEL, ...) -> id;
     pub fn objc_registerClassPair(cls: Class);
     pub fn sel_registerName(name: *const libc::c_char) -> SEL;
+}
+
+/// Returns an Objective-C message send function that returns a type `T`.
+pub unsafe fn msg_send<T>() -> extern fn(theReceiver: id, theSelector: SEL, ...) -> T {
+    mem::transmute(objc_msgSend)
 }
 
 /// A convenience method to convert the name of a class to the class object itself.
@@ -245,21 +252,21 @@ pub trait ObjCMethodSizeArgs {
 impl ObjCMethodArgs for () {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
-        invoke_msg_id(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodArgs for id {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
-        invoke_msg_id_id(receiver, selector, self)
+        msg_send()(receiver, selector, self)
     }
 }
 
 impl ObjCMethodArgs for NSRect {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
-        invoke_msg_id_NSRect(receiver, selector, &self)
+        msg_send()(receiver, selector, &self)
     }
 }
 
@@ -267,7 +274,7 @@ impl ObjCMethodArgs for (id, SEL, id) {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         let (first, second, third) = self;
-        invoke_msg_id_id_SEL_id(receiver, selector, first, second, third)
+        msg_send()(receiver, selector, first, second, third)
     }
 }
 
@@ -275,7 +282,7 @@ impl ObjCMethodArgs for (NSRect, c_ulong, c_ulong, bool) {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         let (first, second, third, fourth) = self;
-        invoke_msg_id_NSRect_ulong_ulong_bool(receiver, selector, first, second, third, fourth)
+        msg_send()(receiver, selector, first, second, third, fourth as libc::c_int)
     }
 }
 
@@ -283,42 +290,42 @@ impl ObjCMethodArgs for (id, id, id, id, id) {
     #[inline]
     unsafe fn send_args(self, receiver: id, selector: SEL) -> id {
         let (first, second, third, fourth, fifth) = self;
-        invoke_msg_id_id_id_id_id_id(receiver, selector, first, second, third, fourth, fifth)
+        msg_send()(receiver, selector, first, second, third, fourth, fifth)
     }
 }
 
 impl ObjCMethodDoubleArgs for () {
     #[inline]
     unsafe fn send_double_args(self, receiver: id, selector: SEL) -> f64 {
-        invoke_msg_double(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodLongArgs for () {
     #[inline]
     unsafe fn send_long_args(self, receiver: id, selector: SEL) -> c_long {
-        invoke_msg_long(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodVoidArgs for () {
     #[inline]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
-        invoke_msg_void(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodVoidArgs for bool {
     #[inline]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
-        invoke_msg_void_bool(receiver, selector, self)
+        msg_send()(receiver, selector, self as libc::c_int)
     }
 }
 
 impl ObjCMethodVoidArgs for id {
     #[inline]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
-        invoke_msg_void_id(receiver, selector, self)
+        msg_send()(receiver, selector, self)
     }
 }
 
@@ -326,21 +333,21 @@ impl ObjCMethodVoidArgs for id {
 // impl ObjCMethodVoidArgs for NSInteger {
 //     #[inline]
 //     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
-//         invoke_msg_void_NSInteger(receiver, selector, self)
+//         msg_send()(receiver, selector, self);
 //     }
 // }
 
 impl ObjCMethodVoidArgs for NSPoint {
     #[inline]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
-        invoke_msg_void_NSPoint(receiver, selector, self)
+        msg_send()(receiver, selector, self)
     }
 }
 
 impl ObjCMethodVoidArgs for NSSize {
     #[inline]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
-        invoke_msg_void_NSSize(receiver, selector, self)
+        msg_send()(receiver, selector, self)
     }
 }
 
@@ -348,7 +355,7 @@ impl ObjCMethodVoidArgs for (NSRect, bool) {
     #[inline]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
         let (first, second) = self;
-        invoke_msg_void_NSRect_bool(receiver, selector, first, second)
+        msg_send()(receiver, selector, first, second as libc::c_int)
     }
 }
 
@@ -356,49 +363,49 @@ impl ObjCMethodVoidArgs for (NSWindowOrderingMode, NSInteger) {
     #[inline]
     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
         let (first, second) = self;
-        invoke_msg_void_NSWindowOrderingMode_NSInteger(receiver, selector, first, second)
+        msg_send()(receiver, selector, first, second)
     }
 }
 
 impl ObjCMethodBoolArgs for () {
     #[inline]
     unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool {
-        invoke_msg_bool(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodBoolArgs for c_long {
     #[inline]
     unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool {
-        invoke_msg_bool_long(receiver, selector, self)
+        msg_send()(receiver, selector, self)
     }
 }
 
 impl ObjCMethodFloatArgs for () {
     #[inline]
     unsafe fn send_float_args(self, receiver: id, selector: SEL) -> CGFloat {
-        invoke_msg_CGFloat(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodIntegerArgs for () {
     #[inline]
     unsafe fn send_integer_args(self, receiver: id, selector: SEL) -> NSInteger {
-        invoke_msg_NSInteger(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
 impl ObjCMethodPointArgs for NSPoint {
     #[inline]
     unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint {
-        invoke_msg_NSPoint_NSPoint(receiver, selector, self)
+        msg_send()(receiver, selector, self)
     }
 }
 
 impl ObjCMethodRectArgs for () {
     #[inline]
     unsafe fn send_rect_args(self, receiver: id, selector: SEL) -> NSRect {
-        invoke_msg_NSRect(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
@@ -406,21 +413,21 @@ impl ObjCMethodRectArgs for (NSRect, NSAlignmentOptions) {
     #[inline]
     unsafe fn send_rect_args(self, receiver: id, selector: SEL) -> NSRect {
         let (first, second) = self;
-        invoke_msg_NSRect_NSAlignmentOptions(receiver, selector, first, second)
+        msg_send()(receiver, selector, first, second)
     }
 }
 
 impl ObjCMethodRectArgs for NSRect {
     #[inline]
     unsafe fn send_rect_args(self, receiver: id, selector: SEL) -> NSRect {
-        invoke_msg_NSRect_NSRect(receiver, selector, self)
+        msg_send()(receiver, selector, self)
     }
 }
 
 impl ObjCMethodSizeArgs for () {
     #[inline]
     unsafe fn send_size_args(self, receiver: id, selector: SEL) -> NSSize {
-        invoke_msg_NSSize(receiver, selector)
+        msg_send()(receiver, selector)
     }
 }
 
@@ -461,45 +468,3 @@ mod test {
         }
     }
 }
-
-#[link(name = "msgsend", kind = "static")]
-extern {
-    pub fn invoke_msg_double(theReceiver: id, theSelector: SEL) -> f64;
-    pub fn invoke_msg_id(theReceiver: id, theSelector: SEL) -> id;
-    pub fn invoke_msg_id_id(theReceiver: id, theSelector: SEL, a: id) -> id;
-    pub fn invoke_msg_id_NSRect(theReceiver: id, theSelector: SEL, a: &NSRect) -> id;
-    pub fn invoke_msg_id_id_SEL_id(theReceiver: id, theSelector: SEL, a: id, b: SEL, c: id) -> id;
-    pub fn invoke_msg_id_NSRect_ulong_ulong_bool(theReceiver: id,
-                                                 theSelector: SEL,
-                                                 a: NSRect,
-                                                 b: c_ulong,
-                                                 c: c_ulong,
-                                                 d: bool) -> id;
-    pub fn invoke_msg_id_id_id_id_id_id(theReceiver: id,
-                                        theSelector: SEL,
-                                        a: id,
-                                        b: id,
-                                        c: id,
-                                        d: id,
-                                        e: id)
-                                        -> id;
-    pub fn invoke_msg_NSInteger(theReceiver: id, theSelector: SEL) -> NSInteger;
-    pub fn invoke_msg_long(theReceiver: id, theSelector: SEL) -> c_long;
-    pub fn invoke_msg_void(theReceiver: id, theSelector: SEL);
-    pub fn invoke_msg_void_bool(theReceiver: id, theSelector: SEL, a: bool);
-    pub fn invoke_msg_void_id(theReceiver: id, theSelector: SEL, a: id);
-    pub fn invoke_msg_void_NSInteger(theReceiver: id, theSelector: SEL, a: NSInteger);
-    pub fn invoke_msg_void_NSPoint(theReceiver: id, theSelector: SEL, a: NSPoint);
-    pub fn invoke_msg_void_NSSize(theReceiver: id, theSelector: SEL, a: NSSize);
-    pub fn invoke_msg_void_NSRect_bool(theReceiver: id, theSelector: SEL, a: NSRect, b: bool);
-    pub fn invoke_msg_void_NSWindowOrderingMode_NSInteger(theReceiver: id, theSelector: SEL, a: NSWindowOrderingMode, b: NSInteger);
-    pub fn invoke_msg_bool(theReceiver: id, theSelector: SEL) -> bool;
-    pub fn invoke_msg_bool_long(theReceiver: id, theSelector: SEL, a: c_long) -> bool;
-    pub fn invoke_msg_CGFloat(theReceiver: id, theSelector: SEL) -> CGFloat;
-    pub fn invoke_msg_NSPoint_NSPoint(theReceiver: id, theSelector: SEL, a: NSPoint) -> NSPoint;
-    pub fn invoke_msg_NSRect(theReceiver: id, theSelector: SEL) -> NSRect;
-    pub fn invoke_msg_NSRect_NSAlignmentOptions(theReceiver: id, theSelector: SEL, a: NSRect, b: NSAlignmentOptions) -> NSRect;
-    pub fn invoke_msg_NSRect_NSRect(theReceiver: id, theSelector: SEL, a: NSRect) -> NSRect;
-    pub fn invoke_msg_NSSize(theReceiver: id, theSelector: SEL) -> NSSize;
-}
-

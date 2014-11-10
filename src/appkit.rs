@@ -249,7 +249,6 @@ pub trait NSWindow {
                                                            backing: NSBackingStoreType,
                                                            defer: bool) -> id;
     unsafe fn makeKeyAndOrderFront_(self, sender: id);
-    unsafe fn center(self);
 
     // Sizing Windows
     unsafe fn frame(self) -> NSRect;
@@ -300,6 +299,11 @@ pub trait NSWindow {
     unsafe fn setRepresentedFilename_(self, filePath: id);
     // skipped: representedURL
     // skipped: setRepresentedURL_
+
+    // Moving Windows
+    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool);
+    unsafe fn setMovable_(self, movable: bool);
+    unsafe fn center(self);
 }
 
 impl NSWindow for id {
@@ -314,10 +318,6 @@ impl NSWindow for id {
 
     unsafe fn makeKeyAndOrderFront_(self, sender: id) {
         self.send_void("makeKeyAndOrderFront:", sender)
-    }
-
-    unsafe fn center(self) {
-        self.send_void("center", ())
     }
 
     // Sizing Windows
@@ -478,6 +478,20 @@ impl NSWindow for id {
 
     unsafe fn setRepresentedFilename_(self, filePath: id) {
         self.send_void("setRepresentedFilename:", filePath);
+    }
+
+    // Moving Windows
+
+    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool) {
+        self.send_void("setMovableByWindowBackground:", movableByWindowBackground);
+    }
+
+    unsafe fn setMovable_(self, movable: bool) {
+        self.send_void("setMovable:", movable);
+    }
+
+    unsafe fn center(self) {
+        self.send_void("center", ());
     }
 }
 

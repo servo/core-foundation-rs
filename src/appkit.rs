@@ -248,10 +248,33 @@ pub trait NSWindow {
                                                            style: NSUInteger,
                                                            backing: NSBackingStoreType,
                                                            defer: bool) -> id;
-    unsafe fn cascadeTopLeftFromPoint_(self, top_left: NSPoint) -> NSPoint;
     unsafe fn setTitle_(self, title: id);
     unsafe fn makeKeyAndOrderFront_(self, sender: id);
     unsafe fn center(self);
+
+    // Sizing Windows
+    unsafe fn frame(self) -> NSRect;
+    unsafe fn setFrameOrigin_(self, point: NSPoint);
+    unsafe fn setFrameTopLeftPoint_(self, point: NSPoint);
+    // skipped: constrainFrameRect_toScreen_
+    unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint;
+    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool);
+    unsafe fn aspectRatio(self) -> NSSize;
+    unsafe fn setAspectRatio_(self, aspectRatio: NSSize);
+    unsafe fn minSize(self) -> NSSize;
+    unsafe fn setMinSize_(self, minSize: NSSize);
+    unsafe fn maxSize(self) -> NSSize;
+    unsafe fn setMaxSize_(self, maxSize: NSSize);
+    unsafe fn performZoom_(self, sender: id);
+    unsafe fn zoom_(self, sender: id);
+    // skipped: resizeFlags
+    unsafe fn showsResizeIndicator(self) -> bool;
+    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool);
+    unsafe fn resizeIncrements(self) -> NSSize;
+    unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize);
+    unsafe fn preservesContentDuringLiveResize(self) -> bool;
+    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool);
+    unsafe fn inLiveResize(self) -> bool;
 
     // Managing Window Layers
     unsafe fn orderOut_(self, sender: id);
@@ -281,10 +304,6 @@ impl NSWindow for id {
                   (rect, style, backing as NSUInteger, defer))
     }
 
-    unsafe fn cascadeTopLeftFromPoint_(self, top_left: NSPoint) -> NSPoint {
-        self.send_point("cascadeTopLeftFromPoint:", top_left)
-    }
-
     unsafe fn setTitle_(self, title: id) {
         self.send_void("setTitle:", title);
     }
@@ -295,6 +314,88 @@ impl NSWindow for id {
 
     unsafe fn center(self) {
         self.send_void("center", ())
+    }
+
+    // Sizing Windows
+
+    unsafe fn frame(self) -> NSRect {
+        self.send_rect("frame", ())
+    }
+
+    unsafe fn setFrameOrigin_(self, point: NSPoint) {
+        self.send_void("setFrameOrigin:", point);
+    }
+
+    unsafe fn setFrameTopLeftPoint_(self, point: NSPoint) {
+        self.send_void("setFrameTopLeftPoint:", point);
+    }
+
+    unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint {
+        self.send_point("cascadeTopLeftFromPoint:", topLeft)
+    }
+
+    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool) {
+        self.send_void("setFrame:displayViews:", (windowFrame, display));
+    }
+
+    unsafe fn aspectRatio(self) -> NSSize {
+        self.send_size("aspectRatio", ())
+    }
+
+    unsafe fn setAspectRatio_(self, aspectRatio: NSSize) {
+        self.send_void("setAspectRatio:", aspectRatio);
+    }
+
+    unsafe fn minSize(self) -> NSSize {
+        self.send_size("minSize", ())
+    }
+
+    unsafe fn setMinSize_(self, minSize: NSSize) {
+        self.send_void("setMinSize:", minSize);
+    }
+
+    unsafe fn maxSize(self) -> NSSize {
+        self.send_size("maxSize", ())
+    }
+
+    unsafe fn setMaxSize_(self, maxSize: NSSize) {
+        self.send_void("setMaxSize:", maxSize);
+    }
+
+    unsafe fn performZoom_(self, sender: id) {
+        self.send_void("performZoom:", sender);
+    }
+
+    unsafe fn zoom_(self, sender: id) {
+        self.send_void("zoom:", sender);
+    }
+
+    unsafe fn showsResizeIndicator(self) -> bool {
+        self.send_bool("showsResizeIndicator", ())
+    }
+
+    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool) {
+        self.send_void("setShowsResizeIndicator:", showsResizeIndicator)
+    }
+
+    unsafe fn resizeIncrements(self) -> NSSize {
+        self.send_size("resizeIncrements", ())
+    }
+
+    unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize) {
+        self.send_void("setResizeIncrements:", resizeIncrements);
+    }
+
+    unsafe fn preservesContentDuringLiveResize(self) -> bool {
+        self.send_bool("preservesContentDuringLiveResize", ())
+    }
+
+    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool) {
+        self.send_void("setPreservesContentDuringLiveResize:", preservesContentDuringLiveResize)
+    }
+
+    unsafe fn inLiveResize(self) -> bool {
+        self.send_bool("inLiveResize", ())
     }
 
     // Managing Window Layers

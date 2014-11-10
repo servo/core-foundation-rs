@@ -67,12 +67,28 @@ void invoke_msg_void_NSInteger(id theReceiver, SEL theSelector, NSInteger a) {
     objc_msgSend(theReceiver, theSelector, a);
 }
 
+void invoke_msg_void_NSPoint(id theReceiver, SEL theSelector, NSPoint a) {
+    objc_msgSend(theReceiver, theSelector, a);
+}
+
+void invoke_msg_void_NSSize(id theReceiver, SEL theSelector, NSSize a) {
+    objc_msgSend(theReceiver, theSelector, a);
+}
+
+void invoke_msg_void_NSRect_bool(id theReceiver, SEL theSelector, NSRect a, bool b) {
+    objc_msgSend(theReceiver, theSelector, a, b);
+}
+
 void invoke_msg_void_NSWindowOrderingMode_NSInteger(id theReceiver, SEL theSelector, NSWindowOrderingMode a, NSInteger b) {
     objc_msgSend(theReceiver, theSelector, a, b);
 }
 
-char invoke_msg_bool_long(id theReceiver, SEL theSelector, long a) {
-	return objc_msgSend(theReceiver, theSelector, a);
+bool invoke_msg_bool(id theReceiver, SEL theSelector) {
+    return objc_msgSend(theReceiver, theSelector);
+}
+
+bool invoke_msg_bool_long(id theReceiver, SEL theSelector, long a) {
+    return objc_msgSend(theReceiver, theSelector, a);
 }
 
 CGFloat invoke_msg_CGFloat(id theReceiver, SEL theSelector) {
@@ -98,4 +114,9 @@ NSRect invoke_msg_NSRect_NSAlignmentOptions(id theReceiver, SEL theSelector, NSR
 NSRect invoke_msg_NSRect_NSRect(id theReceiver, SEL theSelector, NSRect rect) {
     NSRect (*f)(id self, SEL op, NSRect r) = (void *)objc_msgSend;
     return f(theReceiver, theSelector, rect);
+}
+
+NSSize invoke_msg_NSSize(id theReceiver, SEL theSelector) {
+    NSSize (*f)(id self, SEL op) = (void *)objc_msgSend;
+    return f(theReceiver, theSelector);
 }

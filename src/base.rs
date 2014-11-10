@@ -7,7 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use appkit::{NSRect, NSPoint};
+use appkit::{CGFloat, NSRect, NSPoint};
+use appkit::{NSWindowOrderingMode, NSAlignmentOptions};
 
 use libc::{c_double, c_long, c_ulong, c_char};
 use libc;
@@ -75,8 +76,10 @@ pub trait ObjCMethodCall {
     unsafe fn send_long<S:ObjCSelector,A:ObjCMethodLongArgs>(self, selector: S, args: A) -> c_long;
     unsafe fn send_void<S:ObjCSelector,A:ObjCMethodVoidArgs>(self, selector: S, args: A);
     unsafe fn send_bool<S:ObjCSelector,A:ObjCMethodBoolArgs>(self, selector: S, args: A) -> bool;
+    unsafe fn send_float<S:ObjCSelector,A:ObjCMethodFloatArgs>(self, selector: S, args: A) -> CGFloat;
+    unsafe fn send_integer<S:ObjCSelector,A:ObjCMethodIntegerArgs>(self, selector: S, args: A) -> NSInteger;
     unsafe fn send_point<S:ObjCSelector,A:ObjCMethodPointArgs>(self, selector: S, args: A) -> NSPoint;
-
+    unsafe fn send_rect<S:ObjCSelector,A:ObjCMethodRectArgs>(self, selector: S, args: A) -> NSRect;
 }
 
 impl ObjCMethodCall for id {
@@ -104,9 +107,24 @@ impl ObjCMethodCall for id {
         args.send_bool_args(self, selector.as_selector())
     }
     #[inline]
+    unsafe fn send_float<S:ObjCSelector,A:ObjCMethodFloatArgs>(self, selector: S, args: A)
+                        -> CGFloat {
+        args.send_float_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_integer<S:ObjCSelector,A:ObjCMethodIntegerArgs>(self, selector: S, args: A)
+                        -> NSInteger {
+        args.send_integer_args(self, selector.as_selector())
+    }
+    #[inline]
     unsafe fn send_point<S:ObjCSelector,A:ObjCMethodPointArgs>(self, selector: S, args: A)
                         -> NSPoint {
         args.send_point_args(self, selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_rect<S:ObjCSelector,A:ObjCMethodRectArgs>(self, selector: S, args: A)
+                        -> NSRect {
+        args.send_rect_args(self, selector.as_selector())
     }
 }
 
@@ -138,9 +156,24 @@ impl<'a> ObjCMethodCall for &'a str {
         args.send_bool_args(class(self), selector.as_selector())
     }
     #[inline]
+    unsafe fn send_float<S:ObjCSelector,A:ObjCMethodFloatArgs>(self, selector: S, args: A)
+                        -> CGFloat {
+        args.send_float_args(class(self), selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_integer<S:ObjCSelector,A:ObjCMethodIntegerArgs>(self, selector: S, args: A)
+                        -> NSInteger {
+        args.send_integer_args(class(self), selector.as_selector())
+    }
+    #[inline]
     unsafe fn send_point<S:ObjCSelector,A:ObjCMethodPointArgs>(self, selector: S, args: A)
                         -> NSPoint {
         args.send_point_args(class(self), selector.as_selector())
+    }
+    #[inline]
+    unsafe fn send_rect<S:ObjCSelector,A:ObjCMethodRectArgs>(self, selector: S, args: A)
+                        -> NSRect {
+        args.send_rect_args(class(self), selector.as_selector())
     }
 }
 
@@ -182,8 +215,17 @@ pub trait ObjCMethodVoidArgs {
 pub trait ObjCMethodBoolArgs {
     unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool;
 }
+pub trait ObjCMethodFloatArgs {
+    unsafe fn send_float_args(self, receiver: id, selector: SEL) -> CGFloat;
+}
+pub trait ObjCMethodIntegerArgs {
+    unsafe fn send_integer_args(self, receiver: id, selector: SEL) -> NSInteger;
+}
 pub trait ObjCMethodPointArgs {
     unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint;
+}
+pub trait ObjCMethodRectArgs {
+    unsafe fn send_rect_args(self, receiver: id, selector: SEL) -> NSRect;
 }
 
 impl ObjCMethodArgs for () {
@@ -266,6 +308,22 @@ impl ObjCMethodVoidArgs for id {
     }
 }
 
+// Conflicts with id... should id be a newtype? - bjz
+// impl ObjCMethodVoidArgs for NSInteger {
+//     #[inline]
+//     unsafe fn send_void_args(self, receiver: id, selector: SEL) {
+//         invoke_msg_void_NSInteger(receiver, selector, self)
+//     }
+// }
+
+impl ObjCMethodVoidArgs for (NSWindowOrderingMode, NSInteger) {
+    #[inline]
+    unsafe fn send_void_args(self, receiver: id, selector: SEL) {
+        let (first, second) = self;
+        invoke_msg_void_NSWindowOrderingMode_NSInteger(receiver, selector, first, second)
+    }
+}
+
 impl ObjCMethodBoolArgs for c_long {
     #[inline]
     unsafe fn send_bool_args(self, receiver: id, selector: SEL) -> bool {
@@ -273,10 +331,46 @@ impl ObjCMethodBoolArgs for c_long {
     }
 }
 
+impl ObjCMethodFloatArgs for () {
+    #[inline]
+    unsafe fn send_float_args(self, receiver: id, selector: SEL) -> CGFloat {
+        invoke_msg_CGFloat(receiver, selector)
+    }
+}
+
+impl ObjCMethodIntegerArgs for () {
+    #[inline]
+    unsafe fn send_integer_args(self, receiver: id, selector: SEL) -> NSInteger {
+        invoke_msg_NSInteger(receiver, selector)
+    }
+}
+
 impl ObjCMethodPointArgs for NSPoint {
     #[inline]
     unsafe fn send_point_args(self, receiver: id, selector: SEL) -> NSPoint {
         invoke_msg_NSPoint_NSPoint(receiver, selector, self)
+    }
+}
+
+impl ObjCMethodRectArgs for () {
+    #[inline]
+    unsafe fn send_rect_args(self, receiver: id, selector: SEL) -> NSRect {
+        invoke_msg_NSRect(receiver, selector)
+    }
+}
+
+impl ObjCMethodRectArgs for (NSRect, NSAlignmentOptions) {
+    #[inline]
+    unsafe fn send_rect_args(self, receiver: id, selector: SEL) -> NSRect {
+        let (first, second) = self;
+        invoke_msg_NSRect_NSAlignmentOptions(receiver, selector, first, second)
+    }
+}
+
+impl ObjCMethodRectArgs for NSRect {
+    #[inline]
+    unsafe fn send_rect_args(self, receiver: id, selector: SEL) -> NSRect {
+        invoke_msg_NSRect_NSRect(receiver, selector, self)
     }
 }
 
@@ -339,11 +433,18 @@ extern {
                                         d: id,
                                         e: id)
                                         -> id;
+    pub fn invoke_msg_NSInteger(theReceiver: id, theSelector: SEL) -> NSInteger;
     pub fn invoke_msg_long(theReceiver: id, theSelector: SEL) -> c_long;
     pub fn invoke_msg_void(theReceiver: id, theSelector: SEL);
     pub fn invoke_msg_void_bool(theReceiver: id, theSelector: SEL, a: bool);
     pub fn invoke_msg_void_id(theReceiver: id, theSelector: SEL, a: id);
+    pub fn invoke_msg_void_NSInteger(theReceiver: id, theSelector: SEL, a: NSInteger);
+    pub fn invoke_msg_void_NSWindowOrderingMode_NSInteger(theReceiver: id, theSelector: SEL, a: NSWindowOrderingMode, b: NSInteger);
     pub fn invoke_msg_bool_long(theReceiver: id, theSelector: SEL, a: c_long) -> bool;
+    pub fn invoke_msg_CGFloat(theReceiver: id, theSelector: SEL) -> CGFloat;
     pub fn invoke_msg_NSPoint_NSPoint(theReceiver: id, theSelector: SEL, a: NSPoint) -> NSPoint;
+    pub fn invoke_msg_NSRect(theReceiver: id, theSelector: SEL) -> NSRect;
+    pub fn invoke_msg_NSRect_NSAlignmentOptions(theReceiver: id, theSelector: SEL, a: NSRect, b: NSAlignmentOptions) -> NSRect;
+    pub fn invoke_msg_NSRect_NSRect(theReceiver: id, theSelector: SEL, a: NSRect) -> NSRect;
 }
 

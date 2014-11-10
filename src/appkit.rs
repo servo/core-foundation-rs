@@ -7,9 +7,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{ObjCMethodCall, id, SEL, nil, NSInteger, NSUInteger};
+#![allow(non_upper_case_globals)]
 
+use base::{ObjCMethodCall, id, SEL, nil, NSInteger, NSUInteger};
+use libc;
+
+#[cfg(target_word_size = "32")]
 pub type CGFloat = f32;
+#[cfg(target_word_size = "64")]
+pub type CGFloat = f64;
 
 #[repr(C)]
 pub struct NSPoint {
@@ -92,6 +98,50 @@ pub enum NSBackingStoreType {
     NSBackingStoreRetained      = 0,
     NSBackingStoreNonretained   = 1,
     NSBackingStoreBuffered      = 2
+}
+
+bitflags! {
+    flags NSWindowOrderingMode: NSInteger {
+        const NSWindowAbove =  1,
+        const NSWindowBelow = -1,
+        const NSWindowOut   =  0,
+    }
+}
+
+bitflags! {
+    flags NSAlignmentOptions: libc::c_ulonglong {
+        const NSAlignMinXInward         = 1 << 0,
+        const NSAlignMinYInward         = 1 << 1,
+        const NSAlignMaxXInward         = 1 << 2,
+        const NSAlignMaxYInward         = 1 << 3,
+        const NSAlignWidthInward        = 1 << 4,
+        const NSAlignHeightInward       = 1 << 5,
+        const NSAlignMinXOutward        = 1 << 8,
+        const NSAlignMinYOutward        = 1 << 9,
+        const NSAlignMaxXOutward        = 1 << 10,
+        const NSAlignMaxYOutward        = 1 << 11,
+        const NSAlignWidthOutward       = 1 << 12,
+        const NSAlignHeightOutward      = 1 << 13,
+        const NSAlignMinXNearest        = 1 << 16,
+        const NSAlignMinYNearest        = 1 << 17,
+        const NSAlignMaxXNearest        = 1 << 18,
+        const NSAlignMaxYNearest        = 1 << 19,
+        const NSAlignWidthNearest       = 1 << 20,
+        const NSAlignHeightNearest      = 1 << 21,
+        const NSAlignRectFlipped        = 1 << 63,
+        const NSAlignAllEdgesInward     = NSAlignMinXInward.bits
+                                        | NSAlignMaxXInward.bits
+                                        | NSAlignMinYInward.bits
+                                        | NSAlignMaxYInward.bits,
+        const NSAlignAllEdgesOutward    = NSAlignMinXOutward.bits
+                                        | NSAlignMaxXOutward.bits
+                                        | NSAlignMinYOutward.bits
+                                        | NSAlignMaxYOutward.bits,
+        const NSAlignAllEdgesNearest    = NSAlignMinXNearest.bits
+                                        | NSAlignMaxXNearest.bits
+                                        | NSAlignMinYNearest.bits
+                                        | NSAlignMaxYNearest.bits,
+    }
 }
 
 pub trait NSAutoreleasePool {
@@ -202,6 +252,23 @@ pub trait NSWindow {
     unsafe fn setTitle_(self, title: id);
     unsafe fn makeKeyAndOrderFront_(self, sender: id);
     unsafe fn center(self);
+
+    // Managing Window Layers
+    unsafe fn orderOut_(self, sender: id);
+    unsafe fn orderBack_(self, sender: id);
+    unsafe fn orderFront_(self, sender: id);
+    unsafe fn orderFrontRegardless(self);
+    unsafe fn orderFrontWindow_relativeTo_(self, orderingMode: NSWindowOrderingMode, otherWindowNumber: NSInteger);
+    unsafe fn level(self) -> NSInteger;
+    unsafe fn setLevel_(self, level: NSInteger);
+
+    // Converting Coordinates
+    unsafe fn backingScaleFactor(self) -> CGFloat;
+    unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect;
+    unsafe fn convertRectFromBacking_(self, rect: NSRect) -> NSRect;
+    unsafe fn convertRectToBacking_(self, rect: NSRect) -> NSRect;
+    unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect;
+    unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect;
 }
 
 impl NSWindow for id {
@@ -228,6 +295,62 @@ impl NSWindow for id {
 
     unsafe fn center(self) {
         self.send_void("center", ())
+    }
+
+    // Managing Window Layers
+
+    unsafe fn orderOut_(self, sender: id) {
+        self.send_void("orderOut:", sender);
+    }
+
+    unsafe fn orderBack_(self, sender: id) {
+        self.send_void("orderBack:", sender);
+    }
+
+    unsafe fn orderFront_(self, sender: id) {
+        self.send_void("orderFront:", sender);
+    }
+
+    unsafe fn orderFrontRegardless(self) {
+        self.send_void("orderFrontRegardless", ());
+    }
+
+    unsafe fn orderFrontWindow_relativeTo_(self, ordering_mode: NSWindowOrderingMode, other_window_number: NSInteger) {
+        self.send_void("orderWindow:relativeTo:", (ordering_mode, other_window_number));
+    }
+
+    unsafe fn level(self) -> NSInteger {
+        self.send_integer("level", ())
+    }
+
+    unsafe fn setLevel_(self, level: NSInteger) {
+        self.send_void("setLevel:", level);
+    }
+
+    // Converting Coordinates
+
+    unsafe fn backingScaleFactor(self) -> CGFloat {
+        self.send_float("backingScaleFactor", ())
+    }
+
+    unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect {
+        self.send_rect("backingAlignedRect:options:", (rect, options))
+    }
+
+    unsafe fn convertRectFromBacking_(self, rect: NSRect) -> NSRect {
+        self.send_rect("convertRectFromBacking:", rect)
+    }
+
+    unsafe fn convertRectToBacking_(self, rect: NSRect) -> NSRect {
+        self.send_rect("convertRectToBacking:", rect)
+    }
+
+    unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect {
+        self.send_rect("convertRectToScreen:", rect)
+    }
+
+    unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect {
+        self.send_rect("convertRectFromScreen:", rect)
     }
 }
 

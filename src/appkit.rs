@@ -226,16 +226,6 @@ pub enum NSEventType {
 }
 
 #[repr(u64)]
-pub enum NSEventSubtype {
-    NSWindowExposedEventType            = 0,
-    NSApplicationActivatedEventType     = 1,
-    NSApplicationDeactivatedEventType   = 2,
-    NSWindowMovedEventType              = 4,
-    NSScreenChangedEventType            = 8,
-    NSAWTEventType                      = 16,
-}
-
-#[repr(u64)]
 pub enum NSEventMask {
     NSLeftMouseDownMask         = 1 << NSLeftMouseDown as uint,
     NSLeftMouseUpMask           = 1 << NSLeftMouseUp as uint,
@@ -904,7 +894,6 @@ impl NSDate for id {
 
 pub trait NSEvent {
     unsafe fn get_type(self) -> NSEventType;
-    unsafe fn get_subtype(self) -> NSEventSubtype;
     unsafe fn locationInWindow(self) -> NSPoint;
     unsafe fn characters(self) -> id;
     unsafe fn charactersIgnoringModifiers(self) -> id;
@@ -915,10 +904,6 @@ pub trait NSEvent {
 impl NSEvent for id {
     unsafe fn get_type(self) -> NSEventType {
         self.send_event("type", ())
-    }
-
-    unsafe fn get_subtype(self) -> NSEventSubtype {
-        self.send_eventSubtype("subtype", ())
     }
 
     unsafe fn locationInWindow(self) -> NSPoint {

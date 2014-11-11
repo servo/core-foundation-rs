@@ -9,7 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, msg_send, class, selector};
+use base::{id, msg_send, msg_send_stret, class, selector};
 use base::{SEL, NSInteger, NSUInteger};
 use libc;
 
@@ -932,13 +932,13 @@ impl NSEvent for id {
 
 pub trait NSScreen {
     unsafe fn mainScreen(_: Self) -> id {
-        "NSScreen".send("mainScreen", ())
+        msg_send()(class("NSScreen"), selector("mainScreen"))
     }
     unsafe fn frame(self) -> NSRect;
 }
 
 impl NSScreen for id {
     unsafe fn frame(self) -> NSRect {
-        self.send_rect("frame", ())
+        msg_send_stret()(self, selector("frame"))
     }
 }

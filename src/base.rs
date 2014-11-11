@@ -46,6 +46,7 @@ extern {
                                   -> Class;
     pub fn objc_getClass(name: *const libc::c_char) -> id;
     pub fn objc_msgSend(theReceiver: id, theSelector: SEL, ...) -> id;
+    pub fn objc_msgSend_stret(theReceiver: id, theSelector: SEL, ...);
     pub fn objc_registerClassPair(cls: Class);
     pub fn sel_registerName(name: *const libc::c_char) -> SEL;
 }
@@ -53,6 +54,10 @@ extern {
 /// Returns an Objective-C message send function that returns a type `T`.
 pub unsafe fn msg_send<T>() -> extern fn(theReceiver: id, theSelector: SEL, ...) -> T {
     mem::transmute(objc_msgSend)
+}
+
+pub unsafe fn msg_send_stret<T>() -> extern fn(theReceiver: id, theSelector: SEL, ...) -> T {
+    mem::transmute(objc_msgSend_stret)
 }
 
 /// A convenience method to convert the name of a class to the class object itself.

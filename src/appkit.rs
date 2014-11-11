@@ -9,7 +9,8 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{ObjCMethodCall, id, SEL, NSInteger, NSUInteger};
+use base::{id, msg_send, class, selector};
+use base::{SEL, NSInteger, NSUInteger};
 use libc;
 
 #[cfg(target_word_size = "32")]
@@ -74,7 +75,7 @@ extern {
 }
 
 pub unsafe fn NSApp() -> id {
-    "NSApplication".send("sharedApplication", ())
+    msg_send()(class("NSApplication"), selector("sharedApplication"))
 }
 
 #[repr(i64)]
@@ -273,7 +274,7 @@ pub enum NSEventModifierFlags {
 
 pub trait NSAutoreleasePool {
     unsafe fn new(_: Self) -> id {
-        "NSAutoreleasePool".send("new", ())
+        msg_send()(class("NSAutoreleasePool"), selector("new"))
     }
 
     unsafe fn autorelease(self) -> Self;
@@ -281,13 +282,13 @@ pub trait NSAutoreleasePool {
 
 impl NSAutoreleasePool for id {
     unsafe fn autorelease(self) -> id {
-        self.send("autorelease", ())
+        msg_send()(self, selector("autorelease"))
     }
 }
 
 pub trait NSProcessInfo {
     unsafe fn processInfo(_: Self) -> id {
-        "NSProcessInfo".send("processInfo", ())
+        msg_send()(class("NSProcessInfo"), selector("processInfo"))
     }
 
     unsafe fn processName(self) -> id;
@@ -295,13 +296,13 @@ pub trait NSProcessInfo {
 
 impl NSProcessInfo for id {
     unsafe fn processName(self) -> id {
-        self.send("processName", ())
+        msg_send()(self, selector("processName"))
     }
 }
 
 pub trait NSApplication {
     unsafe fn sharedApplication(_: Self) -> id {
-        "NSApplication".send("sharedApplication", ())
+        msg_send()(class("NSApplication"), selector("sharedApplication"))
     }
 
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> bool;
@@ -319,23 +320,23 @@ pub trait NSApplication {
 
 impl NSApplication for id {
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> bool {
-        self.send_bool("setActivationPolicy:", policy as NSInteger)
+        msg_send()(self, selector("setActivationPolicy:"), policy as NSInteger)
     }
 
     unsafe fn setMainMenu_(self, menu: id) {
-        self.send_void("setMainMenu:", menu)
+        msg_send()(self, selector("setMainMenu:"), menu)
     }
 
     unsafe fn activateIgnoringOtherApps_(self, ignore: bool) {
-        self.send_void("activateIgnoringOtherApps:", ignore);
+        msg_send()(self, selector("activateIgnoringOtherApps:"), ignore as libc::c_int)
     }
 
     unsafe fn run(self) {
-        self.send_void("run", ());
+        msg_send()(self, selector("run"))
     }
 
     unsafe fn finishLaunching(self) {
-        self.send_void("finishLaunching", ())
+        msg_send()(self, selector("finishLaunching"))
     }
 
     unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue_(self,
@@ -343,18 +344,18 @@ impl NSApplication for id {
                                                               expiration: id,
                                                               in_mode: id,
                                                               dequeue: bool) -> id {
-        self.send("nextEventMatchingMask:untilDate:inMode:dequeue:",
-                  (mask, expiration, in_mode, dequeue))
+        msg_send()(self, selector("nextEventMatchingMask:untilDate:inMode:dequeue:"),
+                   mask, expiration, in_mode, dequeue as libc::c_int)
     }
 
     unsafe fn sendEvent_(self, an_event: id) {
-        self.send_void("sendEvent:", an_event)
+        msg_send()(self, selector("sendEvent:"), an_event)
     }
 }
 
 pub trait NSMenu {
     unsafe fn new(_: Self) -> id {
-        "NSMenu".send("new", ())
+        msg_send()(class("NSMenu"), selector("new"))
     }
 
     unsafe fn addItem_(self, menu_item: id);
@@ -362,17 +363,17 @@ pub trait NSMenu {
 
 impl NSMenu for id {
     unsafe fn addItem_(self, menu_item: id) {
-        self.send_void("addItem:", menu_item)
+        msg_send()(self, selector("addItem:"), menu_item)
     }
 }
 
 pub trait NSMenuItem {
     unsafe fn alloc(_: Self) -> id {
-        "NSMenuItem".send("alloc", ())
+        msg_send()(class("NSMenuItem"), selector("alloc"))
     }
 
     unsafe fn new(_: Self) -> id {
-        "NSMenuItem".send("new", ())
+        msg_send()(class("NSMenuItem"), selector("new"))
     }
 
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id;
@@ -381,17 +382,17 @@ pub trait NSMenuItem {
 
 impl NSMenuItem for id {
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id {
-        self.send("initWithTitle:action:keyEquivalent:", (title, action, key))
+        msg_send()(self, selector("initWithTitle:action:keyEquivalent:"), title, action, key)
     }
 
     unsafe fn setSubmenu_(self, submenu: id) {
-        self.send_void("setSubmenu:", submenu)
+        msg_send()(self, selector("setSubmenu:"), submenu)
     }
 }
 
 pub trait NSWindow {
     unsafe fn alloc(_: Self) -> id {
-        "NSWindow".send("alloc", ())
+        msg_send()(class("NSWindow"), selector("alloc"))
     }
 
     unsafe fn initWithContentRect_styleMask_backing_defer_(self,
@@ -496,266 +497,266 @@ impl NSWindow for id {
                                                            style: NSUInteger,
                                                            backing: NSBackingStoreType,
                                                            defer: bool) -> id {
-        self.send("initWithContentRect:styleMask:backing:defer:",
-                  (rect, style, backing as NSUInteger, defer))
+        msg_send()(self, selector("initWithContentRect:styleMask:backing:defer:"),
+                   rect, style, backing as NSUInteger, defer as libc::c_int)
     }
 
     // Sizing Windows
 
     unsafe fn frame(self) -> NSRect {
-        self.send_rect("frame", ())
+        msg_send()(self, selector("frame"))
     }
 
     unsafe fn setFrameOrigin_(self, point: NSPoint) {
-        self.send_void("setFrameOrigin:", point);
+        msg_send()(self, selector("setFrameOrigin:"), point)
     }
 
     unsafe fn setFrameTopLeftPoint_(self, point: NSPoint) {
-        self.send_void("setFrameTopLeftPoint:", point);
+        msg_send()(self, selector("setFrameTopLeftPoint:"), point)
     }
 
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint {
-        self.send_point("cascadeTopLeftFromPoint:", topLeft)
+        msg_send()(self, selector("cascadeTopLeftFromPoint:"), topLeft)
     }
 
     unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool) {
-        self.send_void("setFrame:displayViews:", (windowFrame, display));
+        msg_send()(self, selector("setFrame:displayViews:"), windowFrame, display as libc::c_int)
     }
 
     unsafe fn aspectRatio(self) -> NSSize {
-        self.send_size("aspectRatio", ())
+        msg_send()(self, selector("aspectRatio"))
     }
 
     unsafe fn setAspectRatio_(self, aspectRatio: NSSize) {
-        self.send_void("setAspectRatio:", aspectRatio);
+        msg_send()(self, selector("setAspectRatio:"), aspectRatio)
     }
 
     unsafe fn minSize(self) -> NSSize {
-        self.send_size("minSize", ())
+        msg_send()(self, selector("minSize"))
     }
 
     unsafe fn setMinSize_(self, minSize: NSSize) {
-        self.send_void("setMinSize:", minSize);
+        msg_send()(self, selector("setMinSize:"), minSize)
     }
 
     unsafe fn maxSize(self) -> NSSize {
-        self.send_size("maxSize", ())
+        msg_send()(self, selector("maxSize"))
     }
 
     unsafe fn setMaxSize_(self, maxSize: NSSize) {
-        self.send_void("setMaxSize:", maxSize);
+        msg_send()(self, selector("setMaxSize:"), maxSize)
     }
 
     unsafe fn performZoom_(self, sender: id) {
-        self.send_void("performZoom:", sender);
+        msg_send()(self, selector("performZoom:"), sender)
     }
 
     unsafe fn zoom_(self, sender: id) {
-        self.send_void("zoom:", sender);
+        msg_send()(self, selector("zoom:"), sender)
     }
 
     unsafe fn showsResizeIndicator(self) -> bool {
-        self.send_bool("showsResizeIndicator", ())
+        msg_send()(self, selector("showsResizeIndicator"))
     }
 
     unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool) {
-        self.send_void("setShowsResizeIndicator:", showsResizeIndicator)
+        msg_send()(self, selector("setShowsResizeIndicator:"), showsResizeIndicator as libc::c_int)
     }
 
     unsafe fn resizeIncrements(self) -> NSSize {
-        self.send_size("resizeIncrements", ())
+        msg_send()(self, selector("resizeIncrements"))
     }
 
     unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize) {
-        self.send_void("setResizeIncrements:", resizeIncrements);
+        msg_send()(self, selector("setResizeIncrements:"), resizeIncrements)
     }
 
     unsafe fn preservesContentDuringLiveResize(self) -> bool {
-        self.send_bool("preservesContentDuringLiveResize", ())
+        msg_send()(self, selector("preservesContentDuringLiveResize"))
     }
 
     unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool) {
-        self.send_void("setPreservesContentDuringLiveResize:", preservesContentDuringLiveResize)
+        msg_send()(self, selector("setPreservesContentDuringLiveResize:"), preservesContentDuringLiveResize as libc::c_int)
     }
 
     unsafe fn inLiveResize(self) -> bool {
-        self.send_bool("inLiveResize", ())
+        msg_send()(self, selector("inLiveResize"))
     }
 
     // Managing Window Layers
 
     unsafe fn orderOut_(self, sender: id) {
-        self.send_void("orderOut:", sender);
+        msg_send()(self, selector("orderOut:"), sender)
     }
 
     unsafe fn orderBack_(self, sender: id) {
-        self.send_void("orderBack:", sender);
+        msg_send()(self, selector("orderBack:"), sender)
     }
 
     unsafe fn orderFront_(self, sender: id) {
-        self.send_void("orderFront:", sender);
+        msg_send()(self, selector("orderFront:"), sender)
     }
 
     unsafe fn orderFrontRegardless(self) {
-        self.send_void("orderFrontRegardless", ());
+        msg_send()(self, selector("orderFrontRegardless"))
     }
 
     unsafe fn orderFrontWindow_relativeTo_(self, ordering_mode: NSWindowOrderingMode, other_window_number: NSInteger) {
-        self.send_void("orderWindow:relativeTo:", (ordering_mode, other_window_number));
+        msg_send()(self, selector("orderWindow:relativeTo:"), ordering_mode, other_window_number)
     }
 
     unsafe fn level(self) -> NSInteger {
-        self.send_integer("level", ())
+        msg_send()(self, selector("level"))
     }
 
     unsafe fn setLevel_(self, level: NSInteger) {
-        self.send_void("setLevel:", level);
+        msg_send()(self, selector("setLevel:"), level)
     }
 
     // Managing Key Status
 
     unsafe fn canBecomeKeyWindow(self) -> bool {
-        self.send_bool("canBecomeKeyWindow", ())
+        msg_send()(self, selector("canBecomeKeyWindow"))
     }
 
     unsafe fn makeKeyWindow(self) {
-        self.send_void("makeKeyWindow", ());
+        msg_send()(self, selector("makeKeyWindow"))
     }
 
     unsafe fn makeKeyAndOrderFront_(self, sender: id) {
-        self.send_void("makeKeyAndOrderFront:", sender);
+        msg_send()(self, selector("makeKeyAndOrderFront:"), sender)
     }
 
     // Managing Main Status
 
     unsafe fn canBecomeMainWindow(self) -> bool {
-        self.send_bool("canBecomeMainWindow", ())
+        msg_send()(self, selector("canBecomeMainWindow"))
     }
 
     unsafe fn makeMainWindow(self) {
-        self.send_void("makeMainWindow", ());
+        msg_send()(self, selector("makeMainWindow"))
     }
 
     // Converting Coordinates
 
     unsafe fn backingScaleFactor(self) -> CGFloat {
-        self.send_float("backingScaleFactor", ())
+        msg_send()(self, selector("backingScaleFactor"))
     }
 
     unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect {
-        self.send_rect("backingAlignedRect:options:", (rect, options))
+        msg_send()(self, selector("backingAlignedRect:options:"), rect, options)
     }
 
     unsafe fn convertRectFromBacking_(self, rect: NSRect) -> NSRect {
-        self.send_rect("convertRectFromBacking:", rect)
+        msg_send()(self, selector("convertRectFromBacking:"), rect)
     }
 
     unsafe fn convertRectToBacking_(self, rect: NSRect) -> NSRect {
-        self.send_rect("convertRectToBacking:", rect)
+        msg_send()(self, selector("convertRectToBacking:"), rect)
     }
 
     unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect {
-        self.send_rect("convertRectToScreen:", rect)
+        msg_send()(self, selector("convertRectToScreen:"), rect)
     }
 
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect {
-        self.send_rect("convertRectFromScreen:", rect)
+        msg_send()(self, selector("convertRectFromScreen:"), rect)
     }
 
     // Accessing Edited Status
 
     unsafe fn setDocumentEdited_(self, documentEdited: bool) {
-        self.send_void("setDocumentEdited:", documentEdited);
+        msg_send()(self, selector("setDocumentEdited:"), documentEdited as libc::c_int)
     }
 
     // Managing Titles
 
     unsafe fn title(self) -> id {
-        self.send("title", ())
+        msg_send()(self, selector("title"))
     }
 
     unsafe fn setTitle_(self, title: id) {
-        self.send_void("setTitle:", title);
+        msg_send()(self, selector("setTitle:"), title)
     }
 
     unsafe fn setTitleWithRepresentedFilename_(self, filePath: id) {
-        self.send_void("setTitleWithRepresentedFilename:", filePath);
+        msg_send()(self, selector("setTitleWithRepresentedFilename:"), filePath)
     }
 
     unsafe fn representedFilename(self) -> id {
-        self.send("representedFilename", ())
+        msg_send()(self, selector("representedFilename"))
     }
 
     unsafe fn setRepresentedFilename_(self, filePath: id) {
-        self.send_void("setRepresentedFilename:", filePath);
+        msg_send()(self, selector("setRepresentedFilename:"), filePath)
     }
 
     // Moving Windows
 
     unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool) {
-        self.send_void("setMovableByWindowBackground:", movableByWindowBackground);
+        msg_send()(self, selector("setMovableByWindowBackground:"), movableByWindowBackground as libc::c_int)
     }
 
     unsafe fn setMovable_(self, movable: bool) {
-        self.send_void("setMovable:", movable);
+        msg_send()(self, selector("setMovable:"), movable as libc::c_int)
     }
 
     unsafe fn center(self) {
-        self.send_void("center", ());
+        msg_send()(self, selector("center"))
     }
 
     // Closing Windows
 
     unsafe fn performClose_(self, sender: id) {
-        self.send_void("performClose:", sender);
+        msg_send()(self, selector("performClose:"), sender)
     }
 
     unsafe fn close(self) {
-        self.send_void("close", ());
+        msg_send()(self, selector("close"))
     }
 
     unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool) {
-        self.send_void("setReleasedWhenClosed:", releasedWhenClosed);
+        msg_send()(self, selector("setReleasedWhenClosed:"), releasedWhenClosed as libc::c_int)
     }
 
     // Minimizing Windows
 
     unsafe fn performMiniaturize_(self, sender: id) {
-        self.send_void("performMiniaturize:", sender);
+        msg_send()(self, selector("performMiniaturize:"), sender)
     }
 
     unsafe fn miniaturize_(self, sender: id) {
-        self.send_void("miniaturize:", sender);
+        msg_send()(self, selector("miniaturize:"), sender)
     }
 
     unsafe fn deminiaturize_(self, sender: id) {
-        self.send_void("deminiaturize:", sender);
+        msg_send()(self, selector("deminiaturize:"), sender)
     }
 
     unsafe fn miniwindowTitle(self) -> id {
-        self.send("miniwindowTitle", ())
+        msg_send()(self, selector("miniwindowTitle"))
     }
 
     unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id) {
-        self.send_void("setMiniwindowTitle:", miniwindowTitle);
+        msg_send()(self, selector("setMiniwindowTitle:"), miniwindowTitle)
     }
 
     unsafe fn setContentView_(self, view: id) {
-        self.send_void("setContentView:", view)
+        msg_send()(self, selector("setContentView:"), view)
     }
 
     unsafe fn setAcceptsMouseMovedEvents_(self, accept: bool) {
-        self.send_void("setAcceptsMouseMovedEvents:", accept);
+        msg_send()(self, selector("setAcceptsMouseMovedEvents:"), accept as libc::c_int)
     }
 
     unsafe fn isVisible(self) -> bool {
-        self.send_bool("isVisible", ())
+        msg_send()(self, selector("isVisible"))
     }
 }
 
 pub trait NSString {
     unsafe fn alloc(_: Self) -> id {
-        "NSString".send("alloc", ())
+        msg_send()(class("NSString"), selector("alloc"))
     }
 
     unsafe fn initWithUTF8String_(self, c_string: *const u8) -> id;
@@ -766,11 +767,11 @@ pub trait NSString {
 
 impl NSString for id {
     unsafe fn initWithUTF8String_(self, c_string: *const u8) -> id {
-        self.send("initWithUTF8String:", c_string as id)
+        msg_send()(self, selector("initWithUTF8String:"), c_string as id)
     }
 
     unsafe fn stringByAppendingString_(self, other: id) -> id {
-        self.send("stringByAppendingString:", other)
+        msg_send()(self, selector("stringByAppendingString:"), other)
     }
 
     unsafe fn init_str(self, string: &str) -> id {
@@ -778,13 +779,13 @@ impl NSString for id {
     }
 
     unsafe fn UTF8String(self) -> *const libc::c_char {
-        self.send_string("UTF8String", ())
+        msg_send()(self, selector("UTF8String"))
     }
 }
 
 pub trait NSView {
     unsafe fn alloc(_: Self) -> id {
-        "NSView".send("alloc", ())
+        msg_send()(class("NSView"), selector("alloc"))
     }
 
     unsafe fn init(self) -> id;
@@ -796,29 +797,29 @@ pub trait NSView {
 
 impl NSView for id {
     unsafe fn init(self) -> id {
-        self.send("init", ())
+        msg_send()(self, selector("init"))
     }
 
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
-        self.send("initWithFrame:", frameRect)
+        msg_send()(self, selector("initWithFrame:"), frameRect)
     }
 
     unsafe fn display_(self) {
-        self.send_void("display", ())
+        msg_send()(self, selector("display"))
     }
 
     unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: bool) {
-        self.send_void("setWantsBestResolutionOpenGLSurface:", flag)
+        msg_send()(self, selector("setWantsBestResolutionOpenGLSurface:"), flag as libc::c_int)
     }
 
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint {
-        self.send_point("convertPoint:fromView:", (point, view))
+        msg_send()(self, selector("convertPoint:fromView:"), point, view)
     }
 }
 
 pub trait NSOpenGLView {
     unsafe fn alloc(_: Self) -> id {
-        "NSOpenGLView".send("alloc", ())
+        msg_send()(class("NSOpenGLView"), selector("alloc"))
     }
 
     unsafe fn initWithFrame_pixelFormat_(self, frameRect: NSRect, format: id) -> id;
@@ -827,17 +828,17 @@ pub trait NSOpenGLView {
 
 impl NSOpenGLView for id {
     unsafe fn initWithFrame_pixelFormat_(self,  frameRect: NSRect, format: id) -> id {
-        self.send("initWithFrame:pixelFormat:", (frameRect, format))
+        msg_send()(self, selector("initWithFrame:pixelFormat:"), frameRect, format)
     }
 
     unsafe fn display_(self) {
-        self.send_void("display", ())
+        msg_send()(self, selector("display"))
     }
 }
 
 pub trait NSOpenGLPixelFormat {
     unsafe fn alloc(_: Self) -> id {
-        "NSOpenGLPixelFormat".send("alloc", ())
+        msg_send()(class("NSOpenGLPixelFormat"), selector("alloc"))
     }
 
     unsafe fn initWithAttributes_(self, attributes: &[uint]) -> id;
@@ -845,13 +846,13 @@ pub trait NSOpenGLPixelFormat {
 
 impl NSOpenGLPixelFormat for id {
     unsafe fn initWithAttributes_(self, attributes: &[uint]) -> id {
-        self.send("initWithAttributes:", attributes)
+        msg_send()(self, selector("initWithAttributes:"), attributes)
     }
 }
 
 pub trait NSOpenGLContext {
     unsafe fn alloc(_: Self) -> id {
-        "NSOpenGLContext".send("alloc", ())
+        msg_send()(class("NSOpenGLContext"), selector("alloc"))
     }
 
     unsafe fn initWithFormat_shareContext_(self, format: id, shareContext: id) -> id;
@@ -862,29 +863,29 @@ pub trait NSOpenGLContext {
 
 impl NSOpenGLContext for id {
     unsafe fn initWithFormat_shareContext_(self, format: id, shareContext: id) -> id {
-        self.send("initWithFormat:shareContext:", (format, shareContext))
+        msg_send()(self, selector("initWithFormat:shareContext:"), format, shareContext)
     }
 
     unsafe fn setView_(self, view: id) {
-        self.send_void("setView:", view)
+        msg_send()(self, selector("setView:"), view)
     }
 
     unsafe fn makeCurrentContext(self) {
-        self.send_void("makeCurrentContext", ())
+        msg_send()(self, selector("makeCurrentContext"))
     }
 
     unsafe fn flushBuffer(self) {
-        self.send_void("flushBuffer", ())
+        msg_send()(self, selector("flushBuffer"))
     }
 }
 
 pub trait NSDate {
     unsafe fn distantPast(_: Self) -> id {
-        "NSDate".send("distantPast", ())
+        msg_send()(class("NSDate"), selector("distantPast"))
     }
 
     unsafe fn distantFuture(_: Self) -> id {
-        "NSDate".send("distantFuture", ())
+        msg_send()(class("NSDate"), selector("distantFuture"))
     }
 }
 
@@ -903,26 +904,26 @@ pub trait NSEvent {
 
 impl NSEvent for id {
     unsafe fn get_type(self) -> NSEventType {
-        self.send_event("type", ())
+        msg_send()(self, selector("type"))
     }
 
     unsafe fn locationInWindow(self) -> NSPoint {
-        self.send_point("locationInWindow", ())
+        msg_send()(self, selector("locationInWindow"))
     }
 
     unsafe fn characters(self) -> id {
-        self.send("characters", ())
+        msg_send()(self, selector("characters"))
     }
 
     unsafe fn charactersIgnoringModifiers(self) -> id {
-        self.send("charactersIgnoringModifiers", ())
+        msg_send()(self, selector("charactersIgnoringModifiers"))
     }
 
     unsafe fn keycode(self) -> libc::c_ushort {
-        self.send_ushort("keyCode", ())
+        msg_send()(self, selector("keyCode"))
     }
 
     unsafe fn modifierFlags(self) -> NSUInteger {
-        self.send_NSUInteger("modifierFlags", ())
+        msg_send()(self, selector("modifierFlags"))
     }
 }

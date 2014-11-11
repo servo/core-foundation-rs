@@ -1,6 +1,6 @@
 extern crate cocoa;
 
-use cocoa::base::{NSUInteger, nil, ObjCSelector};
+use cocoa::base::{NSUInteger, selector, nil};
 use cocoa::appkit::{NSApp, NSRect, NSPoint, NSSize,
 					NSAutoreleasePool, NSProcessInfo,
 					NSApplication, NSApplicationActivationPolicyRegular,
@@ -27,7 +27,7 @@ fn main() {
 		let quit_title = quit_prefix.stringByAppendingString_(
 			NSProcessInfo::processInfo(nil).processName()
 		);
-		let quit_action = "terminate:".as_selector();
+		let quit_action = selector("terminate:");
 		let quit_key = NSString::alloc(nil).init_str("q\0");
 		let quit_item = NSMenuItem::alloc(nil).initWithTitle_action_keyEquivalent_(
 			quit_title,

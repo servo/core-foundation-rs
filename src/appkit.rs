@@ -272,6 +272,8 @@ pub enum NSEventModifierFlags {
     NSDeviceIndependentModifierFlagsMask    = 0xffff0000,
 }
 
+pub static NSMainMenuWindowLevel: libc::int32_t = 24;
+
 pub trait NSAutoreleasePool {
     unsafe fn new(_: Self) -> id {
         msg_send()(class("NSAutoreleasePool"), selector("new"))

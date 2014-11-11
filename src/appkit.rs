@@ -927,3 +927,16 @@ impl NSEvent for id {
         msg_send()(self, selector("modifierFlags"))
     }
 }
+
+pub trait NSScreen {
+    unsafe fn mainScreen(_: Self) -> id {
+        "NSScreen".send("mainScreen", ())
+    }
+    unsafe fn frame(self) -> NSRect;
+}
+
+impl NSScreen for id {
+    unsafe fn frame(self) -> NSRect {
+        self.send_rect("frame", ())
+    }
+}

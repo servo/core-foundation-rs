@@ -9,7 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, msg_send, class, selector};
+use base::{id, msg_send, msg_send_stret, class, selector};
 use base::{SEL, NSInteger, NSUInteger};
 use libc;
 
@@ -271,6 +271,8 @@ pub enum NSEventModifierFlags {
     NSFunctionKeyMask                       = 1 << 23,
     NSDeviceIndependentModifierFlagsMask    = 0xffff0000,
 }
+
+pub static NSMainMenuWindowLevel: libc::int32_t = 24;
 
 pub trait NSAutoreleasePool {
     unsafe fn new(_: Self) -> id {
@@ -925,5 +927,18 @@ impl NSEvent for id {
 
     unsafe fn modifierFlags(self) -> NSUInteger {
         msg_send()(self, selector("modifierFlags"))
+    }
+}
+
+pub trait NSScreen {
+    unsafe fn mainScreen(_: Self) -> id {
+        msg_send()(class("NSScreen"), selector("mainScreen"))
+    }
+    unsafe fn frame(self) -> NSRect;
+}
+
+impl NSScreen for id {
+    unsafe fn frame(self) -> NSRect {
+        msg_send_stret()(self, selector("frame"))
     }
 }

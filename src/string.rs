@@ -17,7 +17,7 @@ use base::{kCFAllocatorDefault, kCFAllocatorNull};
 
 use libc;
 use std::fmt;
-use std::from_str::FromStr;
+use std::str::FromStr;
 use std::mem;
 use std::ptr;
 use std::vec::Vec;

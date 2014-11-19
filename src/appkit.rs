@@ -13,6 +13,14 @@ use base::{id, msg_send, msg_send_stret, class, selector};
 use base::{SEL, NSInteger, NSUInteger};
 use libc;
 
+pub use self::NSApplicationActivationPolicy::*;
+pub use self::NSWindowMask::*;
+pub use self::NSBackingStoreType::*;
+pub use self::NSOpenGLPixelFormatAttribute::*;
+pub use self::NSEventType::*;
+pub use self::NSEventMask::*;
+pub use self::NSEventModifierFlags::*;
+
 #[cfg(target_word_size = "32")]
 pub type CGFloat = f32;
 #[cfg(target_word_size = "64")]

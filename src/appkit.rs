@@ -506,7 +506,7 @@ impl NSWindow for id {
     // Sizing Windows
 
     unsafe fn frame(self) -> NSRect {
-        msg_send()(self, selector("frame"))
+        msg_send_stret()(self, selector("frame"))
     }
 
     unsafe fn setFrameOrigin_(self, point: NSPoint) {
@@ -792,6 +792,8 @@ pub trait NSView {
 
     unsafe fn init(self) -> id;
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
+    unsafe fn bounds(self) -> NSRect;
+    unsafe fn frame(self) -> NSRect;
     unsafe fn display_(self);
     unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: bool);
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint;
@@ -804,6 +806,14 @@ impl NSView for id {
 
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
         msg_send()(self, selector("initWithFrame:"), frameRect)
+    }
+
+    unsafe fn bounds(self) -> NSRect {
+        msg_send_stret()(self, selector("bounds"))
+    }
+
+    unsafe fn frame(self) -> NSRect {
+        msg_send_stret()(self, selector("frame"))
     }
 
     unsafe fn display_(self) {

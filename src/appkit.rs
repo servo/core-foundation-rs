@@ -280,11 +280,16 @@ pub trait NSAutoreleasePool {
     }
 
     unsafe fn autorelease(self) -> Self;
+    unsafe fn drain(self);
 }
 
 impl NSAutoreleasePool for id {
     unsafe fn autorelease(self) -> id {
         msg_send()(self, selector("autorelease"))
+    }
+
+    unsafe fn drain(self) {
+        msg_send()(self, selector("drain"))
     }
 }
 
@@ -302,6 +307,8 @@ impl NSProcessInfo for id {
     }
 }
 
+pub type NSTimeInterval = libc::c_double;
+
 pub trait NSApplication {
     unsafe fn sharedApplication(_: Self) -> id {
         msg_send()(class("NSApplication"), selector("sharedApplication"))
@@ -318,6 +325,7 @@ pub trait NSApplication {
                                                               in_mode: id,
                                                               dequeue: bool) -> id;
     unsafe fn sendEvent_(self, an_event: id);
+    unsafe fn postEvent_atStart_(self, anEvent: id, flag: bool);
 }
 
 impl NSApplication for id {
@@ -352,6 +360,10 @@ impl NSApplication for id {
 
     unsafe fn sendEvent_(self, an_event: id) {
         msg_send()(self, selector("sendEvent:"), an_event)
+    }
+
+    unsafe fn postEvent_atStart_(self, anEvent: id, flag: bool) {
+        msg_send()(self, selector("postEvent:atStart:"), anEvent, flag as libc::c_int)
     }
 }
 
@@ -906,6 +918,19 @@ impl NSDate for id {
 }
 
 pub trait NSEvent {
+    unsafe fn
+    otherEventWithType_location_modifierFlags_timestamp_windowNumber_context_subtype_data1_data2(
+            _: Self,
+            ty: NSEventType,
+            location: NSPoint,
+            modifierFlags: NSUInteger,
+            timestamp: NSTimeInterval,
+            windowNumber: NSInteger,
+            context: *mut libc::c_void,
+            subtype: libc::c_short,
+            data1: NSInteger,
+            data2: NSInteger)
+            -> id;
     unsafe fn get_type(self) -> NSEventType;
     unsafe fn locationInWindow(self) -> NSPoint;
     unsafe fn characters(self) -> id;
@@ -915,6 +940,33 @@ pub trait NSEvent {
 }
 
 impl NSEvent for id {
+    unsafe fn
+    otherEventWithType_location_modifierFlags_timestamp_windowNumber_context_subtype_data1_data2(
+            _: id,
+            ty: NSEventType,
+            location: NSPoint,
+            modifierFlags: NSUInteger,
+            timestamp: NSTimeInterval,
+            windowNumber: NSInteger,
+            context: *mut libc::c_void,
+            subtype: libc::c_short,
+            data1: NSInteger,
+            data2: NSInteger)
+            -> id {
+        msg_send()(class("NSEvent"),
+                   selector("otherEventWithType:location:modifierFlags:timestamp:windowNumber:\
+                             context:subtype:data1:data2:"),
+                   ty,
+                   location,
+                   modifierFlags,
+                   timestamp,
+                   windowNumber,
+                   context,
+                   subtype as libc::c_int,
+                   data1,
+                   data2)
+    }
+
     unsafe fn get_type(self) -> NSEventType {
         msg_send()(self, selector("type"))
     }

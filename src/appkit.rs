@@ -26,6 +26,8 @@ pub type CGFloat = f32;
 #[cfg(target_word_size = "64")]
 pub type CGFloat = f64;
 
+pub type GLint = libc::int32_t;
+
 #[repr(C)]
 pub struct NSPoint {
     pub x: f64,
@@ -199,6 +201,20 @@ pub enum NSOpenGLPixelFormatAttribute {
     NSOpenGLPFAAcceleratedCompute       = 97,
     NSOpenGLPFAOpenGLProfile            = 99,
     NSOpenGLPFAVirtualScreenCount       = 128,
+}
+
+#[repr(u64)]
+pub enum NSOpenGLContextParameter {
+    NSOpenGLCPSwapInterval          = 222,
+    NSOpenGLCPSurfaceOrder          = 235,
+    NSOpenGLCPSurfaceOpacity        = 236,
+    NSOpenGLCPSurfaceBackingSize    = 304,
+    NSOpenGLCPReclaimResources      = 308,
+    NSOpenGLCPCurrentRendererID     = 309,
+    NSOpenGLCPGPUVertexProcessing   = 310,
+    NSOpenGLCPGPUFragmentProcessing = 311,
+    NSOpenGLCPHasDrawable           = 314,
+    NSOpenGLCPMPSwapsInFlight       = 315,
 }
 
 #[repr(u64)]
@@ -891,6 +907,7 @@ pub trait NSOpenGLContext {
     unsafe fn setView_(self, view: id);
     unsafe fn makeCurrentContext(self);
     unsafe fn flushBuffer(self);
+    unsafe fn setValues_forParameter_(self, vals: *const GLint, param: NSOpenGLContextParameter);
 }
 
 impl NSOpenGLContext for id {
@@ -908,6 +925,10 @@ impl NSOpenGLContext for id {
 
     unsafe fn flushBuffer(self) {
         msg_send()(self, selector("flushBuffer"))
+    }
+
+    unsafe fn setValues_forParameter_(self, vals: *const GLint, param: NSOpenGLContextParameter) {
+        msg_send()(self, selector("setValues:forParameter:"), vals, param)
     }
 }
 

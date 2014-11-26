@@ -26,6 +26,8 @@ pub type CGFloat = f32;
 #[cfg(target_word_size = "64")]
 pub type CGFloat = f64;
 
+pub type GLint = libc::int32_t;
+
 #[repr(C)]
 pub struct NSPoint {
     pub x: f64,
@@ -202,6 +204,20 @@ pub enum NSOpenGLPixelFormatAttribute {
 }
 
 #[repr(u64)]
+pub enum NSOpenGLContextParameter {
+    NSOpenGLCPSwapInterval          = 222,
+    NSOpenGLCPSurfaceOrder          = 235,
+    NSOpenGLCPSurfaceOpacity        = 236,
+    NSOpenGLCPSurfaceBackingSize    = 304,
+    NSOpenGLCPReclaimResources      = 308,
+    NSOpenGLCPCurrentRendererID     = 309,
+    NSOpenGLCPGPUVertexProcessing   = 310,
+    NSOpenGLCPGPUFragmentProcessing = 311,
+    NSOpenGLCPHasDrawable           = 314,
+    NSOpenGLCPMPSwapsInFlight       = 315,
+}
+
+#[repr(u64)]
 pub enum NSEventType {
     NSLeftMouseDown         = 1,
     NSLeftMouseUp           = 2,
@@ -236,34 +252,34 @@ pub enum NSEventType {
 
 #[repr(u64)]
 pub enum NSEventMask {
-    NSLeftMouseDownMask         = 1 << NSLeftMouseDown as uint,
-    NSLeftMouseUpMask           = 1 << NSLeftMouseUp as uint,
-    NSRightMouseDownMask        = 1 << NSRightMouseDown as uint,
-    NSRightMouseUpMask          = 1 << NSRightMouseUp as uint,
-    NSMouseMovedMask            = 1 << NSMouseMoved as uint,
-    NSLeftMouseDraggedMask      = 1 << NSLeftMouseDragged as uint,
-    NSRightMouseDraggedMask     = 1 << NSRightMouseDragged as uint,
-    NSMouseEnteredMask          = 1 << NSMouseEntered as uint,
-    NSMouseExitedMask           = 1 << NSMouseExited as uint,
-    NSKeyDownMask               = 1 << NSKeyDown as uint,
-    NSKeyUpMask                 = 1 << NSKeyUp as uint,
-    NSFlagsChangedMask          = 1 << NSFlagsChanged as uint,
-    NSAppKitDefinedMask         = 1 << NSAppKitDefined as uint,
-    NSSystemDefinedMask         = 1 << NSSystemDefined as uint,
-    NSAPplicationDefinedMask    = 1 << NSApplicationDefined as uint,
-    NSPeriodicMask              = 1 << NSPeriodic as uint,
-    NSCursorUpdateMask          = 1 << NSCursorUpdate as uint,
-    NSScrollWheelMask           = 1 << NSScrollWheel as uint,
-    NSTabletPointMask           = 1 << NSTabletPoint as uint,
-    NSTabletProximityMask       = 1 << NSTabletProximity as uint,
-    NSOtherMouseDownMask        = 1 << NSOtherMouseDown as uint,
-    NSOtherMouseUpMask          = 1 << NSOtherMouseUp as uint,
-    NSOtherMouseDraggedMask     = 1 << NSOtherMouseDragged as uint,
-    NSEventMaskgesture          = 1 << NSEventTypeGesture as uint,
-    NSEventMaskSwipe            = 1 << NSEventTypeSwipe as uint,
-    NSEventMaskRotate           = 1 << NSEventTypeRotate as uint,
-    NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as uint,
-    NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as uint,
+    NSLeftMouseDownMask         = 1 << NSEventType::NSLeftMouseDown as uint,
+    NSLeftMouseUpMask           = 1 << NSEventType::NSLeftMouseUp as uint,
+    NSRightMouseDownMask        = 1 << NSEventType::NSRightMouseDown as uint,
+    NSRightMouseUpMask          = 1 << NSEventType::NSRightMouseUp as uint,
+    NSMouseMovedMask            = 1 << NSEventType::NSMouseMoved as uint,
+    NSLeftMouseDraggedMask      = 1 << NSEventType::NSLeftMouseDragged as uint,
+    NSRightMouseDraggedMask     = 1 << NSEventType::NSRightMouseDragged as uint,
+    NSMouseEnteredMask          = 1 << NSEventType::NSMouseEntered as uint,
+    NSMouseExitedMask           = 1 << NSEventType::NSMouseExited as uint,
+    NSKeyDownMask               = 1 << NSEventType::NSKeyDown as uint,
+    NSKeyUpMask                 = 1 << NSEventType::NSKeyUp as uint,
+    NSFlagsChangedMask          = 1 << NSEventType::NSFlagsChanged as uint,
+    NSAppKitDefinedMask         = 1 << NSEventType::NSAppKitDefined as uint,
+    NSSystemDefinedMask         = 1 << NSEventType::NSSystemDefined as uint,
+    NSAPplicationDefinedMask    = 1 << NSEventType::NSApplicationDefined as uint,
+    NSPeriodicMask              = 1 << NSEventType::NSPeriodic as uint,
+    NSCursorUpdateMask          = 1 << NSEventType::NSCursorUpdate as uint,
+    NSScrollWheelMask           = 1 << NSEventType::NSScrollWheel as uint,
+    NSTabletPointMask           = 1 << NSEventType::NSTabletPoint as uint,
+    NSTabletProximityMask       = 1 << NSEventType::NSTabletProximity as uint,
+    NSOtherMouseDownMask        = 1 << NSEventType::NSOtherMouseDown as uint,
+    NSOtherMouseUpMask          = 1 << NSEventType::NSOtherMouseUp as uint,
+    NSOtherMouseDraggedMask     = 1 << NSEventType::NSOtherMouseDragged as uint,
+    NSEventMaskgesture          = 1 << NSEventType::NSEventTypeGesture as uint,
+    NSEventMaskSwipe            = 1 << NSEventType::NSEventTypeSwipe as uint,
+    NSEventMaskRotate           = 1 << NSEventType::NSEventTypeRotate as uint,
+    NSEventMaskBeginGesture     = 1 << NSEventType::NSEventTypeBeginGesture as uint,
+    NSEventMaskEndGesture       = 1 << NSEventType::NSEventTypeEndGesture as uint,
     NSAnyEventMask              = 0xffffffff,
 }
 
@@ -891,6 +907,7 @@ pub trait NSOpenGLContext {
     unsafe fn setView_(self, view: id);
     unsafe fn makeCurrentContext(self);
     unsafe fn flushBuffer(self);
+    unsafe fn setValues_forParameter_(self, vals: *const GLint, param: NSOpenGLContextParameter);
 }
 
 impl NSOpenGLContext for id {
@@ -908,6 +925,10 @@ impl NSOpenGLContext for id {
 
     unsafe fn flushBuffer(self) {
         msg_send()(self, selector("flushBuffer"))
+    }
+
+    unsafe fn setValues_forParameter_(self, vals: *const GLint, param: NSOpenGLContextParameter) {
+        msg_send()(self, selector("setValues:forParameter:"), vals, param)
     }
 }
 

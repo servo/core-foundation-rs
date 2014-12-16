@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use libc::{c_long, c_ulong};
-use std::num::Bounded;
+use std::num::Int;
 
 pub type Boolean = u8;
 
@@ -23,7 +23,7 @@ pub trait CFIndexConvertible {
 impl CFIndexConvertible for uint {
     #[inline]
     fn to_CFIndex(self) -> CFIndex {
-        let max_CFIndex: CFIndex = Bounded::max_value();
+        let max_CFIndex: CFIndex = Int::max_value();
         if self > (max_CFIndex as uint) {
             panic!("value out of range")
         }
@@ -35,6 +35,7 @@ pub type CFOptionFlags = u32;
 
 #[allow(dead_code)]
 #[repr(C)]
+#[deriving(Copy)]
 pub struct CFRange {
     location: CFIndex,
     length: CFIndex

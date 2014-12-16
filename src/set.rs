@@ -23,6 +23,7 @@ pub type CFSetHashCallBack = *const u8;
 
 #[allow(dead_code)]
 #[repr(C)]
+#[deriving(Copy)]
 pub struct CFSetCallBacks {
     version: CFIndex,
     retain: CFSetRetainCallBack,
@@ -108,7 +109,7 @@ extern {
     static kCFTypeSetCallBacks: CFSetCallBacks;
 
     /* Creating Sets */
-    fn CFSetCreate(allocator: CFAllocatorRef, values: *const *const c_void, numValues: CFIndex, 
+    fn CFSetCreate(allocator: CFAllocatorRef, values: *const *const c_void, numValues: CFIndex,
                    callBacks: *const CFSetCallBacks) -> CFSetRef;
 
     /* Applying a Function to Set Members */

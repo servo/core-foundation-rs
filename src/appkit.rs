@@ -966,6 +966,7 @@ pub trait NSEvent {
     unsafe fn charactersIgnoringModifiers(self) -> id;
     unsafe fn keycode(self) -> libc::c_ushort;
     unsafe fn modifierFlags(self) -> NSUInteger;
+    unsafe fn scrollingDeltaY(self) -> CGFloat;
 }
 
 impl NSEvent for id {
@@ -1018,6 +1019,10 @@ impl NSEvent for id {
 
     unsafe fn modifierFlags(self) -> NSUInteger {
         msg_send()(self, selector("modifierFlags"))
+    }
+
+    unsafe fn scrollingDeltaY(self) -> CGFloat {
+        msg_send()(self, selector("scrollingDeltaY"))
     }
 }
 

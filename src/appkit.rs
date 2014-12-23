@@ -682,23 +682,23 @@ impl NSWindow for id {
     }
 
     unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect {
-        msg_send()(self, selector("backingAlignedRect:options:"), rect, options)
+        msg_send_stret()(self, selector("backingAlignedRect:options:"), rect, options)
     }
 
     unsafe fn convertRectFromBacking_(self, rect: NSRect) -> NSRect {
-        msg_send()(self, selector("convertRectFromBacking:"), rect)
+        msg_send_stret()(self, selector("convertRectFromBacking:"), rect)
     }
 
     unsafe fn convertRectToBacking_(self, rect: NSRect) -> NSRect {
-        msg_send()(self, selector("convertRectToBacking:"), rect)
+        msg_send_stret()(self, selector("convertRectToBacking:"), rect)
     }
 
     unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect {
-        msg_send()(self, selector("convertRectToScreen:"), rect)
+        msg_send_stret()(self, selector("convertRectToScreen:"), rect)
     }
 
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect {
-        msg_send()(self, selector("convertRectFromScreen:"), rect)
+        msg_send_stret()(self, selector("convertRectFromScreen:"), rect)
     }
 
     // Accessing Edited Status

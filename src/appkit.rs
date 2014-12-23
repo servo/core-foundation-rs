@@ -554,7 +554,7 @@ impl NSWindow for id {
     }
 
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint {
-        msg_send()(self, selector("cascadeTopLeftFromPoint:"), topLeft)
+        msg_send_stret()(self, selector("cascadeTopLeftFromPoint:"), topLeft)
     }
 
     unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool) {
@@ -562,7 +562,7 @@ impl NSWindow for id {
     }
 
     unsafe fn aspectRatio(self) -> NSSize {
-        msg_send()(self, selector("aspectRatio"))
+        msg_send_stret()(self, selector("aspectRatio"))
     }
 
     unsafe fn setAspectRatio_(self, aspectRatio: NSSize) {
@@ -570,7 +570,7 @@ impl NSWindow for id {
     }
 
     unsafe fn minSize(self) -> NSSize {
-        msg_send()(self, selector("minSize"))
+        msg_send_stret()(self, selector("minSize"))
     }
 
     unsafe fn setMinSize_(self, minSize: NSSize) {
@@ -578,7 +578,7 @@ impl NSWindow for id {
     }
 
     unsafe fn maxSize(self) -> NSSize {
-        msg_send()(self, selector("maxSize"))
+        msg_send_stret()(self, selector("maxSize"))
     }
 
     unsafe fn setMaxSize_(self, maxSize: NSSize) {
@@ -602,7 +602,7 @@ impl NSWindow for id {
     }
 
     unsafe fn resizeIncrements(self) -> NSSize {
-        msg_send()(self, selector("resizeIncrements"))
+        msg_send_stret()(self, selector("resizeIncrements"))
     }
 
     unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize) {
@@ -861,7 +861,7 @@ impl NSView for id {
     }
 
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint {
-        msg_send()(self, selector("convertPoint:fromView:"), point, view)
+        msg_send_stret()(self, selector("convertPoint:fromView:"), point, view)
     }
 }
 
@@ -1002,7 +1002,7 @@ impl NSEvent for id {
     }
 
     unsafe fn locationInWindow(self) -> NSPoint {
-        msg_send()(self, selector("locationInWindow"))
+        msg_send_stret()(self, selector("locationInWindow"))
     }
 
     unsafe fn characters(self) -> id {

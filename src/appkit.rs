@@ -17,6 +17,7 @@ pub use self::NSApplicationActivationPolicy::*;
 pub use self::NSWindowMask::*;
 pub use self::NSBackingStoreType::*;
 pub use self::NSOpenGLPixelFormatAttribute::*;
+pub use self::NSOpenGLPFAOpenGLProfiles::*;
 pub use self::NSEventType::*;
 pub use self::NSEventMask::*;
 pub use self::NSEventModifierFlags::*;
@@ -201,6 +202,14 @@ pub enum NSOpenGLPixelFormatAttribute {
     NSOpenGLPFAAcceleratedCompute       = 97,
     NSOpenGLPFAOpenGLProfile            = 99,
     NSOpenGLPFAVirtualScreenCount       = 128,
+}
+
+#[repr(u64)]
+#[allow(non_camel_case_types)]
+pub enum NSOpenGLPFAOpenGLProfiles {
+    NSOpenGLProfileVersionLegacy = 0x1000,
+    NSOpenGLProfileVersion3_2Core = 0x3200,
+    NSOpenGLProfileVersion4_1Core = 0x4100,
 }
 
 #[repr(u64)]

@@ -63,16 +63,18 @@ pub unsafe fn msg_send_stret<T>() -> extern fn(theReceiver: id, theSelector: SEL
 /// A convenience method to convert the name of a class to the class object itself.
 #[inline]
 pub fn class(name: &str) -> id {
+    let name_c_str = name.to_c_str();
     unsafe {
-        objc_getClass(name.to_c_str().as_ptr())
+        objc_getClass(name_c_str.as_ptr())
     }
 }
 
 /// A convenience method to convert the name of a selector to the selector object.
 #[inline]
 pub fn selector(name: &str) -> SEL {
+    let name_c_str = name.to_c_str();
     unsafe {
-        sel_registerName(name.to_c_str().as_ptr())
+        sel_registerName(name_c_str.as_ptr())
     }
 }
 
@@ -96,12 +98,16 @@ mod test {
         }
 
         let ns_object = class("NSObject");
+        let name_c_str = "MyObject".to_c_str();
         let my_object = unsafe {
-            objc_allocateClassPair(ns_object, "MyObject".to_c_str().as_ptr(), 0 as libc::size_t)
+            objc_allocateClassPair(ns_object, name_c_str.as_ptr(), 0 as libc::size_t)
         };
+
+        let doSomething = selector("doSomething");
+        let types_c_str = "@@:".to_c_str();
         unsafe {
-            let doSomething = selector("doSomething");
-            let _ = class_addMethod(my_object, doSomething, MyObject_doSomething, "@@:".to_c_str().as_ptr());
+            let _ = class_addMethod(my_object, doSomething, MyObject_doSomething,
+                                    types_c_str.as_ptr());
 
             objc_registerClassPair(my_object);
 

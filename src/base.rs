@@ -10,6 +10,7 @@
 use libc::{c_long, c_ulong, c_char};
 use libc;
 
+use std::c_str::ToCStr;
 use std::mem;
 
 pub type Class = libc::intptr_t;
@@ -79,6 +80,7 @@ pub fn selector(name: &str) -> SEL {
 #[cfg(test)]
 mod test {
     use libc;
+    use std::c_str::ToCStr;
     use super::*;
 
     #[test]

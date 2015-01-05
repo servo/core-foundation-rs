@@ -16,6 +16,7 @@ use base::{TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
 use std::mem;
+use std::num::{FromPrimitive, ToPrimitive};
 
 pub type CFNumberType = u32;
 

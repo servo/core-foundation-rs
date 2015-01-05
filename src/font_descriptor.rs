@@ -291,11 +291,11 @@ pub fn new_from_attributes(attributes: &CFDictionary) -> CTFontDescriptor {
 }
 
 pub fn debug_descriptor(desc: &CTFontDescriptor) {
-    println!("family: {:s}", desc.family_name());
-    println!("name: {:s}", desc.font_name());
-    println!("style: {:s}", desc.style_name());
-    println!("display: {:s}", desc.display_name());
-    println!("path: {:s}", desc.font_path());
+    println!("family: {}", desc.family_name());
+    println!("name: {}", desc.font_name());
+    println!("style: {}", desc.style_name());
+    println!("display: {}", desc.display_name());
+    println!("path: {}", desc.font_path());
     desc.show();
 }
 

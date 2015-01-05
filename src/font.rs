@@ -304,26 +304,26 @@ pub fn debug_font_names(font: &CTFont) {
         get_string_by_name_key(font, key).unwrap()
     }
 
-    println!("kCTFontFamilyNameKey: {:s}", get_key(font, kCTFontFamilyNameKey));
-    println!("kCTFontSubFamilyNameKey: {:s}", get_key(font, kCTFontSubFamilyNameKey));
-    println!("kCTFontStyleNameKey: {:s}", get_key(font, kCTFontStyleNameKey));
-    println!("kCTFontUniqueNameKey: {:s}", get_key(font, kCTFontUniqueNameKey));
-    println!("kCTFontFullNameKey: {:s}", get_key(font, kCTFontFullNameKey));
-    println!("kCTFontPostScriptNameKey: {:s}", get_key(font, kCTFontPostScriptNameKey));
+    println!("kCTFontFamilyNameKey: {}", get_key(font, kCTFontFamilyNameKey));
+    println!("kCTFontSubFamilyNameKey: {}", get_key(font, kCTFontSubFamilyNameKey));
+    println!("kCTFontStyleNameKey: {}", get_key(font, kCTFontStyleNameKey));
+    println!("kCTFontUniqueNameKey: {}", get_key(font, kCTFontUniqueNameKey));
+    println!("kCTFontFullNameKey: {}", get_key(font, kCTFontFullNameKey));
+    println!("kCTFontPostScriptNameKey: {}", get_key(font, kCTFontPostScriptNameKey));
 }
 
 pub fn debug_font_traits(font: &CTFont) {
     let sym = font.symbolic_traits();
-    println!("kCTFontItalicTrait: {:b}", sym.is_italic());
-    println!("kCTFontBoldTrait: {:b}", sym.is_bold());
-    println!("kCTFontExpandedTrait: {:b}", sym.is_expanded());
-    println!("kCTFontCondensedTrait: {:b}", sym.is_condensed());
-    println!("kCTFontMonoSpaceTrait: {:b}", sym.is_monospace());
+    println!("kCTFontItalicTrait: {}", sym.is_italic());
+    println!("kCTFontBoldTrait: {}", sym.is_bold());
+    println!("kCTFontExpandedTrait: {}", sym.is_expanded());
+    println!("kCTFontCondensedTrait: {}", sym.is_condensed());
+    println!("kCTFontMonoSpaceTrait: {}", sym.is_monospace());
 
     let traits = font.all_traits();
-    println!("kCTFontWeightTrait: {:f}", traits.normalized_weight());
-//    println!("kCTFontWidthTrait: {:f}", traits.normalized_width());
-//    println!("kCTFontSlantTrait: {:f}", traits.normalized_slant());
+    println!("kCTFontWeightTrait: {}", traits.normalized_weight());
+//    println!("kCTFontWidthTrait: {}", traits.normalized_width());
+//    println!("kCTFontSlantTrait: {}", traits.normalized_slant());
 }
 
 #[link(name = "ApplicationServices", kind = "framework")]

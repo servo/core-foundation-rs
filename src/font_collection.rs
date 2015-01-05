@@ -86,7 +86,7 @@ pub fn new_from_descriptors(descs: &CFArray) -> CTFontCollection {
     unsafe {
         let key: CFString = TCFType::wrap_under_get_rule(kCTFontCollectionRemoveDuplicatesOption);
         let value: CFNumber = FromPrimitive::from_i8(1).unwrap();
-        let options = CFDictionary::from_CFType_pairs([ (key.as_CFType(), value.as_CFType()) ]);
+        let options = CFDictionary::from_CFType_pairs(&[ (key.as_CFType(), value.as_CFType()) ]);
         let font_collection_ref =
             CTFontCollectionCreateWithFontDescriptors(descs.as_concrete_TypeRef(),
                                                       options.as_concrete_TypeRef());
@@ -98,7 +98,7 @@ pub fn create_for_all_families() -> CTFontCollection {
     unsafe {
         let key: CFString = TCFType::wrap_under_get_rule(kCTFontCollectionRemoveDuplicatesOption);
         let value: CFNumber = FromPrimitive::from_i8(1).unwrap();
-        let options = CFDictionary::from_CFType_pairs([ (key.as_CFType(), value.as_CFType()) ]);
+        let options = CFDictionary::from_CFType_pairs(&[ (key.as_CFType(), value.as_CFType()) ]);
         let font_collection_ref =
             CTFontCollectionCreateFromAvailableFonts(options.as_concrete_TypeRef());
         TCFType::wrap_under_create_rule(font_collection_ref)
@@ -111,13 +111,13 @@ pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
     unsafe {
         let family_attr: CFString = TCFType::wrap_under_get_rule(kCTFontFamilyNameAttribute);
         let family_name: CFString = from_str(family).unwrap();
-        let specified_attrs = CFDictionary::from_CFType_pairs([
+        let specified_attrs = CFDictionary::from_CFType_pairs(&[
             (family_attr.as_CFType(), family_name.as_CFType())
         ]);
 
         let wildcard_desc: CTFontDescriptor =
             font_descriptor::new_from_attributes(&specified_attrs);
-        let mandatory_attrs = CFSet::from_slice([ family_attr.as_CFType() ]);
+        let mandatory_attrs = CFSet::from_slice(&[ family_attr.as_CFType() ]);
         let matched_descs = CTFontDescriptorCreateMatchingFontDescriptors(
                 wildcard_desc.as_concrete_TypeRef(),
                 mandatory_attrs.as_concrete_TypeRef());

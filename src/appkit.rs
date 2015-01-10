@@ -259,7 +259,7 @@ pub enum NSEventType {
     NSEventTypeEndGesture   = 20,
 }
 
-#[repr(u64)]
+#[repr(u32)]
 pub enum NSEventMask {
     NSLeftMouseDownMask         = 1 << NSLeftMouseDown as u32,
     NSLeftMouseUpMask           = 1 << NSLeftMouseUp as u32,

@@ -153,7 +153,7 @@ impl CFDictionary {
     pub fn get(&self, key: *const c_void) -> *const c_void {
         let value = self.find(key);
         if value.is_none() {
-            panic!("No entry found for key [FIXME]"); // FIXME Not sure how to convert key to be printed
+            panic!("No entry found for key {:p}", key);
         }
         value.unwrap()
     }

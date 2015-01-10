@@ -102,10 +102,11 @@ impl TCFType<CFDictionaryRef> for CFDictionary {
 
 impl CFDictionary {
     pub fn from_CFType_pairs(pairs: &[(CFType, CFType)]) -> CFDictionary {
-        let (keys, values) =
-            vec::unzip(pairs.iter()
-                            .map(|&(ref key, ref value)| (key.as_CFTypeRef(),
-                                                          value.as_CFTypeRef())));
+        let (keys, values): (Vec<CFTypeRef>,Vec<CFTypeRef>) =
+            pairs.iter()
+            .map(|&(ref key, ref value)| (key.as_CFTypeRef(), value.as_CFTypeRef()))
+            .unzip();
+
         unsafe {
             let dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
                                                     mem::transmute(keys.as_ptr()),
@@ -118,9 +119,9 @@ impl CFDictionary {
     }
 
     #[inline]
-    pub fn len(&self) -> uint {
+    pub fn len(&self) -> usize {
         unsafe {
-            CFDictionaryGetCount(self.obj) as uint
+            CFDictionaryGetCount(self.obj) as usize
         }
     }
 
@@ -152,7 +153,7 @@ impl CFDictionary {
     pub fn get(&self, key: *const c_void) -> *const c_void {
         let value = self.find(key);
         if value.is_none() {
-            panic!("No entry found for key: {}", key);
+            panic!("No entry found for key [FIXME]"); // FIXME Not sure how to convert key to be printed
         }
         value.unwrap()
     }
@@ -184,4 +185,3 @@ extern {
     fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *const c_void, value: *mut *const c_void)
                                      -> Boolean;
 }
-

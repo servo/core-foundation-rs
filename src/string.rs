@@ -18,6 +18,7 @@ use base::{kCFAllocatorDefault, kCFAllocatorNull};
 use libc;
 use std::fmt;
 use std::str::FromStr;
+use std::string::ToString;
 use std::mem;
 use std::ptr;
 use std::vec::Vec;
@@ -277,16 +278,15 @@ impl FromStr for CFString {
     }
 }
 
-impl fmt::Show for CFString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl ToString for CFString {
+    fn to_string(&self) -> String {
         unsafe {
             let char_len = self.char_len();
-            let range = CFRange::init(0, char_len);
 
             // First, ask how big the buffer ought to be.
             let mut bytes_required: CFIndex = 0;
             CFStringGetBytes(self.obj,
-                             range,
+                             CFRange::init(0, char_len),
                              kCFStringEncodingUTF8,
                              0,
                              false as Boolean,
@@ -295,23 +295,31 @@ impl fmt::Show for CFString {
                              &mut bytes_required);
 
             // Then, allocate the buffer and actually copy.
-            let mut buffer: Vec<u8> = Vec::from_elem(bytes_required as uint, '\x00' as u8);
+            let mut buffer = Vec::with_capacity(bytes_required as usize);
+            for _ in (0..bytes_required) { buffer.push('\x00' as u8) }
+
             let mut bytes_used: CFIndex = 0;
             let chars_written = CFStringGetBytes(self.obj,
-                                                 range,
+                                                 CFRange::init(0, char_len),
                                                  kCFStringEncodingUTF8,
                                                  0,
                                                  false as Boolean,
                                                  buffer.as_mut_ptr(),
                                                  buffer.len().to_CFIndex(),
-                                                 &mut bytes_used) as uint;
+                                                 &mut bytes_used) as usize;
             assert!(chars_written.to_CFIndex() == char_len);
 
             // This is dangerous; we over-allocate and null-terminate the string (during
             // initialization).
             assert!(bytes_used == buffer.len().to_CFIndex());
-            String::from_utf8(buffer).unwrap().fmt(f)
+            String::from_utf8(buffer).unwrap()
         }
+    }
+}
+
+impl fmt::Show for CFString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.to_string().fmt(f)
     }
 }
 
@@ -467,4 +475,3 @@ fn string_and_back() {
     let converted = cfstr.to_string();
     assert!(original == converted.as_slice());
 }
-

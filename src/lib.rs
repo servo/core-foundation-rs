@@ -56,7 +56,7 @@ pub mod test {
         let tru = CFBoolean::true_value();
         let n42 = number(42);
 
-        let _d = CFDictionary::from_CFType_pairs([
+        let _d = CFDictionary::from_CFType_pairs(&[
             (bar.as_CFType(), boo.as_CFType()),
             (baz.as_CFType(), tru.as_CFType()),
             (foo.as_CFType(), n42.as_CFType()),

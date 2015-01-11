@@ -14,6 +14,7 @@ use base::{CFType, CFTypeID, CFTypeRef, TCFType};
 use base::{kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
+use std::num::ToPrimitive;
 
 /// FIXME(pcwalton): This is wrong.
 pub type CFArrayRetainCallBack = *const u8;
@@ -63,7 +64,9 @@ pub struct CFArrayIterator<'a> {
     index: CFIndex,
 }
 
-impl<'a> Iterator<*const c_void> for CFArrayIterator<'a> {
+impl<'a> Iterator for CFArrayIterator<'a> {
+    type Item = *const c_void;
+
     fn next(&mut self) -> Option<*const c_void> {
         if self.index >= self.array.len() {
             None
@@ -177,7 +180,7 @@ extern {
 fn should_box_and_unbox() {
     use number::{CFNumber, number};
 
-    let arr = CFArray::from_CFTypes([
+    let arr = CFArray::from_CFTypes(&[
         number(1).as_CFType(),
         number(2).as_CFType(),
         number(3).as_CFType(),

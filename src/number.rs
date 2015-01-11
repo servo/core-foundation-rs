@@ -169,4 +169,3 @@ extern {
     //fn CFNumberCompare
     fn CFNumberGetTypeID() -> CFTypeID;
 }
-

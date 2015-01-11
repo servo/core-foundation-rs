@@ -70,7 +70,7 @@ impl TCFType<CFDataRef> for CFData {
 impl CFData {
     pub fn from_buffer(buffer: &[u8]) -> CFData {
         unsafe {
-            let data_ref = CFDataCreate(kCFAllocatorDefault, 
+            let data_ref = CFDataCreate(kCFAllocatorDefault,
                                         buffer.as_ptr(),
                                         buffer.len().to_CFIndex());
             TCFType::wrap_under_create_rule(data_ref)
@@ -82,7 +82,7 @@ impl CFData {
     #[inline]
     pub fn bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
-            mem::transmute((CFDataGetBytePtr(self.obj), self.len() as uint))
+            mem::transmute((CFDataGetBytePtr(self.obj), self.len() as usize))
         }
     }
 
@@ -101,7 +101,7 @@ extern {
      * CFData.h
      */
 
-    fn CFDataCreate(allocator: CFAllocatorRef, 
+    fn CFDataCreate(allocator: CFAllocatorRef,
                     bytes: *const u8, length: CFIndex) -> CFDataRef;
     //fn CFDataFind
     fn CFDataGetBytePtr(theData: CFDataRef) -> *const u8;

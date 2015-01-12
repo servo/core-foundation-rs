@@ -13,8 +13,6 @@
 #![comment = "The Servo Parallel Browser Project"]
 #![license = "MIT"]
 
-#![feature(globs)]
-
 #![allow(non_snake_case)]
 
 extern crate libc;
@@ -23,4 +21,3 @@ extern crate libc;
 pub mod appkit;
 #[cfg(target_os="macos")]
 pub mod base;
-

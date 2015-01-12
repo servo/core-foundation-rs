@@ -259,36 +259,36 @@ pub enum NSEventType {
     NSEventTypeEndGesture   = 20,
 }
 
-#[repr(u64)]
+#[repr(u32)]
 pub enum NSEventMask {
-    NSLeftMouseDownMask         = 1 << NSLeftMouseDown as uint,
-    NSLeftMouseUpMask           = 1 << NSLeftMouseUp as uint,
-    NSRightMouseDownMask        = 1 << NSRightMouseDown as uint,
-    NSRightMouseUpMask          = 1 << NSRightMouseUp as uint,
-    NSMouseMovedMask            = 1 << NSMouseMoved as uint,
-    NSLeftMouseDraggedMask      = 1 << NSLeftMouseDragged as uint,
-    NSRightMouseDraggedMask     = 1 << NSRightMouseDragged as uint,
-    NSMouseEnteredMask          = 1 << NSMouseEntered as uint,
-    NSMouseExitedMask           = 1 << NSMouseExited as uint,
-    NSKeyDownMask               = 1 << NSKeyDown as uint,
-    NSKeyUpMask                 = 1 << NSKeyUp as uint,
-    NSFlagsChangedMask          = 1 << NSFlagsChanged as uint,
-    NSAppKitDefinedMask         = 1 << NSAppKitDefined as uint,
-    NSSystemDefinedMask         = 1 << NSSystemDefined as uint,
-    NSAPplicationDefinedMask    = 1 << NSApplicationDefined as uint,
-    NSPeriodicMask              = 1 << NSPeriodic as uint,
-    NSCursorUpdateMask          = 1 << NSCursorUpdate as uint,
-    NSScrollWheelMask           = 1 << NSScrollWheel as uint,
-    NSTabletPointMask           = 1 << NSTabletPoint as uint,
-    NSTabletProximityMask       = 1 << NSTabletProximity as uint,
-    NSOtherMouseDownMask        = 1 << NSOtherMouseDown as uint,
-    NSOtherMouseUpMask          = 1 << NSOtherMouseUp as uint,
-    NSOtherMouseDraggedMask     = 1 << NSOtherMouseDragged as uint,
-    NSEventMaskgesture          = 1 << NSEventTypeGesture as uint,
-    NSEventMaskSwipe            = 1 << NSEventTypeSwipe as uint,
-    NSEventMaskRotate           = 1 << NSEventTypeRotate as uint,
-    NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as uint,
-    NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as uint,
+    NSLeftMouseDownMask         = 1 << NSLeftMouseDown as u32,
+    NSLeftMouseUpMask           = 1 << NSLeftMouseUp as u32,
+    NSRightMouseDownMask        = 1 << NSRightMouseDown as u32,
+    NSRightMouseUpMask          = 1 << NSRightMouseUp as u32,
+    NSMouseMovedMask            = 1 << NSMouseMoved as u32,
+    NSLeftMouseDraggedMask      = 1 << NSLeftMouseDragged as u32,
+    NSRightMouseDraggedMask     = 1 << NSRightMouseDragged as u32,
+    NSMouseEnteredMask          = 1 << NSMouseEntered as u32,
+    NSMouseExitedMask           = 1 << NSMouseExited as u32,
+    NSKeyDownMask               = 1 << NSKeyDown as u32,
+    NSKeyUpMask                 = 1 << NSKeyUp as u32,
+    NSFlagsChangedMask          = 1 << NSFlagsChanged as u32,
+    NSAppKitDefinedMask         = 1 << NSAppKitDefined as u32,
+    NSSystemDefinedMask         = 1 << NSSystemDefined as u32,
+    NSAPplicationDefinedMask    = 1 << NSApplicationDefined as u32,
+    NSPeriodicMask              = 1 << NSPeriodic as u32,
+    NSCursorUpdateMask          = 1 << NSCursorUpdate as u32,
+    NSScrollWheelMask           = 1 << NSScrollWheel as u32,
+    NSTabletPointMask           = 1 << NSTabletPoint as u32,
+    NSTabletProximityMask       = 1 << NSTabletProximity as u32,
+    NSOtherMouseDownMask        = 1 << NSOtherMouseDown as u32,
+    NSOtherMouseUpMask          = 1 << NSOtherMouseUp as u32,
+    NSOtherMouseDraggedMask     = 1 << NSOtherMouseDragged as u32,
+    NSEventMaskgesture          = 1 << NSEventTypeGesture as u32,
+    NSEventMaskSwipe            = 1 << NSEventTypeSwipe as u32,
+    NSEventMaskRotate           = 1 << NSEventTypeRotate as u32,
+    NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as u32,
+    NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as u32,
     NSAnyEventMask              = 0xffffffff,
 }
 
@@ -898,11 +898,11 @@ pub trait NSOpenGLPixelFormat {
         msg_send()(class("NSOpenGLPixelFormat"), selector("alloc"))
     }
 
-    unsafe fn initWithAttributes_(self, attributes: &[uint]) -> id;
+    unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id;
 }
 
 impl NSOpenGLPixelFormat for id {
-    unsafe fn initWithAttributes_(self, attributes: &[uint]) -> id {
+    unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id {
         msg_send()(self, selector("initWithAttributes:"), attributes)
     }
 }

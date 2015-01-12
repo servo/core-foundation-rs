@@ -7,10 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use libc::{c_long, c_ulong, c_char};
+use libc::c_char;
 use libc;
 
-use std::c_str::ToCStr;
+use std::ffi::CString;
 use std::mem;
 
 pub type Class = libc::intptr_t;
@@ -64,7 +64,7 @@ pub unsafe fn msg_send_stret<T>() -> extern fn(theReceiver: id, theSelector: SEL
 /// A convenience method to convert the name of a class to the class object itself.
 #[inline]
 pub fn class(name: &str) -> id {
-    let name_c_str = name.to_c_str();
+    let name_c_str = CString::from_slice(name.as_bytes());
     unsafe {
         objc_getClass(name_c_str.as_ptr())
     }
@@ -73,7 +73,7 @@ pub fn class(name: &str) -> id {
 /// A convenience method to convert the name of a selector to the selector object.
 #[inline]
 pub fn selector(name: &str) -> SEL {
-    let name_c_str = name.to_c_str();
+    let name_c_str = CString::from_slice(name.as_bytes());
     unsafe {
         sel_registerName(name_c_str.as_ptr())
     }
@@ -82,7 +82,7 @@ pub fn selector(name: &str) -> SEL {
 #[cfg(test)]
 mod test {
     use libc;
-    use std::c_str::ToCStr;
+    use std::ffi::CString;
     use super::*;
 
     #[test]
@@ -100,13 +100,13 @@ mod test {
         }
 
         let ns_object = class("NSObject");
-        let name_c_str = "MyObject".to_c_str();
+        let name_c_str = CString::from_slice("MyObject".as_bytes());
         let my_object = unsafe {
             objc_allocateClassPair(ns_object, name_c_str.as_ptr(), 0 as libc::size_t)
         };
 
         let doSomething = selector("doSomething");
-        let types_c_str = "@@:".to_c_str();
+        let types_c_str = CString::from_slice("@@:".as_bytes());
         unsafe {
             let _ = class_addMethod(my_object, doSomething, MyObject_doSomething,
                                     types_c_str.as_ptr());

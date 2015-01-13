@@ -22,9 +22,9 @@ pub use self::NSEventType::*;
 pub use self::NSEventMask::*;
 pub use self::NSEventModifierFlags::*;
 
-#[cfg(target_word_size = "32")]
+#[cfg(target_pointer_width = "32")]
 pub type CGFloat = f32;
-#[cfg(target_word_size = "64")]
+#[cfg(target_pointer_width = "64")]
 pub type CGFloat = f64;
 
 pub type GLint = libc::int32_t;

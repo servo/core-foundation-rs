@@ -138,7 +138,7 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
 
 pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {
     unsafe {
-        let name: CFString = from_str(name).unwrap();
+        let name: CFString = name.parse().unwrap();
         let font_ref = CTFontCreateWithName(name.as_concrete_TypeRef(),
                                             pt_size as CGFloat,
                                             ptr::null());

@@ -10,11 +10,10 @@
 #![crate_name = "cocoa"]
 #![crate_type = "rlib"]
 
-#![comment = "The Servo Parallel Browser Project"]
-#![license = "MIT"]
+#![allow(missing_copy_implementations, non_snake_case, unstable)]
 
-#![allow(non_snake_case)]
-
+#[macro_use]
+extern crate bitflags;
 extern crate libc;
 
 #[cfg(target_os="macos")]

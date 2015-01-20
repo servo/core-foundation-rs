@@ -7,3 +7,6 @@ license = "MIT"
 [lib]
 name = "cocoa"
 crate-type = ["rlib"]
+
+[dependencies]
+bitflags = "0.1"

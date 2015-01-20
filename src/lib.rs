@@ -12,6 +12,8 @@
 
 #![allow(missing_copy_implementations, non_snake_case, unstable)]
 
+#[macro_use]
+extern crate bitflags;
 extern crate libc;
 
 #[cfg(target_os="macos")]

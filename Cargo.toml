@@ -1,10 +1,9 @@
 [package]
-
 name = "cocoa"
 version = "0.1.1"
 authors = ["The Servo Project Developers"]
+license = "MIT"
 
 [lib]
-
 name = "cocoa"
 crate-type = ["rlib"]

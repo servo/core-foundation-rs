@@ -32,6 +32,8 @@ pub type NSUInteger = libc::c_ulong;
 
 #[allow(non_upper_case_globals)]
 pub const nil: id = 0;
+#[allow(non_upper_case_globals)]
+pub const Nil: Class = 0 as Class;
 
 extern {
     pub fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *const libc::c_char) -> bool;

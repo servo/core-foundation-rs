@@ -67,7 +67,7 @@ impl TCFType<CFURLRef> for CFURL {
     }
 }
 
-impl fmt::Show for CFURL {
+impl fmt::Debug for CFURL {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
@@ -174,7 +174,7 @@ extern {
     //fn CFURLHasDirectoryPath
 
     /* Converting URLs to Other Representations */
-    //fn CFURLCreateData(allocator: CFAllocatorRef, url: CFURLRef, 
+    //fn CFURLCreateData(allocator: CFAllocatorRef, url: CFURLRef,
     //                   encoding: CFStringEncoding, escapeWhitespace: bool) -> CFDataRef;
     //fn CFURLCreateStringByAddingPercentEscapes
     //fn CFURLCreateStringByReplacingPercentEscapes

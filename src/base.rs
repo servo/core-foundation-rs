@@ -35,6 +35,11 @@ pub const nil: id = 0;
 #[allow(non_upper_case_globals)]
 pub const Nil: Class = 0 as Class;
 
+pub type BOOL = libc::c_schar;
+
+pub const YES: BOOL = 1;
+pub const NO: BOOL = 0;
+
 extern {
     pub fn class_addMethod(cls: Class, name: SEL, imp: IMP, types: *const libc::c_char) -> bool;
     pub fn class_addIvar(cls: Class,

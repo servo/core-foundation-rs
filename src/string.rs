@@ -319,7 +319,7 @@ impl ToString for CFString {
 
 impl fmt::Show for CFString {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.to_string().fmt(f)
+        write!(f, "{}", self.to_string())
     }
 }
 

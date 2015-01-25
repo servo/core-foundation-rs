@@ -72,8 +72,7 @@ impl fmt::Show for CFURL {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
             let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.obj));
-            let s = string.to_string();
-            s.fmt(f)
+            write!(f, "{}", string.to_string())
         }
     }
 }
@@ -174,7 +173,7 @@ extern {
     //fn CFURLHasDirectoryPath
 
     /* Converting URLs to Other Representations */
-    //fn CFURLCreateData(allocator: CFAllocatorRef, url: CFURLRef, 
+    //fn CFURLCreateData(allocator: CFAllocatorRef, url: CFURLRef,
     //                   encoding: CFStringEncoding, escapeWhitespace: bool) -> CFDataRef;
     //fn CFURLCreateStringByAddingPercentEscapes
     //fn CFURLCreateStringByReplacingPercentEscapes

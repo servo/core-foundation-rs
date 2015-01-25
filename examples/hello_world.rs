@@ -1,6 +1,6 @@
 extern crate cocoa;
 
-use cocoa::base::{NSUInteger, selector, nil};
+use cocoa::base::{NSUInteger, selector, nil, YES, NO};
 use cocoa::appkit::{NSApp, NSRect, NSPoint, NSSize,
 					NSAutoreleasePool, NSProcessInfo,
 					NSApplication, NSApplicationActivationPolicyRegular,
@@ -42,7 +42,7 @@ fn main() {
 			NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
 			NSTitledWindowMask as NSUInteger,
 			NSBackingStoreBuffered,
-			false
+			NO
 		).autorelease();
 		window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
 		window.center();
@@ -50,7 +50,7 @@ fn main() {
 		window.setTitle_(title);
 		window.makeKeyAndOrderFront_(nil);
 
-		app.activateIgnoringOtherApps_(true);
+		app.activateIgnoringOtherApps_(YES);
 		app.run();
 	}
 }

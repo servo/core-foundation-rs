@@ -10,7 +10,7 @@
 #![allow(non_upper_case_globals)]
 
 use base::{id, msg_send, msg_send_stret, class, selector};
-use base::{SEL, NSInteger, NSUInteger};
+use base::{BOOL, SEL, NSInteger, NSUInteger};
 use libc;
 
 pub use self::NSApplicationActivationPolicy::*;
@@ -347,22 +347,22 @@ pub trait NSApplication {
         msg_send()(class("NSApplication"), selector("sharedApplication"))
     }
 
-    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> bool;
+    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL;
     unsafe fn setMainMenu_(self, menu: id);
-    unsafe fn activateIgnoringOtherApps_(self, ignore: bool);
+    unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL);
     unsafe fn run(self);
     unsafe fn finishLaunching(self);
     unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue_(self,
                                                               mask: NSUInteger,
                                                               expiration: id,
                                                               in_mode: id,
-                                                              dequeue: bool) -> id;
+                                                              dequeue: BOOL) -> id;
     unsafe fn sendEvent_(self, an_event: id);
-    unsafe fn postEvent_atStart_(self, anEvent: id, flag: bool);
+    unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL);
 }
 
 impl NSApplication for id {
-    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> bool {
+    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL {
         msg_send()(self, selector("setActivationPolicy:"), policy as NSInteger)
     }
 
@@ -370,7 +370,7 @@ impl NSApplication for id {
         msg_send()(self, selector("setMainMenu:"), menu)
     }
 
-    unsafe fn activateIgnoringOtherApps_(self, ignore: bool) {
+    unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL) {
         msg_send()(self, selector("activateIgnoringOtherApps:"), ignore as libc::c_int)
     }
 
@@ -386,7 +386,7 @@ impl NSApplication for id {
                                                               mask: NSUInteger,
                                                               expiration: id,
                                                               in_mode: id,
-                                                              dequeue: bool) -> id {
+                                                              dequeue: BOOL) -> id {
         msg_send()(self, selector("nextEventMatchingMask:untilDate:inMode:dequeue:"),
                    mask, expiration, in_mode, dequeue as libc::c_int)
     }
@@ -395,7 +395,7 @@ impl NSApplication for id {
         msg_send()(self, selector("sendEvent:"), an_event)
     }
 
-    unsafe fn postEvent_atStart_(self, anEvent: id, flag: bool) {
+    unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL) {
         msg_send()(self, selector("postEvent:atStart:"), anEvent, flag as libc::c_int)
     }
 }
@@ -446,7 +446,7 @@ pub trait NSWindow {
                                                            rect: NSRect,
                                                            style: NSUInteger,
                                                            backing: NSBackingStoreType,
-                                                           defer: bool) -> id;
+                                                           defer: BOOL) -> id;
 
     // Sizing Windows
     unsafe fn frame(self) -> NSRect;
@@ -454,7 +454,7 @@ pub trait NSWindow {
     unsafe fn setFrameTopLeftPoint_(self, point: NSPoint);
     // skipped: constrainFrameRect_toScreen_
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint;
-    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool);
+    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL);
     unsafe fn aspectRatio(self) -> NSSize;
     unsafe fn setAspectRatio_(self, aspectRatio: NSSize);
     unsafe fn minSize(self) -> NSSize;
@@ -464,13 +464,13 @@ pub trait NSWindow {
     unsafe fn performZoom_(self, sender: id);
     unsafe fn zoom_(self, sender: id);
     // skipped: resizeFlags
-    unsafe fn showsResizeIndicator(self) -> bool;
-    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool);
+    unsafe fn showsResizeIndicator(self) -> BOOL;
+    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: BOOL);
     unsafe fn resizeIncrements(self) -> NSSize;
     unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize);
-    unsafe fn preservesContentDuringLiveResize(self) -> bool;
-    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool);
-    unsafe fn inLiveResize(self) -> bool;
+    unsafe fn preservesContentDuringLiveResize(self) -> BOOL;
+    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: BOOL);
+    unsafe fn inLiveResize(self) -> BOOL;
 
     // Managing Window Layers
     unsafe fn orderOut_(self, sender: id);
@@ -482,14 +482,14 @@ pub trait NSWindow {
     unsafe fn setLevel_(self, level: NSInteger);
 
     // Managing Key Status
-    unsafe fn canBecomeKeyWindow(self) -> bool;
+    unsafe fn canBecomeKeyWindow(self) -> BOOL;
     unsafe fn makeKeyWindow(self);
     unsafe fn makeKeyAndOrderFront_(self, sender: id);
     // skipped: becomeKeyWindow (should not be invoked directly, according to Apple's documentation)
     // skipped: resignKeyWindow (should not be invoked directly, according to Apple's documentation)
 
     // Managing Main Status
-    unsafe fn canBecomeMainWindow(self) -> bool;
+    unsafe fn canBecomeMainWindow(self) -> BOOL;
     unsafe fn makeMainWindow(self);
     // skipped: becomeMainWindow (should not be invoked directly, according to Apple's documentation)
     // skipped: resignMainWindow (should not be invoked directly, according to Apple's documentation)
@@ -503,7 +503,7 @@ pub trait NSWindow {
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect;
 
     // Accessing Edited Status
-    unsafe fn setDocumentEdited_(self, documentEdited: bool);
+    unsafe fn setDocumentEdited_(self, documentEdited: BOOL);
 
     // Managing Titles
     unsafe fn title(self) -> id;
@@ -515,14 +515,14 @@ pub trait NSWindow {
     // skipped: setRepresentedURL_
 
     // Moving Windows
-    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool);
-    unsafe fn setMovable_(self, movable: bool);
+    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: BOOL);
+    unsafe fn setMovable_(self, movable: BOOL);
     unsafe fn center(self);
 
     // Closing Windows
     unsafe fn performClose_(self, sender: id);
     unsafe fn close(self);
-    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool);
+    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: BOOL);
 
     // Minimizing Windows
     unsafe fn performMiniaturize_(self, sender: id);
@@ -534,8 +534,8 @@ pub trait NSWindow {
     unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id);
 
     unsafe fn setContentView_(self, view: id);
-    unsafe fn setAcceptsMouseMovedEvents_(self, accept: bool);
-    unsafe fn isVisible(self) -> bool;
+    unsafe fn setAcceptsMouseMovedEvents_(self, accept: BOOL);
+    unsafe fn isVisible(self) -> BOOL;
 }
 
 impl NSWindow for id {
@@ -543,7 +543,7 @@ impl NSWindow for id {
                                                            rect: NSRect,
                                                            style: NSUInteger,
                                                            backing: NSBackingStoreType,
-                                                           defer: bool) -> id {
+                                                           defer: BOOL) -> id {
         msg_send()(self, selector("initWithContentRect:styleMask:backing:defer:"),
                    rect, style, backing as NSUInteger, defer as libc::c_int)
     }
@@ -566,7 +566,7 @@ impl NSWindow for id {
         msg_send()(self, selector("cascadeTopLeftFromPoint:"), topLeft)
     }
 
-    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool) {
+    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL) {
         msg_send()(self, selector("setFrame:displayViews:"), windowFrame, display as libc::c_int)
     }
 
@@ -602,11 +602,11 @@ impl NSWindow for id {
         msg_send()(self, selector("zoom:"), sender)
     }
 
-    unsafe fn showsResizeIndicator(self) -> bool {
+    unsafe fn showsResizeIndicator(self) -> BOOL {
         msg_send()(self, selector("showsResizeIndicator"))
     }
 
-    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool) {
+    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: BOOL) {
         msg_send()(self, selector("setShowsResizeIndicator:"), showsResizeIndicator as libc::c_int)
     }
 
@@ -618,15 +618,15 @@ impl NSWindow for id {
         msg_send()(self, selector("setResizeIncrements:"), resizeIncrements)
     }
 
-    unsafe fn preservesContentDuringLiveResize(self) -> bool {
+    unsafe fn preservesContentDuringLiveResize(self) -> BOOL {
         msg_send()(self, selector("preservesContentDuringLiveResize"))
     }
 
-    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool) {
+    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: BOOL) {
         msg_send()(self, selector("setPreservesContentDuringLiveResize:"), preservesContentDuringLiveResize as libc::c_int)
     }
 
-    unsafe fn inLiveResize(self) -> bool {
+    unsafe fn inLiveResize(self) -> BOOL {
         msg_send()(self, selector("inLiveResize"))
     }
 
@@ -662,7 +662,7 @@ impl NSWindow for id {
 
     // Managing Key Status
 
-    unsafe fn canBecomeKeyWindow(self) -> bool {
+    unsafe fn canBecomeKeyWindow(self) -> BOOL {
         msg_send()(self, selector("canBecomeKeyWindow"))
     }
 
@@ -676,7 +676,7 @@ impl NSWindow for id {
 
     // Managing Main Status
 
-    unsafe fn canBecomeMainWindow(self) -> bool {
+    unsafe fn canBecomeMainWindow(self) -> BOOL {
         msg_send()(self, selector("canBecomeMainWindow"))
     }
 
@@ -712,7 +712,7 @@ impl NSWindow for id {
 
     // Accessing Edited Status
 
-    unsafe fn setDocumentEdited_(self, documentEdited: bool) {
+    unsafe fn setDocumentEdited_(self, documentEdited: BOOL) {
         msg_send()(self, selector("setDocumentEdited:"), documentEdited as libc::c_int)
     }
 
@@ -740,11 +740,11 @@ impl NSWindow for id {
 
     // Moving Windows
 
-    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool) {
+    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: BOOL) {
         msg_send()(self, selector("setMovableByWindowBackground:"), movableByWindowBackground as libc::c_int)
     }
 
-    unsafe fn setMovable_(self, movable: bool) {
+    unsafe fn setMovable_(self, movable: BOOL) {
         msg_send()(self, selector("setMovable:"), movable as libc::c_int)
     }
 
@@ -762,7 +762,7 @@ impl NSWindow for id {
         msg_send()(self, selector("close"))
     }
 
-    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool) {
+    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: BOOL) {
         msg_send()(self, selector("setReleasedWhenClosed:"), releasedWhenClosed as libc::c_int)
     }
 
@@ -792,11 +792,11 @@ impl NSWindow for id {
         msg_send()(self, selector("setContentView:"), view)
     }
 
-    unsafe fn setAcceptsMouseMovedEvents_(self, accept: bool) {
+    unsafe fn setAcceptsMouseMovedEvents_(self, accept: BOOL) {
         msg_send()(self, selector("setAcceptsMouseMovedEvents:"), accept as libc::c_int)
     }
 
-    unsafe fn isVisible(self) -> bool {
+    unsafe fn isVisible(self) -> BOOL {
         msg_send()(self, selector("isVisible"))
     }
 }
@@ -840,7 +840,7 @@ pub trait NSView {
     unsafe fn bounds(self) -> NSRect;
     unsafe fn frame(self) -> NSRect;
     unsafe fn display_(self);
-    unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: bool);
+    unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: BOOL);
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint;
 }
 
@@ -865,7 +865,7 @@ impl NSView for id {
         msg_send()(self, selector("display"))
     }
 
-    unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: bool) {
+    unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: BOOL) {
         msg_send()(self, selector("setWantsBestResolutionOpenGLSurface:"), flag as libc::c_int)
     }
 

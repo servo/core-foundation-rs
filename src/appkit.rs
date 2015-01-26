@@ -522,6 +522,22 @@ pub trait NSWindow {
     unsafe fn preventsApplicationTerminationWhenModal(self) -> BOOL;
     unsafe fn setPreventsApplicationTerminationWhenModal_(self, flag: BOOL);
 
+    // TODO: Accessing Window Information
+
+    // Getting Layout Information
+    unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSUInteger) -> NSRect;
+    unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSUInteger) -> NSRect;
+    unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSUInteger) -> CGFloat;
+    unsafe fn contentRectForFrameRect_(self, windowFrame: NSRect) -> NSRect;
+    unsafe fn frameRectForContentRect_(self, windowContent: NSRect) -> NSRect;
+
+    // Managing Windows
+    unsafe fn drawers(self) -> id;
+    unsafe fn windowController(self) -> id;
+    unsafe fn setWindowController_(self, windowController: id);
+
+    // TODO: Managing Sheets
+
     // Sizing Windows
     unsafe fn frame(self) -> NSRect;
     unsafe fn setFrameOrigin_(self, point: NSPoint);
@@ -584,6 +600,19 @@ pub trait NSWindow {
     // skipped: becomeMainWindow (should not be invoked directly, according to Apple's documentation)
     // skipped: resignMainWindow (should not be invoked directly, according to Apple's documentation)
 
+    // TODO: Managing Toolbars
+    // TODO: Managing Attached Windows
+    // TODO: Managing Window Buffers
+    // TODO: Managing Default Buttons
+    // TODO: Managing Field Editors
+    // TODO: Managing the Window Menu
+    // TODO: Managing Cursor Rectangles
+    // TODO: Managing Title Bars
+    // TODO: Managing Tooltips
+    // TODO: Handling Events
+    // TODO: Managing Responders
+    // TODO: Managing the Key View Loop
+
     // Handling Keyboard Events
     unsafe fn keyDown_(self, event: id);
 
@@ -596,6 +625,13 @@ pub trait NSWindow {
     unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(self,
                                                                point: NSPoint,
                                                                windowNumber: NSInteger) -> NSInteger;
+
+    // TODO: Handling Window Restoration
+    // TODO: Bracketing Drawing Operations
+    // TODO: Drawing Windows
+    // TODO: Window Animation
+    // TODO: Updating Windows
+    // TODO: Dragging Items
 
     // Converting Coordinates
     unsafe fn backingScaleFactor(self) -> CGFloat;
@@ -641,6 +677,14 @@ pub trait NSWindow {
     unsafe fn setMiniwindowImage_(self, miniwindowImage: id);
     unsafe fn miniwindowTitle(self) -> id;
     unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id);
+
+    // TODO: Getting the Dock Tile
+    // TODO: Printing Windows
+    // TODO: Providing Services
+    // TODO: Working with Carbon
+    // TODO: Triggering Constraint-Based Layout
+    // TODO: Debugging Constraint-Based Layout
+    // TODO: Constraint-Based Layouts
 }
 
 impl NSWindow for id {
@@ -789,6 +833,46 @@ impl NSWindow for id {
     unsafe fn setPreventsApplicationTerminationWhenModal_(self, flag: BOOL) {
         msg_send()(self, selector("setPreventsApplicationTerminationWhenModal:"), flag as libc::c_int)
     }
+
+    // TODO: Accessing Window Information
+
+    // Getting Layout Information
+
+    unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSUInteger) -> NSRect {
+        msg_send_stret()(self, selector("contentRectForFrameRect:styleMask:"), windowFrame, windowStyle)
+    }
+
+    unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSUInteger) -> NSRect {
+        msg_send_stret()(self, selector("frameRectForContentRect:styleMask:"), windowContentRect, windowStyle)
+    }
+
+    unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSUInteger) -> CGFloat {
+        msg_send()(self, selector("minFrameWidthWithTitle:styleMask:"), windowTitle, windowStyle)
+    }
+
+    unsafe fn contentRectForFrameRect_(self, windowFrame: NSRect) -> NSRect {
+        msg_send_stret()(self, selector("contentRectForFrameRect:"), windowFrame)
+    }
+
+    unsafe fn frameRectForContentRect_(self, windowContent: NSRect) -> NSRect {
+        msg_send_stret()(self, selector("frameRectForContentRect:"), windowContent)
+    }
+
+    // Managing Windows
+
+    unsafe fn drawers(self) -> id {
+        msg_send()(self, selector("drawers"))
+    }
+
+    unsafe fn windowController(self) -> id {
+        msg_send()(self, selector("windowController"))
+    }
+
+    unsafe fn setWindowController_(self, windowController: id) {
+        msg_send()(self, selector("setWindowController:"), windowController)
+    }
+
+    // TODO: Managing Sheets
 
     // Sizing Windows
 
@@ -986,6 +1070,19 @@ impl NSWindow for id {
         msg_send()(self, selector("makeMainWindow"))
     }
 
+    // TODO: Managing Toolbars
+    // TODO: Managing Attached Windows
+    // TODO: Managing Window Buffers
+    // TODO: Managing Default Buttons
+    // TODO: Managing Field Editors
+    // TODO: Managing the Window Menu
+    // TODO: Managing Cursor Rectangles
+    // TODO: Managing Title Bars
+    // TODO: Managing Tooltips
+    // TODO: Handling Events
+    // TODO: Managing Responders
+    // TODO: Managing the Key View Loop
+
     // Handling Keyboard Events
 
     unsafe fn keyDown_(self, event: id) {
@@ -1158,6 +1255,14 @@ impl NSWindow for id {
     unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id) {
         msg_send()(self, selector("setMiniwindowTitle:"), miniwindowTitle)
     }
+
+    // TODO: Getting the Dock Tile
+    // TODO: Printing Windows
+    // TODO: Providing Services
+    // TODO: Working with Carbon
+    // TODO: Triggering Constraint-Based Layout
+    // TODO: Debugging Constraint-Based Layout
+    // TODO: Constraint-Based Layouts
 }
 
 pub trait NSString {

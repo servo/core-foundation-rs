@@ -373,6 +373,8 @@ impl NSMenuItem for id {
     }
 }
 
+pub type NSWindowDepth = libc::c_int;
+
 bitflags! {
     flags NSWindowCollectionBehavior: NSUInteger {
         const NSWindowCollectionBehaviorDefault = 0,
@@ -2125,14 +2127,87 @@ impl NSEvent for id {
 }
 
 pub trait NSScreen {
-    unsafe fn mainScreen(_: Self) -> id {
-        msg_send()(class("NSScreen"), selector("mainScreen"))
-    }
+    // Getting NSScreen Objects
+    unsafe fn mainScreen(_: Self) -> id /* (NSScreen *) */;
+    unsafe fn deepestScreen(_: Self) -> id /* (NSScreen *) */;
+    unsafe fn screens(_: Self) -> id /* (NSArray *) */;
+
+    // Getting Screen Information
+    unsafe fn depth(self) -> NSWindowDepth;
     unsafe fn frame(self) -> NSRect;
+    unsafe fn supportedWindowDepths(self) -> *const NSWindowDepth;
+    unsafe fn deviceDescription(self) -> id /* (NSDictionary *) */;
+    unsafe fn visibleFrame(self) -> NSRect;
+    unsafe fn colorSpace(self) -> id /* (NSColorSpace *) */;
+    unsafe fn screensHaveSeparateSpaces(_: Self) -> BOOL;
+
+    // Screen Backing Coordinate Conversion
+    unsafe fn backingAlignedRect_options_(self, aRect: NSRect, options: NSAlignmentOptions) -> NSRect;
+    unsafe fn backingScaleFactor(self) -> CGFloat;
+    unsafe fn convertRectFromBacking_(self, aRect: NSRect) -> NSRect;
+    unsafe fn convertRectToBacking_(self, aRect: NSRect) -> NSRect;
 }
 
 impl NSScreen for id {
+    // Getting NSScreen Objects
+
+    unsafe fn mainScreen(_: Self) -> id /* (NSScreen *) */ {
+        msg_send()(class("NSScreen"), selector("mainScreen"))
+    }
+
+    unsafe fn deepestScreen(_: Self) -> id /* (NSScreen *) */ {
+        msg_send()(class("NSScreen"), selector("deepestScreen"))
+    }
+
+    unsafe fn screens(_: Self) -> id /* (NSArray *) */ {
+        msg_send()(class("NSScreen"), selector("screens"))
+    }
+
+    // Getting Screen Information
+
+    unsafe fn depth(self) -> NSWindowDepth {
+        msg_send()(self, selector("depth"))
+    }
+
     unsafe fn frame(self) -> NSRect {
         msg_send_stret()(self, selector("frame"))
+    }
+
+    unsafe fn supportedWindowDepths(self) -> *const NSWindowDepth {
+        msg_send()(self, selector("supportedWindowDepths"))
+    }
+
+    unsafe fn deviceDescription(self) -> id /* (NSDictionary *) */ {
+        msg_send()(self, selector("deviceDescription"))
+    }
+
+    unsafe fn visibleFrame(self) -> NSRect {
+        msg_send_stret()(self, selector("visibleFrame"))
+    }
+
+    unsafe fn colorSpace(self) -> id /* (NSColorSpace *) */ {
+        msg_send()(self, selector("colorSpace"))
+    }
+
+    unsafe fn screensHaveSeparateSpaces(_: Self) -> BOOL {
+        msg_send()(class("NSScreen"), selector("screensHaveSeparateSpaces"))
+    }
+
+    // Screen Backing Coordinate Conversion
+
+    unsafe fn backingAlignedRect_options_(self, aRect: NSRect, options: NSAlignmentOptions) -> NSRect {
+        msg_send_stret()(self, selector("backingAlignedRect:options:"), aRect, options)
+    }
+
+    unsafe fn backingScaleFactor(self) -> CGFloat {
+        msg_send()(self, selector("backingScaleFactor"))
+    }
+
+    unsafe fn convertRectFromBacking_(self, aRect: NSRect) -> NSRect {
+        msg_send_stret()(self, selector("convertRectFromBacking:"), aRect)
+    }
+
+    unsafe fn convertRectToBacking_(self, aRect: NSRect) -> NSRect {
+        msg_send_stret()(self, selector("convertRectToBacking:"), aRect)
     }
 }

@@ -317,7 +317,7 @@ impl ToString for CFString {
     }
 }
 
-impl fmt::Show for CFString {
+impl fmt::Debug for CFString {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.to_string())
     }

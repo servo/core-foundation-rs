@@ -19,6 +19,7 @@ use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::CGFloat;
 
 use std::mem;
+use std::num::ToPrimitive;
 
 /*
 * CTFontTraits.h
@@ -272,12 +273,12 @@ impl CTFontDescriptor {
     pub fn font_path(&self) -> String {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
-            assert!(value.is_not_null());
+            assert!(!value.is_null());
 
             let value: CFType = TCFType::wrap_under_get_rule(value);
             assert!(value.instance_of::<CFURLRef,CFURL>());
             let url: CFURL = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
-            url.to_string()
+            format!("{:?}", url)
         }
     }
 }

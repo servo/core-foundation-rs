@@ -19,6 +19,7 @@ use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
 
 use std::mem;
+use std::num::FromPrimitive;
 use std::ptr;
 
 #[repr(C)]
@@ -110,7 +111,7 @@ pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
 
     unsafe {
         let family_attr: CFString = TCFType::wrap_under_get_rule(kCTFontFamilyNameAttribute);
-        let family_name: CFString = from_str(family).unwrap();
+        let family_name: CFString = family.parse().unwrap();
         let specified_attrs = CFDictionary::from_CFType_pairs(&[
             (family_attr.as_CFType(), family_name.as_CFType())
         ]);

@@ -86,10 +86,10 @@ impl NSRect {
 // Same as CGRectEdge
 #[repr(u32)]
 pub enum NSRectEdge {
-   NSRectMinXEdge,
-   NSRectMinYEdge,
-   NSRectMaxXEdge,
-   NSRectMaxYEdge,
+    NSRectMinXEdge,
+    NSRectMinYEdge,
+    NSRectMaxXEdge,
+    NSRectMaxYEdge,
 }
 
 #[link(name = "AppKit", kind = "framework")]
@@ -1357,9 +1357,9 @@ bitflags! {
 
 #[repr(i64)] // NSInteger
 pub enum NSEventGestureAxis {
-   NSEventGestureAxisNone = 0,
-   NSEventGestureAxisHorizontal,
-   NSEventGestureAxisVertical,
+    NSEventGestureAxisNone = 0,
+    NSEventGestureAxisHorizontal,
+    NSEventGestureAxisVertical,
 }
 
 bitflags! {

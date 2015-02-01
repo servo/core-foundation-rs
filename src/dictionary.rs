@@ -15,7 +15,6 @@ use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
 use std::ptr;
-use std::vec;
 
 pub type CFDictionaryApplierFunction = *const u8;
 pub type CFDictionaryCopyDescriptionCallBack = *const u8;

@@ -14,7 +14,6 @@ use base::{CFType, CFTypeID, CFTypeRef, TCFType};
 use base::{kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
-use std::num::ToPrimitive;
 
 /// FIXME(pcwalton): This is wrong.
 pub type CFArrayRetainCallBack = *const u8;
@@ -179,6 +178,7 @@ extern {
 #[test]
 fn should_box_and_unbox() {
     use number::{CFNumber, number};
+    use std::num::ToPrimitive;
 
     let arr = CFArray::from_CFTypes(&[
         number(1).as_CFType(),

@@ -11,7 +11,9 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFOptionFlags, CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease, CFRetain};
+use base::{Boolean, CFTypeID, CFTypeRef, TCFType};
+use base::{kCFAllocatorDefault};
 use string::{CFString, CFStringRef};
 
 use std::fmt;
@@ -77,7 +79,30 @@ impl fmt::Debug for CFURL {
     }
 }
 
+impl CFURL {
+    pub fn from_file_system_path(filePath: CFString, pathStyle: CFURLPathStyle, isDirectory: bool) -> CFURL {
+        unsafe {
+            let url_ref = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePath.as_concrete_TypeRef(), pathStyle, isDirectory as u8);
+            TCFType::wrap_under_create_rule(url_ref)
+        }
+    }
+
+    pub fn get_string(&self) -> CFString {
+        unsafe {
+            TCFType::wrap_under_get_rule(CFURLGetString(self.obj))
+        }
+    }
+}
+
 type CFURLBookmarkCreationOptions = CFOptionFlags;
+
+pub type CFURLPathStyle = CFIndex;
+
+/* typedef CF_ENUM(CFIndex, CFURLPathStyle) */
+pub const kCFURLPOSIXPathStyle: CFURLPathStyle   = 0;
+pub const kCFURLHFSPathStyle: CFURLPathStyle     = 1;
+pub const kCFURLWindowsPathStyle: CFURLPathStyle = 2;
+
 
 // static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
 //     (1 << 8) as u32;
@@ -149,6 +174,7 @@ extern {
     //fn CFURLCreateFromFSRef
     //fn CFURLCreateWithBytes
     //fn CFURLCreateWithFileSystemPath
+    fn CFURLCreateWithFileSystemPath(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean) -> CFURLRef;
     //fn CFURLCreateWithFileSystemPathRelativeToBase
     //fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
     //                         baseURL: CFURLRef) -> CFURLRef;
@@ -207,4 +233,12 @@ extern {
     //fn CFURLWriteBookmarkDataToFile
     //fn CFURLStartAccessingSecurityScopedResource
     //fn CFURLStopAccessingSecurityScopedResource
+}
+
+#[test]
+fn file_url_from_path() {
+    let path = "/usr/local/foo/";
+    let cfstr_path = CFString::from_static_string(path);
+    let cfurl = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
+    assert!("file:///usr/local/foo/" == cfurl.get_string().to_string().as_slice());
 }

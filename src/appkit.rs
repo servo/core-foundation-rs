@@ -2212,6 +2212,17 @@ impl NSScreen for id {
     }
 }
 
+#[repr(u64)]
+pub enum NSTabViewType {
+    NSTopTabsBezelBorder     = 0,
+    NSLeftTabsBezelBorder    = 1,
+    NSBottomTabsBezelBorder  = 2,
+    NSRightTabsBezelBorder   = 3,
+    NSNoTabsBezelBorder      = 4,
+    NSNoTabsLineBorder       = 5,
+    NSNoTabsNoBorder         = 6
+}
+
 pub trait NSTabView {
     unsafe fn new(_: Self) -> id {
         msg_send()(class("NSTabView"), selector("new"))
@@ -2220,6 +2231,42 @@ pub trait NSTabView {
     unsafe fn addTabViewItem_(self, tab_view_item: id);
     unsafe fn insertTabViewItem_atIndex_(self,tab_view_item:id, index:NSInteger);
     unsafe fn removeTabViewItem_(self,tab_view_item:id);
+
+    unsafe fn indexOfTabViewItem_(self, tab_view_item:id) -> id;
+    unsafe fn indexOfTabViewItemWithIdentifier_(self,identifier:id) -> id;
+    unsafe fn numberOfTabViewItems(self) -> id;
+    unsafe fn tabViewItemAtIndex_(self,index:id)->id;
+
+    unsafe fn tabViewItems(self)->id;
+
+    unsafe fn selectFirstTabViewItem_(self,sender:id);
+    unsafe fn selectLastTabViewItem_(self,sender:id);
+    unsafe fn selectNextTabViewItem_(self, sender:id);
+    unsafe fn selectPreviousTabViewItem_(self,sender:id);
+    unsafe fn selectTabViewItem_(self,tab_view_item:id);
+    unsafe fn selectTabViewItemAtIndex_(self,index:id);
+    unsafe fn selectTabViewItemWithIdentifier_(self,identifier:id);
+    unsafe fn selectedTabViewItem(self) -> id;
+    unsafe fn takeSelectedTabViewItemFromSender_(self,sender:id);
+
+    unsafe fn font(self)->id;
+    unsafe fn setFont_(self, font:id);
+
+    unsafe fn tabViewType(self)->NSTabViewType;
+    unsafe fn setTabViewType_(self,tabViewType: NSTabViewType);
+
+    /*unsafe fn controlTint(self)->id;
+    unsafe fn setControlTint_(self,controlTint:id);
+
+    unsafe fn drawsBackground(self)->BOOL;
+    unsafe fn setDrawsBackground_(self,drawsBackground:BOOL);
+
+    unsafe fn minimumSize(self) -> id;
+    unsafe fn contentRect(self) -> id;
+    unsafe fn controlSize(self) -> id;
+    unsafe fn setControlSize_(self,controlSize:id);
+    */
+
 }
 
 impl NSTabView for id {
@@ -2238,6 +2285,78 @@ impl NSTabView for id {
         msg_send()(self, selector("removeTabViewItem:"), tab_view_item)   
     }
 
+    unsafe fn indexOfTabViewItem_(self, tab_view_item:id) -> id{
+        msg_send()(self,selector("indexOfTabViewItem:"),tab_view_item)
+    }
+
+    unsafe fn indexOfTabViewItemWithIdentifier_(self,identifier:id) -> id{
+        msg_send()(self,selector("indexOfTabViewItemWithIdentifier:"),identifier)
+    }
+    unsafe fn numberOfTabViewItems(self) -> id{
+        msg_send()(self,selector("numberOfTabViewItems"))
+    }
+
+    unsafe fn tabViewItemAtIndex_(self,index:id)->id{
+        msg_send()(self,selector("tabViewItemAtIndex:"),index)
+    }
+
+    unsafe fn tabViewItems(self)->id{
+        msg_send()(self,selector("tabViewItems"))
+    }
+
+    unsafe fn selectFirstTabViewItem_(self,sender:id){
+        msg_send()(self,selector("selectFirstTabViewItem:"),sender)
+    }
+
+    unsafe fn selectLastTabViewItem_(self,sender:id){
+        msg_send()(self,selector("selectLastTabViewItem:"),sender)
+    }
+    unsafe fn selectNextTabViewItem_(self, sender:id){
+        msg_send()(self,selector("selectNextTabViewItem:"),sender)
+    }
+    unsafe fn selectPreviousTabViewItem_(self,sender:id){
+        msg_send()(self,selector("selectPreviousTabViewItem:"),sender)
+    }
+
+    unsafe fn selectTabViewItem_(self,tab_view_item:id){
+        msg_send()(self,selector("selectTabViewItem:"),tab_view_item)
+    }
+
+    unsafe fn selectTabViewItemAtIndex_(self,index:id){
+        msg_send()(self,selector("selectTabViewItemAtIndex:"),index)
+    }
+    unsafe fn selectTabViewItemWithIdentifier_(self,identifier:id){
+        msg_send()(self,selector("selectTabViewItemWithIdentifier:"),identifier)
+    }
+    unsafe fn selectedTabViewItem(self) -> id{
+        msg_send()(self,selector("selectedTabViewItem"))
+    }
+    unsafe fn takeSelectedTabViewItemFromSender_(self,sender:id){
+        msg_send()(self,selector("takeSelectedTabViewItemFromSender:"),sender)
+    }
+
+    unsafe fn font(self)->id{
+        msg_send()(self,selector("font"))
+    }
+
+    unsafe fn setFont_(self, font:id){
+        msg_send()(self,selector("setFont:"),font)
+    }
+
+    unsafe fn tabViewType(self)->NSTabViewType{
+        msg_send()(self,selector("tabViewType"))
+    }
+    unsafe fn setTabViewType_(self,tabViewType: NSTabViewType){
+        msg_send()(self,selector("setTabViewType:"),tabViewType)
+    }
+
+}
+
+#[repr(u64)]
+pub enum NSTabState {
+    NSSelectedTab = 0,
+    NSBackgroundTab = 1,
+    NSPressedTab = 2
 }
 
 pub trait NSTabViewItem {
@@ -2251,7 +2370,30 @@ pub trait NSTabViewItem {
 
 
     unsafe fn initWithIdentifier_(self, identifier:id) -> id;
+    
+    unsafe fn drawLabel_inRect_(self,shouldTruncateLabel:BOOL,labelRect:NSRect);
+    unsafe fn label(self) -> id;
     unsafe fn setLabel_(self,label:id);
+    unsafe fn sizeOfLabel_(self, computeMin:BOOL);
+
+    unsafe fn tabState(self) -> NSTabState;
+
+    unsafe fn identifier(self)-> id;
+    unsafe fn setIdentifier_(self,identifier:id);
+
+    unsafe fn color(self)-> id;
+    unsafe fn setColor_(self,color:id);
+
+    unsafe fn view(self) -> id;
+    unsafe fn setView_(self, view:id);
+
+    unsafe fn initialFirstResponder(self)->id;
+    unsafe fn setInitialFirstResponder_(self,initialFirstResponder:id);
+
+    unsafe fn tabView(self) -> id;
+
+    unsafe fn tooltip(self) -> id;
+    unsafe fn setTooltip_(self,toolTip:id);
 }
 
 impl NSTabViewItem for id {
@@ -2260,7 +2402,66 @@ impl NSTabViewItem for id {
         msg_send()(self, selector("initWithIdentifier:"), identifier)
     }
 
+    unsafe fn drawLabel_inRect_(self, shouldTruncateLabel:BOOL,labelRect:NSRect){
+        msg_send()(self,selector("drawLabel:inRect:"),shouldTruncateLabel as libc::c_int,labelRect)
+    }
+    
+    unsafe fn label(self)->id{
+        msg_send()(self, selector("label"))
+    }
     unsafe fn setLabel_(self,label : id){
         msg_send()(self, selector("setLabel:"), label)
+    }
+
+    unsafe fn sizeOfLabel_(self,computeMin:BOOL){
+        msg_send()(self,selector("sizeOfLabel:"),computeMin as libc::c_int)
+    }
+
+    unsafe fn tabState(self) -> NSTabState{
+        msg_send()(self,selector("tabState"))
+    }
+
+    unsafe fn identifier(self)-> id {
+        msg_send()(self,selector("identifier"))
+    }
+
+    unsafe fn setIdentifier_(self,identifier:id){
+        msg_send()(self,selector("identifier:"),identifier)
+    }
+
+    unsafe fn color(self)-> id{
+        msg_send()(self,selector("color"))
+    }
+
+    unsafe fn setColor_(self,color:id){
+        msg_send()(self,selector("color:"),color)
+    }
+
+    unsafe fn view(self) -> id {
+        msg_send()(self,selector("view"))
+    }
+
+    unsafe fn setView_(self, view:id){
+        msg_send()(self,selector("setView:"),view)
+    }
+
+    unsafe fn initialFirstResponder(self)->id{
+        msg_send()(self,selector("initialFirstResponder"))
+    }
+
+    unsafe fn setInitialFirstResponder_(self,initialFirstResponder:id){
+        msg_send()(self,selector("setInitialFirstResponder:"),initialFirstResponder)
+    }
+
+    unsafe fn tabView(self) -> id{
+        msg_send()(self,selector("tabView"))
+    }
+
+    unsafe fn tooltip(self) -> id{
+        msg_send()(self,selector("tooltip"))
+    }
+
+    unsafe fn setTooltip_(self,toolTip:id){
+        msg_send()(self,selector("setTooltip:"),toolTip)
     }
 }

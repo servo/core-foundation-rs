@@ -8,7 +8,7 @@ use cocoa::appkit::{NSApp, NSRect, NSPoint, NSSize,
 					NSClosableWindowMask,NSResizableWindowMask,NSMiniaturizableWindowMask,NSUnifiedTitleAndToolbarWindowMask,
 					NSString,
 					NSMenu, NSMenuItem,
-					NSTabView, NSTabViewItem};
+					NSTabView, NSTabViewItem,NSTabViewType};
 
 
 fn main() {
@@ -16,6 +16,8 @@ fn main() {
 		
 		// create a tab View
 		let tab_view = NSTabView::new(nil).initWithFrame_(NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)));
+
+		tab_view.setTabViewType_(NSTabViewType::NSBottomTabsBezelBorder);
 
 		// create a tab view item
 		let tab_view_item = NSTabViewItem::new(nil).initWithIdentifier_(NSString::alloc(nil).init_str("TabView1\0"));

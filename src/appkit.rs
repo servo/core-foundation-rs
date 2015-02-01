@@ -2211,3 +2211,56 @@ impl NSScreen for id {
         msg_send_stret()(self, selector("convertRectToBacking:"), aRect)
     }
 }
+
+pub trait NSTabView {
+    unsafe fn new(_: Self) -> id {
+        msg_send()(class("NSTabView"), selector("new"))
+    }
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
+    unsafe fn addTabViewItem_(self, tab_view_item: id);
+    unsafe fn insertTabViewItem_atIndex_(self,tab_view_item:id, index:NSInteger);
+    unsafe fn removeTabViewItem_(self,tab_view_item:id);
+}
+
+impl NSTabView for id {
+
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
+        msg_send()(self, selector("initWithFrame:"), frameRect)
+    }
+
+    unsafe fn addTabViewItem_(self, tab_view_item: id) {
+        msg_send()(self, selector("addTabViewItem:"), tab_view_item)
+    }
+    unsafe fn insertTabViewItem_atIndex_(self, tab_view_item: id,index:NSInteger) {
+        msg_send()(self, selector("addTabViewItem:atIndex:"), tab_view_item,index)
+    }
+    unsafe fn removeTabViewItem_(self,tab_view_item:id){
+        msg_send()(self, selector("removeTabViewItem:"), tab_view_item)   
+    }
+
+}
+
+pub trait NSTabViewItem {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send()(class("NSTabViewItem"), selector("alloc"))
+    }
+
+    unsafe fn new(_: Self) -> id {
+        msg_send()(class("NSTabViewItem"), selector("new"))
+    }
+
+
+    unsafe fn initWithIdentifier_(self, identifier:id) -> id;
+    unsafe fn setLabel_(self,label:id);
+}
+
+impl NSTabViewItem for id {
+
+    unsafe fn initWithIdentifier_(self, identifier: id) -> id {
+        msg_send()(self, selector("initWithIdentifier:"), identifier)
+    }
+
+    unsafe fn setLabel_(self,label : id){
+        msg_send()(self, selector("setLabel:"), label)
+    }
+}

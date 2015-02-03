@@ -1033,7 +1033,7 @@ impl NSWindow for id {
     }
 
     unsafe fn mouseLocationOutsideOfEventStream(self) -> NSPoint {
-        msg_send_stret()(self, selector("mouseLocationOutsideOfEventStream"))
+        msg_send()(self, selector("mouseLocationOutsideOfEventStream"))
     }
 
     unsafe fn setAcceptsMouseMovedEvents_(self, acceptMouseMovedEvents: BOOL) {
@@ -1847,7 +1847,7 @@ impl NSEvent for id {
     }
 
     unsafe fn locationInWindow(self) -> NSPoint {
-        msg_send_stret()(self, selector("locationInWindow"))
+        msg_send()(self, selector("locationInWindow"))
     }
 
     unsafe fn modifierFlags(self) -> NSEventModifierFlags {
@@ -1918,7 +1918,7 @@ impl NSEvent for id {
     }
 
     unsafe fn mouseLocation(_: Self) -> NSPoint {
-        msg_send_stret()(class("NSEvent"), selector("mouseLocation"))
+        msg_send()(class("NSEvent"), selector("mouseLocation"))
     }
 
     unsafe fn buttonNumber(self) -> NSInteger {
@@ -2056,7 +2056,7 @@ impl NSEvent for id {
     }
 
     unsafe fn tilt(self) -> NSPoint {
-        msg_send_stret()(self, selector("tilt"))
+        msg_send()(self, selector("tilt"))
     }
 
     unsafe fn vendorDefined(self) -> id {

@@ -1860,7 +1860,7 @@ impl NSEvent for id {
     // NOTE: renamed from `- type` due to Rust keyword collision
 
     unsafe fn event_type(self) -> NSEventType {
-        msg_send()(self, selector("event_type"))
+        msg_send()(self, selector("type"))
     }
 
     unsafe fn window(self) -> id /* (NSWindow *) */ {

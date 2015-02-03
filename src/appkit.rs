@@ -1635,7 +1635,7 @@ pub trait NSEvent {
     unsafe fn modifierFlags(self) -> NSEventModifierFlags;
     unsafe fn timestamp(self) -> NSTimeInterval;
     // NOTE: renamed from `- type` due to Rust keyword collision
-    unsafe fn event_type(self) -> NSEventType;
+    unsafe fn eventType(self) -> NSEventType;
     unsafe fn window(self) -> id /* (NSWindow *) */;
     unsafe fn windowNumber(self) -> NSInteger;
     unsafe fn eventRef(self) -> *const libc::c_void;
@@ -1859,7 +1859,7 @@ impl NSEvent for id {
     }
     // NOTE: renamed from `- type` due to Rust keyword collision
 
-    unsafe fn event_type(self) -> NSEventType {
+    unsafe fn eventType(self) -> NSEventType {
         msg_send()(self, selector("type"))
     }
 

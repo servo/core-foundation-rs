@@ -7,12 +7,14 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use libc::{c_long, c_ulong};
+use libc::{c_long, c_ulong, c_uint};
 use std::num::Int;
 
 pub type Boolean = u8;
 
 pub type CFIndex = c_long;
+
+pub type mach_port_t = c_uint;
 
 pub trait CFIndexConvertible {
     /// Always use this method to construct a `CFIndex` value. It performs bounds checking to

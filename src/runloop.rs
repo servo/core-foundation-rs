@@ -7,20 +7,18 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![allow(non_upper_case_globals)]
+
 use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease, CFRetain};
-use base::{CFTypeID, CFTypeRef, TCFType};
+use base::{CFTypeID, CFTypeRef, TCFType, CFHashCode, mach_port_t};
 use base::{kCFAllocatorDefault};
 use base::{Boolean};
+use array::{CFArrayRef};
 use string::{CFString, CFStringRef};
 use date::{CFAbsoluteTime, CFTimeInterval, CFAbsoluteTimeGetCurrent};
 use libc::c_void;
 use std::mem;
 use std::ptr;
-
-#[repr(C)]
-struct __CFRunLoop;
-
-pub type CFRunLoopRef = *const __CFRunLoop;
 
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFRunLoop {
@@ -122,72 +120,76 @@ impl CFRunLoop {
      
 }
 
-//typedef struct __CFRunLoopSource * CFRunLoopSourceRef;
-//
-//typedef struct __CFRunLoopObserver * CFRunLoopObserverRef;
-//
-//typedef struct CF_BRIDGED_MUTABLE_TYPE(NSTimer) __CFRunLoopTimer * CFRunLoopTimerRef;
-//
-///* Reasons for CFRunLoopRunInMode() to Return */
-//enum {
-//    kCFRunLoopRunFinished = 1,
-//    kCFRunLoopRunStopped = 2,
-//    kCFRunLoopRunTimedOut = 3,
-//    kCFRunLoopRunHandledSource = 4
-//};
-//
-///* Run Loop Observer Activities */
+#[repr(C)]
+struct __CFRunLoop;
+
+pub type CFRunLoopRef = *const __CFRunLoop;
+
+#[repr(C)]
+struct __CFRunLoopSource;
+
+pub type CFRunLoopSourceRef = *const __CFRunLoopSource;
+
+#[repr(C)]
+struct __CFRunLoopObserver;
+
+pub type CFRunLoopObserverRef = *const __CFRunLoopObserver;
+
+// Reasons for CFRunLoopRunInMode() to Return
+pub const kCFRunLoopRunFinished: i32      = 1;
+pub const kCFRunLoopRunStopped: i32       = 2;
+pub const kCFRunLoopRunTimedOut: i32      = 3;
+pub const kCFRunLoopRunHandledSource: i32 = 4;
+
+// Run Loop Observer Activities
 //typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
-//    kCFRunLoopEntry = (1UL << 0),
-//    kCFRunLoopBeforeTimers = (1UL << 1),
-//    kCFRunLoopBeforeSources = (1UL << 2),
-//    kCFRunLoopBeforeWaiting = (1UL << 5),
-//    kCFRunLoopAfterWaiting = (1UL << 6),
-//    kCFRunLoopExit = (1UL << 7),
-//    kCFRunLoopAllActivities = 0x0FFFFFFFU
-//};
-//
-//
-//typedef struct {
-//    CFIndex	version;
-//    void *	info;
-//    const void *(*retain)(const void *info);
-//    void	(*release)(const void *info);
-//    CFStringRef	(*copyDescription)(const void *info);
-//    Boolean	(*equal)(const void *info1, const void *info2);
-//    CFHashCode	(*hash)(const void *info);
-//    void	(*schedule)(void *info, CFRunLoopRef rl, CFStringRef mode);
-//    void	(*cancel)(void *info, CFRunLoopRef rl, CFStringRef mode);
-//    void	(*perform)(void *info);
-//} CFRunLoopSourceContext;
-//
-//typedef struct {
-//    CFIndex	version;
-//    void *	info;
-//    const void *(*retain)(const void *info);
-//    void	(*release)(const void *info);
-//    CFStringRef	(*copyDescription)(const void *info);
-//    Boolean	(*equal)(const void *info1, const void *info2);
-//    CFHashCode	(*hash)(const void *info);
-//#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)) || (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)
-//    mach_port_t	(*getPort)(void *info);
-//    void *	(*perform)(void *msg, CFIndex size, CFAllocatorRef allocator, void *info);
-//#else
-//    void *	(*getPort)(void *info);
-//    void	(*perform)(void *info);
-//#endif
-//} CFRunLoopSourceContext1;
-//
-//typedef struct {
-//    CFIndex	version;
-//    void *	info;
-//    const void *(*retain)(const void *info);
-//    void	(*release)(const void *info);
-//    CFStringRef	(*copyDescription)(const void *info);
-//} CFRunLoopObserverContext;
-//
-//typedef void (*CFRunLoopObserverCallBack)(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info);
-//
+pub type CFRunLoopActivity = CFOptionFlags;
+pub const kCFRunLoopEntry: CFOptionFlags         = 1 << 0;
+pub const kCFRunLoopBeforeTimers: CFOptionFlags  = 1 << 1;
+pub const kCFRunLoopBeforeSources: CFOptionFlags = 1 << 2;
+pub const kCFRunLoopBeforeWaiting: CFOptionFlags = 1 << 5;
+pub const kCFRunLoopAfterWaiting: CFOptionFlags  = 1 << 6;
+pub const kCFRunLoopExit: CFOptionFlags          = 1 << 7;
+pub const kCFRunLoopAllActivities: CFOptionFlags = 0x0FFFFFFF;
+
+#[repr(C)]
+pub struct CFRunLoopSourceContext {
+    version: CFIndex, 
+    info: *mut c_void,
+    retain: extern "C" fn (info: *const c_void) -> *const c_void,
+    release: extern "C" fn (info: *const c_void),
+    copyDescription: extern "C" fn (info: *const c_void) -> CFStringRef,
+    equal: extern "C" fn (info1: *const c_void, info2: *const c_void) -> Boolean,
+    hash: extern "C" fn (info: *const c_void) -> CFHashCode,
+    schedule: extern "C" fn (info: *const c_void, rl: CFRunLoopRef, mode: CFStringRef),
+    cancel: extern "C" fn (info: *const c_void, rl: CFRunLoopRef, mode: CFStringRef),
+    perform: extern "C" fn (info: *const c_void),
+}
+
+#[repr(C)]
+pub struct CFRunLoopSourceContext1 {
+    version: CFIndex, 
+    info: *mut c_void,
+    retain: extern "C" fn (info: *const c_void) -> *const c_void,
+    release: extern "C" fn (info: *const c_void),
+    copyDescription: extern "C" fn (info: *const c_void) -> CFStringRef,
+    equal: extern "C" fn (info1: *const c_void, info2: *const c_void) -> Boolean,
+    hash: extern "C" fn (info: *const c_void) -> CFHashCode,
+    // note that the following two fields are platform dependent in the C header, the ones here are for OS X
+    getPort: extern "C" fn (info: *mut c_void) -> mach_port_t,
+    perform: extern "C" fn (msg: *mut c_void, size: CFIndex, allocator: CFAllocatorRef, info: *mut c_void) -> *mut c_void,
+}
+
+#[repr(C)]
+pub struct CFRunLoopObserverContext {
+    version: CFIndex, 
+    info: *mut c_void,
+    retain: extern "C" fn (info: *const c_void) -> *const c_void,
+    release: extern "C" fn (info: *const c_void),
+    copyDescription: extern "C" fn (info: *const c_void) -> CFStringRef,
+}
+
+pub type CFRunLoopObserverCallBack = extern "C" fn (observer: CFRunLoopObserverRef, activity: CFRunLoopActivity, info: *mut c_void);
 
 #[repr(C)]
 pub struct CFRunLoopTimerContext {
@@ -262,6 +264,7 @@ impl CFRunLoopTimer {
 }
 
 
+#[allow(dead_code)]
 #[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
@@ -273,57 +276,56 @@ extern {
     fn CFRunLoopGetCurrent() -> CFRunLoopRef;
     fn CFRunLoopGetMain() -> CFRunLoopRef;
     fn CFRunLoopCopyCurrentMode(rl: CFRunLoopRef) -> CFStringRef;
-    //fn CFRunLoopCopyAllModes(rl: CFRunLoopRef) -> CFArrayRef;
-    //fn CFRunLoopAddCommonMode(rl: CFRunLoopRef, mode: CFStringRef);
-    //fn CFRunLoopGetNextTimerFireDate(rl: CFRunLoopRef, mode: CFStringRef) -> CFAbsoluteTime;
+    fn CFRunLoopCopyAllModes(rl: CFRunLoopRef) -> CFArrayRef;
+    fn CFRunLoopAddCommonMode(rl: CFRunLoopRef, mode: CFStringRef);
+    fn CFRunLoopGetNextTimerFireDate(rl: CFRunLoopRef, mode: CFStringRef) -> CFAbsoluteTime;
     fn CFRunLoopRun();
-    //fn CFRunLoopRunInMode(mode: CFStringRef, seconds: CFTimeInterval, returnAfterSourceHandled: Boolean) -> SInt32;
-    //fn CFRunLoopIsWaiting(rl: CFRunLoopRef) -> Boolean;
-    //fn CFRunLoopWakeUp(rl: CFRunLoopRef);
+    fn CFRunLoopRunInMode(mode: CFStringRef, seconds: CFTimeInterval, returnAfterSourceHandled: Boolean) -> i32;
+    fn CFRunLoopIsWaiting(rl: CFRunLoopRef) -> Boolean;
+    fn CFRunLoopWakeUp(rl: CFRunLoopRef);
     fn CFRunLoopStop(rl: CFRunLoopRef);
     // fn CFRunLoopPerformBlock(rl: CFRunLoopRef, mode: CFTypeRef, block: void (^)(void));
-    //fn CFRunLoopContainsSource(rl: CFRunLoopRef, source: CFRunLoopSourceRef, mode: CFStringRef) -> Boolean;
-    //fn CFRunLoopAddSource(rl: CFRunLoopRef, source: CFRunLoopSourceRef, mode: CFStringRef);
-    //fn CFRunLoopRemoveSource(rl: CFRunLoopRef, source: CFRunLoopSourceRef, mode: CFStringRef);
-    //fn CFRunLoopContainsObserver(rl: CFRunLoopRef, observer: CFRunLoopObserverRef, mode: CFStringRef) -> Boolean;
-    //fn CFRunLoopAddObserver(rl: CFRunLoopRef, observer: CFRunLoopObserverRef, mode: CFStringRef);
-    //fn CFRunLoopRemoveObserver(rl: CFRunLoopRef, observer: CFRunLoopObserverRef, mode: CFStringRef);
-    //fn CFRunLoopRemoveObserver(rl: CFRunLoopRef, observer: CFRunLoopObserverRef, mode: CFStringRef);
+    fn CFRunLoopContainsSource(rl: CFRunLoopRef, source: CFRunLoopSourceRef, mode: CFStringRef) -> Boolean;
+    fn CFRunLoopAddSource(rl: CFRunLoopRef, source: CFRunLoopSourceRef, mode: CFStringRef);
+    fn CFRunLoopRemoveSource(rl: CFRunLoopRef, source: CFRunLoopSourceRef, mode: CFStringRef);
+    fn CFRunLoopContainsObserver(rl: CFRunLoopRef, observer: CFRunLoopObserverRef, mode: CFStringRef) -> Boolean;
+    fn CFRunLoopAddObserver(rl: CFRunLoopRef, observer: CFRunLoopObserverRef, mode: CFStringRef);
+    fn CFRunLoopRemoveObserver(rl: CFRunLoopRef, observer: CFRunLoopObserverRef, mode: CFStringRef);
     fn CFRunLoopContainsTimer(rl: CFRunLoopRef, timer: CFRunLoopTimerRef, mode: CFStringRef) -> Boolean;
     fn CFRunLoopAddTimer(rl: CFRunLoopRef, timer: CFRunLoopTimerRef, mode: CFStringRef);
-    //fn CFRunLoopRemoveTimer(rl: CFRunLoopRef, timer: CFRunLoopTimerRef, mode: CFStringRef);
+    fn CFRunLoopRemoveTimer(rl: CFRunLoopRef, timer: CFRunLoopTimerRef, mode: CFStringRef);
 
-    //fn CFRunLoopSourceGetTypeID() -> CFTypeID;
-    //fn CFRunLoopSourceCreate(allocator: CFAllocatorRef, order: CFIndex, context: *mut CFRunLoopSourceContext) -> CFRunLoopSourceRef;
-    //fn CFRunLoopSourceGetOrder(source: CFRunLoopSourceRef) -> CFIndex;
-    //fn CFRunLoopSourceInvalidate(source: CFRunLoopSourceRef);
-    //fn CFRunLoopSourceIsValid(source: CFRunLoopSourceRef) -> Boolean;
-    //fn CFRunLoopSourceGetContext(source: CFRunLoopSourceRef, context: *mut CFRunLoopSourceContext);
-    //fn CFRunLoopSourceSignal(source: CFRunLoopSourceRef);
+    fn CFRunLoopSourceGetTypeID() -> CFTypeID;
+    fn CFRunLoopSourceCreate(allocator: CFAllocatorRef, order: CFIndex, context: *mut CFRunLoopSourceContext) -> CFRunLoopSourceRef;
+    fn CFRunLoopSourceGetOrder(source: CFRunLoopSourceRef) -> CFIndex;
+    fn CFRunLoopSourceInvalidate(source: CFRunLoopSourceRef);
+    fn CFRunLoopSourceIsValid(source: CFRunLoopSourceRef) -> Boolean;
+    fn CFRunLoopSourceGetContext(source: CFRunLoopSourceRef, context: *mut CFRunLoopSourceContext);
+    fn CFRunLoopSourceSignal(source: CFRunLoopSourceRef);
 
-    //fn CFRunLoopObserverGetTypeID() -> CFTypeID;
-    //fn CFRunLoopObserverCreate(allocator: CFAllocatorRef, activities: CFOptionFlags, repeats: Boolean, order: CFIndex, callout: CFRunLoopObserverCallBack, context: *mut CFRunLoopObserverContext) -> CFRunLoopObserverRef;
+    fn CFRunLoopObserverGetTypeID() -> CFTypeID;
+    fn CFRunLoopObserverCreate(allocator: CFAllocatorRef, activities: CFOptionFlags, repeats: Boolean, order: CFIndex, callout: CFRunLoopObserverCallBack, context: *mut CFRunLoopObserverContext) -> CFRunLoopObserverRef;
     // fn CFRunLoopObserverCreateWithHandler(allocator: CFAllocatorRef, activities: CFOptionFlags, repeats: Boolean, order: CFIndex, block: void (^) (CFRunLoopObserverRef observer, CFRunLoopActivity activity)) -> CFRunLoopObserverRef;
-    //fn CFRunLoopObserverGetActivities(observer: CFRunLoopObserverRef) -> CFOptionFlags;
-    //fn CFRunLoopObserverDoesRepeat(observer: CFRunLoopObserverRef) -> Boolean;
-    //fn CFRunLoopObserverGetOrder(observer: CFRunLoopObserverRef) -> CFIndex;
-    //fn CFRunLoopObserverInvalidate(observer: CFRunLoopObserverRef);
-    //fn CFRunLoopObserverIsValid(observer: CFRunLoopObserverRef) -> Boolean;
-    //fn CFRunLoopObserverGetContext(observer: CFRunLoopObserverRef, context: *mut CFRunLoopObserverContext);
+    fn CFRunLoopObserverGetActivities(observer: CFRunLoopObserverRef) -> CFOptionFlags;
+    fn CFRunLoopObserverDoesRepeat(observer: CFRunLoopObserverRef) -> Boolean;
+    fn CFRunLoopObserverGetOrder(observer: CFRunLoopObserverRef) -> CFIndex;
+    fn CFRunLoopObserverInvalidate(observer: CFRunLoopObserverRef);
+    fn CFRunLoopObserverIsValid(observer: CFRunLoopObserverRef) -> Boolean;
+    fn CFRunLoopObserverGetContext(observer: CFRunLoopObserverRef, context: *mut CFRunLoopObserverContext);
 
     fn CFRunLoopTimerGetTypeID() -> CFTypeID;
     fn CFRunLoopTimerCreate(allocator: CFAllocatorRef, fireDate: CFAbsoluteTime, interval: CFTimeInterval, flags: CFOptionFlags, order: CFIndex, callout: CFRunLoopTimerCallBack, context: *mut CFRunLoopTimerContext) -> CFRunLoopTimerRef;
     // fn CFRunLoopTimerCreateWithHandler(allocator: CFAllocatorRef, fireDate: CFAbsoluteTime, interval: CFTimeInterval, flags: CFOptionFlags, order: CFIndex, block: void (^) (CFRunLoopTimerRef timer)) -> CFRunLoopTimerRef;
-    //fn CFRunLoopTimerGetNextFireDate(timer: CFRunLoopTimerRef) -> CFAbsoluteTime;
-    //fn CFRunLoopTimerSetNextFireDate(timer: CFRunLoopTimerRef, fireDate: CFAbsoluteTime);
-    //fn CFRunLoopTimerGetInterval(timer: CFRunLoopTimerRef) -> CFTimeInterval;
-    //fn CFRunLoopTimerDoesRepeat(timer: CFRunLoopTimerRef) -> Boolean;
-    //fn CFRunLoopTimerGetOrder(timer: CFRunLoopTimerRef) -> CFIndex;
-    //fn CFRunLoopTimerInvalidate(timer: CFRunLoopTimerRef);
-    //fn CFRunLoopTimerIsValid(timer: CFRunLoopTimerRef) -> Boolean;
-    //fn CFRunLoopTimerGetContext(timer: CFRunLoopTimerRef, context: *mut CFRunLoopTimerContext);
-    //fn CFRunLoopTimerGetTolerance(timer: CFRunLoopTimerRef) -> CFTimeInterval;
-    //fn CFRunLoopTimerSetTolerance(timer: CFRunLoopTimerRef, tolerance: CFTimeInterval);
+    fn CFRunLoopTimerGetNextFireDate(timer: CFRunLoopTimerRef) -> CFAbsoluteTime;
+    fn CFRunLoopTimerSetNextFireDate(timer: CFRunLoopTimerRef, fireDate: CFAbsoluteTime);
+    fn CFRunLoopTimerGetInterval(timer: CFRunLoopTimerRef) -> CFTimeInterval;
+    fn CFRunLoopTimerDoesRepeat(timer: CFRunLoopTimerRef) -> Boolean;
+    fn CFRunLoopTimerGetOrder(timer: CFRunLoopTimerRef) -> CFIndex;
+    fn CFRunLoopTimerInvalidate(timer: CFRunLoopTimerRef);
+    fn CFRunLoopTimerIsValid(timer: CFRunLoopTimerRef) -> Boolean;
+    fn CFRunLoopTimerGetContext(timer: CFRunLoopTimerRef, context: *mut CFRunLoopTimerContext);
+    fn CFRunLoopTimerGetTolerance(timer: CFRunLoopTimerRef) -> CFTimeInterval;
+    fn CFRunLoopTimerSetTolerance(timer: CFRunLoopTimerRef, tolerance: CFTimeInterval);
 }
 
 

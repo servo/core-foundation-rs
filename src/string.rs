@@ -263,9 +263,11 @@ impl TCFType<CFStringRef> for CFString {
 }
 
 impl FromStr for CFString {
+    type Err = ();
+
     /// Creates a new `CFString` instance from a Rust string.
     #[inline]
-    fn from_str(string: &str) -> Option<CFString> {
+    fn from_str(string: &str) -> Result<CFString, ()> {
         unsafe {
             let string_ref = CFStringCreateWithBytes(kCFAllocatorDefault,
                                                      string.as_ptr(),
@@ -273,7 +275,7 @@ impl FromStr for CFString {
                                                      kCFStringEncodingUTF8,
                                                      false as Boolean,
                                                      kCFAllocatorNull);
-            Some(TCFType::wrap_under_create_rule(string_ref))
+            Some(TCFType::wrap_under_create_rule(string_ref)).ok_or(())
         }
     }
 }

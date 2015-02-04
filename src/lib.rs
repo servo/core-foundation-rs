@@ -36,6 +36,10 @@ pub mod string;
 pub mod url;
 #[cfg(target_os="macos")]
 pub mod bundle;
+#[cfg(target_os="macos")]
+pub mod date;
+#[cfg(target_os="macos")]
+pub mod runloop;
 
 #[cfg(all(target_os="macos", test))]
 pub mod test {

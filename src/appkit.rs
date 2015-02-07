@@ -2369,7 +2369,7 @@ impl NSTabView for id {
         msg_send()(self,selector("drawsBackground"))
     }
     unsafe fn setDrawsBackground_(self,drawsBackground:BOOL){
-        msg_send()(self,selector("setDrawsBackground:"),drawsBackground)    
+        msg_send()(self,selector("setDrawsBackground:"),drawsBackground as libc::c_int)    
     }
 
     unsafe fn minimumSize(self) -> id{
@@ -2389,7 +2389,7 @@ impl NSTabView for id {
         msg_send()(self,selector("allowsTruncatedLabels"))
     }
     unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels:BOOL){
-        msg_send()(self,selector("setAllowsTruncatedLabels:"),allowTruncatedLabels)   
+        msg_send()(self,selector("setAllowsTruncatedLabels:"),allowTruncatedLabels as libc::c_int)   
     }
 
     unsafe fn setDelegate_(self, delegate:id){

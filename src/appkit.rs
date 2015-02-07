@@ -2235,9 +2235,9 @@ pub trait NSTabView {
     unsafe fn indexOfTabViewItem_(self, tabViewItem:id) -> id;
     unsafe fn indexOfTabViewItemWithIdentifier_(self,identifier:id) -> id;
     unsafe fn numberOfTabViewItems(self) -> id;
-    unsafe fn tabViewItemAtIndex_(self,index:id)->id;
+    unsafe fn tabViewItemAtIndex_(self,index:id) -> id;
 
-    unsafe fn tabViewItems(self)->id;
+    unsafe fn tabViewItems(self) -> id;
 
     unsafe fn selectFirstTabViewItem_(self,sender:id);
     unsafe fn selectLastTabViewItem_(self,sender:id);
@@ -2249,23 +2249,31 @@ pub trait NSTabView {
     unsafe fn selectedTabViewItem(self) -> id;
     unsafe fn takeSelectedTabViewItemFromSender_(self,sender:id);
 
-    unsafe fn font(self)->id;
+    unsafe fn font(self) -> id;
     unsafe fn setFont_(self, font:id);
 
-    unsafe fn tabViewType(self)->NSTabViewType;
+    unsafe fn tabViewType(self) -> NSTabViewType;
     unsafe fn setTabViewType_(self,tabViewType: NSTabViewType);
 
-    /*unsafe fn controlTint(self)->id;
+    unsafe fn controlTint(self) -> id;
     unsafe fn setControlTint_(self,controlTint:id);
 
-    unsafe fn drawsBackground(self)->BOOL;
+    unsafe fn drawsBackground(self) -> BOOL;
     unsafe fn setDrawsBackground_(self,drawsBackground:BOOL);
 
     unsafe fn minimumSize(self) -> id;
     unsafe fn contentRect(self) -> id;
     unsafe fn controlSize(self) -> id;
     unsafe fn setControlSize_(self,controlSize:id);
-    */
+    
+    unsafe fn allowsTruncatedLabels(self) -> BOOL;
+    unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels:BOOL);
+
+    unsafe fn setDelegate_(self, delegate:id);
+    unsafe fn delegate(self) -> id ;
+
+    unsafe fn tabViewAtPoint_(self, point:id) -> id;
+
 
 }
 
@@ -2348,6 +2356,51 @@ impl NSTabView for id {
     }
     unsafe fn setTabViewType_(self,tabViewType: NSTabViewType){
         msg_send()(self,selector("setTabViewType:"),tabViewType)
+    }
+
+    unsafe fn controlTint(self) -> id{
+        msg_send()(self,selector("controlTint"))
+    }
+    unsafe fn setControlTint_(self,controlTint:id){
+        msg_send()(self,selector("setControlTint:"),controlTint)
+    }
+
+    unsafe fn drawsBackground(self) -> BOOL{
+        msg_send()(self,selector("drawsBackground"))
+    }
+    unsafe fn setDrawsBackground_(self,drawsBackground:BOOL){
+        msg_send()(self,selector("setDrawsBackground:"),drawsBackground)    
+    }
+
+    unsafe fn minimumSize(self) -> id{
+        msg_send()(self,selector("minimumSize"))
+    }
+    unsafe fn contentRect(self) -> id{
+        msg_send()(self,selector("contentRect"))
+    }
+    unsafe fn controlSize(self) -> id{
+        msg_send()(self,selector("controlSize"))
+    }
+    unsafe fn setControlSize_(self,controlSize:id){
+        msg_send()(self,selector("setControlSize:"),controlSize)   
+    }
+    
+    unsafe fn allowsTruncatedLabels(self) -> BOOL{
+        msg_send()(self,selector("allowsTruncatedLabels"))
+    }
+    unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels:BOOL){
+        msg_send()(self,selector("setAllowsTruncatedLabels:"),allowTruncatedLabels)   
+    }
+
+    unsafe fn setDelegate_(self, delegate:id){
+        msg_send()(self,selector("setDelegate:"),delegate)   
+    }
+    unsafe fn delegate(self) -> id {
+        msg_send()(self,selector("delegate"))      
+    }
+
+    unsafe fn tabViewAtPoint_(self, point:id) -> id{
+        msg_send()(self,selector("tabViewAtPoint:"),point)         
     }
 
 }

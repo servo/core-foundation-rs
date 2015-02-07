@@ -2228,11 +2228,11 @@ pub trait NSTabView {
         msg_send()(class("NSTabView"), selector("new"))
     }
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
-    unsafe fn addTabViewItem_(self, tab_view_item: id);
-    unsafe fn insertTabViewItem_atIndex_(self,tab_view_item:id, index:NSInteger);
-    unsafe fn removeTabViewItem_(self,tab_view_item:id);
+    unsafe fn addTabViewItem_(self, tabViewItem: id);
+    unsafe fn insertTabViewItem_atIndex_(self,tabViewItem:id, index:NSInteger);
+    unsafe fn removeTabViewItem_(self,tabViewItem:id);
 
-    unsafe fn indexOfTabViewItem_(self, tab_view_item:id) -> id;
+    unsafe fn indexOfTabViewItem_(self, tabViewItem:id) -> id;
     unsafe fn indexOfTabViewItemWithIdentifier_(self,identifier:id) -> id;
     unsafe fn numberOfTabViewItems(self) -> id;
     unsafe fn tabViewItemAtIndex_(self,index:id)->id;
@@ -2243,7 +2243,7 @@ pub trait NSTabView {
     unsafe fn selectLastTabViewItem_(self,sender:id);
     unsafe fn selectNextTabViewItem_(self, sender:id);
     unsafe fn selectPreviousTabViewItem_(self,sender:id);
-    unsafe fn selectTabViewItem_(self,tab_view_item:id);
+    unsafe fn selectTabViewItem_(self,tabViewItem:id);
     unsafe fn selectTabViewItemAtIndex_(self,index:id);
     unsafe fn selectTabViewItemWithIdentifier_(self,identifier:id);
     unsafe fn selectedTabViewItem(self) -> id;
@@ -2275,18 +2275,18 @@ impl NSTabView for id {
         msg_send()(self, selector("initWithFrame:"), frameRect)
     }
 
-    unsafe fn addTabViewItem_(self, tab_view_item: id) {
-        msg_send()(self, selector("addTabViewItem:"), tab_view_item)
+    unsafe fn addTabViewItem_(self, tabViewItem: id) {
+        msg_send()(self, selector("addTabViewItem:"), tabViewItem)
     }
-    unsafe fn insertTabViewItem_atIndex_(self, tab_view_item: id,index:NSInteger) {
-        msg_send()(self, selector("addTabViewItem:atIndex:"), tab_view_item,index)
+    unsafe fn insertTabViewItem_atIndex_(self, tabViewItem: id,index:NSInteger) {
+        msg_send()(self, selector("addTabViewItem:atIndex:"), tabViewItem,index)
     }
-    unsafe fn removeTabViewItem_(self,tab_view_item:id){
-        msg_send()(self, selector("removeTabViewItem:"), tab_view_item)   
+    unsafe fn removeTabViewItem_(self,tabViewItem:id){
+        msg_send()(self, selector("removeTabViewItem:"), tabViewItem)   
     }
 
-    unsafe fn indexOfTabViewItem_(self, tab_view_item:id) -> id{
-        msg_send()(self,selector("indexOfTabViewItem:"),tab_view_item)
+    unsafe fn indexOfTabViewItem_(self, tabViewItem:id) -> id{
+        msg_send()(self,selector("indexOfTabViewItem:"),tabViewItem)
     }
 
     unsafe fn indexOfTabViewItemWithIdentifier_(self,identifier:id) -> id{
@@ -2318,8 +2318,8 @@ impl NSTabView for id {
         msg_send()(self,selector("selectPreviousTabViewItem:"),sender)
     }
 
-    unsafe fn selectTabViewItem_(self,tab_view_item:id){
-        msg_send()(self,selector("selectTabViewItem:"),tab_view_item)
+    unsafe fn selectTabViewItem_(self,tabViewItem:id){
+        msg_send()(self,selector("selectTabViewItem:"),tabViewItem)
     }
 
     unsafe fn selectTabViewItemAtIndex_(self,index:id){

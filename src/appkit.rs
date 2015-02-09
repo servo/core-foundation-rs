@@ -27,6 +27,8 @@ pub type CGFloat = f32;
 #[cfg(target_pointer_width = "64")]
 pub type CGFloat = f64;
 
+pub type CGLContextObj = *mut libc::c_void;
+
 pub type GLint = libc::int32_t;
 
 #[repr(C)]
@@ -1305,32 +1307,109 @@ pub trait NSOpenGLContext {
         msg_send()(class("NSOpenGLContext"), selector("alloc"))
     }
 
-    unsafe fn initWithFormat_shareContext_(self, format: id, shareContext: id) -> id;
-    unsafe fn setView_(self, view: id);
+    // Context Creation
+    unsafe fn initWithFormat_shareContext_(self, format: id /* (NSOpenGLPixelFormat *) */, shareContext: id /* (NSOpenGLContext *) */) -> id /* (instancetype) */;
+    unsafe fn initWithCGLContextObj_(self, context: CGLContextObj) -> id /* (instancetype) */;
+
+    // Managing the Current Context
+    unsafe fn clearCurrentContext(_: Self);
+    unsafe fn currentContext(_: Self) -> id /* (NSOpenGLContext *) */;
     unsafe fn makeCurrentContext(self);
+
+    // Drawable Object Management
+    unsafe fn setView_(self, view: id /* (NSView *) */);
+    unsafe fn view(self) -> id /* (NSView *) */;
+    unsafe fn clearDrawable(self);
+    unsafe fn update(self);
+
+    // Flushing the Drawing Buffer
     unsafe fn flushBuffer(self);
+
+    // Context Parameter Handling
     unsafe fn setValues_forParameter_(self, vals: *const GLint, param: NSOpenGLContextParameter);
+    unsafe fn getValues_forParameter_(self, vals: *mut GLint, param: NSOpenGLContextParameter);
+
+    // Working with Virtual Screens
+    unsafe fn setCurrentVirtualScreen_(self, screen: GLint);
+    unsafe fn currentVirtualScreen(self) -> GLint;
+
+    // Getting the CGL Context Object
+    unsafe fn CGLContextObj(self) -> CGLContextObj;
 }
 
 impl NSOpenGLContext for id {
-    unsafe fn initWithFormat_shareContext_(self, format: id, shareContext: id) -> id {
-        msg_send()(self, selector("initWithFormat:shareContext:"), format, shareContext)
+    // Context Creation
+
+    unsafe fn initWithFormat_shareContext_(self, format: id /* (NSOpenGLPixelFormat *) */, shareContext: id /* (NSOpenGLContext *) */) -> id /* (instancetype) */ {
+        msg_send()(class("NSOpenGLContext"), selector("initWithFormat_shareContext:"), format, shareContext)
     }
 
-    unsafe fn setView_(self, view: id) {
-        msg_send()(self, selector("setView:"), view)
+    unsafe fn initWithCGLContextObj_(self, context: CGLContextObj) -> id /* (instancetype) */ {
+        msg_send()(class("NSOpenGLContext"), selector("initWithCGLContextObj:"), context)
+    }
+
+    // Managing the Current Context
+
+    unsafe fn clearCurrentContext(_: Self) {
+        msg_send()(class("NSOpenGLContext"), selector("clearCurrentContext"))
+    }
+
+    unsafe fn currentContext(_: Self) -> id /* (NSOpenGLContext *) */ {
+        msg_send()(class("NSOpenGLContext"), selector("currentContext"))
     }
 
     unsafe fn makeCurrentContext(self) {
         msg_send()(self, selector("makeCurrentContext"))
     }
 
+    // Drawable Object Management
+
+    unsafe fn setView_(self, view: id /* (NSView *) */) {
+        msg_send()(self, selector("setView:"), view)
+    }
+
+    unsafe fn view(self) -> id /* (NSView *) */ {
+        msg_send()(self, selector("view"))
+    }
+
+    unsafe fn clearDrawable(self) {
+        msg_send()(self, selector("clearDrawable"))
+    }
+
+    unsafe fn update(self) {
+        msg_send()(self, selector("update"))
+    }
+
+    // Flushing the Drawing Buffer
+
     unsafe fn flushBuffer(self) {
         msg_send()(self, selector("flushBuffer"))
     }
 
+    // Context Parameter Handling
+
     unsafe fn setValues_forParameter_(self, vals: *const GLint, param: NSOpenGLContextParameter) {
         msg_send()(self, selector("setValues:forParameter:"), vals, param)
+    }
+
+    unsafe fn getValues_forParameter_(self, vals: *mut GLint, param: NSOpenGLContextParameter) {
+        msg_send()(self, selector("getValues:forParameter:"), vals, param)
+    }
+
+    // Working with Virtual Screens
+
+    unsafe fn setCurrentVirtualScreen_(self, screen: GLint) {
+        msg_send()(self, selector("setCurrentVirtualScreen:"), screen)
+    }
+
+    unsafe fn currentVirtualScreen(self) -> GLint {
+        msg_send()(self, selector("currentVirtualScreen"))
+    }
+
+    // Getting the CGL Context Object
+
+    unsafe fn CGLContextObj(self) -> CGLContextObj {
+        msg_send()(self, selector("CGLContextObj"))
     }
 }
 

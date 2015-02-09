@@ -1341,7 +1341,7 @@ impl NSOpenGLContext for id {
     // Context Creation
 
     unsafe fn initWithFormat_shareContext_(self, format: id /* (NSOpenGLPixelFormat *) */, shareContext: id /* (NSOpenGLContext *) */) -> id /* (instancetype) */ {
-        msg_send()(class("NSOpenGLContext"), selector("initWithFormat_shareContext:"), format, shareContext)
+        msg_send()(class("NSOpenGLContext"), selector("initWithFormat:shareContext:"), format, shareContext)
     }
 
     unsafe fn initWithCGLContextObj_(self, context: CGLContextObj) -> id /* (instancetype) */ {

@@ -29,17 +29,11 @@ pub type SEL = libc::intptr_t;
 pub type NSInteger = libc::c_int;
 #[cfg(target_pointer_width = "32")]
 pub type NSUInteger = libc::c_uint;
-#[cfg(target_pointer_width = "32")]
-#[allow(non_camel_case_types)]
-pub type ptrdiff_t = libc::c_int;
 
 #[cfg(target_pointer_width = "64")]
 pub type NSInteger = libc::c_long;
 #[cfg(target_pointer_width = "64")]
 pub type NSUInteger = libc::c_ulong;
-#[cfg(target_pointer_width = "64")]
-#[allow(non_camel_case_types)]
-pub type ptrdiff_t = libc::c_long;
 
 #[allow(non_upper_case_globals)]
 pub const nil: id = 0;
@@ -122,7 +116,7 @@ extern {
     pub fn imp_implementationWithBlock(block: id) -> IMP;
     pub fn imp_removeBlock(imp: IMP) -> BOOL;
     pub fn ivar_getName(ivar: Ivar) -> *const libc::c_char;
-    pub fn ivar_getOffset(ivar: Ivar) -> ptrdiff_t;
+    pub fn ivar_getOffset(ivar: Ivar) -> libc::ptrdiff_t;
     pub fn ivar_getTypeEncoding(ivar: Ivar) -> *const libc::c_char;
     pub fn method_copyArgumentType(m: Method, index: libc::uint32_t) -> *mut libc::c_char;
     pub fn method_copyReturnType(m: Method) -> *mut libc::c_char;

@@ -11,3 +11,4 @@ crate-type = ["rlib"]
 [dependencies]
 bitflags = "0.1"
 libc = "*"
+objc = "0.1"

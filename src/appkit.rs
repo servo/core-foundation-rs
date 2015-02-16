@@ -9,7 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, msg_send, msg_send_fpret, msg_send_stret, class, selector};
+use base::{id, class};
 use base::{BOOL, SEL, NSInteger, NSUInteger};
 use libc;
 
@@ -103,7 +103,7 @@ extern {
 }
 
 pub unsafe fn NSApp() -> id {
-    msg_send()(class("NSApplication"), selector("sharedApplication"))
+    msg_send![class("NSApplication"), sharedApplication]
 }
 
 #[repr(i64)]
@@ -254,7 +254,7 @@ pub static NSMainMenuWindowLevel: libc::int32_t = 24;
 
 pub trait NSAutoreleasePool {
     unsafe fn new(_: Self) -> id {
-        msg_send()(class("NSAutoreleasePool"), selector("new"))
+        msg_send![class("NSAutoreleasePool"), new]
     }
 
     unsafe fn autorelease(self) -> Self;
@@ -263,17 +263,17 @@ pub trait NSAutoreleasePool {
 
 impl NSAutoreleasePool for id {
     unsafe fn autorelease(self) -> id {
-        msg_send()(self, selector("autorelease"))
+        msg_send![self, autorelease]
     }
 
     unsafe fn drain(self) {
-        msg_send()(self, selector("drain"))
+        msg_send![self, drain]
     }
 }
 
 pub trait NSProcessInfo {
     unsafe fn processInfo(_: Self) -> id {
-        msg_send()(class("NSProcessInfo"), selector("processInfo"))
+        msg_send![class("NSProcessInfo"), processInfo]
     }
 
     unsafe fn processName(self) -> id;
@@ -281,7 +281,7 @@ pub trait NSProcessInfo {
 
 impl NSProcessInfo for id {
     unsafe fn processName(self) -> id {
-        msg_send()(self, selector("processName"))
+        msg_send![self, processName]
     }
 }
 
@@ -289,7 +289,7 @@ pub type NSTimeInterval = libc::c_double;
 
 pub trait NSApplication {
     unsafe fn sharedApplication(_: Self) -> id {
-        msg_send()(class("NSApplication"), selector("sharedApplication"))
+        msg_send![class("NSApplication"), sharedApplication]
     }
 
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL;
@@ -309,23 +309,23 @@ pub trait NSApplication {
 
 impl NSApplication for id {
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL {
-        msg_send()(self, selector("setActivationPolicy:"), policy as NSInteger)
+        msg_send![self, setActivationPolicy:policy as NSInteger]
     }
 
     unsafe fn setMainMenu_(self, menu: id) {
-        msg_send()(self, selector("setMainMenu:"), menu)
+        msg_send![self, setMainMenu:menu]
     }
 
     unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL) {
-        msg_send()(self, selector("activateIgnoringOtherApps:"), ignore as libc::c_int)
+        msg_send![self, activateIgnoringOtherApps:ignore as libc::c_int]
     }
 
     unsafe fn run(self) {
-        msg_send()(self, selector("run"))
+        msg_send![self, run]
     }
 
     unsafe fn finishLaunching(self) {
-        msg_send()(self, selector("finishLaunching"))
+        msg_send![self, finishLaunching]
     }
 
     unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue_(self,
@@ -333,26 +333,28 @@ impl NSApplication for id {
                                                               expiration: id,
                                                               in_mode: id,
                                                               dequeue: BOOL) -> id {
-        msg_send()(self, selector("nextEventMatchingMask:untilDate:inMode:dequeue:"),
-                   mask, expiration, in_mode, dequeue as libc::c_int)
+        msg_send![self, nextEventMatchingMask:mask
+                                    untilDate:expiration
+                                       inMode:in_mode
+                                      dequeue:dequeue as libc::c_int]
     }
 
     unsafe fn sendEvent_(self, an_event: id) {
-        msg_send()(self, selector("sendEvent:"), an_event)
+        msg_send![self, sendEvent:an_event]
     }
 
     unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL) {
-        msg_send()(self, selector("postEvent:atStart:"), anEvent, flag as libc::c_int)
+        msg_send![self, postEvent:anEvent atStart:flag as libc::c_int]
     }
 
     unsafe fn stop_(self, sender: id) {
-        msg_send()(self, selector("stop:"), sender)
+        msg_send![self, stop:sender]
     }
 }
 
 pub trait NSMenu {
     unsafe fn new(_: Self) -> id {
-        msg_send()(class("NSMenu"), selector("new"))
+        msg_send![class("NSMenu"), new]
     }
 
     unsafe fn addItem_(self, menu_item: id);
@@ -360,17 +362,17 @@ pub trait NSMenu {
 
 impl NSMenu for id {
     unsafe fn addItem_(self, menu_item: id) {
-        msg_send()(self, selector("addItem:"), menu_item)
+        msg_send![self, addItem:menu_item]
     }
 }
 
 pub trait NSMenuItem {
     unsafe fn alloc(_: Self) -> id {
-        msg_send()(class("NSMenuItem"), selector("alloc"))
+        msg_send![class("NSMenuItem"), alloc]
     }
 
     unsafe fn new(_: Self) -> id {
-        msg_send()(class("NSMenuItem"), selector("new"))
+        msg_send![class("NSMenuItem"), new]
     }
 
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id;
@@ -379,11 +381,11 @@ pub trait NSMenuItem {
 
 impl NSMenuItem for id {
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id {
-        msg_send()(self, selector("initWithTitle:action:keyEquivalent:"), title, action, key)
+        msg_send![self, initWithTitle:title action:action keyEquivalent:key]
     }
 
     unsafe fn setSubmenu_(self, submenu: id) {
-        msg_send()(self, selector("setSubmenu:"), submenu)
+        msg_send![self, setSubmenu:submenu]
     }
 }
 
@@ -415,7 +417,7 @@ bitflags! {
 
 pub trait NSWindow {
     unsafe fn alloc(_: Self) -> id {
-        msg_send()(class("NSWindow"), selector("alloc"))
+        msg_send![class("NSWindow"), alloc]
     }
 
     // Creating Windows
@@ -639,8 +641,10 @@ impl NSWindow for id {
                                                            style: NSUInteger,
                                                            backing: NSBackingStoreType,
                                                            defer: BOOL) -> id {
-        msg_send()(self, selector("initWithContentRect:styleMask:backing:defer:"),
-                   rect, style, backing as NSUInteger, defer as libc::c_int)
+        msg_send![self, initWithContentRect:rect
+                                  styleMask:style
+                                    backing:backing as NSUInteger
+                                      defer:defer as libc::c_int]
     }
 
     unsafe fn initWithContentRect_styleMask_backing_defer_screen_(self,
@@ -649,133 +653,136 @@ impl NSWindow for id {
                                                                   backing: NSBackingStoreType,
                                                                   defer: BOOL,
                                                                   screen: id) -> id {
-        msg_send()(self, selector("initWithContentRect:styleMask:backing:defer:"),
-                   rect, style, backing as NSUInteger, defer as libc::c_int, screen)
+        msg_send![self, initWithContentRect:rect
+                                  styleMask:style
+                                    backing:backing as NSUInteger
+                                      defer:defer as libc::c_int
+                                     screen:screen]
     }
 
     // Configuring Windows
 
     unsafe fn styleMask(self) -> NSUInteger {
-        msg_send()(self, selector("styleMask"))
+        msg_send![self, styleMask]
     }
 
     unsafe fn setStyleMask_(self, styleMask: NSUInteger) {
-        msg_send()(self, selector("setStyleMask:"), styleMask)
+        msg_send![self, setStyleMask:styleMask]
     }
 
     unsafe fn toggleFullScreen_(self, sender: id) {
-        msg_send()(self, selector("toggleFullScreen:"), sender)
+        msg_send![self, toggleFullScreen:sender]
     }
 
     unsafe fn worksWhenModal(self) -> BOOL {
-        msg_send()(self, selector("worksWhenModal"))
+        msg_send![self, worksWhenModal]
     }
 
     unsafe fn alphaValue(self) -> CGFloat {
-        msg_send_fpret()(self, selector("alphaValue"))
+        msg_send![self, alphaValue]
     }
 
     unsafe fn setAlphaValue_(self, windowAlpha: CGFloat) {
-        msg_send()(self, selector("setAlphaValue:"), windowAlpha)
+        msg_send![self, setAlphaValue:windowAlpha]
     }
 
     unsafe fn backgroundColor(self) -> id {
-        msg_send()(self, selector("backgroundColor"))
+        msg_send![self, backgroundColor]
     }
 
     unsafe fn setBackgroundColor_(self, color: id) {
-        msg_send()(self, selector("setBackgroundColor:"), color)
+        msg_send![self, setBackgroundColor:color]
     }
 
     unsafe fn colorSpace(self) -> id {
-        msg_send()(self, selector("colorSpace"))
+        msg_send![self, colorSpace]
     }
 
     unsafe fn setColorSpace_(self, colorSpace: id) {
-        msg_send()(self, selector("setColorSpace:"), colorSpace)
+        msg_send![self, setColorSpace:colorSpace]
     }
 
     unsafe fn contentView(self) -> id {
-        msg_send()(self, selector("contentView"))
+        msg_send![self, contentView]
     }
 
     unsafe fn setContentView_(self, view: id) {
-        msg_send()(self, selector("setContentView:"), view)
+        msg_send![self, setContentView:view]
     }
 
     unsafe fn canHide(self) -> BOOL {
-        msg_send()(self, selector("canHide"))
+        msg_send![self, canHide]
     }
 
     unsafe fn setCanHide_(self, canHide: BOOL) {
-        msg_send()(self, selector("setCanHide:"), canHide as libc::c_int)
+        msg_send![self, setCanHide:canHide as libc::c_int]
     }
 
     unsafe fn hidesOnDeactivate(self) -> BOOL {
-        msg_send()(self, selector("hidesOnDeactivate"))
+        msg_send![self, hidesOnDeactivate]
     }
 
     unsafe fn setHidesOnDeactivate_(self, hideOnDeactivate: BOOL) {
-        msg_send()(self, selector("setHidesOnDeactivate:"), hideOnDeactivate as libc::c_int)
+        msg_send![self, setHidesOnDeactivate:hideOnDeactivate as libc::c_int]
     }
 
     unsafe fn collectionBehavior(self) -> NSWindowCollectionBehavior {
-        msg_send()(self, selector("collectionBehavior"))
+        msg_send![self, collectionBehavior]
     }
 
     unsafe fn setCollectionBehavior_(self, collectionBehavior: NSWindowCollectionBehavior) {
-        msg_send()(self, selector("setCollectionBehavior:"), collectionBehavior)
+        msg_send![self, setCollectionBehavior:collectionBehavior]
     }
 
     unsafe fn setOpaque_(self, opaque: BOOL) {
-        msg_send()(self, selector("setOpaque:"), opaque as libc::c_int)
+        msg_send![self, setOpaque:opaque as libc::c_int]
     }
 
     unsafe fn hasShadow(self) -> BOOL {
-        msg_send()(self, selector("hasShadow"))
+        msg_send![self, hasShadow]
     }
 
     unsafe fn setHasShadow_(self, hasShadow: BOOL) {
-        msg_send()(self, selector("setHasShadow:"), hasShadow as libc::c_int)
+        msg_send![self, setHasShadow:hasShadow as libc::c_int]
     }
 
     unsafe fn invalidateShadow(self) {
-        msg_send()(self, selector("invalidateShadow"))
+        msg_send![self, invalidateShadow]
     }
 
     unsafe fn autorecalculatesContentBorderThicknessForEdge_(self, edge: NSRectEdge) -> BOOL {
-        msg_send()(self, selector("autorecalculatesContentBorderThicknessForEdge:"), edge)
+        msg_send![self, autorecalculatesContentBorderThicknessForEdge:edge]
     }
 
     unsafe fn setAutorecalculatesContentBorderThickness_forEdge_(self,
                                                                  autorecalculateContentBorderThickness: BOOL,
                                                                  edge: NSRectEdge) -> BOOL {
-        msg_send()(self, selector("setAutorecalculatesContentBorderThickness:forEdge:"),
-                   autorecalculateContentBorderThickness as libc::c_int, edge)
+        msg_send![self, setAutorecalculatesContentBorderThickness:
+                        autorecalculateContentBorderThickness as libc::c_int forEdge:edge]
     }
 
     unsafe fn contentBorderThicknessForEdge_(self, edge: NSRectEdge) -> CGFloat {
-        msg_send_fpret()(self, selector("contentBorderThicknessForEdge:"), edge)
+        msg_send![self, contentBorderThicknessForEdge:edge]
     }
 
     unsafe fn setContentBorderThickness_forEdge_(self, borderThickness: CGFloat, edge: NSRectEdge) {
-        msg_send()(self, selector("setContentBorderThickness:forEdge:"), borderThickness, edge)
+        msg_send![self, setContentBorderThickness:borderThickness forEdge:edge]
     }
 
     unsafe fn delegate(self) -> id {
-        msg_send()(self, selector("delegate"))
+        msg_send![self, delegate]
     }
 
     unsafe fn setDelegate_(self, delegate: id) {
-        msg_send()(self, selector("setDelegate:"), delegate)
+        msg_send![self, setDelegate:delegate]
     }
 
     unsafe fn preventsApplicationTerminationWhenModal(self) -> BOOL {
-        msg_send()(self, selector("preventsApplicationTerminationWhenModal"))
+        msg_send![self, preventsApplicationTerminationWhenModal]
     }
 
     unsafe fn setPreventsApplicationTerminationWhenModal_(self, flag: BOOL) {
-        msg_send()(self, selector("setPreventsApplicationTerminationWhenModal:"), flag as libc::c_int)
+        msg_send![self, setPreventsApplicationTerminationWhenModal:flag as libc::c_int]
     }
 
     // TODO: Accessing Window Information
@@ -783,37 +790,37 @@ impl NSWindow for id {
     // Getting Layout Information
 
     unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSUInteger) -> NSRect {
-        msg_send_stret()(self, selector("contentRectForFrameRect:styleMask:"), windowFrame, windowStyle)
+        msg_send![self, contentRectForFrameRect:windowFrame styleMask:windowStyle]
     }
 
     unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSUInteger) -> NSRect {
-        msg_send_stret()(self, selector("frameRectForContentRect:styleMask:"), windowContentRect, windowStyle)
+        msg_send![self, frameRectForContentRect:windowContentRect styleMask:windowStyle]
     }
 
     unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSUInteger) -> CGFloat {
-        msg_send_fpret()(self, selector("minFrameWidthWithTitle:styleMask:"), windowTitle, windowStyle)
+        msg_send![self, minFrameWidthWithTitle:windowTitle styleMask:windowStyle]
     }
 
     unsafe fn contentRectForFrameRect_(self, windowFrame: NSRect) -> NSRect {
-        msg_send_stret()(self, selector("contentRectForFrameRect:"), windowFrame)
+        msg_send![self, contentRectForFrameRect:windowFrame]
     }
 
     unsafe fn frameRectForContentRect_(self, windowContent: NSRect) -> NSRect {
-        msg_send_stret()(self, selector("frameRectForContentRect:"), windowContent)
+        msg_send![self, frameRectForContentRect:windowContent]
     }
 
     // Managing Windows
 
     unsafe fn drawers(self) -> id {
-        msg_send()(self, selector("drawers"))
+        msg_send![self, drawers]
     }
 
     unsafe fn windowController(self) -> id {
-        msg_send()(self, selector("windowController"))
+        msg_send![self, windowController]
     }
 
     unsafe fn setWindowController_(self, windowController: id) {
-        msg_send()(self, selector("setWindowController:"), windowController)
+        msg_send![self, setWindowController:windowController]
     }
 
     // TODO: Managing Sheets
@@ -821,201 +828,201 @@ impl NSWindow for id {
     // Sizing Windows
 
     unsafe fn frame(self) -> NSRect {
-        msg_send_stret()(self, selector("frame"))
+        msg_send![self, frame]
     }
 
     unsafe fn setFrameOrigin_(self, point: NSPoint) {
-        msg_send()(self, selector("setFrameOrigin:"), point)
+        msg_send![self, setFrameOrigin:point]
     }
 
     unsafe fn setFrameTopLeftPoint_(self, point: NSPoint) {
-        msg_send()(self, selector("setFrameTopLeftPoint:"), point)
+        msg_send![self, setFrameTopLeftPoint:point]
     }
 
     unsafe fn constrainFrameRect_toScreen_(self, frameRect: NSRect, screen: id) {
-        msg_send()(self, selector("constrainFrameRect:toScreen:"), frameRect, screen)
+        msg_send![self, constrainFrameRect:frameRect toScreen:screen]
     }
 
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint {
-        msg_send()(self, selector("cascadeTopLeftFromPoint:"), topLeft)
+        msg_send![self, cascadeTopLeftFromPoint:topLeft]
     }
 
     unsafe fn setFrame_display_(self, windowFrame: NSRect, display: BOOL) {
-        msg_send()(self, selector("setFrame:display:"), windowFrame, display as libc::c_int)
+        msg_send![self, setFrame:windowFrame display:display as libc::c_int]
     }
 
     unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL) {
-        msg_send()(self, selector("setFrame:displayViews:"), windowFrame, display as libc::c_int)
+        msg_send![self, setFrame:windowFrame displayViews:display as libc::c_int]
     }
 
     unsafe fn aspectRatio(self) -> NSSize {
-        msg_send()(self, selector("aspectRatio"))
+        msg_send![self, aspectRatio]
     }
 
     unsafe fn setAspectRatio_(self, aspectRatio: NSSize) {
-        msg_send()(self, selector("setAspectRatio:"), aspectRatio)
+        msg_send![self, setAspectRatio:aspectRatio]
     }
 
     unsafe fn minSize(self) -> NSSize {
-        msg_send()(self, selector("minSize"))
+        msg_send![self, minSize]
     }
 
     unsafe fn setMinSize_(self, minSize: NSSize) {
-        msg_send()(self, selector("setMinSize:"), minSize)
+        msg_send![self, setMinSize:minSize]
     }
 
     unsafe fn maxSize(self) -> NSSize {
-        msg_send()(self, selector("maxSize"))
+        msg_send![self, maxSize]
     }
 
     unsafe fn setMaxSize_(self, maxSize: NSSize) {
-        msg_send()(self, selector("setMaxSize:"), maxSize)
+        msg_send![self, setMaxSize:maxSize]
     }
 
     unsafe fn performZoom_(self, sender: id) {
-        msg_send()(self, selector("performZoom:"), sender)
+        msg_send![self, performZoom:sender]
     }
 
     unsafe fn zoom_(self, sender: id) {
-        msg_send()(self, selector("zoom:"), sender)
+        msg_send![self, zoom:sender]
     }
 
     unsafe fn resizeFlags(self) -> NSInteger {
-        msg_send()(self, selector("resizeFlags"))
+        msg_send![self, resizeFlags]
     }
 
     unsafe fn showsResizeIndicator(self) -> BOOL {
-        msg_send()(self, selector("showsResizeIndicator"))
+        msg_send![self, showsResizeIndicator]
     }
 
     unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: BOOL) {
-        msg_send()(self, selector("setShowsResizeIndicator:"), showsResizeIndicator as libc::c_int)
+        msg_send![self, setShowsResizeIndicator:showsResizeIndicator as libc::c_int]
     }
 
     unsafe fn resizeIncrements(self) -> NSSize {
-        msg_send()(self, selector("resizeIncrements"))
+        msg_send![self, resizeIncrements]
     }
 
     unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize) {
-        msg_send()(self, selector("setResizeIncrements:"), resizeIncrements)
+        msg_send![self, setResizeIncrements:resizeIncrements]
     }
 
     unsafe fn preservesContentDuringLiveResize(self) -> BOOL {
-        msg_send()(self, selector("preservesContentDuringLiveResize"))
+        msg_send![self, preservesContentDuringLiveResize]
     }
 
     unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: BOOL) {
-        msg_send()(self, selector("setPreservesContentDuringLiveResize:"), preservesContentDuringLiveResize as libc::c_int)
+        msg_send![self, setPreservesContentDuringLiveResize:preservesContentDuringLiveResize as libc::c_int]
     }
 
     unsafe fn inLiveResize(self) -> BOOL {
-        msg_send()(self, selector("inLiveResize"))
+        msg_send![self, inLiveResize]
     }
 
     // Sizing Content
 
     unsafe fn contentAspectRatio(self) -> NSSize {
-        msg_send_stret()(self, selector("contentAspectRatio"))
+        msg_send![self, contentAspectRatio]
     }
 
     unsafe fn setContentAspectRatio_(self, contentAspectRatio: NSSize) {
-        msg_send()(self, selector("setContentAspectRatio:"), contentAspectRatio)
+        msg_send![self, setContentAspectRatio:contentAspectRatio]
     }
 
     unsafe fn contentMinSize(self) -> NSSize {
-        msg_send_stret()(self, selector("contentMinSize"))
+        msg_send![self, contentMinSize]
     }
 
     unsafe fn setContentMinSize_(self, contentMinSize: NSSize) {
-        msg_send()(self, selector("setContentMinSize:"), contentMinSize)
+        msg_send![self, setContentMinSize:contentMinSize]
     }
 
     unsafe fn contentSize(self) -> NSSize {
-        msg_send_stret()(self, selector("contentSize"))
+        msg_send![self, contentSize]
     }
 
     unsafe fn setContentSize_(self, contentSize: NSSize) {
-        msg_send()(self, selector("setContentSize:"), contentSize)
+        msg_send![self, setContentSize:contentSize]
     }
 
     unsafe fn contentMaxSize(self) -> NSSize {
-        msg_send_stret()(self, selector("contentMaxSize"))
+        msg_send![self, contentMaxSize]
     }
 
     unsafe fn setContentMaxSize_(self, contentMaxSize: NSSize) {
-        msg_send()(self, selector("setContentMaxSize:"), contentMaxSize)
+        msg_send![self, setContentMaxSize:contentMaxSize]
     }
 
     unsafe fn contentResizeIncrements(self) -> NSSize {
-        msg_send_stret()(self, selector("contentResizeIncrements"))
+        msg_send![self, contentResizeIncrements]
     }
 
     unsafe fn setContentResizeIncrements_(self, contentResizeIncrements: NSSize) {
-        msg_send()(self, selector("setContentResizeIncrements:"), contentResizeIncrements)
+        msg_send![self, setContentResizeIncrements:contentResizeIncrements]
     }
 
     // Managing Window Visibility and Occlusion State
 
     unsafe fn isVisible(self) -> BOOL {
-        msg_send()(self, selector("isVisible"))
+        msg_send![self, isVisible]
     }
 
     unsafe fn occlusionState(self) -> NSWindowOcclusionState {
-        msg_send()(self, selector("occlusionState"))
+        msg_send![self, occlusionState]
     }
 
     // Managing Window Layers
 
     unsafe fn orderOut_(self, sender: id) {
-        msg_send()(self, selector("orderOut:"), sender)
+        msg_send![self, orderOut:sender]
     }
 
     unsafe fn orderBack_(self, sender: id) {
-        msg_send()(self, selector("orderBack:"), sender)
+        msg_send![self, orderBack:sender]
     }
 
     unsafe fn orderFront_(self, sender: id) {
-        msg_send()(self, selector("orderFront:"), sender)
+        msg_send![self, orderFront:sender]
     }
 
     unsafe fn orderFrontRegardless(self) {
-        msg_send()(self, selector("orderFrontRegardless"))
+        msg_send![self, orderFrontRegardless]
     }
 
     unsafe fn orderFrontWindow_relativeTo_(self, ordering_mode: NSWindowOrderingMode, other_window_number: NSInteger) {
-        msg_send()(self, selector("orderWindow:relativeTo:"), ordering_mode, other_window_number)
+        msg_send![self, orderWindow:ordering_mode relativeTo:other_window_number]
     }
 
     unsafe fn level(self) -> NSInteger {
-        msg_send()(self, selector("level"))
+        msg_send![self, level]
     }
 
     unsafe fn setLevel_(self, level: NSInteger) {
-        msg_send()(self, selector("setLevel:"), level)
+        msg_send![self, setLevel:level]
     }
 
     // Managing Key Status
 
     unsafe fn canBecomeKeyWindow(self) -> BOOL {
-        msg_send()(self, selector("canBecomeKeyWindow"))
+        msg_send![self, canBecomeKeyWindow]
     }
 
     unsafe fn makeKeyWindow(self) {
-        msg_send()(self, selector("makeKeyWindow"))
+        msg_send![self, makeKeyWindow]
     }
 
     unsafe fn makeKeyAndOrderFront_(self, sender: id) {
-        msg_send()(self, selector("makeKeyAndOrderFront:"), sender)
+        msg_send![self, makeKeyAndOrderFront:sender]
     }
 
     // Managing Main Status
 
     unsafe fn canBecomeMainWindow(self) -> BOOL {
-        msg_send()(self, selector("canBecomeMainWindow"))
+        msg_send![self, canBecomeMainWindow]
     }
 
     unsafe fn makeMainWindow(self) {
-        msg_send()(self, selector("makeMainWindow"))
+        msg_send![self, makeMainWindow]
     }
 
     // TODO: Managing Toolbars
@@ -1034,174 +1041,173 @@ impl NSWindow for id {
     // Handling Keyboard Events
 
     unsafe fn keyDown_(self, event: id) {
-        msg_send()(self, selector("keyDown:"), event)
+        msg_send![self, keyDown:event]
     }
 
     // Handling Mouse Events
 
     unsafe fn acceptsMouseMovedEvents(self) -> BOOL {
-        msg_send()(self, selector("acceptsMouseMovedEvents"))
+        msg_send![self, acceptsMouseMovedEvents]
     }
 
     unsafe fn ignoresMouseEvents(self) -> BOOL {
-        msg_send()(self, selector("ignoresMouseEvents"))
+        msg_send![self, ignoresMouseEvents]
     }
 
     unsafe fn setIgnoresMouseEvents_(self, ignoreMouseEvents: BOOL) {
-        msg_send()(self, selector("setIgnoresMouseEvents:"), ignoreMouseEvents as libc::c_int)
+        msg_send![self, setIgnoresMouseEvents:ignoreMouseEvents as libc::c_int]
     }
 
     unsafe fn mouseLocationOutsideOfEventStream(self) -> NSPoint {
-        msg_send()(self, selector("mouseLocationOutsideOfEventStream"))
+        msg_send![self, mouseLocationOutsideOfEventStream]
     }
 
     unsafe fn setAcceptsMouseMovedEvents_(self, acceptMouseMovedEvents: BOOL) {
-        msg_send()(self, selector("setAcceptsMouseMovedEvents:"), acceptMouseMovedEvents as libc::c_int)
+        msg_send![self, setAcceptsMouseMovedEvents:acceptMouseMovedEvents as libc::c_int]
     }
 
     unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(self,
                                                                point: NSPoint,
                                                                windowNumber: NSInteger) -> NSInteger {
-        msg_send()(self, selector("windowNumberAtPoint:belowWindowWithWindowNumber:"),
-                   point, windowNumber)
+        msg_send![self, windowNumberAtPoint:point belowWindowWithWindowNumber:windowNumber]
     }
 
     // Converting Coordinates
 
     unsafe fn backingScaleFactor(self) -> CGFloat {
-        msg_send_fpret()(self, selector("backingScaleFactor"))
+        msg_send![self, backingScaleFactor]
     }
 
     unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect {
-        msg_send_stret()(self, selector("backingAlignedRect:options:"), rect, options)
+        msg_send![self, backingAlignedRect:rect options:options]
     }
 
     unsafe fn convertRectFromBacking_(self, rect: NSRect) -> NSRect {
-        msg_send_stret()(self, selector("convertRectFromBacking:"), rect)
+        msg_send![self, convertRectFromBacking:rect]
     }
 
     unsafe fn convertRectToBacking_(self, rect: NSRect) -> NSRect {
-        msg_send_stret()(self, selector("convertRectToBacking:"), rect)
+        msg_send![self, convertRectToBacking:rect]
     }
 
     unsafe fn convertRectToScreen_(self, rect: NSRect) -> NSRect {
-        msg_send_stret()(self, selector("convertRectToScreen:"), rect)
+        msg_send![self, convertRectToScreen:rect]
     }
 
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect {
-        msg_send_stret()(self, selector("convertRectFromScreen:"), rect)
+        msg_send![self, convertRectFromScreen:rect]
     }
 
     // Accessing Edited Status
 
     unsafe fn setDocumentEdited_(self, documentEdited: BOOL) {
-        msg_send()(self, selector("setDocumentEdited:"), documentEdited as libc::c_int)
+        msg_send![self, setDocumentEdited:documentEdited as libc::c_int]
     }
 
     // Managing Titles
 
     unsafe fn title(self) -> id {
-        msg_send()(self, selector("title"))
+        msg_send![self, title]
     }
 
     unsafe fn setTitle_(self, title: id) {
-        msg_send()(self, selector("setTitle:"), title)
+        msg_send![self, setTitle:title]
     }
 
     unsafe fn setTitleWithRepresentedFilename_(self, filePath: id) {
-        msg_send()(self, selector("setTitleWithRepresentedFilename:"), filePath)
+        msg_send![self, setTitleWithRepresentedFilename:filePath]
     }
 
     unsafe fn representedFilename(self) -> id {
-        msg_send()(self, selector("representedFilename"))
+        msg_send![self, representedFilename]
     }
 
     unsafe fn setRepresentedFilename_(self, filePath: id) {
-        msg_send()(self, selector("setRepresentedFilename:"), filePath)
+        msg_send![self, setRepresentedFilename:filePath]
     }
 
     unsafe fn representedURL(self) -> id {
-        msg_send()(self, selector("representedURL"))
+        msg_send![self, representedURL]
     }
 
     unsafe fn setRepresentedURL_(self, representedURL: id) {
-        msg_send()(self, selector("setRepresentedURL:"), representedURL)
+        msg_send![self, setRepresentedURL:representedURL]
     }
 
     // Accessing Screen Information
 
     unsafe fn screen(self) -> id {
-        msg_send()(self, selector("screen"))
+        msg_send![self, screen]
     }
 
     unsafe fn deepestScreen(self) -> id {
-        msg_send()(self, selector("deepestScreen"))
+        msg_send![self, deepestScreen]
     }
 
     unsafe fn displaysWhenScreenProfileChanges(self) -> BOOL {
-        msg_send()(self, selector("displaysWhenScreenProfileChanges"))
+        msg_send![self, displaysWhenScreenProfileChanges]
     }
 
     unsafe fn setDisplaysWhenScreenProfileChanges_(self, displaysWhenScreenProfileChanges: BOOL) {
-        msg_send()(self, selector("setDisplaysWhenScreenProfileChanges:"), displaysWhenScreenProfileChanges as libc::c_int)
+        msg_send![self, setDisplaysWhenScreenProfileChanges:displaysWhenScreenProfileChanges as libc::c_int]
     }
 
     // Moving Windows
 
     unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: BOOL) {
-        msg_send()(self, selector("setMovableByWindowBackground:"), movableByWindowBackground as libc::c_int)
+        msg_send![self, setMovableByWindowBackground:movableByWindowBackground as libc::c_int]
     }
 
     unsafe fn setMovable_(self, movable: BOOL) {
-        msg_send()(self, selector("setMovable:"), movable as libc::c_int)
+        msg_send![self, setMovable:movable as libc::c_int]
     }
 
     unsafe fn center(self) {
-        msg_send()(self, selector("center"))
+        msg_send![self, center]
     }
 
     // Closing Windows
 
     unsafe fn performClose_(self, sender: id) {
-        msg_send()(self, selector("performClose:"), sender)
+        msg_send![self, performClose:sender]
     }
 
     unsafe fn close(self) {
-        msg_send()(self, selector("close"))
+        msg_send![self, close]
     }
 
     unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: BOOL) {
-        msg_send()(self, selector("setReleasedWhenClosed:"), releasedWhenClosed as libc::c_int)
+        msg_send![self, setReleasedWhenClosed:releasedWhenClosed as libc::c_int]
     }
 
     // Minimizing Windows
 
     unsafe fn performMiniaturize_(self, sender: id) {
-        msg_send()(self, selector("performMiniaturize:"), sender)
+        msg_send![self, performMiniaturize:sender]
     }
 
     unsafe fn miniaturize_(self, sender: id) {
-        msg_send()(self, selector("miniaturize:"), sender)
+        msg_send![self, miniaturize:sender]
     }
 
     unsafe fn deminiaturize_(self, sender: id) {
-        msg_send()(self, selector("deminiaturize:"), sender)
+        msg_send![self, deminiaturize:sender]
     }
 
     unsafe fn miniwindowImage(self) -> id {
-        msg_send()(self, selector("miniwindowImage"))
+        msg_send![self, miniwindowImage]
     }
 
     unsafe fn setMiniwindowImage_(self, miniwindowImage: id) {
-        msg_send()(self, selector("setMiniwindowImage:"), miniwindowImage)
+        msg_send![self, setMiniwindowImage:miniwindowImage]
     }
 
     unsafe fn miniwindowTitle(self) -> id {
-        msg_send()(self, selector("miniwindowTitle"))
+        msg_send![self, miniwindowTitle]
     }
 
     unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id) {
-        msg_send()(self, selector("setMiniwindowTitle:"), miniwindowTitle)
+        msg_send![self, setMiniwindowTitle:miniwindowTitle]
     }
 
     // TODO: Getting the Dock Tile
@@ -1215,7 +1221,7 @@ impl NSWindow for id {
 
 pub trait NSString {
     unsafe fn alloc(_: Self) -> id {
-        msg_send()(class("NSString"), selector("alloc"))
+        msg_send![class("NSString"), alloc]
     }
 
     unsafe fn initWithUTF8String_(self, c_string: *const i8) -> id;
@@ -1226,11 +1232,11 @@ pub trait NSString {
 
 impl NSString for id {
     unsafe fn initWithUTF8String_(self, c_string: *const i8) -> id {
-        msg_send()(self, selector("initWithUTF8String:"), c_string as id)
+        msg_send![self, initWithUTF8String:c_string as id]
     }
 
     unsafe fn stringByAppendingString_(self, other: id) -> id {
-        msg_send()(self, selector("stringByAppendingString:"), other)
+        msg_send![self, stringByAppendingString:other]
     }
 
     unsafe fn init_str(self, string: &str) -> id {
@@ -1239,13 +1245,13 @@ impl NSString for id {
     }
 
     unsafe fn UTF8String(self) -> *const libc::c_char {
-        msg_send()(self, selector("UTF8String"))
+        msg_send![self, UTF8String]
     }
 }
 
 pub trait NSView {
     unsafe fn alloc(_: Self) -> id {
-        msg_send()(class("NSView"), selector("alloc"))
+        msg_send![class("NSView"), alloc]
     }
 
     unsafe fn init(self) -> id;
@@ -1259,37 +1265,37 @@ pub trait NSView {
 
 impl NSView for id {
     unsafe fn init(self) -> id {
-        msg_send()(self, selector("init"))
+        msg_send![self, init]
     }
 
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
-        msg_send()(self, selector("initWithFrame:"), frameRect)
+        msg_send![self, initWithFrame:frameRect]
     }
 
     unsafe fn bounds(self) -> NSRect {
-        msg_send_stret()(self, selector("bounds"))
+        msg_send![self, bounds]
     }
 
     unsafe fn frame(self) -> NSRect {
-        msg_send_stret()(self, selector("frame"))
+        msg_send![self, frame]
     }
 
     unsafe fn display_(self) {
-        msg_send()(self, selector("display"))
+        msg_send![self, display]
     }
 
     unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: BOOL) {
-        msg_send()(self, selector("setWantsBestResolutionOpenGLSurface:"), flag as libc::c_int)
+        msg_send![self, setWantsBestResolutionOpenGLSurface:flag as libc::c_int]
     }
 
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint {
-        msg_send()(self, selector("convertPoint:fromView:"), point, view)
+        msg_send![self, convertPoint:point fromView:view]
     }
 }
 
 pub trait NSOpenGLView {
     unsafe fn alloc(_: Self) -> id {
-        msg_send()(class("NSOpenGLView"), selector("alloc"))
+        msg_send![class("NSOpenGLView"), alloc]
     }
 
     unsafe fn initWithFrame_pixelFormat_(self, frameRect: NSRect, format: id) -> id;
@@ -1300,25 +1306,25 @@ pub trait NSOpenGLView {
 
 impl NSOpenGLView for id {
     unsafe fn initWithFrame_pixelFormat_(self,  frameRect: NSRect, format: id) -> id {
-        msg_send()(self, selector("initWithFrame:pixelFormat:"), frameRect, format)
+        msg_send![self, initWithFrame:frameRect pixelFormat:format]
     }
 
     unsafe fn display_(self) {
-        msg_send()(self, selector("display"))
+        msg_send![self, display]
     }
 
     unsafe fn setOpenGLContext_(self, context: id) {
-        msg_send()(self, selector("setOpenGLContext:"), context)
+        msg_send![self, setOpenGLContext:context]
     }
 
     unsafe fn setPixelFormat_(self, pixelformat: id) {
-        msg_send()(self, selector("setPixelFormat:"), pixelformat)
+        msg_send![self, setPixelFormat:pixelformat]
     }
 }
 
 pub trait NSOpenGLPixelFormat {
     unsafe fn alloc(_: Self) -> id {
-        msg_send()(class("NSOpenGLPixelFormat"), selector("alloc"))
+        msg_send![class("NSOpenGLPixelFormat"), alloc]
     }
 
     unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id;
@@ -1326,13 +1332,13 @@ pub trait NSOpenGLPixelFormat {
 
 impl NSOpenGLPixelFormat for id {
     unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id {
-        msg_send()(self, selector("initWithAttributes:"), attributes)
+        msg_send![self, initWithAttributes:attributes]
     }
 }
 
 pub trait NSOpenGLContext {
     unsafe fn alloc(_: Self) -> id {
-        msg_send()(class("NSOpenGLContext"), selector("alloc"))
+        msg_send![class("NSOpenGLContext"), alloc]
     }
 
     // Context Creation
@@ -1369,85 +1375,85 @@ impl NSOpenGLContext for id {
     // Context Creation
 
     unsafe fn initWithFormat_shareContext_(self, format: id /* (NSOpenGLPixelFormat *) */, shareContext: id /* (NSOpenGLContext *) */) -> id /* (instancetype) */ {
-        msg_send()(self, selector("initWithFormat:shareContext:"), format, shareContext)
+        msg_send![self, initWithFormat:format shareContext:shareContext]
     }
 
     unsafe fn initWithCGLContextObj_(self, context: CGLContextObj) -> id /* (instancetype) */ {
-        msg_send()(self, selector("initWithCGLContextObj:"), context)
+        msg_send![self, initWithCGLContextObj:context]
     }
 
     // Managing the Current Context
 
     unsafe fn clearCurrentContext(_: Self) {
-        msg_send()(class("NSOpenGLContext"), selector("clearCurrentContext"))
+        msg_send![class("NSOpenGLContext"), clearCurrentContext]
     }
 
     unsafe fn currentContext(_: Self) -> id /* (NSOpenGLContext *) */ {
-        msg_send()(class("NSOpenGLContext"), selector("currentContext"))
+        msg_send![class("NSOpenGLContext"), currentContext]
     }
 
     unsafe fn makeCurrentContext(self) {
-        msg_send()(self, selector("makeCurrentContext"))
+        msg_send![self, makeCurrentContext]
     }
 
     // Drawable Object Management
 
     unsafe fn setView_(self, view: id /* (NSView *) */) {
-        msg_send()(self, selector("setView:"), view)
+        msg_send![self, setView:view]
     }
 
     unsafe fn view(self) -> id /* (NSView *) */ {
-        msg_send()(self, selector("view"))
+        msg_send![self, view]
     }
 
     unsafe fn clearDrawable(self) {
-        msg_send()(self, selector("clearDrawable"))
+        msg_send![self, clearDrawable]
     }
 
     unsafe fn update(self) {
-        msg_send()(self, selector("update"))
+        msg_send![self, update]
     }
 
     // Flushing the Drawing Buffer
 
     unsafe fn flushBuffer(self) {
-        msg_send()(self, selector("flushBuffer"))
+        msg_send![self, flushBuffer]
     }
 
     // Context Parameter Handling
 
     unsafe fn setValues_forParameter_(self, vals: *const GLint, param: NSOpenGLContextParameter) {
-        msg_send()(self, selector("setValues:forParameter:"), vals, param)
+        msg_send![self, setValues:vals forParameter:param]
     }
 
     unsafe fn getValues_forParameter_(self, vals: *mut GLint, param: NSOpenGLContextParameter) {
-        msg_send()(self, selector("getValues:forParameter:"), vals, param)
+        msg_send![self, getValues:vals forParameter:param]
     }
 
     // Working with Virtual Screens
 
     unsafe fn setCurrentVirtualScreen_(self, screen: GLint) {
-        msg_send()(self, selector("setCurrentVirtualScreen:"), screen)
+        msg_send![self, setCurrentVirtualScreen:screen]
     }
 
     unsafe fn currentVirtualScreen(self) -> GLint {
-        msg_send()(self, selector("currentVirtualScreen"))
+        msg_send![self, currentVirtualScreen]
     }
 
     // Getting the CGL Context Object
 
     unsafe fn CGLContextObj(self) -> CGLContextObj {
-        msg_send()(self, selector("CGLContextObj"))
+        msg_send![self, CGLContextObj]
     }
 }
 
 pub trait NSDate {
     unsafe fn distantPast(_: Self) -> id {
-        msg_send()(class("NSDate"), selector("distantPast"))
+        msg_send![class("NSDate"), distantPast]
     }
 
     unsafe fn distantFuture(_: Self) -> id {
-        msg_send()(class("NSDate"), selector("distantFuture"))
+        msg_send![class("NSDate"), distantFuture]
     }
 }
 
@@ -1696,6 +1702,7 @@ pub trait NSEvent {
         modifierFlags: NSEventModifierFlags,
         timestamp: NSTimeInterval,
         windowNumber: NSInteger,
+        context: id /* (NSGraphicsContext *) */,
         characters: id /* (NSString *) */,
         unmodCharacters: id /* (NSString *) */,
         repeatKey: BOOL,
@@ -1841,23 +1848,22 @@ impl NSEvent for id {
         modifierFlags: NSEventModifierFlags,
         timestamp: NSTimeInterval,
         windowNumber: NSInteger,
+        context: id /* (NSGraphicsContext *) */,
         characters: id /* (NSString *) */,
         unmodCharacters: id /* (NSString *) */,
         repeatKey: BOOL,
         code: libc::c_ushort) -> id /* (NSEvent *) */
     {
-        msg_send()(class("NSEvent"),
-                   selector("keyEventWithType:location:modifierFlags:timestamp:windowNumber:\
-                             context:characters:charactersIgnoringModifiers:isARepeat:keyCode:"),
-                   eventType,
-                   location,
-                   modifierFlags,
-                   timestamp,
-                   windowNumber,
-                   characters,
-                   unmodCharacters,
-                   repeatKey as libc::c_int,
-                   code as libc::c_int)
+        msg_send![class("NSEvent"), keyEventWithType:eventType
+                                            location:location
+                                       modifierFlags:modifierFlags
+                                           timestamp:timestamp
+                                        windowNumber:windowNumber
+                                             context:context
+                                          characters:characters
+                         charactersIgnoringModifiers:unmodCharacters
+                                           isARepeat:repeatKey as libc::c_int
+                                             keyCode:code as libc::c_int]
     }
 
     unsafe fn mouseEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_clickCount_pressure_(
@@ -1872,18 +1878,15 @@ impl NSEvent for id {
         clickCount: NSInteger,
         pressure: libc::c_float) -> id /* (NSEvent *) */
     {
-        msg_send()(class("NSEvent"),
-                   selector("mouseEventWithType:location:modifierFlags:timestamp:windowNumber:\
-                             context:eventNumber:clickCount:pressure:"),
-                   eventType,
-                   location,
-                   modifierFlags,
-                   timestamp,
-                   windowNumber,
-                   context,
-                   eventNumber,
-                   clickCount,
-                   pressure as libc::c_double)
+        msg_send![class("NSEvent"), mouseEventWithType:eventType
+                                              location:location
+                                         modifierFlags:modifierFlags
+                                             timestamp:timestamp
+                                          windowNumber:windowNumber
+                                               context:context
+                                           eventNumber:eventNumber
+                                            clickCount:clickCount
+                                              pressure:pressure as libc::c_double]
     }
 
     unsafe fn enterExitEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_trackingNumber_userData_(
@@ -1898,18 +1901,15 @@ impl NSEvent for id {
         trackingNumber: NSInteger,
         userData: *mut libc::c_void) -> id /* (NSEvent *) */
     {
-        msg_send()(class("NSEvent"),
-                   selector("enterExitEventWithType:location:modifierFlags:timestamp:windowNumber:\
-                             context:eventNumber:trackingNumber:userData:"),
-                   eventType,
-                   location,
-                   modifierFlags,
-                   timestamp,
-                   windowNumber,
-                   context,
-                   eventNumber,
-                   trackingNumber,
-                   userData)
+        msg_send![class("NSEvent"), enterExitEventWithType:eventType
+                                                  location:location
+                                             modifierFlags:modifierFlags
+                                                 timestamp:timestamp
+                                              windowNumber:windowNumber
+                                                   context:context
+                                               eventNumber:eventNumber
+                                            trackingNumber:trackingNumber
+                                                  userData:userData]
     }
 
     unsafe fn otherEventWithType_location_modifierFlags_timestamp_windowNumber_context_subtype_data1_data2_(
@@ -1924,66 +1924,62 @@ impl NSEvent for id {
         data1: NSInteger,
         data2: NSInteger) -> id /* (NSEvent *) */
     {
-        msg_send()(class("NSEvent"),
-                   selector("otherEventWithType:location:modifierFlags:timestamp:windowNumber:\
-                             context:subtype:data1:data2:"),
-                   eventType,
-                   location,
-                   modifierFlags,
-                   modifierFlags,
-                   timestamp,
-                   windowNumber,
-                   context,
-                   subtype,
-                   data1,
-                   data2)
+        msg_send![class("NSEvent"), otherEventWithType:eventType
+                                              location:location
+                                         modifierFlags:modifierFlags
+                                             timestamp:timestamp
+                                          windowNumber:windowNumber
+                                               context:context
+                                               subtype:subtype
+                                                 data1:data1
+                                                 data2:data2]
     }
 
     unsafe fn eventWithEventRef_(_: Self, eventRef: *const libc::c_void) -> id {
-        msg_send()(class("NSEvent"), selector("eventWithEventRef:"), eventRef)
+        msg_send![class("NSEvent"), eventWithEventRef:eventRef]
     }
 
     unsafe fn eventWithCGEvent_(_: Self, cgEvent: *mut libc::c_void /* CGEventRef */) -> id {
-        msg_send()(class("NSEvent"), selector("eventWithCGEvent:"), cgEvent)
+        msg_send![class("NSEvent"), eventWithCGEvent:cgEvent]
     }
 
     // Getting General Event Information
 
     unsafe fn context(self) -> id /* (NSGraphicsContext *) */ {
-        msg_send()(self, selector("context"))
+        msg_send![self, context]
     }
 
     unsafe fn locationInWindow(self) -> NSPoint {
-        msg_send()(self, selector("locationInWindow"))
+        msg_send![self, locationInWindow]
     }
 
     unsafe fn modifierFlags(self) -> NSEventModifierFlags {
-        msg_send()(self, selector("modifierFlags"))
+        msg_send![self, modifierFlags]
     }
 
     unsafe fn timestamp(self) -> NSTimeInterval {
-        msg_send()(self, selector("timestamp"))
+        msg_send![self, timestamp]
     }
     // NOTE: renamed from `- type` due to Rust keyword collision
 
     unsafe fn eventType(self) -> NSEventType {
-        msg_send()(self, selector("type"))
+        msg_send![self, type]
     }
 
     unsafe fn window(self) -> id /* (NSWindow *) */ {
-        msg_send()(self, selector("window"))
+        msg_send![self, window]
     }
 
     unsafe fn windowNumber(self) -> NSInteger {
-        msg_send()(self, selector("windowNumber"))
+        msg_send![self, windowNumber]
     }
 
     unsafe fn eventRef(self) -> *const libc::c_void {
-        msg_send()(self, selector("eventRef"))
+        msg_send![self, eventRef]
     }
 
     unsafe fn CGEvent(self) -> *mut libc::c_void /* CGEventRef */ {
-        msg_send()(self, selector("CGEvent"))
+        msg_send![self, CGEvent]
     }
 
     // Getting Key Event Information
@@ -1991,207 +1987,207 @@ impl NSEvent for id {
     // NOTE: renamed from `+ modifierFlags` due to conflict with `- modifierFlags`
 
     unsafe fn currentModifierFlags(_: Self) -> NSEventModifierFlags {
-        msg_send()(class("NSEvent"), selector("currentModifierFlags"))
+        msg_send![class("NSEvent"), currentModifierFlags]
     }
 
     unsafe fn keyRepeatDelay(_: Self) -> NSTimeInterval {
-        msg_send()(class("NSEvent"), selector("keyRepeatDelay"))
+        msg_send![class("NSEvent"), keyRepeatDelay]
     }
 
     unsafe fn keyRepeatInterval(_: Self) -> NSTimeInterval {
-        msg_send()(class("NSEvent"), selector("keyRepeatInterval"))
+        msg_send![class("NSEvent"), keyRepeatInterval]
     }
 
     unsafe fn characters(self) -> id /* (NSString *) */ {
-        msg_send()(self, selector("characters"))
+        msg_send![self, characters]
     }
 
     unsafe fn charactersIgnoringModifiers(self) -> id /* (NSString *) */ {
-        msg_send()(self, selector("charactersIgnoringModifiers"))
+        msg_send![self, charactersIgnoringModifiers]
     }
 
     unsafe fn keyCode(self) -> libc::c_ushort {
-        msg_send()(self, selector("keyCode"))
+        msg_send![self, keyCode]
     }
 
     // Getting Mouse Event Information
 
     unsafe fn pressedMouseButtons(_: Self) -> NSUInteger {
-        msg_send()(class("NSEvent"), selector("pressedMouseButtons"))
+        msg_send![class("NSEvent"), pressedMouseButtons]
     }
 
     unsafe fn doubleClickInterval(_: Self) -> NSTimeInterval {
-        msg_send()(class("NSEvent"), selector("doubleClickInterval"))
+        msg_send![class("NSEvent"), doubleClickInterval]
     }
 
     unsafe fn mouseLocation(_: Self) -> NSPoint {
-        msg_send()(class("NSEvent"), selector("mouseLocation"))
+        msg_send![class("NSEvent"), mouseLocation]
     }
 
     unsafe fn buttonNumber(self) -> NSInteger {
-        msg_send()(self, selector("buttonNumber"))
+        msg_send![self, buttonNumber]
     }
 
     unsafe fn clickCount(self) -> NSInteger {
-        msg_send()(self, selector("clickCount"))
+        msg_send![self, clickCount]
     }
 
     unsafe fn pressure(self) -> libc::c_float {
-        msg_send()(self, selector("pressure"))
+        msg_send![self, pressure]
     }
 
     unsafe fn setMouseCoalescingEnabled_(_: Self, flag: BOOL) {
-        msg_send()(class("NSEvent"), selector("setMouseCoalescingEnabled:"), flag as libc::c_int)
+        msg_send![class("NSEvent"), setMouseCoalescingEnabled:flag as libc::c_int]
     }
 
     unsafe fn isMouseCoalescingEnabled(_: Self) -> BOOL {
-        msg_send()(class("NSEvent"), selector("isMouseCoalescingEnabled"))
+        msg_send![class("NSEvent"), isMouseCoalescingEnabled]
     }
 
     // Getting Mouse-Tracking Event Information
 
     unsafe fn eventNumber(self) -> NSInteger {
-        msg_send()(self, selector("eventNumber"))
+        msg_send![self, eventNumber]
     }
 
     unsafe fn trackingNumber(self) -> NSInteger {
-        msg_send()(self, selector("trackingNumber"))
+        msg_send![self, trackingNumber]
     }
 
     unsafe fn trackingArea(self) -> id /* (NSTrackingArea *) */ {
-        msg_send()(self, selector("trackingArea"))
+        msg_send![self, trackingArea]
     }
 
     unsafe fn userData(self) -> *const libc::c_void {
-        msg_send()(self, selector("userData"))
+        msg_send![self, userData]
     }
 
     // Getting Custom Event Information
 
     unsafe fn data1(self) -> NSInteger {
-        msg_send()(self, selector("data1"))
+        msg_send![self, data1]
     }
 
     unsafe fn data2(self) -> NSInteger {
-        msg_send()(self, selector("data2"))
+        msg_send![self, data2]
     }
 
     unsafe fn subtype(self) -> NSEventSubtype {
-        msg_send()(self, selector("subtype"))
+        msg_send![self, subtype]
     }
 
     // Getting Scroll Wheel Event Information
 
     unsafe fn deltaX(self) -> CGFloat {
-        msg_send_fpret()(self, selector("deltaX"))
+        msg_send![self, deltaX]
     }
 
     unsafe fn deltaY(self) -> CGFloat {
-        msg_send_fpret()(self, selector("deltaY"))
+        msg_send![self, deltaY]
     }
 
     unsafe fn deltaZ(self) -> CGFloat {
-        msg_send_fpret()(self, selector("deltaZ"))
+        msg_send![self, deltaZ]
     }
 
     // Getting Tablet Proximity Information
 
     unsafe fn capabilityMask(self) -> NSUInteger {
-        msg_send()(self, selector("capabilityMask"))
+        msg_send![self, capabilityMask]
     }
 
     unsafe fn deviceID(self) -> NSUInteger {
-        msg_send()(self, selector("deviceID"))
+        msg_send![self, deviceID]
     }
 
     unsafe fn pointingDeviceID(self) -> NSUInteger {
-        msg_send()(self, selector("pointingDeviceID"))
+        msg_send![self, pointingDeviceID]
     }
 
     unsafe fn pointingDeviceSerialNumber(self) -> NSUInteger {
-        msg_send()(self, selector("pointingDeviceSerialNumber"))
+        msg_send![self, pointingDeviceSerialNumber]
     }
 
     unsafe fn pointingDeviceType(self) -> NSPointingDeviceType {
-        msg_send()(self, selector("pointingDeviceType"))
+        msg_send![self, pointingDeviceType]
     }
 
     unsafe fn systemTabletID(self) -> NSUInteger {
-        msg_send()(self, selector("systemTabletID"))
+        msg_send![self, systemTabletID]
     }
 
     unsafe fn tabletID(self) -> NSUInteger {
-        msg_send()(self, selector("tabletID"))
+        msg_send![self, tabletID]
     }
 
     unsafe fn uniqueID(self) -> libc::c_ulonglong {
-        msg_send()(self, selector("uniqueID"))
+        msg_send![self, uniqueID]
     }
 
     unsafe fn vendorID(self) -> NSUInteger {
-        msg_send()(self, selector("vendorID"))
+        msg_send![self, vendorID]
     }
 
     unsafe fn vendorPointingDeviceType(self) -> NSUInteger {
-        msg_send()(self, selector("vendorPointingDeviceType"))
+        msg_send![self, vendorPointingDeviceType]
     }
 
     // Getting Tablet Pointing Information
 
     unsafe fn absoluteX(self) -> NSInteger {
-        msg_send()(self, selector("absoluteX"))
+        msg_send![self, absoluteX]
     }
 
     unsafe fn absoluteY(self) -> NSInteger {
-        msg_send()(self, selector("absoluteY"))
+        msg_send![self, absoluteY]
     }
 
     unsafe fn absoluteZ(self) -> NSInteger {
-        msg_send()(self, selector("absoluteZ"))
+        msg_send![self, absoluteZ]
     }
 
     unsafe fn buttonMask(self) -> NSEventButtonMask {
-        msg_send()(self, selector("buttonMask"))
+        msg_send![self, buttonMask]
     }
 
     unsafe fn rotation(self) -> libc::c_float {
-        msg_send()(self, selector("rotation"))
+        msg_send![self, rotation]
     }
 
     unsafe fn tangentialPressure(self) -> libc::c_float {
-        msg_send()(self, selector("tangentialPressure"))
+        msg_send![self, tangentialPressure]
     }
 
     unsafe fn tilt(self) -> NSPoint {
-        msg_send()(self, selector("tilt"))
+        msg_send![self, tilt]
     }
 
     unsafe fn vendorDefined(self) -> id {
-        msg_send()(self, selector("vendorDefined"))
+        msg_send![self, vendorDefined]
     }
 
     // Requesting and Stopping Periodic Events
 
     unsafe fn startPeriodicEventsAfterDelay_withPeriod_(_: Self, delaySeconds: NSTimeInterval, periodSeconds: NSTimeInterval) {
-        msg_send()(class("NSEvent"), selector("startPeriodicEventsAfterDelay:withPeriod:"), delaySeconds, periodSeconds)
+        msg_send![class("NSEvent"), startPeriodicEventsAfterDelay:delaySeconds withPeriod:periodSeconds]
     }
 
     unsafe fn stopPeriodicEvents(_: Self) {
-        msg_send()(class("NSEvent"), selector("stopPeriodicEvents"))
+        msg_send![class("NSEvent"), stopPeriodicEvents]
     }
 
     // Getting Touch and Gesture Information
 
     unsafe fn magnification(self) -> CGFloat {
-        msg_send_fpret()(self, selector("magnification"))
+        msg_send![self, magnification]
     }
 
     unsafe fn touchesMatchingPhase_inView_(self, phase: NSTouchPhase, view: id /* (NSView *) */) -> id /* (NSSet *) */ {
-        msg_send()(self, selector("touchesMatchingPhase:inView:"), phase, view)
+        msg_send![self, touchesMatchingPhase:phase inView:view]
     }
 
     unsafe fn isSwipeTrackingFromScrollEventsEnabled(_: Self) -> BOOL {
-        msg_send()(class("NSEvent"), selector("isSwipeTrackingFromScrollEventsEnabled"))
+        msg_send![class("NSEvent"), isSwipeTrackingFromScrollEventsEnabled]
     }
 
     // Monitoring Application Events
@@ -2200,36 +2196,36 @@ impl NSEvent for id {
     // TODO: addLocalMonitorForEventsMatchingMask_handler_ (unsure how to bind to blocks)
 
     unsafe fn removeMonitor_(_: Self, eventMonitor: id) {
-        msg_send()(class("NSEvent"), selector("removeMonitor:"), eventMonitor)
+        msg_send![class("NSEvent"), removeMonitor:eventMonitor]
     }
 
     // Scroll Wheel and Flick Events
 
     unsafe fn hasPreciseScrollingDeltas(self) -> BOOL {
-        msg_send()(self, selector("hasPreciseScrollingDeltas"))
+        msg_send![self, hasPreciseScrollingDeltas]
     }
 
     unsafe fn scrollingDeltaX(self) -> CGFloat {
-        msg_send_fpret()(self, selector("scrollingDeltaX"))
+        msg_send![self, scrollingDeltaX]
     }
 
     unsafe fn scrollingDeltaY(self) -> CGFloat {
-        msg_send_fpret()(self, selector("scrollingDeltaY"))
+        msg_send![self, scrollingDeltaY]
     }
 
     unsafe fn momentumPhase(self) -> NSEventPhase {
-        msg_send()(self, selector("momentumPhase"))
+        msg_send![self, momentumPhase]
     }
 
     unsafe fn phase(self) -> NSEventPhase {
-        msg_send()(self, selector("phase"))
+        msg_send![self, phase]
     }
 
     // TODO: trackSwipeEventWithOptions_dampenAmountThresholdMin_max_usingHandler_ (unsure how to bind to blocks)
 
     // Converting a Mouse Event’s Position into a Sprite Kit Node’s Coordinate Space
     unsafe fn locationInNode_(self, node: id /* (SKNode *) */) -> CGPoint {
-        msg_send_stret()(self, selector("locationInNode:"), node)
+        msg_send![self, locationInNode:node]
     }
 }
 
@@ -2259,62 +2255,62 @@ impl NSScreen for id {
     // Getting NSScreen Objects
 
     unsafe fn mainScreen(_: Self) -> id /* (NSScreen *) */ {
-        msg_send()(class("NSScreen"), selector("mainScreen"))
+        msg_send![class("NSScreen"), mainScreen]
     }
 
     unsafe fn deepestScreen(_: Self) -> id /* (NSScreen *) */ {
-        msg_send()(class("NSScreen"), selector("deepestScreen"))
+        msg_send![class("NSScreen"), deepestScreen]
     }
 
     unsafe fn screens(_: Self) -> id /* (NSArray *) */ {
-        msg_send()(class("NSScreen"), selector("screens"))
+        msg_send![class("NSScreen"), screens]
     }
 
     // Getting Screen Information
 
     unsafe fn depth(self) -> NSWindowDepth {
-        msg_send()(self, selector("depth"))
+        msg_send![self, depth]
     }
 
     unsafe fn frame(self) -> NSRect {
-        msg_send_stret()(self, selector("frame"))
+        msg_send![self, frame]
     }
 
     unsafe fn supportedWindowDepths(self) -> *const NSWindowDepth {
-        msg_send()(self, selector("supportedWindowDepths"))
+        msg_send![self, supportedWindowDepths]
     }
 
     unsafe fn deviceDescription(self) -> id /* (NSDictionary *) */ {
-        msg_send()(self, selector("deviceDescription"))
+        msg_send![self, deviceDescription]
     }
 
     unsafe fn visibleFrame(self) -> NSRect {
-        msg_send_stret()(self, selector("visibleFrame"))
+        msg_send![self, visibleFrame]
     }
 
     unsafe fn colorSpace(self) -> id /* (NSColorSpace *) */ {
-        msg_send()(self, selector("colorSpace"))
+        msg_send![self, colorSpace]
     }
 
     unsafe fn screensHaveSeparateSpaces(_: Self) -> BOOL {
-        msg_send()(class("NSScreen"), selector("screensHaveSeparateSpaces"))
+        msg_send![class("NSScreen"), screensHaveSeparateSpaces]
     }
 
     // Screen Backing Coordinate Conversion
 
     unsafe fn backingAlignedRect_options_(self, aRect: NSRect, options: NSAlignmentOptions) -> NSRect {
-        msg_send_stret()(self, selector("backingAlignedRect:options:"), aRect, options)
+        msg_send![self, backingAlignedRect:aRect options:options]
     }
 
     unsafe fn backingScaleFactor(self) -> CGFloat {
-        msg_send_fpret()(self, selector("backingScaleFactor"))
+        msg_send![self, backingScaleFactor]
     }
 
     unsafe fn convertRectFromBacking_(self, aRect: NSRect) -> NSRect {
-        msg_send_stret()(self, selector("convertRectFromBacking:"), aRect)
+        msg_send![self, convertRectFromBacking:aRect]
     }
 
     unsafe fn convertRectToBacking_(self, aRect: NSRect) -> NSRect {
-        msg_send_stret()(self, selector("convertRectToBacking:"), aRect)
+        msg_send![self, convertRectToBacking:aRect]
     }
 }

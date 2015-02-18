@@ -22,6 +22,8 @@ pub use self::NSEventType::*;
 pub use self::NSEventMask::*;
 pub use self::NSEventModifierFlags::*;
 
+use std::ffi::CString;
+
 #[cfg(target_pointer_width = "32")]
 pub type CGFloat = f32;
 #[cfg(target_pointer_width = "64")]
@@ -1201,14 +1203,14 @@ pub trait NSString {
         msg_send()(class("NSString"), selector("alloc"))
     }
 
-    unsafe fn initWithUTF8String_(self, c_string: *const u8) -> id;
+    unsafe fn initWithUTF8String_(self, c_string: *const i8) -> id;
     unsafe fn stringByAppendingString_(self, other: id) -> id;
     unsafe fn init_str(self, string: &str) -> Self;
     unsafe fn UTF8String(self) -> *const libc::c_char;
 }
 
 impl NSString for id {
-    unsafe fn initWithUTF8String_(self, c_string: *const u8) -> id {
+    unsafe fn initWithUTF8String_(self, c_string: *const i8) -> id {
         msg_send()(self, selector("initWithUTF8String:"), c_string as id)
     }
 
@@ -1217,7 +1219,8 @@ impl NSString for id {
     }
 
     unsafe fn init_str(self, string: &str) -> id {
-        self.initWithUTF8String_(string.as_ptr())
+        let cstring = CString::from_slice(string.as_bytes());
+        self.initWithUTF8String_(cstring.as_ptr())
     }
 
     unsafe fn UTF8String(self) -> *const libc::c_char {

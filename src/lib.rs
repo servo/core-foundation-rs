@@ -12,7 +12,7 @@
 
 #![allow(non_snake_case)]
 
-#![feature(core, libc)]
+#![feature(core)]
 
 extern crate libc;
 

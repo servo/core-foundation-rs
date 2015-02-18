@@ -14,6 +14,7 @@ pub type Boolean = u8;
 
 pub type CFIndex = c_long;
 
+#[allow(non_camel_case_types)]
 pub type mach_port_t = c_uint;
 
 pub trait CFIndexConvertible {

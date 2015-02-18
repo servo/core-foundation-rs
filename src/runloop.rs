@@ -15,10 +15,9 @@ use base::{kCFAllocatorDefault};
 use base::{Boolean};
 use array::{CFArrayRef};
 use string::{CFString, CFStringRef};
-use date::{CFAbsoluteTime, CFTimeInterval, CFAbsoluteTimeGetCurrent};
+use date::{CFAbsoluteTime, CFTimeInterval};
 use libc::c_void;
 use std::mem;
-use std::ptr;
 
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
 pub struct CFRunLoop {
@@ -117,7 +116,7 @@ impl CFRunLoop {
             CFRunLoopAddTimer(self.obj, timer.obj, mode);
         }
     }
-     
+
 }
 
 #[repr(C)]
@@ -154,7 +153,7 @@ pub const kCFRunLoopAllActivities: CFOptionFlags = 0x0FFFFFFF;
 
 #[repr(C)]
 pub struct CFRunLoopSourceContext {
-    version: CFIndex, 
+    version: CFIndex,
     info: *mut c_void,
     retain: extern "C" fn (info: *const c_void) -> *const c_void,
     release: extern "C" fn (info: *const c_void),
@@ -168,7 +167,7 @@ pub struct CFRunLoopSourceContext {
 
 #[repr(C)]
 pub struct CFRunLoopSourceContext1 {
-    version: CFIndex, 
+    version: CFIndex,
     info: *mut c_void,
     retain: extern "C" fn (info: *const c_void) -> *const c_void,
     release: extern "C" fn (info: *const c_void),
@@ -182,7 +181,7 @@ pub struct CFRunLoopSourceContext1 {
 
 #[repr(C)]
 pub struct CFRunLoopObserverContext {
-    version: CFIndex, 
+    version: CFIndex,
     info: *mut c_void,
     retain: extern "C" fn (info: *const c_void) -> *const c_void,
     release: extern "C" fn (info: *const c_void),
@@ -193,7 +192,7 @@ pub type CFRunLoopObserverCallBack = extern "C" fn (observer: CFRunLoopObserverR
 
 #[repr(C)]
 pub struct CFRunLoopTimerContext {
-    version: CFIndex, 
+    version: CFIndex,
     info: *mut c_void,
     retain: extern "C" fn (info: *const c_void) -> *const c_void,
     release: extern "C" fn (info: *const c_void),
@@ -328,9 +327,15 @@ extern {
     fn CFRunLoopTimerSetTolerance(timer: CFRunLoopTimerRef, tolerance: CFTimeInterval);
 }
 
+#[cfg(test)]
+mod test {
+    use super::*;
+    use date::{CFAbsoluteTime, CFAbsoluteTimeGetCurrent};
+    use std::mem;
+    use libc::c_void;
 
-#[test]
-fn wait_200_milliseconds() {
+    #[test]
+    fn wait_200_milliseconds() {
         let run_loop = CFRunLoop::get_current();
         let mut now = unsafe { CFAbsoluteTimeGetCurrent() };
         let mut context = unsafe { CFRunLoopTimerContext {
@@ -346,12 +351,13 @@ fn wait_200_milliseconds() {
         run_loop.add_timer(&run_loop_timer, kCFRunLoopDefaultMode);
 
         CFRunLoop::run_current();
-}
+    }
 
-extern "C" fn timer_popped(_timer: CFRunLoopTimerRef, _info: *mut c_void) {
-    let previous_now_ptr: *const CFAbsoluteTime = unsafe { mem::transmute(_info) };
-    let previous_now = unsafe { *previous_now_ptr };
-    let now = unsafe { CFAbsoluteTimeGetCurrent() };
-    assert!(now - previous_now > 0.19 && now - previous_now < 0.21);
-    CFRunLoop::get_current().stop();
+    extern "C" fn timer_popped(_timer: CFRunLoopTimerRef, _info: *mut c_void) {
+        let previous_now_ptr: *const CFAbsoluteTime = unsafe { mem::transmute(_info) };
+        let previous_now = unsafe { *previous_now_ptr };
+        let now = unsafe { CFAbsoluteTimeGetCurrent() };
+        assert!(now - previous_now > 0.19 && now - previous_now < 0.21);
+        CFRunLoop::get_current().stop();
+    }
 }

@@ -255,7 +255,7 @@ impl TCFType<CFStringRef> for CFString {
     }
 
     #[inline]
-    fn type_id(_: Option<CFString>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFStringGetTypeID()
         }

@@ -79,7 +79,7 @@ impl TCFType<CFSetRef> for CFSet {
     }
 
     #[inline]
-    fn type_id(_: Option<CFSet>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFSetGetTypeID()
         }

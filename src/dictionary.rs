@@ -92,7 +92,7 @@ impl TCFType<CFDictionaryRef> for CFDictionary {
     }
 
     #[inline]
-    fn type_id(_: Option<CFDictionary>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFDictionaryGetTypeID()
         }

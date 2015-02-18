@@ -104,7 +104,7 @@ impl TCFType<CFArrayRef> for CFArray {
     }
 
     #[inline]
-    fn type_id(_: Option<CFArray>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFArrayGetTypeID()
         }

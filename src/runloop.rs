@@ -59,7 +59,7 @@ impl TCFType<CFRunLoopRef> for CFRunLoop {
     }
 
     #[inline]
-    fn type_id(_: Option<CFRunLoop>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFRunLoopGetTypeID()
         }
@@ -246,7 +246,7 @@ impl TCFType<CFRunLoopTimerRef> for CFRunLoopTimer {
     }
 
     #[inline]
-    fn type_id(_: Option<CFRunLoopTimer>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFRunLoopTimerGetTypeID()
         }

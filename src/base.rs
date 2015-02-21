@@ -159,7 +159,7 @@ extern {
     pub fn objc_loadWeak(location: *mut id) -> id;
     pub fn objc_storeWeak(location: *mut id, obj: id) -> id;
     pub fn objc_msgSend(target: id, selector: SEL, ...) -> id;
-    pub fn objc_msgSend_ftret(target: id, selector: SEL, ...) -> libc::c_double;
+    pub fn objc_msgSend_fpret(target: id, selector: SEL, ...) -> libc::c_double;
     pub fn objc_msgSend_stret(target: id, selector: SEL, ...);
     pub fn objc_msgSendSuper(sup: *mut objc_super, op: SEL, ...) -> id;
     pub fn objc_msgSendSuper_stret(sup: *mut objc_super, op: SEL, ...);
@@ -240,6 +240,11 @@ extern {
 /// ```
 pub unsafe fn msg_send<T>() -> extern fn(target: id, selector: SEL, ...) -> T {
     mem::transmute(objc_msgSend)
+}
+
+/// Returns an Objective-C message send function that returns a floating-point type.
+pub unsafe fn msg_send_fpret<T>() -> extern fn(target: id, selector: SEL, ...) -> T {
+    mem::transmute(objc_msgSend_fpret)
 }
 
 /// Returns an Objective-C message send function that returns a type `T`, where `T` is a struct

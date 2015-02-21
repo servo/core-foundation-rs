@@ -9,7 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, msg_send, msg_send_stret, class, selector};
+use base::{id, msg_send, msg_send_fpret, msg_send_stret, class, selector};
 use base::{BOOL, SEL, NSInteger, NSUInteger};
 use libc;
 
@@ -1054,7 +1054,7 @@ impl NSWindow for id {
     // Converting Coordinates
 
     unsafe fn backingScaleFactor(self) -> CGFloat {
-        msg_send()(self, selector("backingScaleFactor"))
+        msg_send_fpret()(self, selector("backingScaleFactor"))
     }
 
     unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect {

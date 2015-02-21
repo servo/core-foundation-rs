@@ -71,7 +71,7 @@ impl TCFType<CGFontRef> for CGFont {
     }
 
     #[inline]
-    fn type_id(_: Option<CGFont>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CGFontGetTypeID()
         }

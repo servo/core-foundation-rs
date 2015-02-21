@@ -62,7 +62,7 @@ impl TCFType<CFURLRef> for CFURL {
     }
 
     #[inline]
-    fn type_id(_: Option<CFURL>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFURLGetTypeID()
         }

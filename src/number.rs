@@ -85,7 +85,7 @@ impl TCFType<CFNumberRef> for CFNumber {
     }
 
     #[inline]
-    fn type_id(_: Option<CFNumber>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFNumberGetTypeID()
         }

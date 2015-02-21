@@ -61,7 +61,7 @@ impl TCFType<CFBundleRef> for CFBundle {
     }
 
     #[inline]
-    fn type_id(_: Option<CFBundle>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFBundleGetTypeID()
         }

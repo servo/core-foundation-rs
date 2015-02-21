@@ -14,6 +14,7 @@ pub type Boolean = u8;
 
 pub type CFIndex = c_long;
 
+#[allow(non_camel_case_types)]
 pub type mach_port_t = c_uint;
 
 pub trait CFIndexConvertible {
@@ -105,10 +106,7 @@ pub trait TCFType<ConcreteTypeRef> {
     unsafe fn wrap_under_create_rule(obj: ConcreteTypeRef) -> Self;
 
     /// Returns the type ID for this class.
-    ///
-    /// FIXME(pcwalton): The dummy parameter is there to work around the current inexpressivity of
-    /// the Rust language.
-    fn type_id(dummy: Option<Self>) -> CFTypeID;
+    fn type_id() -> CFTypeID;
 
     /// Returns the object as a wrapped `CFType`. The reference count is incremented by one.
     #[inline]
@@ -152,8 +150,7 @@ pub trait TCFType<ConcreteTypeRef> {
     /// Returns true if this value is an instance of another type.
     #[inline]
     fn instance_of<OtherConcreteTypeRef,OtherCFType:TCFType<OtherConcreteTypeRef>>(&self) -> bool {
-        let dummy: Option<OtherCFType> = None;
-        self.type_of() == TCFType::type_id(dummy)
+        self.type_of() == <OtherCFType as TCFType<_>>::type_id()
     }
 }
 
@@ -182,7 +179,7 @@ impl TCFType<CFTypeRef> for CFType {
     }
 
     #[inline]
-    fn type_id(_: Option<CFType>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         // FIXME(pcwalton): Is this right?
         0
     }

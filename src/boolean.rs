@@ -60,7 +60,7 @@ impl TCFType<CFBooleanRef> for CFBoolean {
     }
 
     #[inline]
-    fn type_id(_: Option<CFBoolean>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CFBooleanGetTypeID()
         }

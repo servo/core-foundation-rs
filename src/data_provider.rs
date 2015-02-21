@@ -69,7 +69,7 @@ impl TCFType<CGDataProviderRef> for CGDataProvider {
     }
 
     #[inline]
-    fn type_id(_: Option<CGDataProvider>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CGDataProviderGetTypeID()
         }

@@ -23,12 +23,12 @@ fn main() {
 
 		// create Application menu
 		let app_menu = NSMenu::new(nil).autorelease();
-		let quit_prefix = NSString::alloc(nil).init_str("Quit \0");
+		let quit_prefix = NSString::alloc(nil).init_str("Quit");
 		let quit_title = quit_prefix.stringByAppendingString_(
 			NSProcessInfo::processInfo(nil).processName()
 		);
 		let quit_action = selector("terminate:");
-		let quit_key = NSString::alloc(nil).init_str("q\0");
+		let quit_key = NSString::alloc(nil).init_str("q");
 		let quit_item = NSMenuItem::alloc(nil).initWithTitle_action_keyEquivalent_(
 			quit_title,
 			quit_action,
@@ -46,7 +46,7 @@ fn main() {
 		).autorelease();
 		window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
 		window.center();
-		let title = NSString::alloc(nil).init_str("Hello World!\0");
+		let title = NSString::alloc(nil).init_str("Hello World!");
 		window.setTitle_(title);
 		window.makeKeyAndOrderFront_(nil);
 

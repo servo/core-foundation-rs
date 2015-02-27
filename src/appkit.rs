@@ -19,8 +19,6 @@ pub use self::NSBackingStoreType::*;
 pub use self::NSOpenGLPixelFormatAttribute::*;
 pub use self::NSOpenGLPFAOpenGLProfiles::*;
 pub use self::NSEventType::*;
-pub use self::NSEventMask::*;
-pub use self::NSEventModifierFlags::*;
 
 use std::ffi::CString;
 

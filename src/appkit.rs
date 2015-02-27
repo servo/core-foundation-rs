@@ -19,8 +19,6 @@ pub use self::NSBackingStoreType::*;
 pub use self::NSOpenGLPixelFormatAttribute::*;
 pub use self::NSOpenGLPFAOpenGLProfiles::*;
 pub use self::NSEventType::*;
-pub use self::NSEventMask::*;
-pub use self::NSEventModifierFlags::*;
 
 use std::ffi::CString;
 
@@ -1219,7 +1217,7 @@ impl NSString for id {
     }
 
     unsafe fn init_str(self, string: &str) -> id {
-        let cstring = CString::from_slice(string.as_bytes());
+        let cstring = CString::new(string).unwrap();
         self.initWithUTF8String_(cstring.as_ptr())
     }
 

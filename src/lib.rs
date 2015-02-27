@@ -11,7 +11,7 @@
 #![crate_type = "rlib"]
 
 #![allow(missing_copy_implementations, non_snake_case)]
-#![feature(std_misc, hash)]
+#![feature(std_misc)]
 
 #[macro_use]
 extern crate bitflags;

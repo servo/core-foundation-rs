@@ -256,7 +256,7 @@ pub unsafe fn msg_send_stret<T>() -> extern fn(target: id, selector: SEL, ...) -
 /// A convenience method to convert the name of a class to the class object itself.
 #[inline]
 pub fn class(name: &str) -> Class {
-    let name_c_str = ffi::CString::from_slice(name.as_bytes());
+    let name_c_str = ffi::CString::new(name).unwrap();
     unsafe {
         objc_getClass(name_c_str.as_ptr())
     }
@@ -265,7 +265,7 @@ pub fn class(name: &str) -> Class {
 /// A convenience method to convert the name of a selector to the selector object.
 #[inline]
 pub fn selector(name: &str) -> SEL {
-    let name_c_str = ffi::CString::from_slice(name.as_bytes());
+    let name_c_str = ffi::CString::new(name).unwrap();
     unsafe {
         sel_registerName(name_c_str.as_ptr())
     }

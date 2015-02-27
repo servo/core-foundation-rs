@@ -1217,7 +1217,7 @@ impl NSString for id {
     }
 
     unsafe fn init_str(self, string: &str) -> id {
-        let cstring = CString::from_slice(string.as_bytes());
+        let cstring = CString::new(string).unwrap();
         self.initWithUTF8String_(cstring.as_ptr())
     }
 

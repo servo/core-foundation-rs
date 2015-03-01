@@ -20,11 +20,7 @@ struct __CFBoolean;
 pub type CFBooleanRef = *const __CFBoolean;
 
 /// A Boolean type.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFBoolean {
-    obj: CFBooleanRef,
-}
+pub struct CFBoolean(CFBooleanRef);
 
 impl Drop for CFBoolean {
     fn drop(&mut self) {
@@ -37,7 +33,7 @@ impl Drop for CFBoolean {
 impl TCFType<CFBooleanRef> for CFBoolean {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFBooleanRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -54,9 +50,7 @@ impl TCFType<CFBooleanRef> for CFBoolean {
     }
 
     unsafe fn wrap_under_create_rule(obj: CFBooleanRef) -> CFBoolean {
-        CFBoolean {
-            obj: obj,
-        }
+        CFBoolean(obj)
     }
 
     #[inline]

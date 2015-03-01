@@ -205,17 +205,13 @@ struct __CFString;
 pub type CFStringRef = *const __CFString;
 
 /// An immutable string in one of a variety of encodings.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFString {
-    obj: CFStringRef,
-}
+pub struct CFString(CFStringRef);
 
 impl Clone for CFString {
     #[inline]
     fn clone(&self) -> CFString {
         unsafe {
-            TCFType::wrap_under_get_rule(self.obj)
+            TCFType::wrap_under_get_rule(self.as_concrete_TypeRef())
         }
     }
 }
@@ -232,7 +228,7 @@ impl Drop for CFString {
 impl TCFType<CFStringRef> for CFString {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFStringRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -249,9 +245,7 @@ impl TCFType<CFStringRef> for CFString {
     }
 
     unsafe fn wrap_under_create_rule(obj: CFStringRef) -> CFString {
-        CFString {
-            obj: obj,
-        }
+        CFString(obj)
     }
 
     #[inline]
@@ -287,7 +281,7 @@ impl ToString for CFString {
 
             // First, ask how big the buffer ought to be.
             let mut bytes_required: CFIndex = 0;
-            CFStringGetBytes(self.obj,
+            CFStringGetBytes(self.as_concrete_TypeRef(),
                              CFRange::init(0, char_len),
                              kCFStringEncodingUTF8,
                              0,
@@ -301,7 +295,7 @@ impl ToString for CFString {
             for _ in (0..bytes_required) { buffer.push('\x00' as u8) }
 
             let mut bytes_used: CFIndex = 0;
-            let chars_written = CFStringGetBytes(self.obj,
+            let chars_written = CFStringGetBytes(self.as_concrete_TypeRef(),
                                                  CFRange::init(0, char_len),
                                                  kCFStringEncodingUTF8,
                                                  0,
@@ -346,7 +340,7 @@ impl CFString {
     #[inline]
     pub fn char_len(&self) -> CFIndex {
         unsafe {
-            CFStringGetLength(self.obj)
+            CFStringGetLength(self.as_concrete_TypeRef())
         }
     }
 }

@@ -19,10 +19,8 @@ use date::{CFAbsoluteTime, CFTimeInterval};
 use libc::c_void;
 use std::mem;
 
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFRunLoop {
-    obj: CFRunLoopRef,
-}
+/// An event processing loop.
+pub struct CFRunLoop(CFRunLoopRef);
 
 impl Drop for CFRunLoop {
     fn drop(&mut self) {
@@ -35,7 +33,7 @@ impl Drop for CFRunLoop {
 impl TCFType<CFRunLoopRef> for CFRunLoop {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFRunLoopRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -53,9 +51,7 @@ impl TCFType<CFRunLoopRef> for CFRunLoop {
 
     #[inline]
     unsafe fn wrap_under_create_rule(obj: CFRunLoopRef) -> CFRunLoop {
-        CFRunLoop {
-            obj: obj,
-        }
+        CFRunLoop(obj)
     }
 
     #[inline]
@@ -89,13 +85,13 @@ impl CFRunLoop {
 
     pub fn stop(&self) {
         unsafe {
-            CFRunLoopStop(self.obj);
+            CFRunLoopStop(self.as_concrete_TypeRef());
         }
     }
 
     pub fn current_mode(&self) -> Option<String> {
         unsafe {
-            let string_ref = CFRunLoopCopyCurrentMode(self.obj);
+            let string_ref = CFRunLoopCopyCurrentMode(self.as_concrete_TypeRef());
             if string_ref.is_null() {
                 return None;
             }
@@ -107,13 +103,15 @@ impl CFRunLoop {
 
     pub fn contains_timer(&self, timer: &CFRunLoopTimer, mode: CFStringRef) -> bool {
         unsafe {
-            CFRunLoopContainsTimer(self.obj, timer.obj, mode) != 0
+            let timer_obj = timer.as_concrete_TypeRef();
+            CFRunLoopContainsTimer(self.as_concrete_TypeRef(), timer_obj, mode) != 0
         }
     }
 
     pub fn add_timer(&self, timer: &CFRunLoopTimer, mode: CFStringRef) {
         unsafe {
-            CFRunLoopAddTimer(self.obj, timer.obj, mode);
+            let timer_obj = timer.as_concrete_TypeRef();
+            CFRunLoopAddTimer(self.as_concrete_TypeRef(), timer_obj, mode);
         }
     }
 
@@ -206,10 +204,8 @@ struct __CFRunLoopTimer;
 
 pub type CFRunLoopTimerRef = *const __CFRunLoopTimer;
 
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFRunLoopTimer {
-    obj: CFRunLoopTimerRef,
-}
+/// Represents a specialized run loop source that fires at a preset time in the future.
+pub struct CFRunLoopTimer(CFRunLoopTimerRef);
 
 impl Drop for CFRunLoopTimer {
     fn drop(&mut self) {
@@ -222,7 +218,8 @@ impl Drop for CFRunLoopTimer {
 impl TCFType<CFRunLoopTimerRef> for CFRunLoopTimer {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFRunLoopTimerRef {
-        self.obj
+        let CFRunLoopTimer(obj) = *self;
+        obj
     }
 
     #[inline]
@@ -240,9 +237,7 @@ impl TCFType<CFRunLoopTimerRef> for CFRunLoopTimer {
 
     #[inline]
     unsafe fn wrap_under_create_rule(obj: CFRunLoopTimerRef) -> CFRunLoopTimer {
-        CFRunLoopTimer {
-            obj: obj,
-        }
+        CFRunLoopTimer(obj)
     }
 
     #[inline]

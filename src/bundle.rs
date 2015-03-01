@@ -21,11 +21,7 @@ struct __CFBundle;
 pub type CFBundleRef = *const __CFBundle;
 
 /// A Bundle type.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFBundle {
-    obj: CFBundleRef,
-}
+pub struct CFBundle(CFBundleRef);
 
 impl Drop for CFBundle {
     fn drop(&mut self) {
@@ -38,7 +34,7 @@ impl Drop for CFBundle {
 impl TCFType<CFBundleRef> for CFBundle {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFBundleRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -55,9 +51,7 @@ impl TCFType<CFBundleRef> for CFBundle {
     }
 
     unsafe fn wrap_under_create_rule(obj: CFBundleRef) -> CFBundle {
-        CFBundle {
-            obj: obj,
-        }
+        CFBundle(obj)
     }
 
     #[inline]

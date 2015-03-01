@@ -44,11 +44,7 @@ struct __CFArray;
 pub type CFArrayRef = *const __CFArray;
 
 /// A heterogeneous immutable array.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFArray {
-    obj: CFArrayRef,
-}
+pub struct CFArray(CFArrayRef);
 
 impl Drop for CFArray {
     fn drop(&mut self) {
@@ -80,7 +76,7 @@ impl<'a> Iterator for CFArrayIterator<'a> {
 impl TCFType<CFArrayRef> for CFArray {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFArrayRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -98,9 +94,7 @@ impl TCFType<CFArrayRef> for CFArray {
 
     #[inline]
     unsafe fn wrap_under_create_rule(obj: CFArrayRef) -> CFArray {
-        CFArray {
-            obj: obj,
-        }
+        CFArray(obj)
     }
 
     #[inline]
@@ -140,7 +134,7 @@ impl CFArray {
     #[inline]
     pub fn len(&self) -> CFIndex {
         unsafe {
-            CFArrayGetCount(self.obj)
+            CFArrayGetCount(self.as_concrete_TypeRef())
         }
     }
 
@@ -148,7 +142,7 @@ impl CFArray {
     pub fn get(&self, index: CFIndex) -> *const c_void {
         assert!(index < self.len());
         unsafe {
-            CFArrayGetValueAtIndex(self.obj, index)
+            CFArrayGetValueAtIndex(self.as_concrete_TypeRef(), index)
         }
     }
 }

@@ -317,7 +317,7 @@ impl NSApplication for id {
     }
 
     unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL) {
-        msg_send![self, activateIgnoringOtherApps:ignore as libc::c_int]
+        msg_send![self, activateIgnoringOtherApps:ignore]
     }
 
     unsafe fn run(self) {
@@ -336,7 +336,7 @@ impl NSApplication for id {
         msg_send![self, nextEventMatchingMask:mask
                                     untilDate:expiration
                                        inMode:in_mode
-                                      dequeue:dequeue as libc::c_int]
+                                      dequeue:dequeue]
     }
 
     unsafe fn sendEvent_(self, an_event: id) {
@@ -344,7 +344,7 @@ impl NSApplication for id {
     }
 
     unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL) {
-        msg_send![self, postEvent:anEvent atStart:flag as libc::c_int]
+        msg_send![self, postEvent:anEvent atStart:flag]
     }
 
     unsafe fn stop_(self, sender: id) {
@@ -644,7 +644,7 @@ impl NSWindow for id {
         msg_send![self, initWithContentRect:rect
                                   styleMask:style
                                     backing:backing as NSUInteger
-                                      defer:defer as libc::c_int]
+                                      defer:defer]
     }
 
     unsafe fn initWithContentRect_styleMask_backing_defer_screen_(self,
@@ -656,7 +656,7 @@ impl NSWindow for id {
         msg_send![self, initWithContentRect:rect
                                   styleMask:style
                                     backing:backing as NSUInteger
-                                      defer:defer as libc::c_int
+                                      defer:defer
                                      screen:screen]
     }
 
@@ -715,7 +715,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setCanHide_(self, canHide: BOOL) {
-        msg_send![self, setCanHide:canHide as libc::c_int]
+        msg_send![self, setCanHide:canHide]
     }
 
     unsafe fn hidesOnDeactivate(self) -> BOOL {
@@ -723,7 +723,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setHidesOnDeactivate_(self, hideOnDeactivate: BOOL) {
-        msg_send![self, setHidesOnDeactivate:hideOnDeactivate as libc::c_int]
+        msg_send![self, setHidesOnDeactivate:hideOnDeactivate]
     }
 
     unsafe fn collectionBehavior(self) -> NSWindowCollectionBehavior {
@@ -735,7 +735,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setOpaque_(self, opaque: BOOL) {
-        msg_send![self, setOpaque:opaque as libc::c_int]
+        msg_send![self, setOpaque:opaque]
     }
 
     unsafe fn hasShadow(self) -> BOOL {
@@ -743,7 +743,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setHasShadow_(self, hasShadow: BOOL) {
-        msg_send![self, setHasShadow:hasShadow as libc::c_int]
+        msg_send![self, setHasShadow:hasShadow]
     }
 
     unsafe fn invalidateShadow(self) {
@@ -758,7 +758,7 @@ impl NSWindow for id {
                                                                  autorecalculateContentBorderThickness: BOOL,
                                                                  edge: NSRectEdge) -> BOOL {
         msg_send![self, setAutorecalculatesContentBorderThickness:
-                        autorecalculateContentBorderThickness as libc::c_int forEdge:edge]
+                        autorecalculateContentBorderThickness forEdge:edge]
     }
 
     unsafe fn contentBorderThicknessForEdge_(self, edge: NSRectEdge) -> CGFloat {
@@ -782,7 +782,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setPreventsApplicationTerminationWhenModal_(self, flag: BOOL) {
-        msg_send![self, setPreventsApplicationTerminationWhenModal:flag as libc::c_int]
+        msg_send![self, setPreventsApplicationTerminationWhenModal:flag]
     }
 
     // TODO: Accessing Window Information
@@ -848,11 +848,11 @@ impl NSWindow for id {
     }
 
     unsafe fn setFrame_display_(self, windowFrame: NSRect, display: BOOL) {
-        msg_send![self, setFrame:windowFrame display:display as libc::c_int]
+        msg_send![self, setFrame:windowFrame display:display]
     }
 
     unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL) {
-        msg_send![self, setFrame:windowFrame displayViews:display as libc::c_int]
+        msg_send![self, setFrame:windowFrame displayViews:display]
     }
 
     unsafe fn aspectRatio(self) -> NSSize {
@@ -896,7 +896,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: BOOL) {
-        msg_send![self, setShowsResizeIndicator:showsResizeIndicator as libc::c_int]
+        msg_send![self, setShowsResizeIndicator:showsResizeIndicator]
     }
 
     unsafe fn resizeIncrements(self) -> NSSize {
@@ -912,7 +912,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: BOOL) {
-        msg_send![self, setPreservesContentDuringLiveResize:preservesContentDuringLiveResize as libc::c_int]
+        msg_send![self, setPreservesContentDuringLiveResize:preservesContentDuringLiveResize]
     }
 
     unsafe fn inLiveResize(self) -> BOOL {
@@ -1055,7 +1055,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setIgnoresMouseEvents_(self, ignoreMouseEvents: BOOL) {
-        msg_send![self, setIgnoresMouseEvents:ignoreMouseEvents as libc::c_int]
+        msg_send![self, setIgnoresMouseEvents:ignoreMouseEvents]
     }
 
     unsafe fn mouseLocationOutsideOfEventStream(self) -> NSPoint {
@@ -1063,7 +1063,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setAcceptsMouseMovedEvents_(self, acceptMouseMovedEvents: BOOL) {
-        msg_send![self, setAcceptsMouseMovedEvents:acceptMouseMovedEvents as libc::c_int]
+        msg_send![self, setAcceptsMouseMovedEvents:acceptMouseMovedEvents]
     }
 
     unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(self,
@@ -1101,7 +1101,7 @@ impl NSWindow for id {
     // Accessing Edited Status
 
     unsafe fn setDocumentEdited_(self, documentEdited: BOOL) {
-        msg_send![self, setDocumentEdited:documentEdited as libc::c_int]
+        msg_send![self, setDocumentEdited:documentEdited]
     }
 
     // Managing Titles
@@ -1149,17 +1149,17 @@ impl NSWindow for id {
     }
 
     unsafe fn setDisplaysWhenScreenProfileChanges_(self, displaysWhenScreenProfileChanges: BOOL) {
-        msg_send![self, setDisplaysWhenScreenProfileChanges:displaysWhenScreenProfileChanges as libc::c_int]
+        msg_send![self, setDisplaysWhenScreenProfileChanges:displaysWhenScreenProfileChanges]
     }
 
     // Moving Windows
 
     unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: BOOL) {
-        msg_send![self, setMovableByWindowBackground:movableByWindowBackground as libc::c_int]
+        msg_send![self, setMovableByWindowBackground:movableByWindowBackground]
     }
 
     unsafe fn setMovable_(self, movable: BOOL) {
-        msg_send![self, setMovable:movable as libc::c_int]
+        msg_send![self, setMovable:movable]
     }
 
     unsafe fn center(self) {
@@ -1177,7 +1177,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: BOOL) {
-        msg_send![self, setReleasedWhenClosed:releasedWhenClosed as libc::c_int]
+        msg_send![self, setReleasedWhenClosed:releasedWhenClosed]
     }
 
     // Minimizing Windows
@@ -1285,7 +1285,7 @@ impl NSView for id {
     }
 
     unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: BOOL) {
-        msg_send![self, setWantsBestResolutionOpenGLSurface:flag as libc::c_int]
+        msg_send![self, setWantsBestResolutionOpenGLSurface:flag]
     }
 
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint {
@@ -1862,8 +1862,8 @@ impl NSEvent for id {
                                              context:context
                                           characters:characters
                          charactersIgnoringModifiers:unmodCharacters
-                                           isARepeat:repeatKey as libc::c_int
-                                             keyCode:code as libc::c_int]
+                                           isARepeat:repeatKey
+                                             keyCode:code]
     }
 
     unsafe fn mouseEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_clickCount_pressure_(
@@ -1886,7 +1886,7 @@ impl NSEvent for id {
                                                context:context
                                            eventNumber:eventNumber
                                             clickCount:clickCount
-                                              pressure:pressure as libc::c_double]
+                                              pressure:pressure]
     }
 
     unsafe fn enterExitEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_trackingNumber_userData_(
@@ -2037,7 +2037,7 @@ impl NSEvent for id {
     }
 
     unsafe fn setMouseCoalescingEnabled_(_: Self, flag: BOOL) {
-        msg_send![class("NSEvent"), setMouseCoalescingEnabled:flag as libc::c_int]
+        msg_send![class("NSEvent"), setMouseCoalescingEnabled:flag]
     }
 
     unsafe fn isMouseCoalescingEnabled(_: Self) -> BOOL {

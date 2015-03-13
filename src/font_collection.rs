@@ -66,7 +66,7 @@ impl TCFType<CTFontCollectionRef> for CTFontCollection {
     }
 
     #[inline]
-    fn type_id(_: Option<CTFontCollection>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CTFontCollectionGetTypeID()
         }

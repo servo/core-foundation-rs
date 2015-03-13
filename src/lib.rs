@@ -107,7 +107,7 @@ impl TCFType<IOSurfaceRef> for IOSurface {
     }
 
     #[inline]
-    fn type_id(_: Option<IOSurface>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             IOSurfaceGetTypeID()
         }

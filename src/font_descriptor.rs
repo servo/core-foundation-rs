@@ -225,7 +225,7 @@ impl TCFType<CTFontDescriptorRef> for CTFontDescriptor {
     }
 
     #[inline]
-    fn type_id(_: Option<CTFontDescriptor>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CTFontDescriptorGetTypeID()
         }

@@ -110,7 +110,7 @@ impl TCFType<CTFontRef> for CTFont {
     }
 
     #[inline]
-    fn type_id(_: Option<CTFont>) -> CFTypeID {
+    fn type_id() -> CFTypeID {
         unsafe {
             CTFontGetTypeID()
         }

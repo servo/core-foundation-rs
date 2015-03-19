@@ -113,6 +113,13 @@ pub enum NSApplicationActivationPolicy {
 }
 
 #[repr(u64)]
+pub enum NSApplicationTerminateReply {
+    NSTerminateCancel = 0,
+    NSTerminateNow = 1,
+    NSTerminateLater = 2,
+}
+
+#[repr(u64)]
 pub enum NSWindowMask {
     NSBorderlessWindowMask      = 0,
     NSTitledWindowMask          = 1 << 0,
@@ -297,6 +304,7 @@ pub trait NSApplication {
                                                               dequeue: BOOL) -> id;
     unsafe fn sendEvent_(self, an_event: id);
     unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL);
+    unsafe fn stop_(self, sender: id);
 }
 
 impl NSApplication for id {
@@ -335,6 +343,10 @@ impl NSApplication for id {
 
     unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL) {
         msg_send()(self, selector("postEvent:atStart:"), anEvent, flag as libc::c_int)
+    }
+
+    unsafe fn stop_(self, sender: id) {
+        msg_send()(self, selector("stop:"), sender)
     }
 }
 
@@ -475,6 +487,7 @@ pub trait NSWindow {
     unsafe fn setFrameTopLeftPoint_(self, point: NSPoint);
     unsafe fn constrainFrameRect_toScreen_(self, frameRect: NSRect, screen: id);
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint;
+    unsafe fn setFrame_display_(self, windowFrame: NSRect, display: BOOL);
     unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL);
     unsafe fn aspectRatio(self) -> NSSize;
     unsafe fn setAspectRatio_(self, aspectRatio: NSSize);
@@ -825,6 +838,10 @@ impl NSWindow for id {
 
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint {
         msg_send()(self, selector("cascadeTopLeftFromPoint:"), topLeft)
+    }
+
+    unsafe fn setFrame_display_(self, windowFrame: NSRect, display: BOOL) {
+        msg_send()(self, selector("setFrame:display:"), windowFrame, display as libc::c_int)
     }
 
     unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL) {
@@ -1277,6 +1294,8 @@ pub trait NSOpenGLView {
 
     unsafe fn initWithFrame_pixelFormat_(self, frameRect: NSRect, format: id) -> id;
     unsafe fn display_(self);
+    unsafe fn setOpenGLContext_(self, context: id);
+    unsafe fn setPixelFormat_(self, pixelformat: id);
 }
 
 impl NSOpenGLView for id {
@@ -1286,6 +1305,14 @@ impl NSOpenGLView for id {
 
     unsafe fn display_(self) {
         msg_send()(self, selector("display"))
+    }
+
+    unsafe fn setOpenGLContext_(self, context: id) {
+        msg_send()(self, selector("setOpenGLContext:"), context)
+    }
+
+    unsafe fn setPixelFormat_(self, pixelformat: id) {
+        msg_send()(self, selector("setPixelFormat:"), pixelformat)
     }
 }
 

@@ -9,8 +9,9 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, class};
-use base::{BOOL, SEL, NSInteger, NSUInteger};
+use base::{id, class, BOOL, SEL};
+use foundation::{NSInteger, NSUInteger, NSTimeInterval,
+                 NSPoint, NSSize, NSRect, NSRectEdge};
 use libc;
 
 pub use self::NSApplicationActivationPolicy::*;
@@ -19,8 +20,6 @@ pub use self::NSBackingStoreType::*;
 pub use self::NSOpenGLPixelFormatAttribute::*;
 pub use self::NSOpenGLPFAOpenGLProfiles::*;
 pub use self::NSEventType::*;
-
-use std::ffi::CString;
 
 #[cfg(target_pointer_width = "32")]
 pub type CGFloat = f32;
@@ -37,70 +36,8 @@ pub struct CGPoint {
     pub y: CGFloat,
 }
 
-#[repr(C)]
-pub struct NSPoint {
-    pub x: f64,
-    pub y: f64,
-}
-
-impl NSPoint {
-    #[inline]
-    pub fn new(x: f64, y: f64) -> NSPoint {
-        NSPoint {
-            x: x,
-            y: y,
-        }
-    }
-}
-
-#[repr(C)]
-pub struct NSSize {
-    pub width: f64,
-    pub height: f64,
-}
-
-impl NSSize {
-    #[inline]
-    pub fn new(width: f64, height: f64) -> NSSize {
-        NSSize {
-            width: width,
-            height: height,
-        }
-    }
-}
-
-#[repr(C)]
-pub struct NSRect {
-    pub origin: NSPoint,
-    pub size: NSSize,
-}
-
-impl NSRect {
-    #[inline]
-    pub fn new(origin: NSPoint, size: NSSize) -> NSRect {
-        NSRect {
-            origin: origin,
-            size: size
-        }
-    }
-}
-
-// Same as CGRectEdge
-#[repr(u32)]
-pub enum NSRectEdge {
-    NSRectMinXEdge,
-    NSRectMinYEdge,
-    NSRectMaxXEdge,
-    NSRectMaxYEdge,
-}
-
 #[link(name = "AppKit", kind = "framework")]
 extern {}
-
-#[link(name = "Foundation", kind = "framework")]
-extern {
-    pub static NSDefaultRunLoopMode: id;
-}
 
 pub unsafe fn NSApp() -> id {
     msg_send![class("NSApplication"), sharedApplication]
@@ -251,41 +188,6 @@ pub enum NSOpenGLContextParameter {
 }
 
 pub static NSMainMenuWindowLevel: libc::int32_t = 24;
-
-pub trait NSAutoreleasePool {
-    unsafe fn new(_: Self) -> id {
-        msg_send![class("NSAutoreleasePool"), new]
-    }
-
-    unsafe fn autorelease(self) -> Self;
-    unsafe fn drain(self);
-}
-
-impl NSAutoreleasePool for id {
-    unsafe fn autorelease(self) -> id {
-        msg_send![self, autorelease]
-    }
-
-    unsafe fn drain(self) {
-        msg_send![self, drain]
-    }
-}
-
-pub trait NSProcessInfo {
-    unsafe fn processInfo(_: Self) -> id {
-        msg_send![class("NSProcessInfo"), processInfo]
-    }
-
-    unsafe fn processName(self) -> id;
-}
-
-impl NSProcessInfo for id {
-    unsafe fn processName(self) -> id {
-        msg_send![self, processName]
-    }
-}
-
-pub type NSTimeInterval = libc::c_double;
 
 pub trait NSApplication {
     unsafe fn sharedApplication(_: Self) -> id {
@@ -1219,36 +1121,6 @@ impl NSWindow for id {
     // TODO: Constraint-Based Layouts
 }
 
-pub trait NSString {
-    unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSString"), alloc]
-    }
-
-    unsafe fn initWithUTF8String_(self, c_string: *const i8) -> id;
-    unsafe fn stringByAppendingString_(self, other: id) -> id;
-    unsafe fn init_str(self, string: &str) -> Self;
-    unsafe fn UTF8String(self) -> *const libc::c_char;
-}
-
-impl NSString for id {
-    unsafe fn initWithUTF8String_(self, c_string: *const i8) -> id {
-        msg_send![self, initWithUTF8String:c_string as id]
-    }
-
-    unsafe fn stringByAppendingString_(self, other: id) -> id {
-        msg_send![self, stringByAppendingString:other]
-    }
-
-    unsafe fn init_str(self, string: &str) -> id {
-        let cstring = CString::new(string).unwrap();
-        self.initWithUTF8String_(cstring.as_ptr())
-    }
-
-    unsafe fn UTF8String(self) -> *const libc::c_char {
-        msg_send![self, UTF8String]
-    }
-}
-
 pub trait NSView {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSView"), alloc]
@@ -1445,20 +1317,6 @@ impl NSOpenGLContext for id {
     unsafe fn CGLContextObj(self) -> CGLContextObj {
         msg_send![self, CGLContextObj]
     }
-}
-
-pub trait NSDate {
-    unsafe fn distantPast(_: Self) -> id {
-        msg_send![class("NSDate"), distantPast]
-    }
-
-    unsafe fn distantFuture(_: Self) -> id {
-        msg_send![class("NSDate"), distantFuture]
-    }
-}
-
-impl NSDate for id {
-
 }
 
 bitflags! {

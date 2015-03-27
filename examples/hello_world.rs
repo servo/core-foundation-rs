@@ -1,11 +1,11 @@
 extern crate cocoa;
 
-use cocoa::base::{NSUInteger, selector, nil, YES, NO};
-use cocoa::appkit::{NSApp, NSRect, NSPoint, NSSize,
-					NSAutoreleasePool, NSProcessInfo,
+use cocoa::base::{selector, nil, YES, NO};
+use cocoa::foundation::{NSUInteger, NSRect, NSPoint, NSSize,
+						NSAutoreleasePool, NSProcessInfo, NSString};
+use cocoa::appkit::{NSApp,
 					NSApplication, NSApplicationActivationPolicyRegular,
 					NSWindow, NSTitledWindowMask, NSBackingStoreBuffered,
-					NSString,
 					NSMenu, NSMenuItem};
 
 fn main() {

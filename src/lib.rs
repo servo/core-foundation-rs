@@ -24,3 +24,5 @@ extern crate objc;
 pub mod appkit;
 #[cfg(target_os="macos")]
 pub mod base;
+#[cfg(target_os="macos")]
+pub mod foundation;

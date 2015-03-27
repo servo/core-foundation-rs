@@ -4,6 +4,9 @@ name = "core_graphics"
 version = "0.1.0"
 authors = ["The Servo Project Developers"]
 
+[dependencies]
+libc = "*"
+
 [dependencies.core_foundation]
 
 git = "https://github.com/servo/rust-core-foundation"

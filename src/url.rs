@@ -240,5 +240,5 @@ fn file_url_from_path() {
     let path = "/usr/local/foo/";
     let cfstr_path = CFString::from_static_string(path);
     let cfurl = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
-    assert!("file:///usr/local/foo/" == cfurl.get_string().to_string().as_slice());
+    assert!(cfurl.get_string().to_string() == "file:///usr/local/foo/");
 }

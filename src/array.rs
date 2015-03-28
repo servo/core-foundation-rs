@@ -178,7 +178,6 @@ extern {
 #[test]
 fn should_box_and_unbox() {
     use number::{CFNumber, number};
-    use std::num::ToPrimitive;
 
     let arr = CFArray::from_CFTypes(&[
         number(1).as_CFType(),
@@ -189,18 +188,18 @@ fn should_box_and_unbox() {
     ]);
 
     unsafe {
-        let mut sum = 0i32;
+        let mut sum = 0;
 
         for elem in arr.iter() {
             let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
-            sum += number.to_i32().unwrap()
+            sum += number.to_i64().unwrap()
         }
 
         assert!(sum == 15);
 
         for elem in arr.iter() {
             let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
-            sum += number.to_i32().unwrap()
+            sum += number.to_i64().unwrap()
         }
 
         assert!(sum == 30);

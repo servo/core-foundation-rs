@@ -12,8 +12,6 @@
 
 #![allow(non_snake_case)]
 
-#![feature(core)]
-
 extern crate libc;
 
 #[cfg(target_os="macos")]

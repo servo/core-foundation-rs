@@ -7,7 +7,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use libc;
 use objc::runtime;
 use std::mem;
 
@@ -17,16 +16,6 @@ pub type Class = *mut runtime::Class;
 #[allow(non_camel_case_types)]
 pub type id = *mut runtime::Object;
 pub type SEL = runtime::Sel;
-
-#[cfg(target_pointer_width = "32")]
-pub type NSInteger = libc::c_int;
-#[cfg(target_pointer_width = "32")]
-pub type NSUInteger = libc::c_uint;
-
-#[cfg(target_pointer_width = "64")]
-pub type NSInteger = libc::c_long;
-#[cfg(target_pointer_width = "64")]
-pub type NSUInteger = libc::c_ulong;
 
 #[allow(non_upper_case_globals)]
 pub const nil: id = 0 as id;

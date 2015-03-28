@@ -10,8 +10,7 @@
 #![crate_name = "cocoa"]
 #![crate_type = "rlib"]
 
-#![allow(missing_copy_implementations, non_snake_case)]
-#![feature(std_misc)]
+#![allow(non_snake_case)]
 
 #[macro_use]
 extern crate bitflags;

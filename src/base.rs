@@ -8,7 +8,6 @@
 // except according to those terms.
 
 use libc::{c_long, c_ulong, c_uint};
-use std::num::Int;
 
 pub type Boolean = u8;
 
@@ -26,7 +25,7 @@ pub trait CFIndexConvertible {
 impl CFIndexConvertible for usize {
     #[inline]
     fn to_CFIndex(self) -> CFIndex {
-        let max_CFIndex: CFIndex = Int::max_value();
+        let max_CFIndex = CFIndex::max_value();
         if self > (max_CFIndex as usize) {
             panic!("value out of range")
         }

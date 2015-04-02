@@ -16,7 +16,6 @@ use base::{TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
 use std::mem;
-use std::num::{FromPrimitive, ToPrimitive};
 
 pub type CFNumberType = u32;
 
@@ -93,66 +92,49 @@ impl TCFType<CFNumberRef> for CFNumber {
 }
 
 // TODO(pcwalton): Floating point.
-impl ToPrimitive for CFNumber {
+impl CFNumber {
     #[inline]
-    fn to_i64(&self) -> Option<i64> {
+    pub fn to_i64(&self) -> Option<i64> {
         unsafe {
             let mut value: i64 = 0;
             let ok = CFNumberGetValue(self.obj, kCFNumberSInt64Type, mem::transmute(&mut value));
-            assert!(ok);
-            Some(value)
+            if ok { Some(value) } else { None }
         }
     }
 
     #[inline]
-    fn to_u64(&self) -> Option<u64> {
-        // CFNumber does not support unsigned 64-bit values.
-        None
-    }
-
-    #[inline]
-    fn to_f64(&self) -> Option<f64> {
+    pub fn to_f64(&self) -> Option<f64> {
         unsafe {
             let mut value: f64 = 0.0;
             let ok = CFNumberGetValue(self.obj, kCFNumberFloat64Type, mem::transmute(&mut value));
-            assert!(ok);
-            Some(value)
+            if ok { Some(value) } else { None }
         }
     }
-}
 
-// TODO(pcwalton): Floating point.
-impl FromPrimitive for CFNumber {
     #[inline]
-    fn from_i64(value: i64) -> Option<CFNumber> {
+    pub fn from_i64(value: i64) -> CFNumber {
         unsafe {
             let number_ref = CFNumberCreate(kCFAllocatorDefault,
                                             kCFNumberSInt64Type,
                                             mem::transmute(&value));
-            Some(TCFType::wrap_under_create_rule(number_ref))
+            TCFType::wrap_under_create_rule(number_ref)
         }
     }
 
     #[inline]
-    fn from_u64(_: u64) -> Option<CFNumber> {
-        // CFNumber does not support unsigned 64-bit values.
-        None
-    }
-
-    #[inline]
-    fn from_f64(value: f64) -> Option<CFNumber> {
+    pub fn from_f64(value: f64) -> CFNumber {
         unsafe {
             let number_ref = CFNumberCreate(kCFAllocatorDefault,
                                             kCFNumberFloat64Type,
                                             mem::transmute(&value));
-            Some(TCFType::wrap_under_create_rule(number_ref))
+            TCFType::wrap_under_create_rule(number_ref)
         }
     }
 }
 
 /// A convenience function to create CFNumbers.
 pub fn number(value: i64) -> CFNumber {
-    FromPrimitive::from_i64(value).unwrap()
+    CFNumber::from_i64(value)
 }
 
 #[link(name = "CoreFoundation", kind = "framework")]

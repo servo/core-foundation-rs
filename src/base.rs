@@ -37,7 +37,7 @@ pub type CFOptionFlags = u32;
 
 #[allow(dead_code)]
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub struct CFRange {
     location: CFIndex,
     length: CFIndex

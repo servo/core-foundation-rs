@@ -29,7 +29,7 @@ pub type CFArrayEqualCallBack = *const u8;
 
 #[allow(dead_code)]
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub struct CFArrayCallBacks {
     version: CFIndex,
     retain: CFArrayRetainCallBack,

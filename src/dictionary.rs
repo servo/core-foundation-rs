@@ -25,7 +25,7 @@ pub type CFDictionaryRetainCallBack = *const u8;
 
 #[allow(dead_code)]
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub struct CFDictionaryKeyCallBacks {
     version: CFIndex,
     retain: CFDictionaryRetainCallBack,
@@ -37,7 +37,7 @@ pub struct CFDictionaryKeyCallBacks {
 
 #[allow(dead_code)]
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub struct CFDictionaryValueCallBacks {
     version: CFIndex,
     retain: CFDictionaryRetainCallBack,

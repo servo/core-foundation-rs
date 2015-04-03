@@ -23,7 +23,7 @@ pub type CFSetHashCallBack = *const u8;
 
 #[allow(dead_code)]
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub struct CFSetCallBacks {
     version: CFIndex,
     retain: CFSetRetainCallBack,

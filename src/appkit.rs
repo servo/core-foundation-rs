@@ -1355,7 +1355,7 @@ bitflags! {
         const NSTouchPhaseTouching      = NSTouchPhaseBegan.bits
                                         | NSTouchPhaseMoved.bits
                                         | NSTouchPhaseStationary.bits,
-        const NSTouchPhaseAny           = 0 - 1, // NSUIntegerMax
+        const NSTouchPhaseAny           = !0, // NSUIntegerMax
     }
 }
 

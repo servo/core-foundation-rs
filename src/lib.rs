@@ -10,6 +10,8 @@
 #![crate_name = "io_surface"]
 #![crate_type = "rlib"]
 
+#![feature(core)]
+
 extern crate libc;
 extern crate core_foundation;
 extern crate geom;
@@ -29,13 +31,14 @@ use geom::size::Size2D;
 #[cfg(target_os="macos")]
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
 #[cfg(target_os="macos")]
-use gleam::gl::{BGRA, GLenum, GLsizei, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
+use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 #[cfg(target_os="macos")]
 use libc::{c_int, c_void, size_t};
 #[cfg(target_os="macos")]
 use std::mem;
 #[cfg(target_os="macos")]
 use std::slice::bytes::copy_memory;
+use std::slice;
 
 
 //static kIOSurfaceLockReadOnly: u32 = 0x1;
@@ -140,14 +143,14 @@ impl IOSurface {
     }
 
     /// Binds to the current GL texture.
-    pub fn bind_to_gl_texture(&self, size: Size2D<int>) {
+    pub fn bind_to_gl_texture(&self, size: Size2D<i32>) {
         unsafe {
             let context = CGLGetCurrentContext();
             let gl_error = CGLTexImageIOSurface2D(context,
                                                   TEXTURE_RECTANGLE_ARB,
                                                   RGBA as GLenum,
-                                                  size.width as GLsizei,
-                                                  size.height as GLsizei,
+                                                  size.width,
+                                                  size.height,
                                                   BGRA as GLenum,
                                                   UNSIGNED_INT_8_8_8_8_REV,
                                                   mem::transmute(self.as_concrete_TypeRef()),
@@ -166,9 +169,10 @@ impl IOSurface {
 
             let height = IOSurfaceGetHeight(surface);
             let stride = IOSurfaceGetBytesPerRow(surface);
-            let size = (height * stride) as uint;
-            let dest: &mut [u8] = mem::transmute((IOSurfaceGetBaseAddress(surface), size));
-            copy_memory(dest, data);
+            let size = (height * stride) as usize;
+            let address = IOSurfaceGetBaseAddress(surface) as *mut u8;
+            let dest: &mut [u8] = slice::from_raw_parts_mut(address, size);
+            copy_memory(data, dest);
 
             // FIXME(pcwalton): RAII
             IOSurfaceUnlock(surface, 0, &mut seed);

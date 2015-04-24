@@ -22,7 +22,7 @@ pub type CFNumberType = u32;
 // members of enum CFNumberType
 // static kCFNumberSInt8Type:     CFNumberType = 1;
 // static kCFNumberSInt16Type:    CFNumberType = 2;
-// static kCFNumberSInt32Type:    CFNumberType = 3;
+static kCFNumberSInt32Type:    CFNumberType = 3;
 static kCFNumberSInt64Type:    CFNumberType = 4;
 // static kCFNumberFloat32Type:   CFNumberType = 5;
 static kCFNumberFloat64Type:   CFNumberType = 6;
@@ -93,6 +93,16 @@ impl TCFType<CFNumberRef> for CFNumber {
 
 // TODO(pcwalton): Floating point.
 impl CFNumber {
+    #[inline]
+    pub fn from_i32(value: i32) -> CFNumber {
+        unsafe {
+            let number_ref = CFNumberCreate(kCFAllocatorDefault,
+                                            kCFNumberSInt32Type,
+                                            mem::transmute(&value));
+            TCFType::wrap_under_create_rule(number_ref)
+        }
+    }
+
     #[inline]
     pub fn to_i64(&self) -> Option<i64> {
         unsafe {

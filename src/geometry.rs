@@ -9,16 +9,19 @@
 
 use base::CGFloat;
 
+#[repr(C)]
 pub struct CGSize {
     pub width: CGFloat,
     pub height: CGFloat,
 }
 
+#[repr(C)]
 pub struct CGPoint {
     pub x: CGFloat,
     pub y: CGFloat,
 }
 
+#[repr(C)]
 pub struct CGRect {
     pub origin: CGPoint,
     pub size: CGSize

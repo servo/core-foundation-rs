@@ -11,3 +11,6 @@ git = "https://github.com/servo/rust-core-foundation"
 [dependencies.core_graphics]
 
 git = "https://github.com/servo/rust-core-graphics"
+
+[dependencies]
+libc = "*"

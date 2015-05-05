@@ -19,7 +19,6 @@ use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
 
 use std::mem;
-use std::num::FromPrimitive;
 use std::ptr;
 
 #[repr(C)]
@@ -86,7 +85,7 @@ impl CTFontCollection {
 pub fn new_from_descriptors(descs: &CFArray) -> CTFontCollection {
     unsafe {
         let key: CFString = TCFType::wrap_under_get_rule(kCTFontCollectionRemoveDuplicatesOption);
-        let value: CFNumber = FromPrimitive::from_i8(1).unwrap();
+        let value = CFNumber::from_i64(1);
         let options = CFDictionary::from_CFType_pairs(&[ (key.as_CFType(), value.as_CFType()) ]);
         let font_collection_ref =
             CTFontCollectionCreateWithFontDescriptors(descs.as_concrete_TypeRef(),
@@ -98,7 +97,7 @@ pub fn new_from_descriptors(descs: &CFArray) -> CTFontCollection {
 pub fn create_for_all_families() -> CTFontCollection {
     unsafe {
         let key: CFString = TCFType::wrap_under_get_rule(kCTFontCollectionRemoveDuplicatesOption);
-        let value: CFNumber = FromPrimitive::from_i8(1).unwrap();
+        let value = CFNumber::from_i64(1);
         let options = CFDictionary::from_CFType_pairs(&[ (key.as_CFType(), value.as_CFType()) ]);
         let font_collection_ref =
             CTFontCollectionCreateFromAvailableFonts(options.as_concrete_TypeRef());

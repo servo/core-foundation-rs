@@ -1199,12 +1199,32 @@ pub trait NSOpenGLPixelFormat {
         msg_send![class("NSOpenGLPixelFormat"), alloc]
     }
 
+    // Creating an NSOpenGLPixelFormat Object 
+
     unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id;
+
+    // Managing the Pixel Format
+
+    unsafe fn getValues_forAttribute_forVirtualScreen_(self, val: *mut GLint, attrib: NSOpenGLPixelFormatAttribute, screen: GLint);
+    unsafe fn numberOfVirtualScreens(self) -> GLint;
+
 }
 
 impl NSOpenGLPixelFormat for id {
+    // Creating an NSOpenGLPixelFormat Object 
+
     unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id {
         msg_send![self, initWithAttributes:attributes]
+    }
+
+    // Managing the Pixel Format
+
+    unsafe fn getValues_forAttribute_forVirtualScreen_(self, val: *mut GLint, attrib: NSOpenGLPixelFormatAttribute, screen: GLint) {
+        msg_send![self, getValues:val forAttribute:attrib forVirtualScreen:screen]
+    }
+
+    unsafe fn numberOfVirtualScreens(self) -> GLint {
+        msg_send![self, numberOfVirtualScreens]
     }
 }
 

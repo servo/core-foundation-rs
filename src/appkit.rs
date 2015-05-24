@@ -37,7 +37,35 @@ pub struct CGPoint {
 }
 
 #[link(name = "AppKit", kind = "framework")]
-extern {}
+extern {
+    pub static NSAppKitVersionNumber: f64;
+}
+
+pub const NSAppKitVersionNumber10_0: f64 = 577.0;
+pub const NSAppKitVersionNumber10_1: f64 = 620.0;
+pub const NSAppKitVersionNumber10_2: f64 = 663.0;
+pub const NSAppKitVersionNumber10_2_3: f64 = 663.6;
+pub const NSAppKitVersionNumber10_3: f64 = 743.0;
+pub const NSAppKitVersionNumber10_3_2: f64 = 743.14;
+pub const NSAppKitVersionNumber10_3_3: f64 = 743.2;
+pub const NSAppKitVersionNumber10_3_5: f64 = 743.24;
+pub const NSAppKitVersionNumber10_3_7: f64 = 743.33;
+pub const NSAppKitVersionNumber10_3_9: f64 = 743.36;
+pub const NSAppKitVersionNumber10_4: f64 = 824.0;
+pub const NSAppKitVersionNumber10_4_1: f64 = 824.1;
+pub const NSAppKitVersionNumber10_4_3: f64 = 824.23;
+pub const NSAppKitVersionNumber10_4_4: f64 = 824.33;
+pub const NSAppKitVersionNumber10_4_7: f64 = 824.41;
+pub const NSAppKitVersionNumber10_5: f64 = 949.0;
+pub const NSAppKitVersionNumber10_5_2: f64 = 949.27;
+pub const NSAppKitVersionNumber10_5_3: f64 = 949.33;
+pub const NSAppKitVersionNumber10_6: f64 = 1038.0;
+pub const NSAppKitVersionNumber10_7: f64 = 1138.0;
+pub const NSAppKitVersionNumber10_7_2: f64 = 1138.23;
+pub const NSAppKitVersionNumber10_7_3: f64 = 1138.32;
+pub const NSAppKitVersionNumber10_7_4: f64 = 1138.47;
+pub const NSAppKitVersionNumber10_8: f64 = 1187.0;
+pub const NSAppKitVersionNumber10_9: f64 = 1265.0;
 
 pub unsafe fn NSApp() -> id {
     msg_send![class("NSApplication"), sharedApplication]

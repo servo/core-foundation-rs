@@ -1,11 +1,13 @@
 [package]
-
 name = "core_foundation"
+description = "Bindings to Core Foundation for OS X"
+homepage = "https://github.com/servo/rust-core-foundation"
+repository = "https://github.com/servo/rust-core-foundation"
 version = "0.1.0"
 authors = ["The Servo Project Developers"]
+license = "MIT / Apache-2.0"
 
 [lib]
-
 name = "core_foundation"
 crate-type = ["rlib"]
 

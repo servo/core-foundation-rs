@@ -14,32 +14,20 @@
 
 extern crate libc;
 
-#[cfg(target_os="macos")]
 pub mod array;
-#[cfg(target_os="macos")]
 pub mod base;
-#[cfg(target_os="macos")]
 pub mod boolean;
-#[cfg(target_os="macos")]
 pub mod data;
-#[cfg(target_os="macos")]
 pub mod dictionary;
-#[cfg(target_os="macos")]
 pub mod number;
-#[cfg(target_os="macos")]
 pub mod set;
-#[cfg(target_os="macos")]
 pub mod string;
-#[cfg(target_os="macos")]
 pub mod url;
-#[cfg(target_os="macos")]
 pub mod bundle;
-#[cfg(target_os="macos")]
 pub mod date;
-#[cfg(target_os="macos")]
 pub mod runloop;
 
-#[cfg(all(target_os="macos", test))]
+#[cfg(test)]
 pub mod test {
     #[test]
     fn test_stuff() {

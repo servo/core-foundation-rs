@@ -1,8 +1,11 @@
 [package]
 name = "cocoa"
+description = "Bindings to Cocoa for OS X"
+homepage = "https://github.com/servo/rust-cocoa"
+repository = "https://github.com/servo/rust-cocoa"
 version = "0.1.1"
 authors = ["The Servo Project Developers"]
-license = "MIT"
+license = "MIT / Apache 2.0"
 
 [lib]
 name = "cocoa"

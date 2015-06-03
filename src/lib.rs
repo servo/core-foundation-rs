@@ -20,23 +20,14 @@ extern crate gleam;
 
 // Rust bindings to the IOSurface framework on Mac OS X.
 
-#[cfg(target_os="macos")]
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
-#[cfg(target_os="macos")]
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
-#[cfg(target_os="macos")]
 use core_foundation::string::CFStringRef;
-#[cfg(target_os="macos")]
 use geom::size::Size2D;
-#[cfg(target_os="macos")]
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
-#[cfg(target_os="macos")]
 use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
-#[cfg(target_os="macos")]
 use libc::{c_int, c_void, size_t};
-#[cfg(target_os="macos")]
 use std::mem;
-#[cfg(target_os="macos")]
 use std::slice::bytes::copy_memory;
 use std::slice;
 
@@ -44,23 +35,18 @@ use std::slice;
 //static kIOSurfaceLockReadOnly: u32 = 0x1;
 //static kIOSurfaceLockAvoidSync: u32 = 0x2;
 
-#[cfg(target_os="macos")]
 type IOReturn = c_int;
 
-#[cfg(target_os="macos")]
 #[repr(C)]
 struct __IOSurface;
 
-#[cfg(target_os="macos")]
 pub type IOSurfaceRef = *const __IOSurface;
 
-#[cfg(target_os="macos")]
 #[repr(C)]
 pub struct IOSurface {
     pub obj: IOSurfaceRef,
 }
 
-#[cfg(target_os="macos")]
 impl Drop for IOSurface {
     fn drop(&mut self) {
         unsafe {
@@ -69,10 +55,8 @@ impl Drop for IOSurface {
     }
 }
 
-#[cfg(target_os="macos")]
 pub type IOSurfaceID = u32;
 
-#[cfg(target_os="macos")]
 impl Clone for IOSurface {
     #[inline]
     fn clone(&self) -> IOSurface {
@@ -82,7 +66,6 @@ impl Clone for IOSurface {
     }
 }
 
-#[cfg(target_os="macos")]
 impl TCFType<IOSurfaceRef> for IOSurface {
     #[inline]
     fn as_concrete_TypeRef(&self) -> IOSurfaceRef {
@@ -117,7 +100,6 @@ impl TCFType<IOSurfaceRef> for IOSurface {
     }
 }
 
-#[cfg(target_os="macos")]
 pub fn new(properties: &CFDictionary) -> IOSurface {
     unsafe {
         TCFType::wrap_under_create_rule(IOSurfaceCreate(properties.as_concrete_TypeRef()))
@@ -127,14 +109,12 @@ pub fn new(properties: &CFDictionary) -> IOSurface {
 /// Looks up an `IOSurface` by its global ID.
 ///
 /// FIXME(pcwalton): This should return an `Option`.
-#[cfg(target_os="macos")]
 pub fn lookup(csid: IOSurfaceID) -> IOSurface {
     unsafe {
         TCFType::wrap_under_create_rule(IOSurfaceLookup(csid))
     }
 }
 
-#[cfg(target_os="macos")]
 impl IOSurface {
     pub fn get_id(&self) -> IOSurfaceID {
         unsafe {
@@ -180,7 +160,6 @@ impl IOSurface {
     }
 }
 
-#[cfg(target_os="macos")]
 #[link(name = "IOSurface", kind = "framework")]
 extern {
     pub static kIOSurfaceAllocSize: CFStringRef;

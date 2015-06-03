@@ -9,6 +9,8 @@
 
 // this file defines CGFloat, as well as stubbed data types.
 
+#![allow(non_camel_case_types)]
+
 use libc;
 
 #[cfg(target_pointer_width = "32")]

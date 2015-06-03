@@ -17,11 +17,7 @@ extern crate libc;
 extern crate core_foundation;
 extern crate core_graphics;
 
-#[cfg(target_os="macos")]
 pub mod font;
-#[cfg(target_os="macos")]
 pub mod font_collection;
-#[cfg(target_os="macos")]
 pub mod font_descriptor;
-#[cfg(target_os="macos")]
 pub mod font_manager;

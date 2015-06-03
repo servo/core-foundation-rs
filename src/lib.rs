@@ -15,13 +15,9 @@
 #[macro_use]
 extern crate bitflags;
 extern crate libc;
-#[cfg(target_os="macos")]
 #[macro_use]
 extern crate objc;
 
-#[cfg(target_os="macos")]
 pub mod appkit;
-#[cfg(target_os="macos")]
 pub mod base;
-#[cfg(target_os="macos")]
 pub mod foundation;

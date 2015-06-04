@@ -1,14 +1,11 @@
 [package]
-
-name = "core_text"
+name = "core-text"
 version = "0.1.0"
 authors = ["The Servo Project Developers"]
 
 [dependencies]
 libc = "*"
 
-[target.x86_64-apple-darwin.dependencies.core_foundation]
-git = "https://github.com/servo/rust-core-foundation"
-
-[target.x86_64-apple-darwin.dependencies.core_graphics]
-git = "https://github.com/servo/rust-core-graphics"
+[target.x86_64-apple-darwin.dependencies]
+core-foundation = "*"
+core-graphics = "*"

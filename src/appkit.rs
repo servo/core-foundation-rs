@@ -14,6 +14,9 @@ use foundation::{NSInteger, NSUInteger, NSTimeInterval,
                  NSPoint, NSSize, NSRect, NSRectEdge};
 use libc;
 
+pub use core_graphics::base::CGFloat;
+pub use core_graphics::geometry::CGPoint;
+
 pub use self::NSApplicationActivationPolicy::*;
 pub use self::NSWindowMask::*;
 pub use self::NSBackingStoreType::*;
@@ -21,20 +24,9 @@ pub use self::NSOpenGLPixelFormatAttribute::*;
 pub use self::NSOpenGLPFAOpenGLProfiles::*;
 pub use self::NSEventType::*;
 
-#[cfg(target_pointer_width = "32")]
-pub type CGFloat = f32;
-#[cfg(target_pointer_width = "64")]
-pub type CGFloat = f64;
-
 pub type CGLContextObj = *mut libc::c_void;
 
 pub type GLint = libc::int32_t;
-
-#[repr(C)]
-pub struct CGPoint {
-    pub x: CGFloat,
-    pub y: CGFloat,
-}
 
 #[link(name = "AppKit", kind = "framework")]
 extern {

@@ -1,0 +1,3 @@
+language: rust
+os: osx
+rust: nightly

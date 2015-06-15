@@ -6,14 +6,10 @@ authors = ["The Servo Project Developers"]
 [dependencies.geom]
 git = "https://github.com/servo/rust-geom"
 
-[dependencies.gleam]
-git = "https://github.com/servo/gleam"
-
 [dependencies]
 libc = "*"
+gleam = "0.1"
 
 [target.x86_64-apple-darwin.dependencies]
 core-foundation = "*"
-
-[target.x86_64-apple-darwin.dependencies.cgl]
-git = "https://github.com/servo/cgl-rs"
+cgl = "0.1"

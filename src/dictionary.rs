@@ -23,7 +23,6 @@ pub type CFDictionaryHashCallBack = *const u8;
 pub type CFDictionaryReleaseCallBack = *const u8;
 pub type CFDictionaryRetainCallBack = *const u8;
 
-#[allow(dead_code)]
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct CFDictionaryKeyCallBacks {
@@ -35,7 +34,6 @@ pub struct CFDictionaryKeyCallBacks {
     hash: CFDictionaryHashCallBack
 }
 
-#[allow(dead_code)]
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct CFDictionaryValueCallBacks {
@@ -52,11 +50,7 @@ struct __CFDictionary;
 pub type CFDictionaryRef = *const __CFDictionary;
 
 /// An immutable dictionary of key-value pairs.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that panics due to a Rust compiler bug.
-pub struct CFDictionary {
-    obj: CFDictionaryRef,
-}
+pub struct CFDictionary(CFDictionaryRef);
 
 impl Drop for CFDictionary {
     fn drop(&mut self) {
@@ -69,7 +63,7 @@ impl Drop for CFDictionary {
 impl TCFType<CFDictionaryRef> for CFDictionary {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFDictionaryRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -86,9 +80,7 @@ impl TCFType<CFDictionaryRef> for CFDictionary {
     }
 
     unsafe fn wrap_under_create_rule(obj: CFDictionaryRef) -> CFDictionary {
-        CFDictionary {
-            obj: obj,
-        }
+        CFDictionary(obj)
     }
 
     #[inline]
@@ -120,7 +112,7 @@ impl CFDictionary {
     #[inline]
     pub fn len(&self) -> usize {
         unsafe {
-            CFDictionaryGetCount(self.obj) as usize
+            CFDictionaryGetCount(self.as_concrete_TypeRef()) as usize
         }
     }
 
@@ -132,7 +124,7 @@ impl CFDictionary {
     #[inline]
     pub fn contains_key(&self, key: *const c_void) -> bool {
         unsafe {
-            CFDictionaryContainsKey(self.obj, key) != 0
+            CFDictionaryContainsKey(self.as_concrete_TypeRef(), key) != 0
         }
     }
 
@@ -140,7 +132,7 @@ impl CFDictionary {
     pub fn find(&self, key: *const c_void) -> Option<*const c_void> {
         unsafe {
             let mut value: *const c_void = ptr::null();
-            if CFDictionaryGetValueIfPresent(self.obj, key, &mut value) != 0 {
+            if CFDictionaryGetValueIfPresent(self.as_concrete_TypeRef(), key, &mut value) != 0 {
                 Some(value)
             } else {
                 None

@@ -3,12 +3,10 @@ name = "io-surface"
 version = "0.1.0"
 authors = ["The Servo Project Developers"]
 
-[dependencies.geom]
-git = "https://github.com/servo/rust-geom"
-
 [dependencies]
 libc = "*"
 gleam = "0.1"
+euclid = "0.1"
 
 [target.x86_64-apple-darwin.dependencies]
 core-foundation = "*"

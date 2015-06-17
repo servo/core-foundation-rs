@@ -14,7 +14,7 @@
 
 extern crate libc;
 extern crate core_foundation;
-extern crate geom;
+extern crate euclid;
 extern crate cgl;
 extern crate gleam;
 
@@ -23,7 +23,7 @@ extern crate gleam;
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFStringRef;
-use geom::size::Size2D;
+use euclid::size::Size2D;
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
 use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 use libc::{c_int, c_void, size_t};

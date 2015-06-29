@@ -216,6 +216,7 @@ pub trait NSApplication {
 
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL;
     unsafe fn setMainMenu_(self, menu: id);
+    unsafe fn setServicesMenu_(self, menu: id);
     unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL);
     unsafe fn run(self);
     unsafe fn finishLaunching(self);
@@ -236,6 +237,10 @@ impl NSApplication for id {
 
     unsafe fn setMainMenu_(self, menu: id) {
         msg_send![self, setMainMenu:menu]
+    }
+
+    unsafe fn setServicesMenu_(self, menu: id) {
+        msg_send![self, setServicesMenu:menu]
     }
 
     unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL) {
@@ -279,12 +284,23 @@ pub trait NSMenu {
         msg_send![class("NSMenu"), new]
     }
 
+    unsafe fn setAutoenablesItems(self, state: BOOL);
+
     unsafe fn addItem_(self, menu_item: id);
+    unsafe fn addItemWithTitle_action_keyEquivalent(self, title: id, action: SEL, key: id) -> id;
 }
 
 impl NSMenu for id {
+    unsafe fn setAutoenablesItems(self, state: BOOL) {
+        msg_send![self, setAutoenablesItems: state]
+    }
+
     unsafe fn addItem_(self, menu_item: id) {
         msg_send![self, addItem:menu_item]
+    }
+
+    unsafe fn addItemWithTitle_action_keyEquivalent(self, title: id, action: SEL, key: id) -> id {
+        msg_send![self, addItemWithTitle:title action:action keyEquivalent:key]
     }
 }
 
@@ -297,13 +313,22 @@ pub trait NSMenuItem {
         msg_send![class("NSMenuItem"), new]
     }
 
+    unsafe fn separatorItem(_: Self) -> id {
+        msg_send![class("NSMenuItem"), separatorItem]
+    }
+
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id;
+    unsafe fn setKeyEquivalentModifierMask_(self, mask: NSEventModifierFlags);
     unsafe fn setSubmenu_(self, submenu: id);
 }
 
 impl NSMenuItem for id {
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id {
         msg_send![self, initWithTitle:title action:action keyEquivalent:key]
+    }
+
+    unsafe fn setKeyEquivalentModifierMask_(self, mask: NSEventModifierFlags) {
+        msg_send![self, setKeyEquivalentModifierMask:mask]
     }
 
     unsafe fn setSubmenu_(self, submenu: id) {

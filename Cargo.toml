@@ -12,7 +12,7 @@ name = "cocoa"
 crate-type = ["rlib"]
 
 [dependencies]
-bitflags = "0.1"
+bitflags = "*"
 libc = "*"
 core-graphics = "*"
 objc = "0.1"

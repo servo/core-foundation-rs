@@ -83,6 +83,15 @@ impl Drop for CTFont {
     }
 }
 
+impl Clone for CTFont {
+    #[inline]
+    fn clone(&self) -> CTFont {
+        unsafe {
+            TCFType::wrap_under_get_rule(self.obj)
+        }
+    }
+}
+
 impl TCFType<CTFontRef> for CTFont {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CTFontRef {

@@ -9,17 +9,11 @@
 
 //! A Boolean type.
 
-use core_foundation_sys::base::{CFRelease, CFTypeID};
+use core_foundation_sys::base::{CFRelease};
+use core_foundation_sys::number::{CFBooleanRef, CFBooleanGetTypeID, kCFBooleanTrue, kCFBooleanFalse};
 use std::mem;
 
 use base::TCFType;
-
-pub type Boolean = u32;
-
-#[repr(C)]
-struct __CFBoolean;
-
-pub type CFBooleanRef = *const __CFBoolean;
 
 /// A Boolean type.
 ///
@@ -49,12 +43,3 @@ impl CFBoolean {
         }
     }
 }
-
-#[link(name = "CoreFoundation", kind = "framework")]
-extern {
-    static kCFBooleanTrue: CFBooleanRef;
-    static kCFBooleanFalse: CFBooleanRef;
-
-    fn CFBooleanGetTypeID() -> CFTypeID;
-}
-

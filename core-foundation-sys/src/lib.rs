@@ -4,3 +4,4 @@ extern crate libc;
 
 pub mod array;
 pub mod base;
+pub mod number;

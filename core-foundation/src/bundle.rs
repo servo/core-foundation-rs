@@ -9,9 +9,10 @@
 
 //! Core Foundation Bundle Type
 
-use base::{CFRelease, CFTypeID, TCFType};
+use core_foundation_sys::base::{CFRelease, CFTypeID};
 use std::mem;
 
+use base::{TCFType};
 use string::CFStringRef;
 use libc::c_void;
 

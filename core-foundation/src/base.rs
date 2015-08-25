@@ -7,14 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use libc::{c_long, c_ulong, c_uint};
-
-pub type Boolean = u8;
-
-pub type CFIndex = c_long;
-
-#[allow(non_camel_case_types)]
-pub type mach_port_t = c_uint;
+use core_foundation_sys::base::*;
 
 pub trait CFIndexConvertible {
     /// Always use this method to construct a `CFIndex` value. It performs bounds checking to
@@ -32,44 +25,6 @@ impl CFIndexConvertible for usize {
         self as CFIndex
     }
 }
-
-pub type CFOptionFlags = u32;
-
-#[allow(dead_code)]
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct CFRange {
-    location: CFIndex,
-    length: CFIndex
-}
-
-impl CFRange {
-    pub fn init(offset: CFIndex, length: CFIndex) -> CFRange {
-        CFRange {
-            location: offset,
-            length: length,
-        }
-    }
-}
-
-#[repr(C)]
-struct __CFAllocator;
-
-pub type CFAllocatorRef = *const __CFAllocator;
-
-#[repr(C)]
-struct __CFNull;
-
-pub type CFNullRef = *const __CFNull;
-
-pub type CFHashCode = c_ulong;
-
-pub type CFTypeID = c_ulong;
-
-#[repr(C)]
-struct __CFType;
-
-pub type CFTypeRef = *const __CFType;
 
 /// Superclass of all Core Foundation objects.
 pub struct CFType(CFTypeRef);
@@ -184,41 +139,4 @@ impl TCFType<CFTypeRef> for CFType {
         // Since this is the root of the type hierarchy, we always answer yes.
         true
     }
-}
-
-#[link(name = "CoreFoundation", kind = "framework")]
-extern {
-    /*
-     * CFBase.h
-     */
-
-    /* CFAllocator Reference */
-    // N.B. Many CFAllocator functions and constants are omitted here.
-    pub static kCFAllocatorDefault: CFAllocatorRef;
-    pub static kCFAllocatorSystemDefault: CFAllocatorRef;
-    pub static kCFAllocatorMalloc: CFAllocatorRef;
-    pub static kCFAllocatorMallocZone: CFAllocatorRef;
-    pub static kCFAllocatorNull: CFAllocatorRef;
-    pub static kCFAllocatorUseContext: CFAllocatorRef;
-
-    /* CFNull Reference */
-
-    pub static kCFNull: CFNullRef;
-
-    /* CFType Reference */
-
-    //fn CFCopyDescription
-    //fn CFCopyTypeIDDescription
-    //fn CFEqual
-    //fn CFGetAllocator
-    pub fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;
-    pub fn CFGetTypeID(cf: CFTypeRef) -> CFTypeID;
-    pub fn CFHash(cf: CFTypeRef) -> CFHashCode;
-    //fn CFMakeCollectable
-    pub fn CFRelease(cf: CFTypeRef);
-    pub fn CFRetain(cf: CFTypeRef) -> CFTypeRef;
-    pub fn CFShow(obj: CFTypeRef);
-
-    /* Base Utilities Reference */
-    // N.B. Some things missing here.
 }

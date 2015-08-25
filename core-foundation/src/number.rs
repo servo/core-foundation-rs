@@ -11,11 +11,12 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFAllocatorRef, CFRelease, CFTypeID};
-use base::{TCFType, kCFAllocatorDefault};
-
+use core_foundation_sys::base::{CFAllocatorRef, CFRelease, CFTypeID};
+use core_foundation_sys::base::{kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
+
+use base::{TCFType};
 
 pub type CFNumberType = u32;
 

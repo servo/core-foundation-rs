@@ -9,12 +9,13 @@
 
 //! Core Foundation byte buffers.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
-use base::{CFTypeID, TCFType, kCFAllocatorDefault};
-
+use core_foundation_sys::base::{CFAllocatorRef, CFIndex, CFRelease};
+use core_foundation_sys::base::{CFTypeID, kCFAllocatorDefault};
 use std::mem;
 use std::ops::Deref;
 use std::slice;
+
+use base::{CFIndexConvertible, TCFType};
 
 #[repr(C)]
 struct __CFData;

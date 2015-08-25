@@ -11,10 +11,11 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFOptionFlags, CFRange};
-use base::{CFRelease, CFTypeID, TCFType};
-use base::{kCFAllocatorDefault, kCFAllocatorNull};
+use base::{CFIndexConvertible, TCFType};
 
+use core_foundation_sys::base::{Boolean, CFAllocatorRef, CFIndex, CFRange};
+use core_foundation_sys::base::{CFRelease, CFTypeID};
+use core_foundation_sys::base::{kCFAllocatorDefault, kCFAllocatorNull, CFOptionFlags};
 use libc;
 use std::ffi::CStr;
 use std::fmt;
@@ -250,7 +251,7 @@ impl fmt::Display for CFString {
                 // First, ask how big the buffer ought to be.
                 let mut bytes_required: CFIndex = 0;
                 CFStringGetBytes(self.0,
-                                 CFRange::init(0, char_len),
+                                 CFRange { location: 0, length: char_len },
                                  kCFStringEncodingUTF8,
                                  0,
                                  false as Boolean,
@@ -264,7 +265,7 @@ impl fmt::Display for CFString {
 
                 let mut bytes_used: CFIndex = 0;
                 let chars_written = CFStringGetBytes(self.0,
-                                                     CFRange::init(0, char_len),
+                                                     CFRange { location: 0, length: char_len },
                                                      kCFStringEncodingUTF8,
                                                      0,
                                                      false as Boolean,

@@ -9,15 +9,17 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease};
-use base::{CFTypeID, TCFType, CFHashCode, mach_port_t};
-use base::{kCFAllocatorDefault};
-use base::{Boolean};
-use array::{CFArrayRef};
-use string::{CFString, CFStringRef};
-use date::{CFAbsoluteTime, CFTimeInterval};
+
+use core_foundation_sys::base::{CFAllocatorRef, CFIndex, CFRelease};
+use core_foundation_sys::base::{CFTypeID, CFHashCode, mach_port_t};
+use core_foundation_sys::base::{kCFAllocatorDefault, Boolean, CFOptionFlags};
+use core_foundation_sys::array::{CFArrayRef};
 use libc::c_void;
 use std::mem;
+
+use base::{TCFType};
+use string::{CFString, CFStringRef};
+use date::{CFAbsoluteTime, CFTimeInterval};
 
 pub struct CFRunLoop(CFRunLoopRef);
 

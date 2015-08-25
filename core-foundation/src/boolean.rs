@@ -9,8 +9,10 @@
 
 //! A Boolean type.
 
-use base::{CFRelease, CFTypeID, TCFType};
+use core_foundation_sys::base::{CFRelease, CFTypeID};
 use std::mem;
+
+use base::TCFType;
 
 pub type Boolean = u32;
 

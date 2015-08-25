@@ -11,11 +11,11 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease};
-use base::{Boolean, CFTypeID, TCFType};
-use base::{kCFAllocatorDefault};
+use base::{TCFType};
 use string::{CFString, CFStringRef};
 
+use core_foundation_sys::base::{CFAllocatorRef, CFIndex, CFRelease, CFOptionFlags};
+use core_foundation_sys::base::{Boolean, CFTypeID, kCFAllocatorDefault};
 use std::fmt;
 use std::mem;
 

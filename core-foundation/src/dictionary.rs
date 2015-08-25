@@ -9,12 +9,13 @@
 
 //! Dictionaries of key-value pairs.
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
-use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
-
+use core_foundation_sys::base::{Boolean, CFAllocatorRef, CFIndex, CFRelease};
+use core_foundation_sys::base::{CFTypeID, CFTypeRef, kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
 use std::ptr;
+
+use base::{CFType, CFIndexConvertible, TCFType};
 
 pub type CFDictionaryApplierFunction = *const u8;
 pub type CFDictionaryCopyDescriptionCallBack = *const u8;

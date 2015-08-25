@@ -9,8 +9,10 @@
 
 //! An immutable bag of elements.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
-use base::{CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
+use core_foundation_sys::base::{CFAllocatorRef, CFIndex, CFRelease};
+use core_foundation_sys::base::{CFTypeID, CFTypeRef, kCFAllocatorDefault};
+
+use base::{CFIndexConvertible, TCFType};
 
 use libc::c_void;
 use std::mem;

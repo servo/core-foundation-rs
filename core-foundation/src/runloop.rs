@@ -15,12 +15,12 @@ use core_foundation_sys::base::{CFTypeID, CFHashCode, mach_port_t};
 use core_foundation_sys::base::{kCFAllocatorDefault, Boolean, CFOptionFlags};
 use core_foundation_sys::array::{CFArrayRef};
 use core_foundation_sys::string::CFStringRef;
+use core_foundation_sys::date::{CFAbsoluteTime, CFTimeInterval};
 use libc::c_void;
 use std::mem;
 
 use base::{TCFType};
 use string::{CFString};
-use date::{CFAbsoluteTime, CFTimeInterval};
 
 pub struct CFRunLoop(CFRunLoopRef);
 

@@ -6,5 +6,6 @@ pub mod array;
 pub mod base;
 pub mod bundle;
 pub mod data;
+pub mod date;
 pub mod number;
 pub mod string;

@@ -58,7 +58,6 @@ pub mod set;
 pub mod string;
 pub mod url;
 pub mod bundle;
-pub mod date;
 pub mod runloop;
 
 #[cfg(test)]

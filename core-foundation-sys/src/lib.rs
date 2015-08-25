@@ -5,5 +5,6 @@ extern crate libc;
 pub mod array;
 pub mod base;
 pub mod bundle;
+pub mod data;
 pub mod number;
 pub mod string;

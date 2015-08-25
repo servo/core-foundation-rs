@@ -9,18 +9,14 @@
 
 //! Core Foundation byte buffers.
 
-use core_foundation_sys::base::{CFAllocatorRef, CFIndex, CFRelease};
-use core_foundation_sys::base::{CFTypeID, kCFAllocatorDefault};
+use core_foundation_sys::base::{CFIndex, CFRelease};
+use core_foundation_sys::base::{kCFAllocatorDefault};
+use core_foundation_sys::data::*;
 use std::mem;
 use std::ops::Deref;
 use std::slice;
 
 use base::{CFIndexConvertible, TCFType};
-
-#[repr(C)]
-struct __CFData;
-
-pub type CFDataRef = *const __CFData;
 
 /// A byte buffer.
 pub struct CFData(CFDataRef);
@@ -70,19 +66,4 @@ impl Deref for CFData {
     fn deref(&self) -> &[u8] {
         self.bytes()
     }
-}
-
-#[link(name = "CoreFoundation", kind = "framework")]
-extern {
-    /*
-     * CFData.h
-     */
-
-    fn CFDataCreate(allocator: CFAllocatorRef,
-                    bytes: *const u8, length: CFIndex) -> CFDataRef;
-    //fn CFDataFind
-    fn CFDataGetBytePtr(theData: CFDataRef) -> *const u8;
-    fn CFDataGetLength(theData: CFDataRef) -> CFIndex;
-
-    fn CFDataGetTypeID() -> CFTypeID;
 }

@@ -12,10 +12,11 @@
 #![allow(non_upper_case_globals)]
 
 use base::{TCFType};
-use string::{CFString, CFStringRef};
+use string::{CFString};
 
 use core_foundation_sys::base::{CFAllocatorRef, CFIndex, CFRelease, CFOptionFlags};
 use core_foundation_sys::base::{Boolean, CFTypeID, kCFAllocatorDefault};
+use core_foundation_sys::string::CFStringRef;
 use std::fmt;
 use std::mem;
 

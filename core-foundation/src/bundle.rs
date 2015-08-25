@@ -9,17 +9,11 @@
 
 //! Core Foundation Bundle Type
 
-use core_foundation_sys::base::{CFRelease, CFTypeID};
+use core_foundation_sys::base::CFRelease;
+use core_foundation_sys::bundle::{CFBundleRef, CFBundleGetTypeID};
 use std::mem;
 
 use base::{TCFType};
-use string::CFStringRef;
-use libc::c_void;
-
-#[repr(C)]
-struct __CFBundle;
-
-pub type CFBundleRef = *const __CFBundle;
 
 /// A Bundle type.
 pub struct CFBundle(CFBundleRef);
@@ -33,17 +27,3 @@ impl Drop for CFBundle {
 }
 
 impl_TCFType!(CFBundle, CFBundleRef, CFBundleGetTypeID);
-
-#[link(name = "CoreFoundation", kind = "framework")]
-extern {
-    /*
-     * CFBundle.h
-     */
-
-
-    pub fn CFBundleGetBundleWithIdentifier(bundleID: CFStringRef) -> CFBundleRef;
-    pub fn CFBundleGetFunctionPointerForName(bundle: CFBundleRef, function_name: CFStringRef) -> *const c_void;
-
-    fn CFBundleGetTypeID() -> CFTypeID;
-}
-

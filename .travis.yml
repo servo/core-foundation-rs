@@ -1,3 +1,8 @@
 language: rust
 rust: nightly
 os: osx
+
+script:
+  - cd core-foundation
+  - cargo build --verbose
+  - cargo test --verbose

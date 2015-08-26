@@ -9,8 +9,8 @@
 
 //! Core Foundation Bundle Type
 
+pub use core_foundation_sys::bundle::*;
 use core_foundation_sys::base::CFRelease;
-use core_foundation_sys::bundle::{CFBundleRef, CFBundleGetTypeID};
 use std::mem;
 
 use base::{TCFType};

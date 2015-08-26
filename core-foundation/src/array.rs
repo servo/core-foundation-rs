@@ -9,7 +9,7 @@
 
 //! Heterogeneous immutable arrays.
 
-use core_foundation_sys::array::*;
+pub use core_foundation_sys::array::*;
 use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
 use libc::c_void;

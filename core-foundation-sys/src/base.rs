@@ -26,6 +26,16 @@ pub struct CFRange {
     pub length: CFIndex
 }
 
+// for back-compat
+impl CFRange {
+    pub fn init(location: CFIndex, length: CFIndex) -> CFRange {
+        CFRange {
+            location: location,
+            length: length,
+        }
+    }
+}
+
 extern {
     /*
      * CFBase.h

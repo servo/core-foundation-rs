@@ -9,10 +9,8 @@
 
 //! Immutable numbers.
 
-#![allow(non_upper_case_globals)]
-
 use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
-use core_foundation_sys::number::*;
+pub use core_foundation_sys::number::*;
 use std::mem;
 
 use base::{TCFType};

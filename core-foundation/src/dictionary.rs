@@ -9,9 +9,9 @@
 
 //! Dictionaries of key-value pairs.
 
+pub use core_foundation_sys::dictionary::*;
 use core_foundation_sys::base::CFRelease;
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
-use core_foundation_sys::dictionary::*;
 use libc::c_void;
 use std::mem;
 use std::ptr;

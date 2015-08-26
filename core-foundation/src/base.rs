@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use core_foundation_sys::base::*;
+pub use core_foundation_sys::base::*;
 
 pub trait CFIndexConvertible {
     /// Always use this method to construct a `CFIndex` value. It performs bounds checking to

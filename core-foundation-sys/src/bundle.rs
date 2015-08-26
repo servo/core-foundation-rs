@@ -12,7 +12,10 @@ use libc::c_void;
 use base::CFTypeID;
 use string::CFStringRef;
 
-pub type CFBundleRef = *const c_void;
+#[repr(C)]
+struct __CFBundle;
+
+pub type CFBundleRef = *const __CFBundle;
 
 extern {
     /*

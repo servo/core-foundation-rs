@@ -11,7 +11,10 @@ use libc::c_void;
 
 use base::{CFAllocatorRef, CFTypeID};
 
-pub type CFBooleanRef = *const c_void;
+#[repr(C)]
+struct __CFBoolean;
+
+pub type CFBooleanRef = *const __CFBoolean;
 
 pub type CFNumberType = u32;
 

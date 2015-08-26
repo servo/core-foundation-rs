@@ -9,13 +9,12 @@
 
 //! A URL type for Core Foundation.
 
-#![allow(non_upper_case_globals)]
+pub use core_foundation_sys::url::*;
 
 use base::{TCFType};
 use string::{CFString};
 
 use core_foundation_sys::base::{kCFAllocatorDefault, CFRelease};
-use core_foundation_sys::url::*;
 use std::fmt;
 use std::mem;
 

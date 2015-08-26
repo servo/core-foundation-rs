@@ -1,8 +1,9 @@
-use libc::c_void;
-
 use base::{CFAllocatorRef, CFTypeID, CFIndex};
 
-pub type CFDataRef = *const c_void;
+#[repr(C)]
+struct __CFData;
+
+pub type CFDataRef = *const __CFData;
 
 extern {
     /*

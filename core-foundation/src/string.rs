@@ -9,13 +9,12 @@
 
 //! Immutable strings.
 
-#![allow(non_upper_case_globals)]
+pub use core_foundation_sys::string::*;
 
 use base::{CFIndexConvertible, TCFType};
 
 use core_foundation_sys::base::{Boolean, CFIndex, CFRange, CFRelease};
 use core_foundation_sys::base::{kCFAllocatorDefault, kCFAllocatorNull};
-use core_foundation_sys::string::*;
 use std::fmt;
 use std::str::{self, FromStr};
 use std::mem;

@@ -33,7 +33,10 @@ pub struct CFArrayCallBacks {
     pub equal: CFArrayEqualCallBack,
 }
 
-pub type CFArrayRef = *const c_void;
+#[repr(C)]
+struct __CFArray;
+
+pub type CFArrayRef = *const __CFArray;
 
 extern {
     /*

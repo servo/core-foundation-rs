@@ -9,9 +9,9 @@
 
 //! An immutable bag of elements.
 
+pub use core_foundation_sys::set::*;
 use core_foundation_sys::base::CFRelease;
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
-use core_foundation_sys::set::*;
 
 use base::{CFIndexConvertible, TCFType};
 

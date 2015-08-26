@@ -9,9 +9,9 @@
 
 //! Core Foundation byte buffers.
 
+pub use core_foundation_sys::data::*;
 use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{kCFAllocatorDefault};
-use core_foundation_sys::data::*;
 use std::mem;
 use std::ops::Deref;
 use std::slice;

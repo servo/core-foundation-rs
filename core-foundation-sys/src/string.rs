@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use libc::{c_char, c_void, c_ushort};
+use libc::{c_char, c_ushort};
 
 use base::{Boolean, CFOptionFlags, CFIndex, CFAllocatorRef, CFRange, CFTypeID};
 
@@ -49,7 +49,7 @@ pub static kCFStringEncodingUTF8: CFStringEncoding = 0x08000100;
 
 // CFStringEncodingExt.h
 
-type CFStringEncodings = CFIndex;
+pub type CFStringEncodings = CFIndex;
 
 // External encodings, except those defined above.
 // Defined above: kCFStringEncodingMacRoman = 0
@@ -187,7 +187,10 @@ type CFStringEncodings = CFIndex;
 //static kCFStringEncodingUTF7_IMAP: CFStringEncoding = 0x0A10;
 //static kCFStringEncodingShiftJIS_X0213_00: CFStringEncoding = 0x0628; /* Deprecated */
 
-pub type CFStringRef = *const c_void;
+#[repr(C)]
+struct __CFString;
+
+pub type CFStringRef = *const __CFString;
 
 extern {
     /*

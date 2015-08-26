@@ -9,11 +9,11 @@
 
 #![allow(non_upper_case_globals)]
 
+pub use core_foundation_sys::runloop::*;
 use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 use core_foundation_sys::string::CFStringRef;
 use core_foundation_sys::date::{CFAbsoluteTime, CFTimeInterval};
-use core_foundation_sys::runloop::*;
 use std::mem;
 
 use base::{TCFType};

@@ -18,6 +18,7 @@ pub type CFHashCode = c_ulong;
 pub type CFTypeID = c_ulong;
 pub type CFTypeRef = *const c_void;
 pub type CFOptionFlags = u32;
+pub type OSStatus = i32;
 
 #[repr(C)]
 #[derive(Clone, Copy)]

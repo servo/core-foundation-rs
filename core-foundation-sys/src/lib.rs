@@ -7,5 +7,6 @@ pub mod base;
 pub mod bundle;
 pub mod data;
 pub mod date;
+pub mod dictionary;
 pub mod number;
 pub mod string;

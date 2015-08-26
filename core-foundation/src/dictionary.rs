@@ -9,48 +9,14 @@
 
 //! Dictionaries of key-value pairs.
 
-use core_foundation_sys::base::{Boolean, CFAllocatorRef, CFIndex, CFRelease};
-use core_foundation_sys::base::{CFTypeID, CFTypeRef, kCFAllocatorDefault};
+use core_foundation_sys::base::CFRelease;
+use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
+use core_foundation_sys::dictionary::*;
 use libc::c_void;
 use std::mem;
 use std::ptr;
 
 use base::{CFType, CFIndexConvertible, TCFType};
-
-pub type CFDictionaryApplierFunction = *const u8;
-pub type CFDictionaryCopyDescriptionCallBack = *const u8;
-pub type CFDictionaryEqualCallBack = *const u8;
-pub type CFDictionaryHashCallBack = *const u8;
-pub type CFDictionaryReleaseCallBack = *const u8;
-pub type CFDictionaryRetainCallBack = *const u8;
-
-#[allow(dead_code)]
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct CFDictionaryKeyCallBacks {
-    version: CFIndex,
-    retain: CFDictionaryRetainCallBack,
-    release: CFDictionaryReleaseCallBack,
-    copyDescription: CFDictionaryCopyDescriptionCallBack,
-    equal: CFDictionaryEqualCallBack,
-    hash: CFDictionaryHashCallBack
-}
-
-#[allow(dead_code)]
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct CFDictionaryValueCallBacks {
-    version: CFIndex,
-    retain: CFDictionaryRetainCallBack,
-    release: CFDictionaryReleaseCallBack,
-    copyDescription: CFDictionaryCopyDescriptionCallBack,
-    equal: CFDictionaryEqualCallBack
-}
-
-#[repr(C)]
-struct __CFDictionary;
-
-pub type CFDictionaryRef = *const __CFDictionary;
 
 /// An immutable dictionary of key-value pairs.
 pub struct CFDictionary(CFDictionaryRef);
@@ -130,24 +96,4 @@ impl CFDictionary {
         let value: CFTypeRef = mem::transmute(self.get(key));
         TCFType::wrap_under_get_rule(value)
     }
-}
-
-#[link(name = "CoreFoundation", kind = "framework")]
-extern {
-    /*
-     * CFDictionary.h
-     */
-
-    static kCFTypeDictionaryKeyCallBacks: CFDictionaryKeyCallBacks;
-    static kCFTypeDictionaryValueCallBacks: CFDictionaryValueCallBacks;
-
-    fn CFDictionaryContainsKey(theDict: CFDictionaryRef, key: *const c_void) -> Boolean;
-    fn CFDictionaryCreate(allocator: CFAllocatorRef, keys: *const *const c_void, values: *const *const c_void,
-                          numValues: CFIndex, keyCallBacks: *const CFDictionaryKeyCallBacks,
-                          valueCallBacks: *const CFDictionaryValueCallBacks)
-                       -> CFDictionaryRef;
-    fn CFDictionaryGetCount(theDict: CFDictionaryRef) -> CFIndex;
-    fn CFDictionaryGetTypeID() -> CFTypeID;
-    fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *const c_void, value: *mut *const c_void)
-                                     -> Boolean;
 }

@@ -108,7 +108,7 @@ impl CFRunLoopTimer {
 #[cfg(test)]
 mod test {
     use super::*;
-    use date::{CFAbsoluteTime, CFAbsoluteTimeGetCurrent};
+    use core_foundation_sys::date::{CFAbsoluteTime, CFAbsoluteTimeGetCurrent};
     use std::mem;
     use libc::c_void;
 

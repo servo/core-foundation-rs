@@ -9,36 +9,13 @@
 
 //! An immutable bag of elements.
 
-use core_foundation_sys::base::{CFAllocatorRef, CFIndex, CFRelease};
-use core_foundation_sys::base::{CFTypeID, CFTypeRef, kCFAllocatorDefault};
+use core_foundation_sys::base::CFRelease;
+use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
+use core_foundation_sys::set::*;
 
 use base::{CFIndexConvertible, TCFType};
 
-use libc::c_void;
 use std::mem;
-
-pub type CFSetRetainCallBack = *const u8;
-pub type CFSetReleaseCallBack = *const u8;
-pub type CFSetCopyDescriptionCallBack = *const u8;
-pub type CFSetEqualCallBack = *const u8;
-pub type CFSetHashCallBack = *const u8;
-
-#[allow(dead_code)]
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct CFSetCallBacks {
-    version: CFIndex,
-    retain: CFSetRetainCallBack,
-    release: CFSetReleaseCallBack,
-    copyDescription: CFSetCopyDescriptionCallBack,
-    equal: CFSetEqualCallBack,
-    hash: CFSetHashCallBack,
-}
-
-#[repr(C)]
-struct __CFSet;
-
-pub type CFSetRef = *const __CFSet;
 
 /// An immutable bag of elements.
 pub struct CFSet(CFSetRef);
@@ -66,22 +43,3 @@ impl CFSet {
         }
     }
 }
-
-#[link(name = "CoreFoundation", kind = "framework")]
-extern {
-    /*
-     * CFSet.h
-     */
-
-    static kCFTypeSetCallBacks: CFSetCallBacks;
-
-    /* Creating Sets */
-    fn CFSetCreate(allocator: CFAllocatorRef, values: *const *const c_void, numValues: CFIndex,
-                   callBacks: *const CFSetCallBacks) -> CFSetRef;
-
-    /* Applying a Function to Set Members */
-    //fn CFSetApplyFunction
-
-    fn CFSetGetTypeID() -> CFTypeID;
-}
-

@@ -10,4 +10,5 @@ pub mod date;
 pub mod dictionary;
 pub mod number;
 pub mod runloop;
+pub mod set;
 pub mod string;

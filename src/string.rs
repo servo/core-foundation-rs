@@ -205,17 +205,13 @@ struct __CFString;
 pub type CFStringRef = *const __CFString;
 
 /// An immutable string in one of a variety of encodings.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFString {
-    obj: CFStringRef,
-}
+pub struct CFString(CFStringRef);
 
 impl Clone for CFString {
     #[inline]
     fn clone(&self) -> CFString {
         unsafe {
-            TCFType::wrap_under_get_rule(self.obj)
+            TCFType::wrap_under_get_rule(self.0)
         }
     }
 }
@@ -231,7 +227,7 @@ impl Drop for CFString {
 impl TCFType<CFStringRef> for CFString {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFStringRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -248,9 +244,7 @@ impl TCFType<CFStringRef> for CFString {
     }
 
     unsafe fn wrap_under_create_rule(obj: CFStringRef) -> CFString {
-        CFString {
-            obj: obj,
-        }
+        CFString(obj)
     }
 
     #[inline]
@@ -277,7 +271,7 @@ impl fmt::Display for CFString {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
             // Do this without allocating if we can get away with it
-            let c_string = CFStringGetCStringPtr(self.obj, kCFStringEncodingUTF8);
+            let c_string = CFStringGetCStringPtr(self.0, kCFStringEncodingUTF8);
             if c_string != ptr::null() {
                 let c_str = CStr::from_ptr(c_string);
                 fmt.write_str(str::from_utf8_unchecked(c_str.to_bytes()))
@@ -286,7 +280,7 @@ impl fmt::Display for CFString {
 
                 // First, ask how big the buffer ought to be.
                 let mut bytes_required: CFIndex = 0;
-                CFStringGetBytes(self.obj,
+                CFStringGetBytes(self.0,
                                  CFRange::init(0, char_len),
                                  kCFStringEncodingUTF8,
                                  0,
@@ -300,7 +294,7 @@ impl fmt::Display for CFString {
                 for _ in (0..bytes_required) { buffer.push('\x00' as u8) }
 
                 let mut bytes_used: CFIndex = 0;
-                let chars_written = CFStringGetBytes(self.obj,
+                let chars_written = CFStringGetBytes(self.0,
                                                      CFRange::init(0, char_len),
                                                      kCFStringEncodingUTF8,
                                                      0,
@@ -360,7 +354,7 @@ impl CFString {
     #[inline]
     pub fn char_len(&self) -> CFIndex {
         unsafe {
-            CFStringGetLength(self.obj)
+            CFStringGetLength(self.0)
         }
     }
 }

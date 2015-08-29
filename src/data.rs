@@ -22,11 +22,7 @@ struct __CFData;
 pub type CFDataRef = *const __CFData;
 
 /// A byte buffer.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFData {
-    obj: CFDataRef,
-}
+pub struct CFData(CFDataRef);
 
 impl Drop for CFData {
     fn drop(&mut self) {
@@ -39,7 +35,7 @@ impl Drop for CFData {
 impl TCFType<CFDataRef> for CFData {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFDataRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -56,9 +52,7 @@ impl TCFType<CFDataRef> for CFData {
     }
 
     unsafe fn wrap_under_create_rule(obj: CFDataRef) -> CFData {
-        CFData {
-            obj: obj,
-        }
+        CFData(obj)
     }
 
     #[inline]
@@ -84,7 +78,7 @@ impl CFData {
     #[inline]
     pub fn bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
-            slice::from_raw_parts(CFDataGetBytePtr(self.obj), self.len() as usize)
+            slice::from_raw_parts(CFDataGetBytePtr(self.0), self.len() as usize)
         }
     }
 
@@ -92,7 +86,7 @@ impl CFData {
     #[inline]
     pub fn len(&self) -> CFIndex {
         unsafe {
-            CFDataGetLength(self.obj)
+            CFDataGetLength(self.0)
         }
     }
 }

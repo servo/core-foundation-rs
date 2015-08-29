@@ -72,15 +72,13 @@ struct __CFType;
 pub type CFTypeRef = *const __CFType;
 
 /// Superclass of all Core Foundation objects.
-pub struct CFType {
-    obj: CFTypeRef,
-}
+pub struct CFType(CFTypeRef);
 
 impl Clone for CFType {
     #[inline]
     fn clone(&self) -> CFType {
         unsafe {
-            TCFType::wrap_under_get_rule(self.obj)
+            TCFType::wrap_under_get_rule(self.0)
         }
     }
 }
@@ -88,7 +86,7 @@ impl Clone for CFType {
 impl Drop for CFType {
     fn drop(&mut self) {
         unsafe {
-            CFRelease(self.obj)
+            CFRelease(self.0)
         }
     }
 }
@@ -156,7 +154,7 @@ pub trait TCFType<ConcreteTypeRef> {
 impl TCFType<CFTypeRef> for CFType {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFTypeRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -172,9 +170,7 @@ impl TCFType<CFTypeRef> for CFType {
 
     #[inline]
     unsafe fn wrap_under_create_rule(obj: CFTypeRef) -> CFType {
-        CFType {
-            obj: obj,
-        }
+        CFType(obj)
     }
 
     #[inline]

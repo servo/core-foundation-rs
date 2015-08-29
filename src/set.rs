@@ -39,11 +39,7 @@ struct __CFSet;
 pub type CFSetRef = *const __CFSet;
 
 /// An immutable bag of elements.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFSet {
-    obj: CFSetRef,
-}
+pub struct CFSet(CFSetRef);
 
 impl Drop for CFSet {
     fn drop(&mut self) {
@@ -56,7 +52,7 @@ impl Drop for CFSet {
 impl TCFType<CFSetRef> for CFSet {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFSetRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -73,9 +69,7 @@ impl TCFType<CFSetRef> for CFSet {
     }
 
     unsafe fn wrap_under_create_rule(obj: CFSetRef) -> CFSet {
-        CFSet {
-            obj: obj,
-        }
+        CFSet(obj)
     }
 
     #[inline]

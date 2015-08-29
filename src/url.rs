@@ -24,9 +24,7 @@ struct __CFURL;
 
 pub type CFURLRef = *const __CFURL;
 
-pub struct CFURL {
-    obj: CFURLRef,
-}
+pub struct CFURL(CFURLRef);
 
 impl Drop for CFURL {
     fn drop(&mut self) {
@@ -39,7 +37,7 @@ impl Drop for CFURL {
 impl TCFType<CFURLRef> for CFURL {
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFURLRef {
-        self.obj
+        self.0
     }
 
     #[inline]
@@ -56,9 +54,7 @@ impl TCFType<CFURLRef> for CFURL {
     }
 
     unsafe fn wrap_under_create_rule(obj: CFURLRef) -> CFURL {
-        CFURL {
-            obj: obj,
-        }
+        CFURL(obj)
     }
 
     #[inline]
@@ -73,7 +69,7 @@ impl fmt::Debug for CFURL {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
-            let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.obj));
+            let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.0));
             write!(f, "{}", string.to_string())
         }
     }
@@ -89,7 +85,7 @@ impl CFURL {
 
     pub fn get_string(&self) -> CFString {
         unsafe {
-            TCFType::wrap_under_get_rule(CFURLGetString(self.obj))
+            TCFType::wrap_under_get_rule(CFURLGetString(self.0))
         }
     }
 }

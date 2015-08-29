@@ -100,7 +100,8 @@ impl TCFType<CFDictionaryRef> for CFDictionary {
 }
 
 impl CFDictionary {
-    pub fn from_CFType_pairs(pairs: &[(CFType, CFType)]) -> CFDictionary {
+    pub fn from_CFType_pairs<R1, R2, K, V>(pairs: &[(K, V)]) -> CFDictionary
+            where K: TCFType<R1>, V: TCFType<R2> {
         let (keys, values): (Vec<CFTypeRef>,Vec<CFTypeRef>) =
             pairs.iter()
             .map(|&(ref key, ref value)| (key.as_CFTypeRef(), value.as_CFTypeRef()))

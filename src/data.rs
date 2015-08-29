@@ -13,6 +13,8 @@ use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
 use base::{CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use std::mem;
+use std::ops::Deref;
+use std::slice;
 
 #[repr(C)]
 struct __CFData;
@@ -82,7 +84,7 @@ impl CFData {
     #[inline]
     pub fn bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
-            mem::transmute((CFDataGetBytePtr(self.obj), self.len() as usize))
+            slice::from_raw_parts(CFDataGetBytePtr(self.obj), self.len() as usize)
         }
     }
 
@@ -92,6 +94,15 @@ impl CFData {
         unsafe {
             CFDataGetLength(self.obj)
         }
+    }
+}
+
+impl Deref for CFData {
+    type Target = [u8];
+
+    #[inline]
+    fn deref(&self) -> &[u8] {
+        self.bytes()
     }
 }
 

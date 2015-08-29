@@ -10,7 +10,7 @@
 //! Heterogeneous immutable arrays.
 
 use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
-use base::{CFType, CFTypeID, CFTypeRef, TCFType};
+use base::{CFTypeID, CFTypeRef, TCFType};
 use base::{kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
@@ -113,7 +113,7 @@ impl TCFType<CFArrayRef> for CFArray {
 
 impl CFArray {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    pub fn from_CFTypes(elems: &[CFType]) -> CFArray {
+    pub fn from_CFTypes<R, T: TCFType<R>>(elems: &[T]) -> CFArray {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
@@ -128,7 +128,7 @@ impl CFArray {
     ///
     /// Careful; the loop body must wrap the reference properly. Generally, when array elements are
     /// Core Foundation objects (not always true), they need to be wrapped with
-    /// `TCFType::wrap_under_get_rule()`. The safer `iter_CFTypes` method will do this for you.
+    /// `TCFType::wrap_under_get_rule()`.
     #[inline]
     pub fn iter<'a>(&'a self) -> CFArrayIterator<'a> {
         CFArrayIterator {
@@ -150,6 +150,15 @@ impl CFArray {
         unsafe {
             CFArrayGetValueAtIndex(self.obj, index)
         }
+    }
+}
+
+impl<'a> IntoIterator for &'a CFArray {
+    type Item = *const c_void;
+    type IntoIter = CFArrayIterator<'a>;
+
+    fn into_iter(self) -> CFArrayIterator<'a> {
+        self.iter()
     }
 }
 

@@ -10,7 +10,7 @@
 //! An immutable bag of elements.
 
 use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
-use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
+use base::{CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
 use std::mem;
@@ -88,7 +88,7 @@ impl TCFType<CFSetRef> for CFSet {
 
 impl CFSet {
     /// Creates a new set from a list of `CFType` instances.
-    pub fn from_slice(elems: &[CFType]) -> CFSet {
+    pub fn from_slice<R, T: TCFType<R>>(elems: &[T]) -> CFSet {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let set_ref = CFSetCreate(kCFAllocatorDefault,

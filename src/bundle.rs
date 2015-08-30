@@ -9,7 +9,7 @@
 
 //! Core Foundation Bundle Type
 
-use base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use base::{CFRelease, CFTypeID, TCFType};
 use std::mem;
 
 use string::CFStringRef;
@@ -31,36 +31,7 @@ impl Drop for CFBundle {
     }
 }
 
-impl TCFType<CFBundleRef> for CFBundle {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFBundleRef {
-        self.0
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFBundleRef) -> CFBundle {
-        let reference: CFBundleRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFBundleRef) -> CFBundle {
-        CFBundle(obj)
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFBundleGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFBundle, CFBundleRef, CFBundleGetTypeID);
 
 #[link(name = "CoreFoundation", kind = "framework")]
 extern {

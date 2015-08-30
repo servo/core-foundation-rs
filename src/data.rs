@@ -9,8 +9,8 @@
 
 //! Core Foundation byte buffers.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
-use base::{CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
+use base::{CFTypeID, TCFType, kCFAllocatorDefault};
 
 use std::mem;
 use std::ops::Deref;
@@ -32,36 +32,7 @@ impl Drop for CFData {
     }
 }
 
-impl TCFType<CFDataRef> for CFData {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFDataRef {
-        self.0
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFDataRef) -> CFData {
-        let reference: CFDataRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFDataRef) -> CFData {
-        CFData(obj)
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFDataGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFData, CFDataRef, CFDataGetTypeID);
 
 impl CFData {
     pub fn from_buffer(buffer: &[u8]) -> CFData {

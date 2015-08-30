@@ -11,7 +11,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFAllocatorRef, CFRelease, CFRetain, CFTypeID, CFTypeRef};
+use base::{CFAllocatorRef, CFRelease, CFTypeID};
 use base::{TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
@@ -54,36 +54,7 @@ impl Drop for CFNumber {
     }
 }
 
-impl TCFType<CFNumberRef> for CFNumber {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFNumberRef {
-        self.0
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFNumberRef) -> CFNumber {
-        let reference: CFNumberRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFNumberRef) -> CFNumber {
-        CFNumber(obj)
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFNumberGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFNumber, CFNumberRef, CFNumberGetTypeID);
 
 // TODO(pcwalton): Floating point.
 impl CFNumber {

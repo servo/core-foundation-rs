@@ -9,7 +9,7 @@
 
 //! An immutable bag of elements.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
 use base::{CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
@@ -49,36 +49,7 @@ impl Drop for CFSet {
     }
 }
 
-impl TCFType<CFSetRef> for CFSet {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFSetRef {
-        self.0
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFSetRef) -> CFSet {
-        let reference: CFSetRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFSetRef) -> CFSet {
-        CFSet(obj)
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFSetGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFSet, CFSetRef, CFSetGetTypeID);
 
 impl CFSet {
     /// Creates a new set from a list of `CFType` instances.

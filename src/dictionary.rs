@@ -9,7 +9,7 @@
 
 //! Dictionaries of key-value pairs.
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
 use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
@@ -62,36 +62,7 @@ impl Drop for CFDictionary {
     }
 }
 
-impl TCFType<CFDictionaryRef> for CFDictionary {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFDictionaryRef {
-        self.0
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFDictionaryRef) -> CFDictionary {
-        let reference: CFDictionaryRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFDictionaryRef) -> CFDictionary {
-        CFDictionary(obj)
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFDictionaryGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFDictionary, CFDictionaryRef, CFDictionaryGetTypeID);
 
 impl CFDictionary {
     pub fn from_CFType_pairs<R1, R2, K, V>(pairs: &[(K, V)]) -> CFDictionary

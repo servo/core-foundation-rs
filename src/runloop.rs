@@ -9,8 +9,8 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease, CFRetain};
-use base::{CFTypeID, CFTypeRef, TCFType, CFHashCode, mach_port_t};
+use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease};
+use base::{CFTypeID, TCFType, CFHashCode, mach_port_t};
 use base::{kCFAllocatorDefault};
 use base::{Boolean};
 use array::{CFArrayRef};
@@ -29,37 +29,7 @@ impl Drop for CFRunLoop {
     }
 }
 
-impl TCFType<CFRunLoopRef> for CFRunLoop {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFRunLoopRef {
-        self.0
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFRunLoopRef) -> CFRunLoop {
-        let reference: CFRunLoopRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    #[inline]
-    unsafe fn wrap_under_create_rule(obj: CFRunLoopRef) -> CFRunLoop {
-        CFRunLoop(obj)
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFRunLoopGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFRunLoop, CFRunLoopRef, CFRunLoopGetTypeID);
 
 impl CFRunLoop {
     pub fn get_current() -> CFRunLoop {
@@ -211,37 +181,7 @@ impl Drop for CFRunLoopTimer {
     }
 }
 
-impl TCFType<CFRunLoopTimerRef> for CFRunLoopTimer {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFRunLoopTimerRef {
-        self.0
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFRunLoopTimerRef) -> CFRunLoopTimer {
-        let reference: CFRunLoopTimerRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    #[inline]
-    unsafe fn wrap_under_create_rule(obj: CFRunLoopTimerRef) -> CFRunLoopTimer {
-        CFRunLoopTimer(obj)
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFRunLoopTimerGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFRunLoopTimer, CFRunLoopTimerRef, CFRunLoopTimerGetTypeID);
 
 impl CFRunLoopTimer {
     pub fn new(fireDate: CFAbsoluteTime, interval: CFTimeInterval, flags: CFOptionFlags, order: CFIndex, callout: CFRunLoopTimerCallBack, context: *mut CFRunLoopTimerContext) -> CFRunLoopTimer {

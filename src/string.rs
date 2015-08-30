@@ -12,7 +12,7 @@
 #![allow(non_upper_case_globals)]
 
 use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFOptionFlags, CFRange};
-use base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use base::{CFRelease, CFTypeID, TCFType};
 use base::{kCFAllocatorDefault, kCFAllocatorNull};
 
 use libc;
@@ -224,36 +224,7 @@ impl Drop for CFString {
     }
 }
 
-impl TCFType<CFStringRef> for CFString {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFStringRef {
-        self.0
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFStringRef) -> CFString {
-        let reference: CFStringRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFStringRef) -> CFString {
-        CFString(obj)
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFStringGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFString, CFStringRef, CFStringGetTypeID);
 
 impl FromStr for CFString {
     type Err = ();

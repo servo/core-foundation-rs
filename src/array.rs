@@ -77,7 +77,7 @@ impl_TCFType!(CFArray, CFArrayRef, CFArrayGetTypeID);
 
 impl CFArray {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    pub fn from_CFTypes<R, T: TCFType<R>>(elems: &[T]) -> CFArray {
+    pub fn from_CFTypes<R, T>(elems: &[T]) -> CFArray where T: TCFType<R> {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,

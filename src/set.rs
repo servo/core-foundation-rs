@@ -53,7 +53,7 @@ impl_TCFType!(CFSet, CFSetRef, CFSetGetTypeID);
 
 impl CFSet {
     /// Creates a new set from a list of `CFType` instances.
-    pub fn from_slice<R, T: TCFType<R>>(elems: &[T]) -> CFSet {
+    pub fn from_slice<R, T>(elems: &[T]) -> CFSet where T: TCFType<R> {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let set_ref = CFSetCreate(kCFAllocatorDefault,

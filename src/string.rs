@@ -229,9 +229,7 @@ impl_TCFType!(CFString, CFStringRef, CFStringGetTypeID);
 impl FromStr for CFString {
     type Err = ();
 
-    /// # Deprecated
-    ///
-    /// Use CFString::new instead.
+    /// See also CFString::new for a variant of this which does not return a Result
     #[inline]
     fn from_str(string: &str) -> Result<CFString, ()> {
         Ok(CFString::new(string))

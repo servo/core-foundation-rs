@@ -9,8 +9,8 @@
 
 //! Heterogeneous immutable arrays.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
-use base::{CFType, CFTypeID, CFTypeRef, TCFType};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
+use base::{CFTypeID, CFTypeRef, TCFType};
 use base::{kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
@@ -44,11 +44,7 @@ struct __CFArray;
 pub type CFArrayRef = *const __CFArray;
 
 /// A heterogeneous immutable array.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFArray {
-    obj: CFArrayRef,
-}
+pub struct CFArray(CFArrayRef);
 
 impl Drop for CFArray {
     fn drop(&mut self) {
@@ -77,43 +73,11 @@ impl<'a> Iterator for CFArrayIterator<'a> {
     }
 }
 
-impl TCFType<CFArrayRef> for CFArray {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFArrayRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFArrayRef) -> CFArray {
-        let reference: CFArrayRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    #[inline]
-    unsafe fn wrap_under_create_rule(obj: CFArrayRef) -> CFArray {
-        CFArray {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFArrayGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFArray, CFArrayRef, CFArrayGetTypeID);
 
 impl CFArray {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    pub fn from_CFTypes(elems: &[CFType]) -> CFArray {
+    pub fn from_CFTypes<R, T>(elems: &[T]) -> CFArray where T: TCFType<R> {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
@@ -128,7 +92,7 @@ impl CFArray {
     ///
     /// Careful; the loop body must wrap the reference properly. Generally, when array elements are
     /// Core Foundation objects (not always true), they need to be wrapped with
-    /// `TCFType::wrap_under_get_rule()`. The safer `iter_CFTypes` method will do this for you.
+    /// `TCFType::wrap_under_get_rule()`.
     #[inline]
     pub fn iter<'a>(&'a self) -> CFArrayIterator<'a> {
         CFArrayIterator {
@@ -140,7 +104,7 @@ impl CFArray {
     #[inline]
     pub fn len(&self) -> CFIndex {
         unsafe {
-            CFArrayGetCount(self.obj)
+            CFArrayGetCount(self.0)
         }
     }
 
@@ -148,8 +112,17 @@ impl CFArray {
     pub fn get(&self, index: CFIndex) -> *const c_void {
         assert!(index < self.len());
         unsafe {
-            CFArrayGetValueAtIndex(self.obj, index)
+            CFArrayGetValueAtIndex(self.0, index)
         }
+    }
+}
+
+impl<'a> IntoIterator for &'a CFArray {
+    type Item = *const c_void;
+    type IntoIter = CFArrayIterator<'a>;
+
+    fn into_iter(self) -> CFArrayIterator<'a> {
+        self.iter()
     }
 }
 

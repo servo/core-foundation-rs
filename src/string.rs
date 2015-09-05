@@ -12,13 +12,13 @@
 #![allow(non_upper_case_globals)]
 
 use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFOptionFlags, CFRange};
-use base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use base::{CFRelease, CFTypeID, TCFType};
 use base::{kCFAllocatorDefault, kCFAllocatorNull};
 
 use libc;
+use std::ffi::CStr;
 use std::fmt;
-use std::str::FromStr;
-use std::string::ToString;
+use std::str::{self, FromStr};
 use std::mem;
 use std::ptr;
 use std::vec::Vec;
@@ -205,17 +205,13 @@ struct __CFString;
 pub type CFStringRef = *const __CFString;
 
 /// An immutable string in one of a variety of encodings.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFString {
-    obj: CFStringRef,
-}
+pub struct CFString(CFStringRef);
 
 impl Clone for CFString {
     #[inline]
     fn clone(&self) -> CFString {
         unsafe {
-            TCFType::wrap_under_get_rule(self.obj)
+            TCFType::wrap_under_get_rule(self.0)
         }
     }
 }
@@ -228,46 +224,75 @@ impl Drop for CFString {
     }
 }
 
-
-impl TCFType<CFStringRef> for CFString {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFStringRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFStringRef) -> CFString {
-        let reference: CFStringRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFStringRef) -> CFString {
-        CFString {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFStringGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFString, CFStringRef, CFStringGetTypeID);
 
 impl FromStr for CFString {
     type Err = ();
 
-    /// Creates a new `CFString` instance from a Rust string.
+    /// See also CFString::new for a variant of this which does not return a Result
     #[inline]
     fn from_str(string: &str) -> Result<CFString, ()> {
+        Ok(CFString::new(string))
+    }
+}
+
+impl fmt::Display for CFString {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        unsafe {
+            // Do this without allocating if we can get away with it
+            let c_string = CFStringGetCStringPtr(self.0, kCFStringEncodingUTF8);
+            if c_string != ptr::null() {
+                let c_str = CStr::from_ptr(c_string);
+                fmt.write_str(str::from_utf8_unchecked(c_str.to_bytes()))
+            } else {
+                let char_len = self.char_len();
+
+                // First, ask how big the buffer ought to be.
+                let mut bytes_required: CFIndex = 0;
+                CFStringGetBytes(self.0,
+                                 CFRange::init(0, char_len),
+                                 kCFStringEncodingUTF8,
+                                 0,
+                                 false as Boolean,
+                                 ptr::null_mut(),
+                                 0,
+                                 &mut bytes_required);
+
+                // Then, allocate the buffer and actually copy.
+                let mut buffer = Vec::with_capacity(bytes_required as usize);
+                for _ in (0..bytes_required) { buffer.push('\x00' as u8) }
+
+                let mut bytes_used: CFIndex = 0;
+                let chars_written = CFStringGetBytes(self.0,
+                                                     CFRange::init(0, char_len),
+                                                     kCFStringEncodingUTF8,
+                                                     0,
+                                                     false as Boolean,
+                                                     buffer.as_mut_ptr(),
+                                                     buffer.len().to_CFIndex(),
+                                                     &mut bytes_used) as usize;
+                assert!(chars_written.to_CFIndex() == char_len);
+
+                // This is dangerous; we over-allocate and null-terminate the string (during
+                // initialization).
+                assert!(bytes_used == buffer.len().to_CFIndex());
+                fmt.write_str(str::from_utf8_unchecked(&buffer))
+            }
+        }
+    }
+}
+
+impl fmt::Debug for CFString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "\"{}\"", self)
+    }
+}
+
+
+impl CFString {
+    /// Creates a new `CFString` instance from a Rust string.
+    #[inline]
+    pub fn new(string: &str) -> CFString {
         unsafe {
             let string_ref = CFStringCreateWithBytes(kCFAllocatorDefault,
                                                      string.as_ptr(),
@@ -275,59 +300,11 @@ impl FromStr for CFString {
                                                      kCFStringEncodingUTF8,
                                                      false as Boolean,
                                                      kCFAllocatorNull);
-            Some(TCFType::wrap_under_create_rule(string_ref)).ok_or(())
+            CFString::wrap_under_create_rule(string_ref)
         }
     }
-}
 
-impl ToString for CFString {
-    fn to_string(&self) -> String {
-        unsafe {
-            let char_len = self.char_len();
-
-            // First, ask how big the buffer ought to be.
-            let mut bytes_required: CFIndex = 0;
-            CFStringGetBytes(self.obj,
-                             CFRange::init(0, char_len),
-                             kCFStringEncodingUTF8,
-                             0,
-                             false as Boolean,
-                             ptr::null_mut(),
-                             0,
-                             &mut bytes_required);
-
-            // Then, allocate the buffer and actually copy.
-            let mut buffer = Vec::with_capacity(bytes_required as usize);
-            for _ in (0..bytes_required) { buffer.push('\x00' as u8) }
-
-            let mut bytes_used: CFIndex = 0;
-            let chars_written = CFStringGetBytes(self.obj,
-                                                 CFRange::init(0, char_len),
-                                                 kCFStringEncodingUTF8,
-                                                 0,
-                                                 false as Boolean,
-                                                 buffer.as_mut_ptr(),
-                                                 buffer.len().to_CFIndex(),
-                                                 &mut bytes_used) as usize;
-            assert!(chars_written.to_CFIndex() == char_len);
-
-            // This is dangerous; we over-allocate and null-terminate the string (during
-            // initialization).
-            assert!(bytes_used == buffer.len().to_CFIndex());
-            String::from_utf8(buffer).unwrap()
-        }
-    }
-}
-
-impl fmt::Debug for CFString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_string())
-    }
-}
-
-
-impl CFString {
-    /// Like `CFString::from_string`, but references a string that can be used as a backing store
+    /// Like `CFString::new`, but references a string that can be used as a backing store
     /// by virtue of being statically allocated.
     #[inline]
     pub fn from_static_string(string: &'static str) -> CFString {
@@ -346,7 +323,7 @@ impl CFString {
     #[inline]
     pub fn char_len(&self) -> CFIndex {
         unsafe {
-            CFStringGetLength(self.obj)
+            CFStringGetLength(self.0)
         }
     }
 }
@@ -420,7 +397,9 @@ extern {
     //fn CFStringGetCharactersPtr
     //fn CFStringGetCharacterFromInlineBuffer
     //fn CFStringGetCString
-    //fn CFStringGetCStringPtr
+    fn CFStringGetCStringPtr(theString: CFStringRef,
+                             encoding: CFStringEncoding)
+                             -> *const libc::c_char;
     fn CFStringGetLength(theString: CFStringRef) -> CFIndex;
     //fn CFStringGetPascalString
     //fn CFStringGetPascalStringPtr

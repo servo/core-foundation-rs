@@ -11,7 +11,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFAllocatorRef, CFRelease, CFRetain, CFTypeID, CFTypeRef};
+use base::{CFAllocatorRef, CFRelease, CFTypeID};
 use base::{TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
@@ -44,11 +44,7 @@ struct __CFNumber;
 pub type CFNumberRef = *const __CFNumber;
 
 /// An immutable numeric value.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFNumber {
-    obj: CFNumberRef,
-}
+pub struct CFNumber(CFNumberRef);
 
 impl Drop for CFNumber {
     fn drop(&mut self) {
@@ -58,38 +54,7 @@ impl Drop for CFNumber {
     }
 }
 
-impl TCFType<CFNumberRef> for CFNumber {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFNumberRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFNumberRef) -> CFNumber {
-        let reference: CFNumberRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFNumberRef) -> CFNumber {
-        CFNumber {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFNumberGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFNumber, CFNumberRef, CFNumberGetTypeID);
 
 // TODO(pcwalton): Floating point.
 impl CFNumber {
@@ -107,7 +72,7 @@ impl CFNumber {
     pub fn to_i64(&self) -> Option<i64> {
         unsafe {
             let mut value: i64 = 0;
-            let ok = CFNumberGetValue(self.obj, kCFNumberSInt64Type, mem::transmute(&mut value));
+            let ok = CFNumberGetValue(self.0, kCFNumberSInt64Type, mem::transmute(&mut value));
             if ok { Some(value) } else { None }
         }
     }
@@ -116,7 +81,7 @@ impl CFNumber {
     pub fn to_f64(&self) -> Option<f64> {
         unsafe {
             let mut value: f64 = 0.0;
-            let ok = CFNumberGetValue(self.obj, kCFNumberFloat64Type, mem::transmute(&mut value));
+            let ok = CFNumberGetValue(self.0, kCFNumberFloat64Type, mem::transmute(&mut value));
             if ok { Some(value) } else { None }
         }
     }

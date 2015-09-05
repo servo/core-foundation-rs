@@ -9,8 +9,8 @@
 
 //! An immutable bag of elements.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
-use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
+use base::{CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
 use std::mem;
@@ -39,11 +39,7 @@ struct __CFSet;
 pub type CFSetRef = *const __CFSet;
 
 /// An immutable bag of elements.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFSet {
-    obj: CFSetRef,
-}
+pub struct CFSet(CFSetRef);
 
 impl Drop for CFSet {
     fn drop(&mut self) {
@@ -53,42 +49,11 @@ impl Drop for CFSet {
     }
 }
 
-impl TCFType<CFSetRef> for CFSet {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFSetRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFSetRef) -> CFSet {
-        let reference: CFSetRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFSetRef) -> CFSet {
-        CFSet {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFSetGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFSet, CFSetRef, CFSetGetTypeID);
 
 impl CFSet {
     /// Creates a new set from a list of `CFType` instances.
-    pub fn from_slice(elems: &[CFType]) -> CFSet {
+    pub fn from_slice<R, T>(elems: &[T]) -> CFSet where T: TCFType<R> {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let set_ref = CFSetCreate(kCFAllocatorDefault,

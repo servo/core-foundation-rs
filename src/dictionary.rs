@@ -9,7 +9,7 @@
 
 //! Dictionaries of key-value pairs.
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
 use base::{CFType, CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
 
 use libc::c_void;
@@ -52,11 +52,7 @@ struct __CFDictionary;
 pub type CFDictionaryRef = *const __CFDictionary;
 
 /// An immutable dictionary of key-value pairs.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that panics due to a Rust compiler bug.
-pub struct CFDictionary {
-    obj: CFDictionaryRef,
-}
+pub struct CFDictionary(CFDictionaryRef);
 
 impl Drop for CFDictionary {
     fn drop(&mut self) {
@@ -66,41 +62,11 @@ impl Drop for CFDictionary {
     }
 }
 
-impl TCFType<CFDictionaryRef> for CFDictionary {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFDictionaryRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFDictionaryRef) -> CFDictionary {
-        let reference: CFDictionaryRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFDictionaryRef) -> CFDictionary {
-        CFDictionary {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFDictionaryGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFDictionary, CFDictionaryRef, CFDictionaryGetTypeID);
 
 impl CFDictionary {
-    pub fn from_CFType_pairs(pairs: &[(CFType, CFType)]) -> CFDictionary {
+    pub fn from_CFType_pairs<R1, R2, K, V>(pairs: &[(K, V)]) -> CFDictionary
+            where K: TCFType<R1>, V: TCFType<R2> {
         let (keys, values): (Vec<CFTypeRef>,Vec<CFTypeRef>) =
             pairs.iter()
             .map(|&(ref key, ref value)| (key.as_CFTypeRef(), value.as_CFTypeRef()))
@@ -120,7 +86,7 @@ impl CFDictionary {
     #[inline]
     pub fn len(&self) -> usize {
         unsafe {
-            CFDictionaryGetCount(self.obj) as usize
+            CFDictionaryGetCount(self.0) as usize
         }
     }
 
@@ -132,7 +98,7 @@ impl CFDictionary {
     #[inline]
     pub fn contains_key(&self, key: *const c_void) -> bool {
         unsafe {
-            CFDictionaryContainsKey(self.obj, key) != 0
+            CFDictionaryContainsKey(self.0, key) != 0
         }
     }
 
@@ -140,7 +106,7 @@ impl CFDictionary {
     pub fn find(&self, key: *const c_void) -> Option<*const c_void> {
         unsafe {
             let mut value: *const c_void = ptr::null();
-            if CFDictionaryGetValueIfPresent(self.obj, key, &mut value) != 0 {
+            if CFDictionaryGetValueIfPresent(self.0, key, &mut value) != 0 {
                 Some(value)
             } else {
                 None

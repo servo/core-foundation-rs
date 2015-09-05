@@ -9,8 +9,8 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease, CFRetain};
-use base::{CFTypeID, CFTypeRef, TCFType, CFHashCode, mach_port_t};
+use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease};
+use base::{CFTypeID, TCFType, CFHashCode, mach_port_t};
 use base::{kCFAllocatorDefault};
 use base::{Boolean};
 use array::{CFArrayRef};
@@ -19,10 +19,7 @@ use date::{CFAbsoluteTime, CFTimeInterval};
 use libc::c_void;
 use std::mem;
 
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFRunLoop {
-    obj: CFRunLoopRef,
-}
+pub struct CFRunLoop(CFRunLoopRef);
 
 impl Drop for CFRunLoop {
     fn drop(&mut self) {
@@ -32,39 +29,7 @@ impl Drop for CFRunLoop {
     }
 }
 
-impl TCFType<CFRunLoopRef> for CFRunLoop {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFRunLoopRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFRunLoopRef) -> CFRunLoop {
-        let reference: CFRunLoopRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    #[inline]
-    unsafe fn wrap_under_create_rule(obj: CFRunLoopRef) -> CFRunLoop {
-        CFRunLoop {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFRunLoopGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFRunLoop, CFRunLoopRef, CFRunLoopGetTypeID);
 
 impl CFRunLoop {
     pub fn get_current() -> CFRunLoop {
@@ -89,13 +54,13 @@ impl CFRunLoop {
 
     pub fn stop(&self) {
         unsafe {
-            CFRunLoopStop(self.obj);
+            CFRunLoopStop(self.0);
         }
     }
 
     pub fn current_mode(&self) -> Option<String> {
         unsafe {
-            let string_ref = CFRunLoopCopyCurrentMode(self.obj);
+            let string_ref = CFRunLoopCopyCurrentMode(self.0);
             if string_ref.is_null() {
                 return None;
             }
@@ -107,13 +72,13 @@ impl CFRunLoop {
 
     pub fn contains_timer(&self, timer: &CFRunLoopTimer, mode: CFStringRef) -> bool {
         unsafe {
-            CFRunLoopContainsTimer(self.obj, timer.obj, mode) != 0
+            CFRunLoopContainsTimer(self.0, timer.0, mode) != 0
         }
     }
 
     pub fn add_timer(&self, timer: &CFRunLoopTimer, mode: CFStringRef) {
         unsafe {
-            CFRunLoopAddTimer(self.obj, timer.obj, mode);
+            CFRunLoopAddTimer(self.0, timer.0, mode);
         }
     }
 
@@ -206,10 +171,7 @@ struct __CFRunLoopTimer;
 
 pub type CFRunLoopTimerRef = *const __CFRunLoopTimer;
 
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFRunLoopTimer {
-    obj: CFRunLoopTimerRef,
-}
+pub struct CFRunLoopTimer(CFRunLoopTimerRef);
 
 impl Drop for CFRunLoopTimer {
     fn drop(&mut self) {
@@ -219,39 +181,7 @@ impl Drop for CFRunLoopTimer {
     }
 }
 
-impl TCFType<CFRunLoopTimerRef> for CFRunLoopTimer {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFRunLoopTimerRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFRunLoopTimerRef) -> CFRunLoopTimer {
-        let reference: CFRunLoopTimerRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    #[inline]
-    unsafe fn wrap_under_create_rule(obj: CFRunLoopTimerRef) -> CFRunLoopTimer {
-        CFRunLoopTimer {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFRunLoopTimerGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFRunLoopTimer, CFRunLoopTimerRef, CFRunLoopTimerGetTypeID);
 
 impl CFRunLoopTimer {
     pub fn new(fireDate: CFAbsoluteTime, interval: CFTimeInterval, flags: CFOptionFlags, order: CFIndex, callout: CFRunLoopTimerCallBack, context: *mut CFRunLoopTimerContext) -> CFRunLoopTimer {

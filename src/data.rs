@@ -9,10 +9,12 @@
 
 //! Core Foundation byte buffers.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease, CFRetain};
-use base::{CFTypeID, CFTypeRef, TCFType, kCFAllocatorDefault};
+use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
+use base::{CFTypeID, TCFType, kCFAllocatorDefault};
 
 use std::mem;
+use std::ops::Deref;
+use std::slice;
 
 #[repr(C)]
 struct __CFData;
@@ -20,11 +22,7 @@ struct __CFData;
 pub type CFDataRef = *const __CFData;
 
 /// A byte buffer.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFData {
-    obj: CFDataRef,
-}
+pub struct CFData(CFDataRef);
 
 impl Drop for CFData {
     fn drop(&mut self) {
@@ -34,38 +32,7 @@ impl Drop for CFData {
     }
 }
 
-impl TCFType<CFDataRef> for CFData {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFDataRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFDataRef) -> CFData {
-        let reference: CFDataRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFDataRef) -> CFData {
-        CFData {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFDataGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFData, CFDataRef, CFDataGetTypeID);
 
 impl CFData {
     pub fn from_buffer(buffer: &[u8]) -> CFData {
@@ -82,7 +49,7 @@ impl CFData {
     #[inline]
     pub fn bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
-            mem::transmute((CFDataGetBytePtr(self.obj), self.len() as usize))
+            slice::from_raw_parts(CFDataGetBytePtr(self.0), self.len() as usize)
         }
     }
 
@@ -90,8 +57,17 @@ impl CFData {
     #[inline]
     pub fn len(&self) -> CFIndex {
         unsafe {
-            CFDataGetLength(self.obj)
+            CFDataGetLength(self.0)
         }
+    }
+}
+
+impl Deref for CFData {
+    type Target = [u8];
+
+    #[inline]
+    fn deref(&self) -> &[u8] {
+        self.bytes()
     }
 }
 

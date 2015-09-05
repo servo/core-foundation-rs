@@ -11,8 +11,8 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease, CFRetain};
-use base::{Boolean, CFTypeID, CFTypeRef, TCFType};
+use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease};
+use base::{Boolean, CFTypeID, TCFType};
 use base::{kCFAllocatorDefault};
 use string::{CFString, CFStringRef};
 
@@ -24,9 +24,7 @@ struct __CFURL;
 
 pub type CFURLRef = *const __CFURL;
 
-pub struct CFURL {
-    obj: CFURLRef,
-}
+pub struct CFURL(CFURLRef);
 
 impl Drop for CFURL {
     fn drop(&mut self) {
@@ -36,44 +34,13 @@ impl Drop for CFURL {
     }
 }
 
-impl TCFType<CFURLRef> for CFURL {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFURLRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFURLRef) -> CFURL {
-        let reference: CFURLRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFURLRef) -> CFURL {
-        CFURL {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFURLGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFURL, CFURLRef, CFURLGetTypeID);
 
 impl fmt::Debug for CFURL {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
-            let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.obj));
+            let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.0));
             write!(f, "{}", string.to_string())
         }
     }
@@ -89,7 +56,7 @@ impl CFURL {
 
     pub fn get_string(&self) -> CFString {
         unsafe {
-            TCFType::wrap_under_get_rule(CFURLGetString(self.obj))
+            TCFType::wrap_under_get_rule(CFURLGetString(self.0))
         }
     }
 }

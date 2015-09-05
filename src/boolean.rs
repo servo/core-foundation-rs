@@ -9,7 +9,7 @@
 
 //! A Boolean type.
 
-use base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use base::{CFRelease, CFTypeID, TCFType};
 use std::mem;
 
 pub type Boolean = u32;
@@ -22,9 +22,7 @@ pub type CFBooleanRef = *const __CFBoolean;
 /// A Boolean type.
 ///
 /// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFBoolean {
-    obj: CFBooleanRef,
-}
+pub struct CFBoolean(CFBooleanRef);
 
 impl Drop for CFBoolean {
     fn drop(&mut self) {
@@ -34,38 +32,7 @@ impl Drop for CFBoolean {
     }
 }
 
-impl TCFType<CFBooleanRef> for CFBoolean {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFBooleanRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFBooleanRef) -> CFBoolean {
-        let reference: CFBooleanRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFBooleanRef) -> CFBoolean {
-        CFBoolean {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFBooleanGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFBoolean, CFBooleanRef, CFBooleanGetTypeID);
 
 impl CFBoolean {
     pub fn true_value() -> CFBoolean {

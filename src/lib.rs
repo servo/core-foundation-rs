@@ -14,6 +14,43 @@
 
 extern crate libc;
 
+#[macro_export]
+macro_rules! impl_TCFType {
+    ($ty:ident, $raw:ident, $ty_id:ident) => {
+        impl $crate::base::TCFType<$raw> for $ty {
+            #[inline]
+            fn as_concrete_TypeRef(&self) -> $raw {
+                self.0
+            }
+
+            #[inline]
+            unsafe fn wrap_under_get_rule(reference: $raw) -> $ty {
+                let reference = mem::transmute($crate::base::CFRetain(mem::transmute(reference)));
+                $crate::base::TCFType::wrap_under_create_rule(reference)
+            }
+
+            #[inline]
+            fn as_CFTypeRef(&self) -> $crate::base::CFTypeRef {
+                unsafe {
+                    mem::transmute(self.as_concrete_TypeRef())
+                }
+            }
+
+            #[inline]
+            unsafe fn wrap_under_create_rule(obj: $raw) -> $ty {
+                $ty(obj)
+            }
+
+            #[inline]
+            fn type_id() -> $crate::base::CFTypeID {
+                unsafe {
+                    $ty_id()
+                }
+            }
+        }
+    }
+}
+
 pub mod array;
 pub mod base;
 pub mod boolean;

@@ -9,7 +9,7 @@
 
 //! Core Foundation Bundle Type
 
-use base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use base::{CFRelease, CFTypeID, TCFType};
 use std::mem;
 
 use string::CFStringRef;
@@ -21,11 +21,7 @@ struct __CFBundle;
 pub type CFBundleRef = *const __CFBundle;
 
 /// A Bundle type.
-///
-/// FIXME(pcwalton): Should be a newtype struct, but that fails due to a Rust compiler bug.
-pub struct CFBundle {
-    obj: CFBundleRef,
-}
+pub struct CFBundle(CFBundleRef);
 
 impl Drop for CFBundle {
     fn drop(&mut self) {
@@ -35,38 +31,7 @@ impl Drop for CFBundle {
     }
 }
 
-impl TCFType<CFBundleRef> for CFBundle {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CFBundleRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CFBundleRef) -> CFBundle {
-        let reference: CFBundleRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    unsafe fn wrap_under_create_rule(obj: CFBundleRef) -> CFBundle {
-        CFBundle {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CFBundleGetTypeID()
-        }
-    }
-}
+impl_TCFType!(CFBundle, CFBundleRef, CFBundleGetTypeID);
 
 #[link(name = "CoreFoundation", kind = "framework")]
 extern {

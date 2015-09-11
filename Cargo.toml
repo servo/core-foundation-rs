@@ -6,7 +6,7 @@ authors = ["The Servo Project Developers"]
 [dependencies]
 libc = "*"
 gleam = "0.1"
-euclid = "0.1"
+euclid = "0.2"
 
 [target.x86_64-apple-darwin.dependencies]
 core-foundation = "*"

@@ -478,7 +478,13 @@ pub trait NSWindow {
     // TODO: Managing Title Bars
     // TODO: Managing Tooltips
     // TODO: Handling Events
-    // TODO: Managing Responders
+
+    // Managing Responders
+    unsafe fn initialFirstResponder(self) -> id;
+    unsafe fn firstResponder(self) -> id;
+    unsafe fn setInitialFirstResponder_(self, responder: id);
+    unsafe fn makeFirstResponder_(self, responder: id) -> BOOL;
+
     // TODO: Managing the Key View Loop
 
     // Handling Keyboard Events
@@ -957,7 +963,25 @@ impl NSWindow for id {
     // TODO: Managing Title Bars
     // TODO: Managing Tooltips
     // TODO: Handling Events
-    // TODO: Managing Responders
+
+    // Managing Responders
+
+    unsafe fn initialFirstResponder(self) -> id {
+        msg_send![self, initialFirstResponder]
+    }
+
+    unsafe fn firstResponder(self) -> id {
+        msg_send![self, firstResponder]
+    }
+
+    unsafe fn setInitialFirstResponder_(self, responder: id) {
+        msg_send![self, setInitialFirstResponder:responder]
+    }
+
+    unsafe fn makeFirstResponder_(self, responder: id) -> BOOL {
+        msg_send![self, makeFirstResponder:responder]
+    }
+
     // TODO: Managing the Key View Loop
 
     // Handling Keyboard Events

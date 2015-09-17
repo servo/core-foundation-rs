@@ -9,6 +9,4 @@ license = "MIT / Apache-2.0"
 
 [dependencies]
 libc = "*"
-
-[target.x86_64-apple-darwin.dependencies]
 core-foundation = "*"

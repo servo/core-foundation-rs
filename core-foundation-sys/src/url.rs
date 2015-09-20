@@ -6,12 +6,13 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+use libc::c_void;
 
 use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID};
 use string::CFStringRef;
 
 #[repr(C)]
-struct __CFURL;
+struct __CFURL(c_void);
 
 pub type CFURLRef = *const __CFURL;
 

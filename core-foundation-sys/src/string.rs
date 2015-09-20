@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use libc::{c_char, c_ushort};
+use libc::{c_char, c_ushort, c_void};
 
 use base::{Boolean, CFOptionFlags, CFIndex, CFAllocatorRef, CFRange, CFTypeID};
 
@@ -188,7 +188,7 @@ pub type CFStringEncodings = CFIndex;
 //static kCFStringEncodingShiftJIS_X0213_00: CFStringEncoding = 0x0628; /* Deprecated */
 
 #[repr(C)]
-struct __CFString;
+struct __CFString(c_void);
 
 pub type CFStringRef = *const __CFString;
 

@@ -1,7 +1,9 @@
+use libc::c_void;
+
 use base::{CFAllocatorRef, CFTypeID, CFIndex};
 
 #[repr(C)]
-struct __CFData;
+struct __CFData(c_void);
 
 pub type CFDataRef = *const __CFData;
 

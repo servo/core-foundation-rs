@@ -12,7 +12,7 @@ use libc::c_void;
 use base::{CFAllocatorRef, CFTypeID};
 
 #[repr(C)]
-struct __CFBoolean;
+struct __CFBoolean(c_void);
 
 pub type CFBooleanRef = *const __CFBoolean;
 

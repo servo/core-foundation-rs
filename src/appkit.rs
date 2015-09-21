@@ -88,7 +88,15 @@ pub enum NSWindowMask {
 
     NSUnifiedTitleAndToolbarWindowMask  = 1 << 12,
 
-    NSFullScreenWindowMask      = 1 << 14
+    NSFullScreenWindowMask      = 1 << 14,
+
+    NSFullSizeContentViewWindowMask = 1 << 15
+}
+
+#[repr(u64)]
+pub enum NSWindowTitleVisibility {
+    NSWindowTitleVisible = 0,
+    NSWindowTitleHidden = 1
 }
 
 #[repr(u64)]
@@ -516,6 +524,8 @@ pub trait NSWindow {
     unsafe fn title(self) -> id;
     unsafe fn setTitle_(self, title: id);
     unsafe fn setTitleWithRepresentedFilename_(self, filePath: id);
+    unsafe fn setTitleVisibility_(self, visibility: NSWindowTitleVisibility);
+    unsafe fn setTitlebarAppearsTransparent_(self, transparent: BOOL);
     unsafe fn representedFilename(self) -> id;
     unsafe fn setRepresentedFilename_(self, filePath: id);
     unsafe fn representedURL(self) -> id;
@@ -1038,6 +1048,14 @@ impl NSWindow for id {
 
     unsafe fn setTitleWithRepresentedFilename_(self, filePath: id) {
         msg_send![self, setTitleWithRepresentedFilename:filePath]
+    }
+
+    unsafe fn setTitleVisibility_(self, visibility: NSWindowTitleVisibility) {
+        msg_send![self, setTitleVisibility:visibility]
+    }
+
+    unsafe fn setTitlebarAppearsTransparent_(self, transparent: BOOL) {
+        msg_send![self, setTitlebarAppearsTransparent:transparent]
     }
 
     unsafe fn representedFilename(self) -> id {

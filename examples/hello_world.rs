@@ -1,12 +1,13 @@
 extern crate cocoa;
 
-use cocoa::base::{selector, nil, YES, NO};
+use cocoa::base::{selector, nil, /*YES, */ NO};
 use cocoa::foundation::{NSUInteger, NSRect, NSPoint, NSSize,
 						NSAutoreleasePool, NSProcessInfo, NSString};
 use cocoa::appkit::{NSApp,
 					NSApplication, NSApplicationActivationPolicyRegular,
 					NSWindow, NSTitledWindowMask, NSBackingStoreBuffered,
-					NSMenu, NSMenuItem};
+					NSMenu, NSMenuItem, NSRunningApplication,
+					NSApplicationActivateIgnoringOtherApps};
 
 fn main() {
 	unsafe {
@@ -49,8 +50,8 @@ fn main() {
 		let title = NSString::alloc(nil).init_str("Hello World!");
 		window.setTitle_(title);
 		window.makeKeyAndOrderFront_(nil);
-
-		app.activateIgnoringOtherApps_(YES);
+		let current_app = NSRunningApplication::currentApplication(nil);
+		current_app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps);
 		app.run();
 	}
 }

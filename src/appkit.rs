@@ -18,6 +18,7 @@ pub use core_graphics::base::CGFloat;
 pub use core_graphics::geometry::CGPoint;
 
 pub use self::NSApplicationActivationPolicy::*;
+pub use self::NSApplicationActivationOptions::*;
 pub use self::NSWindowMask::*;
 pub use self::NSBackingStoreType::*;
 pub use self::NSOpenGLPixelFormatAttribute::*;
@@ -67,6 +68,12 @@ pub unsafe fn NSApp() -> id {
 pub enum NSApplicationActivationPolicy {
     NSApplicationActivationPolicyRegular = 0,
     NSApplicationActivationPolicyERROR = -1
+}
+
+#[repr(u64)]
+pub enum NSApplicationActivationOptions {
+    NSApplicationActivateAllWindows = 1 << 0,
+    NSApplicationActivateIgnoringOtherApps = 1 << 1
 }
 
 #[repr(u64)]
@@ -284,6 +291,19 @@ impl NSApplication for id {
 
     unsafe fn stop_(self, sender: id) {
         msg_send![self, stop:sender]
+    }
+}
+
+pub trait NSRunningApplication { 
+    unsafe fn currentApplication(_: Self) -> id {
+        msg_send![class("NSRunningApplication"), currentApplication]
+    }
+    unsafe fn activateWithOptions_(self, options: NSApplicationActivationOptions) -> BOOL;
+}
+
+impl NSRunningApplication for id {
+    unsafe fn activateWithOptions_(self, options: NSApplicationActivationOptions) -> BOOL {
+        msg_send![self, activateWithOptions:options as NSUInteger]
     }
 }
 

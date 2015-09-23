@@ -1,6 +1,6 @@
 extern crate cocoa;
 
-use cocoa::base::{selector, nil, /*YES, */ NO};
+use cocoa::base::{selector, nil, NO};
 use cocoa::foundation::{NSUInteger, NSRect, NSPoint, NSSize,
 						NSAutoreleasePool, NSProcessInfo, NSString};
 use cocoa::appkit::{NSApp,

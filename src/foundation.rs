@@ -9,7 +9,6 @@
 
 use base::{id, class};
 use libc;
-use std::ffi::CString;
 
 #[cfg(target_pointer_width = "32")]
 pub type NSInteger = libc::c_int;
@@ -20,6 +19,8 @@ pub type NSUInteger = libc::c_uint;
 pub type NSInteger = libc::c_long;
 #[cfg(target_pointer_width = "64")]
 pub type NSUInteger = libc::c_ulong;
+
+const UTF8_ENCODING: usize = 4;
 
 #[repr(C)]
 pub struct NSPoint {
@@ -123,24 +124,26 @@ pub trait NSString {
         msg_send![class("NSString"), alloc]
     }
 
-    unsafe fn initWithUTF8String_(self, c_string: *const i8) -> id;
     unsafe fn stringByAppendingString_(self, other: id) -> id;
     unsafe fn init_str(self, string: &str) -> Self;
     unsafe fn UTF8String(self) -> *const libc::c_char;
+    unsafe fn len(self) -> usize;
 }
 
 impl NSString for id {
-    unsafe fn initWithUTF8String_(self, c_string: *const i8) -> id {
-        msg_send![self, initWithUTF8String:c_string as id]
-    }
-
     unsafe fn stringByAppendingString_(self, other: id) -> id {
         msg_send![self, stringByAppendingString:other]
     }
 
     unsafe fn init_str(self, string: &str) -> id {
-        let cstring = CString::new(string).unwrap();
-        self.initWithUTF8String_(cstring.as_ptr())
+        return msg_send![self,
+                         initWithBytes:string.as_ptr()
+                             length:string.len()
+                             encoding:UTF8_ENCODING as id];
+    }
+
+    unsafe fn len(self) -> usize {
+        msg_send![self, lengthOfBytesUsingEncoding:UTF8_ENCODING]
     }
 
     unsafe fn UTF8String(self) -> *const libc::c_char {

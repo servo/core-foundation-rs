@@ -16,6 +16,7 @@ use core_foundation::base::{CFIndex, CFOptionFlags, CFTypeID, CFRelease, CFRetai
 use core_foundation::data::{CFData, CFDataRef};
 use core_foundation::dictionary::CFDictionaryRef;
 use core_foundation::string::{CFString, CFStringRef, UniChar};
+use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::{CGAffineTransform, CGFloat};
 use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
 use core_graphics::geometry::{CGRect, CGSize};
@@ -293,6 +294,17 @@ impl CTFont {
             }
         }
     }
+
+    pub fn url(&self) -> Option<CFURL> {
+        unsafe {
+            let result = CTFontCopyAttribute(self.obj, kCTFontURLAttribute);
+            if result.is_null() {
+                None
+            } else {
+                Some(TCFType::wrap_under_create_rule(result as CFURLRef))
+            }
+        }
+    }
 }
 
 // Helper methods
@@ -376,6 +388,8 @@ extern {
     //static kCTFontFeatureSelectorDefaultKey: CFStringRef;
     //static kCTFontFeatureSelectorSettingKey: CFStringRef;
 
+    static kCTFontURLAttribute: CFStringRef;
+
     // N.B. Unlike most Cocoa bindings, this extern block is organized according
     // to the documentation's Functions By Task listing, because there so many functions.
 
@@ -394,7 +408,7 @@ extern {
 
     /* Getting Font Data */
     //fn CTFontCopyFontDescriptor(font: CTFontRef) -> CTFontDescriptorRef;
-    //fn CTFontCopyAttribute(font: CTFontRef) -> CFTypeRef;
+    fn CTFontCopyAttribute(font: CTFontRef, attribute: CFStringRef) -> CFTypeRef;
     fn CTFontGetSize(font: CTFontRef) -> CGFloat;
     //fn CTFontGetMatrix
     fn CTFontGetSymbolicTraits(font: CTFontRef) -> CTFontSymbolicTraits;

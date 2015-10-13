@@ -8,4 +8,4 @@ libc = "*"
 
 [target.x86_64-apple-darwin.dependencies]
 core-foundation = "*"
-core-graphics = "*"
+core-graphics = "0.1.2"

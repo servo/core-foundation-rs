@@ -18,10 +18,11 @@ use core_foundation::dictionary::CFDictionaryRef;
 use core_foundation::string::{CFString, CFStringRef, UniChar};
 use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::{CGAffineTransform, CGFloat};
+use core_graphics::context::{CGContext, CGContextRef};
 use core_graphics::font::{CGGlyph, CGFont, CGFontRef};
-use core_graphics::geometry::{CGRect, CGSize};
+use core_graphics::geometry::{CGPoint, CGRect, CGSize};
 
-use libc;
+use libc::{self, size_t};
 use std::mem;
 use std::ptr;
 
@@ -295,6 +296,29 @@ impl CTFont {
         }
     }
 
+    pub fn get_bounding_rects_for_glyphs(&self, orientation: CTFontOrientation, glyphs: &[CGGlyph])
+                                         -> CGRect {
+        unsafe {
+            let mut result = CTFontGetBoundingRectsForGlyphs(self.as_concrete_TypeRef(),
+                                                             orientation,
+                                                             glyphs.as_ptr(),
+                                                             ptr::null_mut(),
+                                                             glyphs.len() as CFIndex);
+            result
+        }
+    }
+
+    pub fn draw_glyphs(&self, glyphs: &[CGGlyph], positions: &[CGPoint], context: CGContext) {
+        assert!(glyphs.len() == positions.len());
+        unsafe {
+            CTFontDrawGlyphs(self.as_concrete_TypeRef(),
+                             glyphs.as_ptr(),
+                             positions.as_ptr(),
+                             glyphs.len() as size_t,
+                             context.as_concrete_TypeRef())
+        }
+    }
+
     pub fn url(&self) -> Option<CFURL> {
         unsafe {
             let result = CTFontCopyAttribute(self.obj, kCTFontURLAttribute);
@@ -444,7 +468,12 @@ extern {
     /* Getting Glyph Data */
     //fn CTFontCreatePathForGlyph
     //fn CTFontGetGlyphWithName
-    //fn CTFontGetBoundingRectsForGlyphs
+    fn CTFontGetBoundingRectsForGlyphs(font: CTFontRef,
+                                       orientation: CTFontOrientation,
+                                       glyphs: *const CGGlyph,
+                                       boundingRects: *mut CGRect,
+                                       count: CFIndex)
+                                       -> CGRect;
     fn CTFontGetAdvancesForGlyphs(font: CTFontRef, orientation: CTFontOrientation, glyphs: *const CGGlyph, advances: *mut CGSize, count: CFIndex) -> libc::c_double;
     //fn CTFontGetVerticalTranslationsForGlyphs
 
@@ -458,7 +487,11 @@ extern {
 
     /* Working with Glyphs */
     fn CTFontGetGlyphsForCharacters(font: CTFontRef, characters: *const UniChar, glyphs: *mut CGGlyph, count: CFIndex) -> bool;
-    //fn CTFontDrawGlyphs
+    fn CTFontDrawGlyphs(font: CTFontRef,
+                        glyphs: *const CGGlyph,
+                        positions: *const CGPoint,
+                        count: size_t,
+                        context: CGContextRef);
     //fn CTFontGetLigatureCaretPositions
 
     /* Converting Fonts */
@@ -475,5 +508,5 @@ extern {
     fn CTFontCopyTable(font: CTFontRef, table: CTFontTableTag, options: CTFontTableOptions) -> CFDataRef;
 
     fn CTFontGetTypeID() -> CFTypeID;
-    
 }
+

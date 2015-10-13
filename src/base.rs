@@ -24,3 +24,11 @@ pub type CGError = libc::int32_t;
 
 pub type CGAffineTransform = ();
 
+pub const kCGImageAlphaNone: u32 = 0;
+pub const kCGImageAlphaPremultipliedLast: u32 = 1;
+pub const kCGImageAlphaPremultipliedFirst: u32 = 2;
+pub const kCGImageAlphaLast: u32 = 3;
+pub const kCGImageAlphaFirst: u32 = 4;
+pub const kCGImageAlphaNoneSkipLast: u32 = 5;
+pub const kCGImageAlphaNoneSkipFirst: u32 = 6;
+

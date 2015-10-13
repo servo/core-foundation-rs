@@ -11,7 +11,10 @@ extern crate libc;
 extern crate core_foundation;
 
 pub mod base;
+pub mod color_space;
+pub mod context;
 pub mod data_provider;
+pub mod display;
 pub mod font;
 pub mod geometry;
-pub mod display;
+

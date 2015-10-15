@@ -9,39 +9,11 @@
 
 //! Immutable numbers.
 
-#![allow(non_upper_case_globals)]
-
-use base::{CFAllocatorRef, CFRelease, CFTypeID};
-use base::{TCFType, kCFAllocatorDefault};
-
-use libc::c_void;
+use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
+pub use core_foundation_sys::number::*;
 use std::mem;
 
-pub type CFNumberType = u32;
-
-// members of enum CFNumberType
-// static kCFNumberSInt8Type:     CFNumberType = 1;
-// static kCFNumberSInt16Type:    CFNumberType = 2;
-static kCFNumberSInt32Type:    CFNumberType = 3;
-static kCFNumberSInt64Type:    CFNumberType = 4;
-// static kCFNumberFloat32Type:   CFNumberType = 5;
-static kCFNumberFloat64Type:   CFNumberType = 6;
-// static kCFNumberCharType:      CFNumberType = 7;
-// static kCFNumberShortType:     CFNumberType = 8;
-// static kCFNumberIntType:       CFNumberType = 9;
-// static kCFNumberLongType:      CFNumberType = 10;
-// static kCFNumberLongLongType:  CFNumberType = 11;
-// static kCFNumberFloatType:     CFNumberType = 12;
-// static kCFNumberDoubleType:    CFNumberType = 13;
-// static kCFNumberCFIndexType:   CFNumberType = 14;
-// static kCFNumberNSIntegerType: CFNumberType = 15;
-// static kCFNumberCGFloatType:   CFNumberType = 16;
-// static kCFNumberMaxType:       CFNumberType = 16;
-
-#[repr(C)]
-struct __CFNumber;
-
-pub type CFNumberRef = *const __CFNumber;
+use base::{TCFType};
 
 /// An immutable numeric value.
 pub struct CFNumber(CFNumberRef);
@@ -110,19 +82,4 @@ impl CFNumber {
 /// A convenience function to create CFNumbers.
 pub fn number(value: i64) -> CFNumber {
     CFNumber::from_i64(value)
-}
-
-#[link(name = "CoreFoundation", kind = "framework")]
-extern {
-    /*
-     * CFNumber.h
-     */
-
-
-    fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *const c_void)
-                   -> CFNumberRef;
-    //fn CFNumberGetByteSize
-    fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *mut c_void) -> bool;
-    //fn CFNumberCompare
-    fn CFNumberGetTypeID() -> CFTypeID;
 }

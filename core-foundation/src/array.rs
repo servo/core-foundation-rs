@@ -9,39 +9,13 @@
 
 //! Heterogeneous immutable arrays.
 
-use base::{CFAllocatorRef, CFIndex, CFIndexConvertible, CFRelease};
-use base::{CFTypeID, CFTypeRef, TCFType};
-use base::{kCFAllocatorDefault};
+pub use core_foundation_sys::array::*;
+use core_foundation_sys::base::{CFIndex, CFRelease};
+use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
 
-/// FIXME(pcwalton): This is wrong.
-pub type CFArrayRetainCallBack = *const u8;
-
-/// FIXME(pcwalton): This is wrong.
-pub type CFArrayReleaseCallBack = *const u8;
-
-/// FIXME(pcwalton): This is wrong.
-pub type CFArrayCopyDescriptionCallBack = *const u8;
-
-/// FIXME(pcwalton): This is wrong.
-pub type CFArrayEqualCallBack = *const u8;
-
-#[allow(dead_code)]
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct CFArrayCallBacks {
-    version: CFIndex,
-    retain: CFArrayRetainCallBack,
-    release: CFArrayReleaseCallBack,
-    copyDescription: CFArrayCopyDescriptionCallBack,
-    equal: CFArrayEqualCallBack,
-}
-
-#[repr(C)]
-struct __CFArray;
-
-pub type CFArrayRef = *const __CFArray;
+use base::{CFIndexConvertible, TCFType};
 
 /// A heterogeneous immutable array.
 pub struct CFArray(CFArrayRef);
@@ -124,28 +98,6 @@ impl<'a> IntoIterator for &'a CFArray {
     fn into_iter(self) -> CFArrayIterator<'a> {
         self.iter()
     }
-}
-
-#[link(name = "CoreFoundation", kind = "framework")]
-extern {
-    /*
-     * CFArray.h
-     */
-    static kCFTypeArrayCallBacks: CFArrayCallBacks;
-
-    fn CFArrayCreate(allocator: CFAllocatorRef, values: *const *const c_void,
-                     numValues: CFIndex, callBacks: *const CFArrayCallBacks) -> CFArrayRef;
-    // CFArrayCreateCopy
-    // CFArrayBSearchValues
-    // CFArrayContainsValue
-    fn CFArrayGetCount(theArray: CFArrayRef) -> CFIndex;
-    // CFArrayGetCountOfValue
-    // CFArrayGetFirstIndexOfValue
-    // CFArrayGetLastIndexOfValue
-    // CFArrayGetValues
-    fn CFArrayGetValueAtIndex(theArray: CFArrayRef, idx: CFIndex) -> *const c_void;
-    // CFArrayApplyFunction
-    fn CFArrayGetTypeID() -> CFTypeID;
 }
 
 #[test]

@@ -6,12 +6,9 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
-#![crate_name = "core_foundation"]
-#![crate_type = "rlib"]
-
 #![allow(non_snake_case)]
 
+extern crate core_foundation_sys;
 extern crate libc;
 
 #[macro_export]
@@ -25,12 +22,12 @@ macro_rules! impl_TCFType {
 
             #[inline]
             unsafe fn wrap_under_get_rule(reference: $raw) -> $ty {
-                let reference = mem::transmute($crate::base::CFRetain(mem::transmute(reference)));
+                let reference = mem::transmute(::core_foundation_sys::base::CFRetain(mem::transmute(reference)));
                 $crate::base::TCFType::wrap_under_create_rule(reference)
             }
 
             #[inline]
-            fn as_CFTypeRef(&self) -> $crate::base::CFTypeRef {
+            fn as_CFTypeRef(&self) -> ::core_foundation_sys::base::CFTypeRef {
                 unsafe {
                     mem::transmute(self.as_concrete_TypeRef())
                 }
@@ -42,7 +39,7 @@ macro_rules! impl_TCFType {
             }
 
             #[inline]
-            fn type_id() -> $crate::base::CFTypeID {
+            fn type_id() -> ::core_foundation_sys::base::CFTypeID {
                 unsafe {
                     $ty_id()
                 }
@@ -55,13 +52,13 @@ pub mod array;
 pub mod base;
 pub mod boolean;
 pub mod data;
+pub use core_foundation_sys::date; // back compat
 pub mod dictionary;
 pub mod number;
 pub mod set;
 pub mod string;
 pub mod url;
 pub mod bundle;
-pub mod date;
 pub mod runloop;
 
 #[cfg(test)]

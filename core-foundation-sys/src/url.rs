@@ -1,4 +1,4 @@
-// Copyright 2013 The Servo Project Developers. See the COPYRIGHT
+// Copyright 2013-2015 The Servo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -6,62 +6,17 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
+use libc::c_void;
 
-//! A URL type for Core Foundation.
-
-#![allow(non_upper_case_globals)]
-
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRelease};
-use base::{Boolean, CFTypeID, TCFType};
-use base::{kCFAllocatorDefault};
-use string::{CFString, CFStringRef};
-
-use std::fmt;
-use std::mem;
+use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID};
+use string::CFStringRef;
 
 #[repr(C)]
-struct __CFURL;
+struct __CFURL(c_void);
 
 pub type CFURLRef = *const __CFURL;
 
-pub struct CFURL(CFURLRef);
-
-impl Drop for CFURL {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
-impl_TCFType!(CFURL, CFURLRef, CFURLGetTypeID);
-
-impl fmt::Debug for CFURL {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        unsafe {
-            let string: CFString = TCFType::wrap_under_get_rule(CFURLGetString(self.0));
-            write!(f, "{}", string.to_string())
-        }
-    }
-}
-
-impl CFURL {
-    pub fn from_file_system_path(filePath: CFString, pathStyle: CFURLPathStyle, isDirectory: bool) -> CFURL {
-        unsafe {
-            let url_ref = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePath.as_concrete_TypeRef(), pathStyle, isDirectory as u8);
-            TCFType::wrap_under_create_rule(url_ref)
-        }
-    }
-
-    pub fn get_string(&self) -> CFString {
-        unsafe {
-            TCFType::wrap_under_get_rule(CFURLGetString(self.0))
-        }
-    }
-}
-
-type CFURLBookmarkCreationOptions = CFOptionFlags;
+pub type CFURLBookmarkCreationOptions = CFOptionFlags;
 
 pub type CFURLPathStyle = CFIndex;
 
@@ -69,7 +24,6 @@ pub type CFURLPathStyle = CFIndex;
 pub const kCFURLPOSIXPathStyle: CFURLPathStyle   = 0;
 pub const kCFURLHFSPathStyle: CFURLPathStyle     = 1;
 pub const kCFURLWindowsPathStyle: CFURLPathStyle = 2;
-
 
 // static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
 //     (1 << 8) as u32;
@@ -84,7 +38,6 @@ pub const kCFURLWindowsPathStyle: CFURLPathStyle = 2;
 
 // TODO: there are a lot of missing keys and constants. Add if you are bored or need them.
 
-#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     /*
      * CFURL.h
@@ -141,7 +94,7 @@ extern {
     //fn CFURLCreateFromFSRef
     //fn CFURLCreateWithBytes
     //fn CFURLCreateWithFileSystemPath
-    fn CFURLCreateWithFileSystemPath(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean) -> CFURLRef;
+    pub fn CFURLCreateWithFileSystemPath(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean) -> CFURLRef;
     //fn CFURLCreateWithFileSystemPathRelativeToBase
     //fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
     //                         baseURL: CFURLRef) -> CFURLRef;
@@ -173,13 +126,13 @@ extern {
     //fn CFURLCreateStringByReplacingPercentEscapesUsingEncoding
     //fn CFURLGetFileSystemRepresentation
     //fn CFURLGetFSRef
-    fn CFURLGetString(anURL: CFURLRef) -> CFStringRef;
+    pub fn CFURLGetString(anURL: CFURLRef) -> CFStringRef;
 
     /* Getting URL Properties */
     //fn CFURLGetBaseURL(anURL: CFURLRef) -> CFURLRef;
     //fn CFURLGetBytes
     //fn CFURLGetByteRangeForComponent
-    fn CFURLGetTypeID() -> CFTypeID;
+    pub fn CFURLGetTypeID() -> CFTypeID;
     //fn CFURLResourceIsReachable
 
     /* Getting and Setting File System Resource Properties */
@@ -200,12 +153,4 @@ extern {
     //fn CFURLWriteBookmarkDataToFile
     //fn CFURLStartAccessingSecurityScopedResource
     //fn CFURLStopAccessingSecurityScopedResource
-}
-
-#[test]
-fn file_url_from_path() {
-    let path = "/usr/local/foo/";
-    let cfstr_path = CFString::from_static_string(path);
-    let cfurl = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
-    assert!(cfurl.get_string().to_string() == "file:///usr/local/foo/");
 }

@@ -7,6 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use base::CGFloat;
 use color_space::{CGColorSpace, CGColorSpaceRef};
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use libc::{c_void, size_t};
@@ -118,6 +119,24 @@ impl CGContext {
             CGBitmapContextGetBytesPerRow(self.as_concrete_TypeRef())
         }
     }
+
+    pub fn set_rgb_fill_color(&self, red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        unsafe {
+            CGContextSetRGBFillColor(self.as_concrete_TypeRef(), red, green, blue, alpha)
+        }
+    }
+
+    pub fn set_allows_font_smoothing(&self, allows_font_smoothing: bool) {
+        unsafe {
+            CGContextSetAllowsFontSmoothing(self.as_concrete_TypeRef(), allows_font_smoothing)
+        }
+    }
+
+    pub fn set_should_smooth_fonts(&self, should_smooth_fonts: bool) {
+        unsafe {
+            CGContextSetShouldSmoothFonts(self.as_concrete_TypeRef(), should_smooth_fonts)
+        }
+    }
 }
 
 #[link(name = "ApplicationServices", kind = "framework")]
@@ -135,5 +154,12 @@ extern {
     fn CGBitmapContextGetHeight(context: CGContextRef) -> size_t;
     fn CGBitmapContextGetBytesPerRow(context: CGContextRef) -> size_t;
     fn CGContextGetTypeID() -> CFTypeID;
+    fn CGContextSetAllowsFontSmoothing(c: CGContextRef, allowsFontSmoothing: bool);
+    fn CGContextSetShouldSmoothFonts(c: CGContextRef, shouldSmoothFonts: bool);
+    fn CGContextSetRGBFillColor(context: CGContextRef,
+                                red: CGFloat,
+                                green: CGFloat,
+                                blue: CGFloat,
+                                alpha: CGFloat);
 }
 

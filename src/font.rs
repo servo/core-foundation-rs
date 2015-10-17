@@ -25,6 +25,9 @@ pub struct CGFont {
     obj: CGFontRef,
 }
 
+unsafe impl Send for CGFont {}
+unsafe impl Sync for CGFont {}
+
 impl Clone for CGFont {
     #[inline]
     fn clone(&self) -> CGFont {

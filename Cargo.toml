@@ -3,7 +3,7 @@ name = "cocoa"
 description = "Bindings to Cocoa for OS X"
 homepage = "https://github.com/servo/cocoa-rs"
 repository = "https://github.com/servo/cocoa-rs"
-version = "0.1.5"
+version = "0.2.0"
 authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 
@@ -12,7 +12,7 @@ name = "cocoa"
 crate-type = ["rlib"]
 
 [dependencies]
-bitflags = "*"
-libc = "*"
-core-graphics = "*"
-objc = "0.1"
+bitflags = "0.3"
+libc = "0.2"
+core-graphics = "0.2"
+objc = "0.1.8"

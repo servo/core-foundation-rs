@@ -8,7 +8,7 @@ authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 
 [dependencies]
-libc = "*"
+libc = "0.1"
 gleam = "0.1"
 euclid = "0.3"
 

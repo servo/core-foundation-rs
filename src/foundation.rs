@@ -9,6 +9,7 @@
 
 use base::{id, class};
 use libc;
+use objc;
 
 #[cfg(target_pointer_width = "32")]
 pub type NSInteger = libc::c_int;
@@ -38,6 +39,15 @@ impl NSPoint {
     }
 }
 
+unsafe impl objc::Encode for NSPoint {
+    fn encode() -> objc::Encoding {
+        let encoding = format!("{{CGPoint={}{}}}",
+                               f64::encode().as_str(),
+                               f64::encode().as_str());
+        unsafe { objc::Encoding::from_str(&encoding) }
+    }
+}
+
 #[repr(C)]
 pub struct NSSize {
     pub width: f64,
@@ -54,6 +64,15 @@ impl NSSize {
     }
 }
 
+unsafe impl objc::Encode for NSSize {
+    fn encode() -> objc::Encoding {
+        let encoding = format!("{{CGSize={}{}}}",
+                               f64::encode().as_str(),
+                               f64::encode().as_str());
+        unsafe { objc::Encoding::from_str(&encoding) }
+    }
+}
+
 #[repr(C)]
 pub struct NSRect {
     pub origin: NSPoint,
@@ -67,6 +86,15 @@ impl NSRect {
             origin: origin,
             size: size
         }
+    }
+}
+
+unsafe impl objc::Encode for NSRect {
+    fn encode() -> objc::Encoding {
+        let encoding = format!("{{CGRect={}{}}}",
+                               NSPoint::encode().as_str(),
+                               NSSize::encode().as_str());
+        unsafe { objc::Encoding::from_str(&encoding) }
     }
 }
 

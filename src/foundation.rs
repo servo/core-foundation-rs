@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{id, class};
+use base::{id, class, BOOL, nil};
 use libc;
 use objc;
 
@@ -147,6 +147,47 @@ impl NSProcessInfo for id {
 
 pub type NSTimeInterval = libc::c_double;
 
+pub trait NSValue {
+    unsafe fn valueWithPoint(_: Self, point: NSPoint) -> id {
+        msg_send![class("NSValue"), valueWithPoint:point]
+    }
+
+    unsafe fn valueWithSize(_: Self, size: NSSize) -> id {
+        msg_send![class("NSValue"), valueWithSize:size]
+    }
+}
+
+impl NSValue for id {
+}
+
+pub trait NSArray {
+    unsafe fn array(_: Self) -> id {
+        msg_send![class("NSArray"), array]
+    }
+
+    unsafe fn arrayWithObjects(_: Self, objects: &[id]) -> id {
+        msg_send![class("NSArray"), arrayWithObjects:objects.as_ptr()
+                                    count:objects.len()]
+    }
+
+    unsafe fn arrayWithObject(_: Self, object: id) -> id {
+        msg_send![class("NSArray"), arrayWithObject:object]
+    }
+
+    unsafe fn arrayByAddingObjectFromArray(self, object: id) -> id;
+    unsafe fn arrayByAddingObjectsFromArray(self, objects: id) -> id;
+}
+
+impl NSArray for id {
+    unsafe fn arrayByAddingObjectFromArray(self, object: id) -> id {
+        msg_send![self, arrayByAddingObjectFromArray:object]
+    }
+
+    unsafe fn arrayByAddingObjectsFromArray(self, objects: id) -> id {
+        msg_send![self, arrayByAddingObjectsFromArray:objects]
+    }
+}
+
 pub trait NSString {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSString"), alloc]
@@ -156,9 +197,16 @@ pub trait NSString {
     unsafe fn init_str(self, string: &str) -> Self;
     unsafe fn UTF8String(self) -> *const libc::c_char;
     unsafe fn len(self) -> usize;
+    unsafe fn isEqualToString(self, &str) -> bool;
 }
 
 impl NSString for id {
+    unsafe fn isEqualToString(self, other: &str) -> bool {
+        let other = NSString::alloc(nil).init_str(other);
+        let rv: BOOL = msg_send![self, isEqualToString:other];
+        rv != 0
+    }
+
     unsafe fn stringByAppendingString_(self, other: id) -> id {
         msg_send![self, stringByAppendingString:other]
     }

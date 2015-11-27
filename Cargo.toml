@@ -8,9 +8,9 @@ authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 
 [dependencies]
-libc = "0.1"
+libc = "0.2"
 gleam = "0.1"
-euclid = "0.3"
+euclid = "0.4"
 
 [target.x86_64-apple-darwin.dependencies]
 core-foundation = "*"

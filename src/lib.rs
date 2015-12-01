@@ -9,6 +9,7 @@
 
 extern crate libc;
 extern crate core_foundation;
+extern crate serde;
 
 pub mod base;
 pub mod color_space;

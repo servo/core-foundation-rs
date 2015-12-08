@@ -4,8 +4,8 @@ version = "0.1.0"
 authors = ["The Servo Project Developers"]
 
 [dependencies]
-libc = "*"
+libc = "0.2"
 
 [target.x86_64-apple-darwin.dependencies]
-core-foundation = "*"
+core-foundation = "0.2"
 core-graphics = "0.1.2"

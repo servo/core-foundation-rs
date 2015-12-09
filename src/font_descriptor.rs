@@ -185,6 +185,7 @@ struct __CTFontDescriptor;
 
 pub type CTFontDescriptorRef = *const __CTFontDescriptor;
 
+#[derive(Debug)]
 pub struct CTFontDescriptor {
     obj: CTFontDescriptorRef,
 }

@@ -26,6 +26,7 @@ struct __CTFontCollection;
 
 pub type CTFontCollectionRef = *const __CTFontCollection;
 
+#[derive(Debug)]
 pub struct CTFontCollection {
     obj: CTFontCollectionRef,
 }

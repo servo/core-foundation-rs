@@ -73,6 +73,7 @@ struct __CTFont;
 
 pub type CTFontRef = *const __CTFont;
 
+#[derive(Debug)]
 pub struct CTFont {
     obj: CTFontRef,
 }

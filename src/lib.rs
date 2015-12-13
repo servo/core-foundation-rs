@@ -10,8 +10,7 @@
 #![crate_name = "io_surface"]
 #![crate_type = "rlib"]
 
-#![feature(core)]
-#![feature(slice_bytes)]
+#![feature(clone_from_slice)]
 
 extern crate libc;
 extern crate core_foundation;
@@ -29,7 +28,6 @@ use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
 use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 use libc::{c_int, c_void, size_t};
 use std::mem;
-use std::slice::bytes::copy_memory;
 use std::slice;
 
 
@@ -153,7 +151,7 @@ impl IOSurface {
             let size = (height * stride) as usize;
             let address = IOSurfaceGetBaseAddress(surface) as *mut u8;
             let dest: &mut [u8] = slice::from_raw_parts_mut(address, size);
-            copy_memory(data, dest);
+            dest.clone_from_slice(data);
 
             // FIXME(pcwalton): RAII
             IOSurfaceUnlock(surface, 0, &mut seed);

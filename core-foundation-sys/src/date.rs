@@ -10,7 +10,6 @@
 pub type CFTimeInterval = f64;
 pub type CFAbsoluteTime = CFTimeInterval;
 
-#[link(name = "CoreFoundation", kind = "framework")]
 extern {
     pub fn CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime;
 }

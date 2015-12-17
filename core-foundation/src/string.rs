@@ -18,7 +18,6 @@ use core_foundation_sys::base::{kCFAllocatorDefault, kCFAllocatorNull};
 use std::fmt;
 use std::str::{self, FromStr};
 use std::ptr;
-use std::vec::Vec;
 use std::ffi::CStr;
 
 /// An immutable string in one of a variety of encodings.
@@ -76,8 +75,7 @@ impl fmt::Display for CFString {
                                  &mut bytes_required);
 
                 // Then, allocate the buffer and actually copy.
-                let mut buffer = Vec::with_capacity(bytes_required as usize);
-                for _ in (0..bytes_required) { buffer.push('\x00' as u8) }
+                let mut buffer = vec![b'\x00'; bytes_required as usize];
 
                 let mut bytes_used: CFIndex = 0;
                 let chars_written = CFStringGetBytes(self.0,

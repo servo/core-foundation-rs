@@ -17,7 +17,6 @@ use core_foundation_sys::base::{Boolean, CFIndex, CFRange, CFRelease};
 use core_foundation_sys::base::{kCFAllocatorDefault, kCFAllocatorNull};
 use std::fmt;
 use std::str::{self, FromStr};
-use std::mem;
 use std::ptr;
 use std::vec::Vec;
 use std::ffi::CStr;

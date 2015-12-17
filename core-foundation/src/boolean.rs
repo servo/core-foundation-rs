@@ -11,7 +11,6 @@
 
 use core_foundation_sys::base::{CFRelease};
 pub use core_foundation_sys::number::{CFBooleanRef, CFBooleanGetTypeID, kCFBooleanTrue, kCFBooleanFalse};
-use std::mem;
 
 use base::TCFType;
 

@@ -11,7 +11,6 @@
 
 pub use core_foundation_sys::bundle::*;
 use core_foundation_sys::base::CFRelease;
-use std::mem;
 
 use base::{TCFType};
 

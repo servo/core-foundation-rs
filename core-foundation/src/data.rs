@@ -12,7 +12,6 @@
 pub use core_foundation_sys::data::*;
 use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{kCFAllocatorDefault};
-use std::mem;
 use std::ops::Deref;
 use std::slice;
 

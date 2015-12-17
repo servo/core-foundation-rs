@@ -14,7 +14,6 @@ use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 use core_foundation_sys::string::CFStringRef;
 use core_foundation_sys::date::{CFAbsoluteTime, CFTimeInterval};
-use std::mem;
 
 use base::{TCFType};
 use string::{CFString};

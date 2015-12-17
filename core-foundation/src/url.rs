@@ -16,7 +16,6 @@ use string::{CFString};
 
 use core_foundation_sys::base::{kCFAllocatorDefault, CFRelease};
 use std::fmt;
-use std::mem;
 
 pub struct CFURL(CFURLRef);
 

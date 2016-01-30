@@ -2331,18 +2331,43 @@ impl NSButton for id {
     }
 }
 
+pub const NSVariableStatusItemLength: CGFloat = -1.0;
+pub const NSSquareStatusItemLength: CGFloat = -2.0;
+
 pub trait NSStatusItem {
+    unsafe fn statusBar(self) -> id /* (NSStatusBar *) */;
     unsafe fn button(self) -> id /* (NSStatusBarButton *) */;
+    unsafe fn menu(self) -> id;
+    unsafe fn setMenu_(self, menu: id);
+    unsafe fn length(self) -> CGFloat;
+    unsafe fn setLength(self, length: CGFloat);
 }
 
 impl NSStatusItem for id {
+    unsafe fn statusBar(self) -> id /* (NSStatusBar *) */ {
+        msg_send![self, statusBar]
+    }
+
     unsafe fn button(self) -> id /* (NSStatusBarButton *) */ {
         msg_send![self, button]
     }
-}
 
-pub const NSVariableStatusItemLength: CGFloat = -1.0;
-pub const NSSquareStatusItemLength: CGFloat = -2.0;
+    unsafe fn menu(self) -> id {
+        msg_send![self, menu]
+    }
+
+    unsafe fn setMenu_(self, menu: id) {
+        msg_send![self, setMenu:menu]
+    }
+
+    unsafe fn length(self) -> CGFloat {
+        msg_send![self, length]
+    }
+
+    unsafe fn setLength(self, length: CGFloat) {
+        msg_send![self, setLength: length]
+    }
+}
 
 pub trait NSStatusBar {
     unsafe fn systemStatusBar(_: Self) -> id {

@@ -2340,7 +2340,7 @@ pub trait NSStatusItem {
     unsafe fn menu(self) -> id;
     unsafe fn setMenu_(self, menu: id);
     unsafe fn length(self) -> CGFloat;
-    unsafe fn setLength(self, length: CGFloat);
+    unsafe fn setLength_(self, length: CGFloat);
 }
 
 impl NSStatusItem for id {
@@ -2364,7 +2364,7 @@ impl NSStatusItem for id {
         msg_send![self, length]
     }
 
-    unsafe fn setLength(self, length: CGFloat) {
+    unsafe fn setLength_(self, length: CGFloat) {
         msg_send![self, setLength: length]
     }
 }

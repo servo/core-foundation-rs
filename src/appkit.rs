@@ -2307,20 +2307,6 @@ impl NSScreen for id {
     }
 }
 
-pub trait NSImage {
-    unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSImage"), alloc]
-    }
-
-    unsafe fn initByReferencingFile_(self, file_path: id /* (NSString *) */) -> id;
-}
-
-impl NSImage for id {
-    unsafe fn initByReferencingFile_(self, file_path: id /* (NSString *) */) -> id {
-        msg_send![self, initByReferencingFile:file_path]
-    }
-}
-
 pub trait NSButton {
      unsafe fn setImage_(self, img: id /* (NSImage *) */);
 }
@@ -2328,6 +2314,35 @@ pub trait NSButton {
 impl NSButton for id {
     unsafe fn setImage_(self, img: id /* (NSImage *) */) {
         msg_send![self, setImage:img]
+    }
+}
+
+pub trait NSImage {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class("NSImage"), alloc]
+    }
+
+    unsafe fn initByReferencingFile_(self, file_name: id /* (NSString *) */) -> id;
+    unsafe fn initWithContentsOfFile_(self, file_name: id /* (NSString *) */) -> id;
+    unsafe fn name(self) -> id /* (NSString *) */;
+    unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL;
+}
+
+impl NSImage for id {
+    unsafe fn initByReferencingFile_(self, file_name: id /* (NSString *) */) -> id {
+        msg_send![self, initByReferencingFile:file_name]
+    }
+
+    unsafe fn initWithContentsOfFile_(self, file_name: id /* (NSString *) */) -> id {
+        msg_send![self, initWithContentsOfFile:file_name]
+    }
+
+    unsafe fn name(self) -> id /* (NSString *) */ {
+        msg_send![self, name]
+    }
+
+    unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL {
+        msg_send![self, setName:name]
     }
 }
 

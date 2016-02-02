@@ -13,7 +13,7 @@ gleam = "0.2"
 euclid = "0.4"
 
 [target.x86_64-apple-darwin.dependencies]
-core-foundation = "*"
+core-foundation = "0.2"
 cgl = "0.1.4"
 leaky-cow = "0.1.1"
 

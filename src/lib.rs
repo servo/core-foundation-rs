@@ -17,6 +17,7 @@ extern crate core_foundation;
 extern crate euclid;
 extern crate cgl;
 extern crate gleam;
+extern crate leaky_cow;
 
 // Rust bindings to the IOSurface framework on Mac OS X.
 
@@ -24,11 +25,13 @@ use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFStringRef;
 use euclid::size::Size2D;
-use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D};
+use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString};
 use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 use libc::{c_int, c_void, size_t};
+use leaky_cow::LeakyCow;
 use std::mem;
 use std::slice;
+use std::ffi::CStr;
 
 
 //static kIOSurfaceLockReadOnly: u32 = 0x1;
@@ -135,7 +138,13 @@ impl IOSurface {
                                                   mem::transmute(self.as_concrete_TypeRef()),
                                                   0);
 
-            assert_eq!(gl_error, kCGLNoError);
+            if gl_error != kCGLNoError {
+                let error_msg = CStr::from_ptr(CGLErrorString(gl_error));
+                let error_msg = error_msg.to_string_lossy();
+                // This will only actually leak memory if error_msg is a `Cow::Owned`, which
+                // will only happen if the platform gives us invalid unicode.
+                panic!(error_msg.leak());
+            }
         }
     }
 

@@ -67,6 +67,7 @@ pub unsafe fn NSApp() -> id {
 #[repr(i64)]
 pub enum NSApplicationActivationPolicy {
     NSApplicationActivationPolicyRegular = 0,
+    NSApplicationActivationPolicyAccessory = 1,
     NSApplicationActivationPolicyERROR = -1
 }
 
@@ -294,7 +295,7 @@ impl NSApplication for id {
     }
 }
 
-pub trait NSRunningApplication { 
+pub trait NSRunningApplication {
     unsafe fn currentApplication(_: Self) -> id {
         msg_send![class("NSRunningApplication"), currentApplication]
     }
@@ -1312,7 +1313,7 @@ pub trait NSOpenGLPixelFormat {
         msg_send![class("NSOpenGLPixelFormat"), alloc]
     }
 
-    // Creating an NSOpenGLPixelFormat Object 
+    // Creating an NSOpenGLPixelFormat Object
 
     unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id;
 
@@ -1324,7 +1325,7 @@ pub trait NSOpenGLPixelFormat {
 }
 
 impl NSOpenGLPixelFormat for id {
-    // Creating an NSOpenGLPixelFormat Object 
+    // Creating an NSOpenGLPixelFormat Object
 
     unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id {
         msg_send![self, initWithAttributes:attributes]
@@ -2303,5 +2304,106 @@ impl NSScreen for id {
 
     unsafe fn convertRectToBacking_(self, aRect: NSRect) -> NSRect {
         msg_send![self, convertRectToBacking:aRect]
+    }
+}
+
+pub trait NSButton {
+     unsafe fn setImage_(self, img: id /* (NSImage *) */);
+}
+
+impl NSButton for id {
+    unsafe fn setImage_(self, img: id /* (NSImage *) */) {
+        msg_send![self, setImage:img]
+    }
+}
+
+pub trait NSImage {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class("NSImage"), alloc]
+    }
+
+    unsafe fn initByReferencingFile_(self, file_name: id /* (NSString *) */) -> id;
+    unsafe fn initWithContentsOfFile_(self, file_name: id /* (NSString *) */) -> id;
+    unsafe fn name(self) -> id /* (NSString *) */;
+    unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL;
+}
+
+impl NSImage for id {
+    unsafe fn initByReferencingFile_(self, file_name: id /* (NSString *) */) -> id {
+        msg_send![self, initByReferencingFile:file_name]
+    }
+
+    unsafe fn initWithContentsOfFile_(self, file_name: id /* (NSString *) */) -> id {
+        msg_send![self, initWithContentsOfFile:file_name]
+    }
+
+    unsafe fn name(self) -> id /* (NSString *) */ {
+        msg_send![self, name]
+    }
+
+    unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL {
+        msg_send![self, setName:name]
+    }
+}
+
+pub const NSVariableStatusItemLength: CGFloat = -1.0;
+pub const NSSquareStatusItemLength: CGFloat = -2.0;
+
+pub trait NSStatusItem {
+    unsafe fn statusBar(self) -> id /* (NSStatusBar *) */;
+    unsafe fn button(self) -> id /* (NSStatusBarButton *) */;
+    unsafe fn menu(self) -> id;
+    unsafe fn setMenu_(self, menu: id);
+    unsafe fn length(self) -> CGFloat;
+    unsafe fn setLength_(self, length: CGFloat);
+}
+
+impl NSStatusItem for id {
+    unsafe fn statusBar(self) -> id /* (NSStatusBar *) */ {
+        msg_send![self, statusBar]
+    }
+
+    unsafe fn button(self) -> id /* (NSStatusBarButton *) */ {
+        msg_send![self, button]
+    }
+
+    unsafe fn menu(self) -> id {
+        msg_send![self, menu]
+    }
+
+    unsafe fn setMenu_(self, menu: id) {
+        msg_send![self, setMenu:menu]
+    }
+
+    unsafe fn length(self) -> CGFloat {
+        msg_send![self, length]
+    }
+
+    unsafe fn setLength_(self, length: CGFloat) {
+        msg_send![self, setLength: length]
+    }
+}
+
+pub trait NSStatusBar {
+    unsafe fn systemStatusBar(_: Self) -> id {
+        msg_send![class("NSStatusBar"), systemStatusBar]
+    }
+
+    unsafe fn statusItemWithLength_(self, length: CGFloat) -> id /* (NSStatusItem *) */;
+    unsafe fn removeStatusItem_(self, item: id /* (NSStatusItem *) */);
+    unsafe fn isVertical(self) -> BOOL;
+}
+
+impl NSStatusBar for id {
+    unsafe fn statusItemWithLength_(self, length: CGFloat) -> id /* (NSStatusItem *) */ {
+        msg_send![self, statusItemWithLength:length]
+    }
+
+    unsafe fn removeStatusItem_(self, item: id /* (NSStatusItem *) */) {
+        msg_send![self, removeStatusItem:item]
+    }
+
+    unsafe fn isVertical(self) -> BOOL {
+        msg_send![self, isVertical]
     }
 }

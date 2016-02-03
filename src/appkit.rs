@@ -223,6 +223,18 @@ pub enum NSOpenGLContextParameter {
     NSOpenGLCPMPSwapsInFlight       = 315,
 }
 
+#[repr(u64)]
+#[derive(Copy, Clone, PartialEq)]
+pub enum NSWindowButton {
+    NSWindowCloseButton            = 0,
+    NSWindowMiniaturizeButton      = 1,
+    NSWindowZoomButton             = 2,
+    NSWindowToolbarButton          = 3,
+    NSWindowDocumentIconButton     = 4,
+    NSWindowDocumentVersionsButton = 6,
+    NSWindowFullScreenButton       = 7,
+}
+
 pub static NSMainMenuWindowLevel: libc::int32_t = 24;
 
 pub trait NSApplication {
@@ -529,7 +541,10 @@ pub trait NSWindow {
     // TODO: Managing Field Editors
     // TODO: Managing the Window Menu
     // TODO: Managing Cursor Rectangles
-    // TODO: Managing Title Bars
+
+    // Managing Title Bars
+    unsafe fn standardWindowButton_(self, windowButtonKind: NSWindowButton) -> id;
+
     // TODO: Managing Tooltips
     // TODO: Handling Events
 
@@ -1016,7 +1031,13 @@ impl NSWindow for id {
     // TODO: Managing Field Editors
     // TODO: Managing the Window Menu
     // TODO: Managing Cursor Rectangles
-    // TODO: Managing Title Bars
+
+    // Managing Title Bars
+
+    unsafe fn standardWindowButton_(self, windowButtonKind: NSWindowButton) -> id {
+        msg_send![self, standardWindowButton:windowButtonKind]
+    }
+
     // TODO: Managing Tooltips
     // TODO: Handling Events
 
@@ -1243,6 +1264,7 @@ pub trait NSView {
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint;
     unsafe fn addSubview_(self, view: id);
     unsafe fn superview(self) -> id;
+    unsafe fn removeFromSuperview(self);
 }
 
 impl NSView for id {
@@ -1280,6 +1302,10 @@ impl NSView for id {
 
     unsafe fn superview(self) -> id {
         msg_send![self, superview]
+    }
+
+    unsafe fn removeFromSuperview(self) {
+        msg_send![self, removeFromSuperview]
     }
 }
 

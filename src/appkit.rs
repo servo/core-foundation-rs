@@ -1242,6 +1242,7 @@ pub trait NSView {
     unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: BOOL);
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint;
     unsafe fn addSubview_(self, view: id);
+    unsafe fn superview(self) -> id;
 }
 
 impl NSView for id {
@@ -1277,6 +1278,9 @@ impl NSView for id {
         msg_send![self, addSubview:view]
     }
 
+    unsafe fn superview(self) -> id {
+        msg_send![self, superview]
+    }
 }
 
 pub trait NSOpenGLView {

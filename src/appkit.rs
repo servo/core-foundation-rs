@@ -1523,6 +1523,7 @@ bitflags! {
     }
 }
 
+#[derive(Debug)]
 #[repr(u64)] // NSUInteger
 pub enum NSEventType {
     NSLeftMouseDown         = 1,
@@ -1554,6 +1555,7 @@ pub enum NSEventType {
     NSEventTypeRotate       = 18,
     NSEventTypeBeginGesture = 19,
     NSEventTypeEndGesture   = 20,
+    NSEventTypePressure     = 34,
 }
 
 bitflags! {
@@ -1586,6 +1588,7 @@ bitflags! {
         const NSEventMaskRotate           = 1 << NSEventTypeRotate as libc::c_ulonglong,
         const NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as libc::c_ulonglong,
         const NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as libc::c_ulonglong,
+        const NSEventMaskPressure         = 1 << NSEventTypePressure as libc::c_ulonglong,
         const NSAnyEventMask              = 0xffffffff,
     }
 }
@@ -1793,6 +1796,7 @@ pub trait NSEvent {
     unsafe fn buttonNumber(self) -> NSInteger;
     unsafe fn clickCount(self) -> NSInteger;
     unsafe fn pressure(self) -> libc::c_float;
+    unsafe fn stage(self) -> NSInteger;
     unsafe fn setMouseCoalescingEnabled_(_: Self, flag: BOOL);
     unsafe fn isMouseCoalescingEnabled(_: Self) -> BOOL;
 
@@ -2056,6 +2060,10 @@ impl NSEvent for id {
 
     unsafe fn pressure(self) -> libc::c_float {
         msg_send![self, pressure]
+    }
+
+    unsafe fn stage(self) -> NSInteger{
+        msg_send![self, stage]
     }
 
     unsafe fn setMouseCoalescingEnabled_(_: Self, flag: BOOL) {

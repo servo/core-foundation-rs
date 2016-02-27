@@ -1265,6 +1265,11 @@ pub trait NSView {
     unsafe fn addSubview_(self, view: id);
     unsafe fn superview(self) -> id;
     unsafe fn removeFromSuperview(self);
+    
+    unsafe fn wantsLayer(self) -> BOOL;
+    unsafe fn setWantsLayer(self, wantsLayer: BOOL);
+    unsafe fn layer(self) -> id;
+    unsafe fn setLayer(self, layer: id);
 }
 
 impl NSView for id {
@@ -1306,6 +1311,22 @@ impl NSView for id {
 
     unsafe fn removeFromSuperview(self) {
         msg_send![self, removeFromSuperview]
+    }
+
+    unsafe fn wantsLayer(self) -> BOOL {
+        msg_send![self, wantsLayer]
+    }
+
+    unsafe fn setWantsLayer(self, wantsLayer: BOOL) {
+        msg_send![self, setWantsLayer:wantsLayer]
+    }
+
+    unsafe fn layer(self) -> id {
+        msg_send![self, layer]
+    }
+
+    unsafe fn setLayer(self, layer: id) {
+        msg_send![self, setLayer:layer]
     }
 }
 

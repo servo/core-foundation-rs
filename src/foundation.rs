@@ -89,6 +89,22 @@ impl NSRect {
     }
 }
 
+#[repr(C)]
+pub struct NSRange {
+    pub location: NSUInteger,
+    pub length: NSUInteger,
+}
+
+impl NSRange {
+    #[inline]
+    pub fn new(location: NSUInteger, length: NSUInteger) -> NSRange {
+        NSRange {
+            location: location,
+            length: length
+        }
+    }
+}
+
 unsafe impl objc::Encode for NSRect {
     fn encode() -> objc::Encoding {
         let encoding = format!("{{CGRect={}{}}}",

@@ -7,6 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use std::ptr;
 use base::{id, class, BOOL, nil};
 use libc;
 use objc;
@@ -255,4 +256,77 @@ pub trait NSDate {
 
 impl NSDate for id {
 
+}
+
+#[repr(C)]
+struct NSFastEnumerationState {
+    pub state: libc::c_ulong,
+    pub items_ptr: *mut id,
+    pub mutations_ptr: *mut libc::c_ulong,
+    pub extra: [libc::c_ulong; 5]
+}
+
+const NS_FAST_ENUM_BUF_SIZE: usize = 16;
+
+pub struct NSFastIterator {
+    state: NSFastEnumerationState,
+    buffer: [id; NS_FAST_ENUM_BUF_SIZE],
+    mut_val: Option<libc::c_ulong>,
+    len: usize,
+    idx: usize,
+    object: id
+}
+
+impl Iterator for NSFastIterator {
+    type Item = id;
+
+    fn next(&mut self) -> Option<id> {
+        if self.idx >= self.len {
+            self.len = unsafe {
+                msg_send![self.object, countByEnumeratingWithState:&mut self.state objects:self.buffer.as_mut_ptr() count:NS_FAST_ENUM_BUF_SIZE]
+            };
+            self.idx = 0;
+        }
+
+        let new_mut = unsafe {
+            *self.state.mutations_ptr
+        };
+
+        if let Some(old_mut) = self.mut_val {
+            assert!(old_mut == new_mut, "The collection was mutated while being enumerated");
+        }
+
+        if self.idx < self.len {
+            let object = unsafe {
+                *self.state.items_ptr.offset(self.idx as isize)
+            };        
+            self.mut_val = Some(new_mut);
+            self.idx += 1;
+            Some(object)
+        } else {
+            None
+        }
+    }
+}
+
+pub trait NSFastEnumeration {
+    unsafe fn iter(self) -> NSFastIterator;
+}
+
+impl NSFastEnumeration for id {
+    unsafe fn iter(self) -> NSFastIterator {
+        NSFastIterator {
+            state: NSFastEnumerationState {
+                state: 0,
+                items_ptr: ptr::null_mut(),
+                mutations_ptr: ptr::null_mut(),
+                extra: [0; 5]
+            },
+            buffer: [nil; NS_FAST_ENUM_BUF_SIZE],
+            mut_val: None,
+            len: 0,
+            idx: 0,
+            object: self
+        }
+    }
 }

@@ -1,3 +1,5 @@
+#[macro_use]
+extern crate objc;
 extern crate cocoa;
 
 #[cfg(test)]
@@ -53,6 +55,46 @@ mod foundation {
                 let bytes = append_string.UTF8String() as *const u8;
                 let objc_string = str::from_utf8(slice::from_raw_parts(bytes, append_string.len())).unwrap();
                 assert!(objc_string == expected);
+            }
+        }
+    }
+
+    mod nsfastenumeration {
+        use std::str;
+        use std::slice;
+        use cocoa::foundation::{NSString, NSFastEnumeration};
+        use cocoa::base::{id, nil};
+
+        #[test]
+        fn test_iter() {
+            unsafe {
+                let string = NSString::alloc(nil).init_str("this is a test string");
+                let separator = NSString::alloc(nil).init_str(" ");
+                let components: id = msg_send![string, componentsSeparatedByString:separator];
+
+                let combined = components.iter()
+                    .map(|s| {
+                        let bytes = s.UTF8String() as *const u8;
+                        str::from_utf8(slice::from_raw_parts(bytes, s.len())).unwrap()
+                    })
+                .fold(String::new(), |mut acc, s| { acc.push_str(s); acc });
+
+                assert_eq!(combined, "thisisateststring");
+            }
+        }
+
+        #[test]
+        #[should_panic]
+        fn test_mutation() {
+            unsafe {
+                let string = NSString::alloc(nil).init_str("this is a test string");
+                let separator = NSString::alloc(nil).init_str(" ");
+                let components: id = msg_send![string, componentsSeparatedByString:separator];
+                let mut_components: id = msg_send![components, mutableCopy];
+                let mut iter = mut_components.iter();
+                iter.next();
+                msg_send![mut_components, removeObjectAtIndex:1];
+                iter.next();
             }
         }
     }

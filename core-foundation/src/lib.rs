@@ -54,6 +54,7 @@ pub mod boolean;
 pub mod data;
 pub use core_foundation_sys::date; // back compat
 pub mod dictionary;
+pub mod error;
 pub mod number;
 pub mod set;
 pub mod string;

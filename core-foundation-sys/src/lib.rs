@@ -16,6 +16,7 @@ pub mod bundle;
 pub mod data;
 pub mod date;
 pub mod dictionary;
+pub mod error;
 pub mod number;
 pub mod runloop;
 pub mod set;

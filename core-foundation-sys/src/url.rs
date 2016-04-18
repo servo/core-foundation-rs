@@ -12,7 +12,7 @@ use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID};
 use string::CFStringRef;
 
 #[repr(C)]
-struct __CFURL(c_void);
+pub struct __CFURL(c_void);
 
 pub type CFURLRef = *const __CFURL;
 

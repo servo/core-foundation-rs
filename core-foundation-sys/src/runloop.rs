@@ -15,17 +15,17 @@ use date::{CFAbsoluteTime, CFTimeInterval};
 use string::CFStringRef;
 
 #[repr(C)]
-struct __CFRunLoop(c_void);
+pub struct __CFRunLoop(c_void);
 
 pub type CFRunLoopRef = *const __CFRunLoop;
 
 #[repr(C)]
-struct __CFRunLoopSource(c_void);
+pub struct __CFRunLoopSource(c_void);
 
 pub type CFRunLoopSourceRef = *const __CFRunLoopSource;
 
 #[repr(C)]
-struct __CFRunLoopObserver(c_void);
+pub struct __CFRunLoopObserver(c_void);
 
 pub type CFRunLoopObserverRef = *const __CFRunLoopObserver;
 
@@ -97,7 +97,7 @@ pub struct CFRunLoopTimerContext {
 pub type CFRunLoopTimerCallBack = extern "C" fn (timer: CFRunLoopTimerRef, info: *mut c_void);
 
 #[repr(C)]
-struct __CFRunLoopTimer;
+pub struct __CFRunLoopTimer;
 
 pub type CFRunLoopTimerRef = *const __CFRunLoopTimer;
 

@@ -13,7 +13,7 @@ use base::{CFTypeID, CFIndex};
 use string::CFStringRef;
 
 #[repr(C)]
-struct __CFError(c_void);
+pub struct __CFError(c_void);
 
 pub type CFErrorRef = *mut __CFError;
 

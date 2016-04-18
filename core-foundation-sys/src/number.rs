@@ -12,7 +12,7 @@ use libc::c_void;
 use base::{CFAllocatorRef, CFTypeID};
 
 #[repr(C)]
-struct __CFBoolean(c_void);
+pub struct __CFBoolean(c_void);
 
 pub type CFBooleanRef = *const __CFBoolean;
 
@@ -38,7 +38,7 @@ pub static kCFNumberFloat64Type:   CFNumberType = 6;
 // static kCFNumberMaxType:       CFNumberType = 16;
 
 #[repr(C)]
-struct __CFNumber;
+pub struct __CFNumber;
 
 pub type CFNumberRef = *const __CFNumber;
 

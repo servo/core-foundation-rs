@@ -42,7 +42,7 @@ pub struct CFDictionaryValueCallBacks {
 }
 
 #[repr(C)]
-struct __CFDictionary(c_void);
+pub struct __CFDictionary(c_void);
 
 pub type CFDictionaryRef = *const __CFDictionary;
 

@@ -188,7 +188,7 @@ pub type CFStringEncodings = CFIndex;
 //static kCFStringEncodingShiftJIS_X0213_00: CFStringEncoding = 0x0628; /* Deprecated */
 
 #[repr(C)]
-struct __CFString(c_void);
+pub struct __CFString(c_void);
 
 pub type CFStringRef = *const __CFString;
 

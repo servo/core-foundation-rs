@@ -34,7 +34,7 @@ pub struct CFArrayCallBacks {
 }
 
 #[repr(C)]
-struct __CFArray(c_void);
+pub struct __CFArray(c_void);
 
 pub type CFArrayRef = *const __CFArray;
 

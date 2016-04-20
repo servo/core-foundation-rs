@@ -29,7 +29,7 @@ pub struct CFSetCallBacks {
 }
 
 #[repr(C)]
-struct __CFSet(c_void);
+pub struct __CFSet(c_void);
 
 pub type CFSetRef = *const __CFSet;
 

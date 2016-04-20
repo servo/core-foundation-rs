@@ -13,7 +13,7 @@ use base::CFTypeID;
 use string::CFStringRef;
 
 #[repr(C)]
-struct __CFBundle(c_void);
+pub struct __CFBundle(c_void);
 
 pub type CFBundleRef = *const __CFBundle;
 

@@ -65,6 +65,7 @@ pub unsafe fn NSApp() -> id {
 }
 
 #[repr(i64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSApplicationActivationPolicy {
     NSApplicationActivationPolicyRegular = 0,
     NSApplicationActivationPolicyAccessory = 1,
@@ -73,12 +74,14 @@ pub enum NSApplicationActivationPolicy {
 }
 
 #[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSApplicationActivationOptions {
     NSApplicationActivateAllWindows = 1 << 0,
     NSApplicationActivateIgnoringOtherApps = 1 << 1
 }
 
 #[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSApplicationTerminateReply {
     NSTerminateCancel = 0,
     NSTerminateNow = 1,
@@ -86,6 +89,7 @@ pub enum NSApplicationTerminateReply {
 }
 
 #[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSWindowMask {
     NSBorderlessWindowMask      = 0,
     NSTitledWindowMask          = 1 << 0,
@@ -103,12 +107,14 @@ pub enum NSWindowMask {
 }
 
 #[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSWindowTitleVisibility {
     NSWindowTitleVisible = 0,
     NSWindowTitleHidden = 1
 }
 
 #[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSBackingStoreType {
     NSBackingStoreRetained      = 0,
     NSBackingStoreNonretained   = 1,
@@ -160,6 +166,7 @@ bitflags! {
 }
 
 #[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSOpenGLPixelFormatAttribute {
     NSOpenGLPFAAllRenderers             = 1,
     NSOpenGLPFATripleBuffer             = 3,
@@ -204,6 +211,7 @@ pub enum NSOpenGLPixelFormatAttribute {
 
 #[repr(u64)]
 #[allow(non_camel_case_types)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSOpenGLPFAOpenGLProfiles {
     NSOpenGLProfileVersionLegacy = 0x1000,
     NSOpenGLProfileVersion3_2Core = 0x3200,
@@ -211,6 +219,7 @@ pub enum NSOpenGLPFAOpenGLProfiles {
 }
 
 #[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSOpenGLContextParameter {
     NSOpenGLCPSwapInterval          = 222,
     NSOpenGLCPSurfaceOrder          = 235,
@@ -225,7 +234,7 @@ pub enum NSOpenGLContextParameter {
 }
 
 #[repr(u64)]
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSWindowButton {
     NSWindowCloseButton            = 0,
     NSWindowMiniaturizeButton      = 1,
@@ -1545,7 +1554,7 @@ bitflags! {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u64)] // NSUInteger
 pub enum NSEventType {
     NSLeftMouseDown         = 1,

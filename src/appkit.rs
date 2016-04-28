@@ -68,6 +68,7 @@ pub unsafe fn NSApp() -> id {
 pub enum NSApplicationActivationPolicy {
     NSApplicationActivationPolicyRegular = 0,
     NSApplicationActivationPolicyAccessory = 1,
+    NSApplicationActivationPolicyProhibited = 2,
     NSApplicationActivationPolicyERROR = -1
 }
 

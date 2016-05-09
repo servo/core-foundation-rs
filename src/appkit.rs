@@ -1275,6 +1275,7 @@ pub trait NSView {
     unsafe fn addSubview_(self, view: id);
     unsafe fn superview(self) -> id;
     unsafe fn removeFromSuperview(self);
+    unsafe fn setAutoresizingMask_(self, autoresizingMask: NSAutoresizingMaskOptions);
     
     unsafe fn wantsLayer(self) -> BOOL;
     unsafe fn setWantsLayer(self, wantsLayer: BOOL);
@@ -1323,6 +1324,10 @@ impl NSView for id {
         msg_send![self, removeFromSuperview]
     }
 
+    unsafe fn setAutoresizingMask_(self, autoresizingMask: NSAutoresizingMaskOptions) {
+        msg_send![self, setAutoresizingMask:autoresizingMask]
+    }
+
     unsafe fn wantsLayer(self) -> BOOL {
         msg_send![self, wantsLayer]
     }
@@ -1339,6 +1344,16 @@ impl NSView for id {
         msg_send![self, setLayer:layer]
     }
 }
+
+pub type NSAutoresizingMaskOptions = u64;
+
+pub const NSViewNotSizable: u64 = 0;
+pub const NSViewMinXMargin: u64 = 1;
+pub const NSViewWidthSizable: u64 = 2;
+pub const NSViewMaxXMargin: u64 = 4;
+pub const NSViewMinYMargin: u64 = 8;
+pub const NSViewHeightSizable: u64 = 16;
+pub const NSViewMaxYMargin: u64 = 32;
 
 pub trait NSOpenGLView {
     unsafe fn alloc(_: Self) -> id {
@@ -2476,3 +2491,8 @@ impl NSStatusBar for id {
         msg_send![self, isVertical]
     }
 }
+
+extern {
+    pub fn NSRectFill(rect: NSRect);
+}
+

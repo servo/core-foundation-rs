@@ -2491,3 +2491,8 @@ impl NSStatusBar for id {
         msg_send![self, isVertical]
     }
 }
+
+extern {
+    pub fn NSRectFill(rect: NSRect);
+}
+

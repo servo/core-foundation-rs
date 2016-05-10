@@ -8,12 +8,36 @@
 // except according to those terms.
 
 // this file defines CGFloat, as well as stubbed data types.
+extern crate core_foundation;
 
-use libc;
-use base::{CGError, boolean_t};
-use geometry::{CGRect, CGPoint, CGSize};
+pub use libc;
+pub use base::{CGError, boolean_t};
+pub use geometry::{CGRect, CGPoint, CGSize};
 
 pub type CGDirectDisplayID = libc::uint32_t;
+pub type CGWindowID        = libc::uint32_t;
+
+pub const kCGNullWindowID: CGWindowID = 0 as CGWindowID;
+
+
+pub const kCGWindowListOptionAll:          libc::uint32_t        = 0;
+pub const kCGWindowListOptionOnScreenOnly: libc::uint32_t        = 1 << 0;
+pub const kCGWindowListOptionOnScreenAboveWindow: libc::uint32_t = 1 << 1;
+pub const kCGWindowListOptionOnScreenBelowWindow: libc::uint32_t = 1 << 2;
+pub const kCGWindowListOptionIncludingWindow:  libc::uint32_t    = 1 << 3;
+pub const kCGWindowListExcludeDesktopElements: libc::uint32_t    = 1 << 4;
+
+pub enum CGWindowListOption {
+    kCGWindowListOptionAll,
+    kCGWindowListOptionOnScreenOnly,
+    kCGWindowListOptionOnScreenAboveWindow,
+    kCGWindowListOptionOnScreenBelowWindow,
+    kCGWindowListOptionIncludingWindow,
+    kCGWindowListExcludeDesktopElements,
+}
+
+pub use core_foundation::dictionary::{ CFDictionary, CFDictionaryRef };
+pub use core_foundation::array::{ CFArray, CFArrayRef };
 
 #[link(name = "ApplicationServices", kind = "framework")]
 extern {
@@ -49,5 +73,8 @@ extern {
     pub fn CGDisplayMoveCursorToPoint(display: CGDirectDisplayID, point: CGPoint) -> CGError;
     pub fn CGWarpMouseCursorPosition(point: CGPoint) -> CGError;
     pub fn CGAssociateMouseAndMouseCursorPosition(connected: bool) -> CGError;
+
+    // Window Services Reference
+    pub fn CGWindowListCopyWindowInfo(option: CGWindowListOption, relativeToWindow: CGWindowID ) -> CFArrayRef;
 
 }

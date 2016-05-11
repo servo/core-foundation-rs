@@ -266,6 +266,7 @@ pub trait NSApplication {
     unsafe fn sendEvent_(self, an_event: id);
     unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL);
     unsafe fn stop_(self, sender: id);
+    unsafe fn setApplicationIconImage_(self, image: id);
 }
 
 impl NSApplication for id {
@@ -314,6 +315,10 @@ impl NSApplication for id {
 
     unsafe fn stop_(self, sender: id) {
         msg_send![self, stop:sender]
+    }
+
+    unsafe fn setApplicationIconImage_(self, icon: id) {
+        msg_send![self, setApplicationIconImage:icon]
     }
 }
 
@@ -2410,6 +2415,7 @@ pub trait NSImage {
     unsafe fn initWithContentsOfFile_(self, file_name: id /* (NSString *) */) -> id;
     unsafe fn name(self) -> id /* (NSString *) */;
     unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL;
+    unsafe fn isValid(self) -> BOOL;
 }
 
 impl NSImage for id {
@@ -2427,6 +2433,10 @@ impl NSImage for id {
 
     unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL {
         msg_send![self, setName:name]
+    }
+
+    unsafe fn isValid(self) -> BOOL {
+        msg_send![self, isValid]
     }
 }
 

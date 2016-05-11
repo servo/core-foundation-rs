@@ -9,6 +9,7 @@
 
 // this file defines CGFloat, as well as stubbed data types.
 extern crate core_foundation;
+// extern crate core_foundation_sys;
 
 pub use libc;
 pub use base::{CGError, boolean_t};
@@ -20,24 +21,20 @@ pub type CGWindowID        = libc::uint32_t;
 pub const kCGNullWindowID: CGWindowID = 0 as CGWindowID;
 
 
-pub const kCGWindowListOptionAll:          libc::uint32_t        = 0;
-pub const kCGWindowListOptionOnScreenOnly: libc::uint32_t        = 1 << 0;
-pub const kCGWindowListOptionOnScreenAboveWindow: libc::uint32_t = 1 << 1;
-pub const kCGWindowListOptionOnScreenBelowWindow: libc::uint32_t = 1 << 2;
-pub const kCGWindowListOptionIncludingWindow:  libc::uint32_t    = 1 << 3;
-pub const kCGWindowListExcludeDesktopElements: libc::uint32_t    = 1 << 4;
+pub type CGWindowListOption = libc::uint32_t;
 
-pub enum CGWindowListOption {
-    kCGWindowListOptionAll,
-    kCGWindowListOptionOnScreenOnly,
-    kCGWindowListOptionOnScreenAboveWindow,
-    kCGWindowListOptionOnScreenBelowWindow,
-    kCGWindowListOptionIncludingWindow,
-    kCGWindowListExcludeDesktopElements,
-}
+pub const kCGWindowListOptionAll:              CGWindowListOption    = 0;
+pub const kCGWindowListOptionOnScreenOnly:     CGWindowListOption    = 1 << 0;
+pub const kCGWindowListOptionOnScreenAboveWindow: CGWindowListOption = 1 << 1;
+pub const kCGWindowListOptionOnScreenBelowWindow: CGWindowListOption = 1 << 2;
+pub const kCGWindowListOptionIncludingWindow:  CGWindowListOption    = 1 << 3;
+pub const kCGWindowListExcludeDesktopElements: CGWindowListOption    = 1 << 4;
 
-pub use core_foundation::dictionary::{ CFDictionary, CFDictionaryRef };
+
+pub use core_foundation::dictionary::{ CFDictionary, CFDictionaryRef, CFDictionaryGetValueIfPresent };
 pub use core_foundation::array::{ CFArray, CFArrayRef };
+pub use core_foundation::array::{ CFArrayGetCount, CFArrayGetValueAtIndex };
+pub use core_foundation::base::{  CFIndex, CFRelease, CFTypeRef };
 
 #[link(name = "ApplicationServices", kind = "framework")]
 extern {

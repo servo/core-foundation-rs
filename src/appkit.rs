@@ -252,9 +252,11 @@ pub trait NSApplication {
         msg_send![class("NSApplication"), sharedApplication]
     }
 
+    unsafe fn mainMenu(self) -> id;
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL;
     unsafe fn setMainMenu_(self, menu: id);
     unsafe fn setServicesMenu_(self, menu: id);
+    unsafe fn setWindowsMenu_(self, menu: id);
     unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL);
     unsafe fn run(self);
     unsafe fn finishLaunching(self);
@@ -270,6 +272,10 @@ pub trait NSApplication {
 }
 
 impl NSApplication for id {
+    unsafe fn mainMenu(self) -> id {
+        msg_send![self, mainMenu]
+    }
+
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL {
         msg_send![self, setActivationPolicy:policy as NSInteger]
     }
@@ -280,6 +286,10 @@ impl NSApplication for id {
 
     unsafe fn setServicesMenu_(self, menu: id) {
         msg_send![self, setServicesMenu:menu]
+    }
+
+    unsafe fn setWindowsMenu_(self, menu: id) {
+        msg_send![self, setWindowsMenu:menu]
     }
 
     unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL) {
@@ -336,17 +346,27 @@ impl NSRunningApplication for id {
 }
 
 pub trait NSMenu {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class("NSMenu"), alloc]
+    }
+
     unsafe fn new(_: Self) -> id {
         msg_send![class("NSMenu"), new]
     }
 
+    unsafe fn initWithTitle_(self, title: id /* NSString */) -> id;
     unsafe fn setAutoenablesItems(self, state: BOOL);
 
     unsafe fn addItem_(self, menu_item: id);
     unsafe fn addItemWithTitle_action_keyEquivalent(self, title: id, action: SEL, key: id) -> id;
+    unsafe fn itemAtIndex_(self, index: NSInteger) -> id;
 }
 
 impl NSMenu for id {
+    unsafe fn initWithTitle_(self, title: id /* NSString */) -> id {
+        msg_send![self, initWithTitle:title]
+    }
+
     unsafe fn setAutoenablesItems(self, state: BOOL) {
         msg_send![self, setAutoenablesItems: state]
     }
@@ -357,6 +377,10 @@ impl NSMenu for id {
 
     unsafe fn addItemWithTitle_action_keyEquivalent(self, title: id, action: SEL, key: id) -> id {
         msg_send![self, addItemWithTitle:title action:action keyEquivalent:key]
+    }
+
+    unsafe fn itemAtIndex_(self, index: NSInteger) -> id {
+        msg_send![self, itemAtIndex:index]
     }
 }
 

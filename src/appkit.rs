@@ -122,7 +122,7 @@ pub enum NSBackingStoreType {
 }
 
 bitflags! {
-    flags NSWindowOrderingMode: NSInteger {
+    pub flags NSWindowOrderingMode: NSInteger {
         const NSWindowAbove =  1,
         const NSWindowBelow = -1,
         const NSWindowOut   =  0,
@@ -130,7 +130,7 @@ bitflags! {
 }
 
 bitflags! {
-    flags NSAlignmentOptions: libc::c_ulonglong {
+    pub flags NSAlignmentOptions: libc::c_ulonglong {
         const NSAlignMinXInward         = 1 << 0,
         const NSAlignMinYInward         = 1 << 1,
         const NSAlignMaxXInward         = 1 << 2,
@@ -390,7 +390,7 @@ impl NSMenuItem for id {
 pub type NSWindowDepth = libc::c_int;
 
 bitflags! {
-    flags NSWindowCollectionBehavior: NSUInteger {
+    pub flags NSWindowCollectionBehavior: NSUInteger {
         const NSWindowCollectionBehaviorDefault = 0,
         const NSWindowCollectionBehaviorCanJoinAllSpaces = 1 << 0,
         const NSWindowCollectionBehaviorMoveToActiveSpace = 1 << 1,
@@ -408,7 +408,7 @@ bitflags! {
 }
 
 bitflags! {
-    flags NSWindowOcclusionState: NSUInteger {
+    pub flags NSWindowOcclusionState: NSUInteger {
         const NSWindowOcclusionStateVisible = 1 << 1
     }
 }
@@ -1515,7 +1515,7 @@ impl NSOpenGLContext for id {
 }
 
 bitflags! {
-    flags NSEventSwipeTrackingOptions: NSUInteger {
+    pub flags NSEventSwipeTrackingOptions: NSUInteger {
         const NSEventSwipeTrackingLockDirection         = 0x1 << 0,
         const NSEventSwipeTrackingClampGestureAmount    = 0x1 << 1,
     }
@@ -1529,7 +1529,7 @@ pub enum NSEventGestureAxis {
 }
 
 bitflags! {
-    flags NSEventPhase: NSUInteger {
+    pub flags NSEventPhase: NSUInteger {
        const NSEventPhaseNone        = 0,
        const NSEventPhaseBegan       = 0x1 << 0,
        const NSEventPhaseStationary  = 0x1 << 1,
@@ -1541,7 +1541,7 @@ bitflags! {
 }
 
 bitflags! {
-    flags NSTouchPhase: NSUInteger {
+    pub flags NSTouchPhase: NSUInteger {
         const NSTouchPhaseBegan         = 1 << 0,
         const NSTouchPhaseMoved         = 1 << 1,
         const NSTouchPhaseStationary    = 1 << 2,
@@ -1590,7 +1590,7 @@ pub enum NSEventType {
 }
 
 bitflags! {
-    flags NSEventMask: libc::c_ulonglong {
+    pub flags NSEventMask: libc::c_ulonglong {
         const NSLeftMouseDownMask         = 1 << NSLeftMouseDown as libc::c_ulonglong,
         const NSLeftMouseUpMask           = 1 << NSLeftMouseUp as libc::c_ulonglong,
         const NSRightMouseDownMask        = 1 << NSRightMouseDown as libc::c_ulonglong,
@@ -1631,7 +1631,7 @@ impl NSEventMask {
 }
 
 bitflags! {
-    flags NSEventModifierFlags: NSUInteger {
+    pub flags NSEventModifierFlags: NSUInteger {
         const NSAlphaShiftKeyMask                     = 1 << 16,
         const NSShiftKeyMask                          = 1 << 17,
         const NSControlKeyMask                        = 1 << 18,

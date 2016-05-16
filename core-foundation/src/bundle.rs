@@ -13,6 +13,7 @@ pub use core_foundation_sys::bundle::*;
 use core_foundation_sys::base::CFRelease;
 
 use base::{TCFType};
+use dictionary::CFDictionary;
 
 /// A Bundle type.
 pub struct CFBundle(CFBundleRef);
@@ -25,4 +26,21 @@ impl Drop for CFBundle {
     }
 }
 
+impl CFBundle {
+    pub fn main_bundle() -> CFBundle {
+        unsafe {
+            let bundle_ref = CFBundleGetMainBundle();
+            TCFType::wrap_under_get_rule(bundle_ref)
+        }
+    }
+
+    pub fn info_dictionary(&self) -> CFDictionary {
+        unsafe {
+            let info_dictionary = CFBundleGetInfoDictionary(self.0);
+            TCFType::wrap_under_get_rule(info_dictionary)
+        }
+    }
+}
+
 impl_TCFType!(CFBundle, CFBundleRef, CFBundleGetTypeID);
+

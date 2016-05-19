@@ -254,6 +254,12 @@ impl CTFont {
         }
     }
 
+    pub fn units_per_em(&self) -> libc::c_uint {
+        unsafe {
+            CTFontGetUnitsPerEm(self.obj)
+        }
+    }
+
     pub fn x_height(&self) -> CGFloat {
         unsafe {
             CTFontGetXHeight(self.obj)
@@ -457,7 +463,7 @@ extern {
     fn CTFontGetAscent(font: CTFontRef) -> CGFloat;
     fn CTFontGetDescent(font: CTFontRef) -> CGFloat;
     fn CTFontGetLeading(font: CTFontRef) -> CGFloat;
-    //fn CTFontGetUnitsPerEm(font: CTFontRef) -> libc::c_uint;
+    fn CTFontGetUnitsPerEm(font: CTFontRef) -> libc::c_uint;
     //fn CTFontGetGlyphCount
     fn CTFontGetBoundingBox(font: CTFontRef) -> CGRect;
     fn CTFontGetUnderlinePosition(font: CTFontRef) -> CGFloat;

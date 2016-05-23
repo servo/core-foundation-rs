@@ -16,7 +16,7 @@ use std::mem;
 use base::{TCFType};
 
 /// An immutable numeric value.
-pub struct CFNumber(CFNumberRef);
+pub struct CFNumber(pub CFNumberRef);
 
 impl Drop for CFNumber {
     fn drop(&mut self) {
@@ -39,7 +39,20 @@ impl CFNumber {
             TCFType::wrap_under_create_rule(number_ref)
         }
     }
-
+    #[inline]
+    pub unsafe fn to_isize(&self, kcf_number_type: CFNumberType) -> Option<isize> {
+        let mut value: isize = 0;
+        let ok = CFNumberGetValue(self.0, kcf_number_type, mem::transmute(&mut value));
+        if ok { Some(value) } else { None }
+    }
+    #[inline]
+    pub fn to_i32(&self) -> Option<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let ok = CFNumberGetValue(self.0, kCFNumberSInt32Type, mem::transmute(&mut value));
+            if ok { Some(value) } else { None }
+        }
+    }
     #[inline]
     pub fn to_i64(&self) -> Option<i64> {
         unsafe {
@@ -48,7 +61,14 @@ impl CFNumber {
             if ok { Some(value) } else { None }
         }
     }
-
+    #[inline]
+    pub fn to_f32(&self) -> Option<f32> {
+        unsafe {
+            let mut value: f32 = 0.0;
+            let ok = CFNumberGetValue(self.0, kCFNumberFloatType, mem::transmute(&mut value));
+            if ok { Some(value) } else { None }
+        }
+    }
     #[inline]
     pub fn to_f64(&self) -> Option<f64> {
         unsafe {

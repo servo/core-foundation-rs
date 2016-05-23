@@ -18,7 +18,7 @@ use std::mem;
 use base::{CFIndexConvertible, TCFType};
 
 /// A heterogeneous immutable array.
-pub struct CFArray(CFArrayRef);
+pub struct CFArray(pub CFArrayRef);
 
 impl Drop for CFArray {
     fn drop(&mut self) {

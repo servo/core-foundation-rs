@@ -19,7 +19,7 @@ use std::ptr;
 use base::{CFType, CFIndexConvertible, TCFType};
 
 /// An immutable dictionary of key-value pairs.
-pub struct CFDictionary(CFDictionaryRef);
+pub struct CFDictionary(pub CFDictionaryRef);
 
 impl Drop for CFDictionary {
     fn drop(&mut self) {
@@ -89,7 +89,14 @@ impl CFDictionary {
         }
         value.unwrap()
     }
-
+    pub fn kvs(&self) -> (*const c_void, *const c_void) {
+        unsafe {
+            let mut values: *const c_void = ptr::null();
+            let mut keys:   *const c_void = ptr::null();
+            CFDictionaryGetKeysAndValues(self.0, &mut keys, &mut values);
+            (keys, values)
+        }
+    }
     /// A convenience function to retrieve `CFType` instances.
     #[inline]
     pub unsafe fn get_CFType(&self, key: *const c_void) -> CFType {

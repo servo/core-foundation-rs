@@ -63,4 +63,5 @@ extern {
     pub fn CFDictionaryGetTypeID() -> CFTypeID;
     pub fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *const c_void, value: *mut *const c_void)
                                          -> Boolean;
+    pub fn CFDictionaryGetKeysAndValues(theDict: CFDictionaryRef, keys: *mut *const c_void, values: *mut *const c_void) ;
 }

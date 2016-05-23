@@ -21,7 +21,7 @@ use std::ptr;
 use std::ffi::CStr;
 
 /// An immutable string in one of a variety of encodings.
-pub struct CFString(CFStringRef);
+pub struct CFString(pub CFStringRef);
 
 impl Clone for CFString {
     #[inline]

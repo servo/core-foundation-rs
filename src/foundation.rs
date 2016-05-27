@@ -7,8 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use std::mem;
 use std::ptr;
 use base::{id, class, BOOL, nil};
+use core_graphics::base::CGFloat;
+use core_graphics::geometry::CGRect;
 use libc;
 use objc;
 
@@ -25,6 +28,7 @@ pub type NSUInteger = libc::c_ulong;
 const UTF8_ENCODING: usize = 4;
 
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct NSPoint {
     pub x: f64,
     pub y: f64,
@@ -50,6 +54,7 @@ unsafe impl objc::Encode for NSPoint {
 }
 
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct NSSize {
     pub width: f64,
     pub height: f64,
@@ -75,6 +80,7 @@ unsafe impl objc::Encode for NSSize {
 }
 
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct NSRect {
     pub origin: NSPoint,
     pub size: NSSize,
@@ -86,6 +92,20 @@ impl NSRect {
         NSRect {
             origin: origin,
             size: size
+        }
+    }
+
+    #[inline]
+    pub fn as_CGRect(&self) -> &CGRect {
+        unsafe {
+            mem::transmute::<&NSRect, &CGRect>(self)
+        }
+    }
+
+    #[inline]
+    pub fn inset(&self, x: CGFloat, y: CGFloat) -> NSRect {
+        unsafe {
+            NSInsetRect(*self, x, y)
         }
     }
 }
@@ -330,3 +350,9 @@ impl NSFastEnumeration for id {
         }
     }
 }
+
+#[link(name = "Foundation", kind = "framework")]
+extern {
+    fn NSInsetRect(rect: NSRect, x: CGFloat, y: CGFloat) -> NSRect;
+}
+

@@ -18,4 +18,5 @@ pub mod data_provider;
 pub mod display;
 pub mod font;
 pub mod geometry;
+pub mod private;
 

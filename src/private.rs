@@ -37,10 +37,24 @@ impl CGSRegion {
             }
         }
     }
+
+    #[inline]
+    pub fn from_rects(rects: &[CGRect]) -> CGSRegion {
+        unsafe {
+            let mut region = ptr::null_mut();
+            assert!(ffi::CGSNewRegionWithRectList(rects.as_ptr(),
+                                                  rects.len() as c_uint,
+                                                  &mut region) == 0);
+            CGSRegion {
+                region: region,
+            }
+        }
+    }
 }
 
 mod ffi {
     use geometry::CGRect;
+    use libc::c_uint;
 
     // This is an enum so that we can't easily make instances of this opaque type.
     enum CGSRegionObject {}
@@ -53,6 +67,10 @@ mod ffi {
     extern {
         pub fn CGSRegionRelease(region: CGSRegionRef);
         pub fn CGSNewRegionWithRect(rect: *const CGRect, outRegion: *mut CGSRegionRef) -> CGError;
+        pub fn CGSNewRegionWithRectList(rects: *const CGRect,
+                                        rectCount: c_uint,
+                                        outRegion: *mut CGSRegionRef)
+                                        -> CGError;
     }
 }
 

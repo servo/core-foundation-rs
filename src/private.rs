@@ -15,7 +15,7 @@ use geometry::CGRect;
 use std::ptr;
 
 pub struct CGSRegion {
-    region: ffi::CGSRegion,
+    region: ffi::CGSRegionRef,
 }
 
 impl Drop for CGSRegion {
@@ -45,13 +45,14 @@ mod ffi {
     // This is an enum so that we can't easily make instances of this opaque type.
     enum CGSRegionObject {}
 
-    pub type CGSRegion = *mut CGSRegionObject;
+    pub type CGError = OSStatus;
+    pub type CGSRegionRef = *mut CGSRegionObject;
     pub type OSStatus = i32;
 
     #[link(name = "ApplicationServices", kind = "framework")]
     extern {
-        pub fn CGSRegionRelease(region: CGSRegion);
-        pub fn CGSNewRegionWithRect(rect: *const CGRect, region: *mut CGSRegion) -> OSStatus;
+        pub fn CGSRegionRelease(region: CGSRegionRef);
+        pub fn CGSNewRegionWithRect(rect: *const CGRect, outRegion: *mut CGSRegionRef) -> CGError;
     }
 }
 

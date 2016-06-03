@@ -63,5 +63,22 @@ impl CGRect {
             size: *size,
         }
     }
+
+    #[inline]
+    pub fn inset(&self, size: &CGSize) -> CGRect {
+        unsafe {
+            ffi::CGRectInset(*self, size.width, size.height)
+        }
+    }
+}
+
+mod ffi {
+    use base::CGFloat;
+    use geometry::CGRect;
+
+    #[link(name = "ApplicationServices", kind = "framework")]
+    extern {
+        pub fn CGRectInset(rect: CGRect, dx: CGFloat, dy: CGFloat) -> CGRect;
+    }
 }
 

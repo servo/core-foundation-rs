@@ -9,6 +9,11 @@
 
 use base::CGFloat;
 
+pub const CG_ZERO_POINT: CGPoint = CGPoint {
+    x: 0.0,
+    y: 0.0,
+};
+
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct CGSize {

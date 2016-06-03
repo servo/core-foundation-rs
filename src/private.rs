@@ -12,6 +12,7 @@
 //! These are liable to change at any time. Use with caution!
 
 use geometry::CGRect;
+use libc::{c_int, c_uint};
 use std::ptr;
 
 pub struct CGSRegion {
@@ -52,9 +53,42 @@ impl CGSRegion {
     }
 }
 
+/// This should always be memory-safe; the window server rejects any invalid surface IDs.
+pub struct CGSSurface {
+    context_id: c_uint,
+    window_number: c_int,
+    surface_id: c_uint,
+}
+
+impl CGSSurface {
+    #[inline]
+    pub fn from_ids(context_id: c_uint, window_number: c_int, surface_id: c_uint) -> CGSSurface {
+        CGSSurface {
+            context_id: context_id,
+            window_number: window_number,
+            surface_id: surface_id,
+        }
+    }
+
+    #[inline]
+    pub fn id(&self) -> c_uint {
+        self.surface_id
+    }
+
+    #[inline]
+    pub fn set_shape(&self, region: &CGSRegion) {
+        unsafe {
+            assert!(ffi::CGSSetSurfaceShape(self.context_id,
+                                            self.window_number,
+                                            self.surface_id,
+                                            region.region) == 0)
+        }
+    }
+}
+
 mod ffi {
     use geometry::CGRect;
-    use libc::c_uint;
+    use libc::{c_int, c_uint};
 
     // This is an enum so that we can't easily make instances of this opaque type.
     enum CGSRegionObject {}
@@ -71,6 +105,12 @@ mod ffi {
                                         rectCount: c_uint,
                                         outRegion: *mut CGSRegionRef)
                                         -> CGError;
+
+        pub fn CGSSetSurfaceShape(contextID: c_uint,
+                                  windowNumber: c_int,
+                                  surfaceID: c_uint,
+                                  region: CGSRegionRef)
+                                  -> CGError;
     }
 }
 

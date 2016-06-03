@@ -21,11 +21,31 @@ pub struct CGSize {
     pub height: CGFloat,
 }
 
+impl CGSize {
+    #[inline]
+    pub fn new(width: CGFloat, height: CGFloat) -> CGSize {
+        CGSize {
+            width: width,
+            height: height,
+        }
+    }
+}
+
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct CGPoint {
     pub x: CGFloat,
     pub y: CGFloat,
+}
+
+impl CGPoint {
+    #[inline]
+    pub fn new(x: CGFloat, y: CGFloat) -> CGPoint {
+        CGPoint {
+            x: x,
+            y: y,
+        }
+    }
 }
 
 #[repr(C)]
@@ -34,3 +54,14 @@ pub struct CGRect {
     pub origin: CGPoint,
     pub size: CGSize
 }
+
+impl CGRect {
+    #[inline]
+    pub fn new(origin: &CGPoint, size: &CGSize) -> CGRect {
+        CGRect {
+            origin: *origin,
+            size: *size,
+        }
+    }
+}
+

@@ -1664,7 +1664,7 @@ bitflags! {
         const NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as libc::c_ulonglong,
         const NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as libc::c_ulonglong,
         const NSEventMaskPressure         = 1 << NSEventTypePressure as libc::c_ulonglong,
-        const NSAnyEventMask              = 0xffffffff,
+        const NSAnyEventMask              = 0xffffffffffffffff,
     }
 }
 

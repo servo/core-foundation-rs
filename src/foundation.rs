@@ -9,7 +9,7 @@
 
 use std::mem;
 use std::ptr;
-use base::{id, class, BOOL, nil};
+use base::{id, class, BOOL, SEL, nil};
 use core_graphics::base::CGFloat;
 use core_graphics::geometry::CGRect;
 use libc;
@@ -354,5 +354,35 @@ impl NSFastEnumeration for id {
 #[link(name = "Foundation", kind = "framework")]
 extern {
     fn NSInsetRect(rect: NSRect, x: CGFloat, y: CGFloat) -> NSRect;
+}
+
+pub trait NSRunLoop {
+    unsafe fn currentRunLoop() -> Self;
+
+    unsafe fn performSelector_target_argument_order_modes_(self,
+                                                           aSelector: SEL,
+                                                           target: id,
+                                                           anArgument: id,
+                                                           order: NSUInteger,
+                                                           modes: id);
+}
+
+impl NSRunLoop for id {
+    unsafe fn currentRunLoop() -> id {
+        msg_send![class("NSRunLoop"), currentRunLoop]
+    }
+
+    unsafe fn performSelector_target_argument_order_modes_(self,
+                                                           aSelector: SEL,
+                                                           target: id,
+                                                           anArgument: id,
+                                                           order: NSUInteger,
+                                                           modes: id) {
+        msg_send![self, performSelector:aSelector
+                                 target:target
+                               argument:anArgument
+                                  order:order
+                                  modes:modes]
+    }
 }
 

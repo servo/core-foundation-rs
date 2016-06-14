@@ -12,6 +12,8 @@
 pub use core_foundation_sys::dictionary::*;
 use core_foundation_sys::base::CFRelease;
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
+use core_foundation_sys::string::CFStringRef;
+
 use libc::c_void;
 use std::mem;
 use std::ptr;
@@ -70,7 +72,7 @@ impl CFDictionary {
     }
 
     #[inline]
-    pub fn find(&self, key: *const c_void) -> Option<*const c_void> {
+    pub fn find(&self, key: CFStringRef) -> Option<*const c_void> {
         unsafe {
             let mut value: *const c_void = ptr::null();
             if CFDictionaryGetValueIfPresent(self.0, key, &mut value) != 0 {
@@ -82,7 +84,7 @@ impl CFDictionary {
     }
 
     #[inline]
-    pub fn get(&self, key: *const c_void) -> *const c_void {
+    pub fn get(&self, key: CFStringRef) -> *const c_void {
         let value = self.find(key);
         if value.is_none() {
             panic!("No entry found for key {:p}", key);
@@ -99,7 +101,7 @@ impl CFDictionary {
     }
     /// A convenience function to retrieve `CFType` instances.
     #[inline]
-    pub unsafe fn get_CFType(&self, key: *const c_void) -> CFType {
+    pub unsafe fn get_CFType(&self, key: CFStringRef) -> CFType {
         let value: CFTypeRef = mem::transmute(self.get(key));
         TCFType::wrap_under_get_rule(value)
     }

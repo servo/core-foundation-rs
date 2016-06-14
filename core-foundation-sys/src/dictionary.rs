@@ -43,7 +43,6 @@ pub struct CFDictionaryValueCallBacks {
 
 #[repr(C)]
 pub struct __CFDictionary(c_void);
-
 pub type CFDictionaryRef = *const __CFDictionary;
 
 extern {
@@ -61,7 +60,7 @@ extern {
                               -> CFDictionaryRef;
     pub fn CFDictionaryGetCount(theDict: CFDictionaryRef) -> CFIndex;
     pub fn CFDictionaryGetTypeID() -> CFTypeID;
-    pub fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *const c_void, value: *mut *const c_void)
+    pub fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: CFStringRef, value: *mut *const c_void)
                                          -> Boolean;
     pub fn CFDictionaryGetKeysAndValues(theDict: CFDictionaryRef, keys: *mut *const c_void, values: *mut *const c_void) ;
     pub fn CFDictionarySetValue(theDict: CFDictionaryRef,

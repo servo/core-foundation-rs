@@ -188,7 +188,7 @@ pub type CFStringEncodings = CFIndex;
 //static kCFStringEncodingShiftJIS_X0213_00: CFStringEncoding = 0x0628; /* Deprecated */
 
 #[repr(C)]
-pub struct __CFString(pub c_void);
+pub struct __CFString(c_void);
 
 pub type CFStringRef = *const __CFString;
 
@@ -260,10 +260,10 @@ extern {
     //fn CFStringGetCharactersPtr
     //fn CFStringGetCharacterFromInlineBuffer
     pub fn CFStringGetCString(theString: CFStringRef, 
-                                buffer: *mut *const c_char, 
-                                buffersize: CFIndex,
-                                encoding: CFStringEncoding
-                                ) -> Boolean;
+                              buffer: *mut *const c_char, 
+                              buffersize: CFIndex,
+                              encoding: CFStringEncoding)
+                              -> Boolean;
 
     pub fn CFStringGetCStringPtr(theString: CFStringRef,
                                  encoding: CFStringEncoding)

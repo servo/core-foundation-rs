@@ -9,6 +9,7 @@
 
 use libc::{c_void};
 
+use string::CFStringRef;
 use base::{CFAllocatorRef, CFIndex, CFTypeID, Boolean};
 
 pub type CFDictionaryApplierFunction = *const u8;

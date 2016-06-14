@@ -19,9 +19,10 @@ use std::fmt;
 use std::str::{self, FromStr};
 use std::ptr;
 use std::ffi::CStr;
+use libc::{c_char, c_ushort, c_void};
 
 /// An immutable string in one of a variety of encodings.
-pub struct CFString(CFStringRef);
+pub struct CFString(pub CFStringRef);
 
 impl Clone for CFString {
     #[inline]
@@ -136,10 +137,8 @@ impl CFString {
 
     /// Returns the number of characters in the string.
     #[inline]
-    pub fn char_len(&self) -> CFIndex {
-        unsafe {
-            CFStringGetLength(self.0)
-        }
+    pub unsafe fn char_len(&self) -> CFIndex {
+        CFStringGetLength(self.0)
     }
 }
 

@@ -259,7 +259,12 @@ extern {
     //fn CFStringGetCharacters
     //fn CFStringGetCharactersPtr
     //fn CFStringGetCharacterFromInlineBuffer
-    //fn CFStringGetCString
+    pub fn CFStringGetCString(theString: CFStringRef, 
+                              buffer: *mut *const c_char, 
+                              buffersize: CFIndex,
+                              encoding: CFStringEncoding)
+                              -> Boolean;
+
     pub fn CFStringGetCStringPtr(theString: CFStringRef,
                                  encoding: CFStringEncoding)
                                  -> *const c_char;

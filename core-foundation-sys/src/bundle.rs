@@ -10,6 +10,7 @@
 use libc::c_void;
 
 use base::CFTypeID;
+use dictionary::CFDictionaryRef;
 use string::CFStringRef;
 
 #[repr(C)]
@@ -23,6 +24,8 @@ extern {
      */
     pub fn CFBundleGetBundleWithIdentifier(bundleID: CFStringRef) -> CFBundleRef;
     pub fn CFBundleGetFunctionPointerForName(bundle: CFBundleRef, function_name: CFStringRef) -> *const c_void;
+    pub fn CFBundleGetMainBundle() -> CFBundleRef;
+    pub fn CFBundleGetInfoDictionary(bundle: CFBundleRef) -> CFDictionaryRef;
 
     pub fn CFBundleGetTypeID() -> CFTypeID;
 }

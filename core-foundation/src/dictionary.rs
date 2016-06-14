@@ -103,4 +103,9 @@ impl CFDictionary {
         let value: CFTypeRef = mem::transmute(self.get(key));
         TCFType::wrap_under_get_rule(value)
     }
+
+    #[inline]
+    pub unsafe fn set_value(&self, key: *const c_void, value: *const c_void) {
+        CFDictionarySetValue(self.0, key, value)
+    }
 }

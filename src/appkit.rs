@@ -32,6 +32,42 @@ pub type GLint = libc::int32_t;
 #[link(name = "AppKit", kind = "framework")]
 extern {
     pub static NSAppKitVersionNumber: f64;
+
+    // Types for Standard Data - OS X v10.6 and later. (NSString *const)
+    pub static NSPasteboardTypeString: id;
+    pub static NSPasteboardTypePDF: id;
+    pub static NSPasteboardTypeTIFF: id;
+    pub static NSPasteboardTypePNG: id;
+    pub static NSPasteboardTypeRTF: id;
+    pub static NSPasteboardTypeRTFD: id;
+    pub static NSPasteboardTypeHTML: id;
+    pub static NSPasteboardTypeTabularText: id;
+    pub static NSPasteboardTypeFont: id;
+    pub static NSPasteboardTypeRuler: id;
+    pub static NSPasteboardTypeColor: id;
+    pub static NSPasteboardTypeSound: id;
+    pub static NSPasteboardTypeMultipleTextSelection: id;
+    pub static NSPasteboardTypeFindPanelSearchOptions: id;
+
+    // Types for Standard Data - OS X v10.5 and earlier. (NSString *)
+    pub static NSStringPboardType: id;
+    pub static NSFilenamesPboardType: id;
+    pub static NSPostScriptPboardType: id;
+    pub static NSTIFFPboardType: id;
+    pub static NSRTFPboardType: id;
+    pub static NSTabularTextPboardType: id;
+    pub static NSFontPboardType: id;
+    pub static NSRulerPboardType: id;
+    pub static NSFileContentsPboardType: id;
+    pub static NSColorPboardType: id;
+    pub static NSRTFDPboardType: id;
+    pub static NSHTMLPboardType: id;
+    pub static NSPICTPboardType: id;
+    pub static NSURLPboardType: id;
+    pub static NSPDFPboardType: id;
+    pub static NSVCardPboardType: id;
+    pub static NSFilesPromisePboardType: id;
+    pub static NSMultipleTextSelectionPboardType: id;
 }
 
 pub const NSAppKitVersionNumber10_0: f64 = 577.0;

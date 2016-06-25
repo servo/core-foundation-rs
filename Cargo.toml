@@ -3,17 +3,16 @@ name = "io-surface"
 description = "Bindings to IO Surface for OS X"
 homepage = "https://github.com/servo/io-surface-rs"
 repository = "https://github.com/servo/io-surface-rs"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 
 [dependencies]
 libc = "0.2"
 gleam = "0.2"
-euclid = "0.6.1"
+euclid = ">=0.6.1, <0.8"
 
 [target.x86_64-apple-darwin.dependencies]
 core-foundation = "0.2"
 cgl = "0.1.4"
 leaky-cow = "0.1.1"
-

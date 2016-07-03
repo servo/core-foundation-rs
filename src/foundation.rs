@@ -7,9 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![allow(non_upper_case_globals)]
+
 use std::mem;
 use std::ptr;
 use base::{id, class, BOOL, SEL, nil};
+use block::Block;
 use core_graphics::base::CGFloat;
 use core_graphics::geometry::CGRect;
 use libc;
@@ -386,3 +389,233 @@ impl NSRunLoop for id {
     }
 }
 
+pub trait NSData {
+    unsafe fn data(_: Self) -> id {
+        msg_send![class("NSData"), data]
+    }
+
+    unsafe fn dataWithBytes_length_(_: Self, bytes: *const libc::c_void, length: NSUInteger) -> id {
+        msg_send![class("NSData"), dataWithBytes:bytes length:length]
+    }
+
+    unsafe fn dataWithBytesNoCopy_length_(_: Self, bytes: *const libc::c_void, length: NSUInteger) -> id {
+        msg_send![class("NSData"), dataWithBytesNoCopy:bytes length:length]
+    }
+
+    unsafe fn dataWithBytesNoCopy_length_freeWhenDone_(_: Self, bytes: *const libc::c_void,
+                                                      length: NSUInteger, freeWhenDone: BOOL) -> id {
+        msg_send![class("NSData"), dataWithBytesNoCopy:bytes length:length freeWhenDone:freeWhenDone]
+    }
+
+    unsafe fn dataWithContentsOfFile_(_: Self, path: id) -> id {
+        msg_send![class("NSData"), dataWithContentsOfFile:path]
+    }
+
+    unsafe fn dataWithContentsOfFile_options_error_(_: Self, path: id, mask: NSDataReadingOptions,
+                                                    errorPtr: *mut id) -> id {
+        msg_send![class("NSData"), dataWithContentsOfFile:path options:mask error:errorPtr]
+    }
+
+    unsafe fn dataWithContentsOfURL_(_: Self, aURL: id) -> id {
+        msg_send![class("NSData"), dataWithContentsOfURL:aURL]
+    }
+
+    unsafe fn dataWithContentsOfURL_options_error_(_: Self, aURL: id, mask: NSDataReadingOptions,
+                                                   errorPtr: *mut id) -> id {
+        msg_send![class("NSData"), dataWithContentsOfURL:aURL options:mask error:errorPtr]
+    }
+
+    unsafe fn dataWithData_(_: Self, aData: id) -> id {
+        msg_send![class("NSData"), dataWithData:aData]
+    }
+
+    unsafe fn initWithBase64EncodedData_options_(self, base64Data: id, options: NSDataBase64DecodingOptions)
+                                                 -> id;
+    unsafe fn initWithBase64EncodedString_options_(self, base64String: id, options: NSDataBase64DecodingOptions)
+                                                   -> id;
+    unsafe fn initWithBytes_length_(self, bytes: *const libc::c_void, length: NSUInteger) -> id;
+    unsafe fn initWithBytesNoCopy_length_(self, bytes: *const libc::c_void, length: NSUInteger) -> id;
+    unsafe fn initWithBytesNoCopy_length_deallocator_(self, bytes: *const libc::c_void, length: NSUInteger,
+                                                      deallocator: *mut Block<(*const libc::c_void, NSUInteger), ()>)
+                                                      -> id;
+    unsafe fn initWithBytesNoCopy_length_freeWhenDone_(self, bytes: *const libc::c_void,
+                                                       length: NSUInteger, freeWhenDone: BOOL) -> id;
+    unsafe fn initWithContentsOfFile_(self, path: id) -> id;
+    unsafe fn initWithContentsOfFile_options_error(self, path: id, mask: NSDataReadingOptions, errorPtr: *mut id)
+                                                   -> id;
+    unsafe fn initWithContentsOfURL_(self, aURL: id) -> id;
+    unsafe fn initWithContentsOfURL_options_error_(self, aURL: id, mask: NSDataReadingOptions, errorPtr: *mut id)
+                                                   -> id;
+    unsafe fn initWithData_(self, data: id) -> id;
+
+    unsafe fn bytes(self) -> *const libc::c_void;
+    unsafe fn description(self) -> id;
+    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const libc::c_void, NSRange, *mut BOOL), ()>);
+    unsafe fn getBytes_length_(self, buffer: *mut libc::c_void, length: NSUInteger);
+    unsafe fn getBytes_range_(self, buffer: *mut libc::c_void, range: NSRange);
+    unsafe fn subdataWithRange_(self, range: NSRange) -> id;
+    unsafe fn rangeOfData_options_range_(self, dataToFind: id, options: NSDataSearchOptions, searchRange: NSRange)
+                                         -> NSRange;
+
+    unsafe fn base64EncodedDataWithOptions_(self, options: NSDataBase64EncodingOptions) -> id;
+    unsafe fn base64EncodedStringWithOptions_(self, options: NSDataBase64EncodingOptions) -> id;
+
+    unsafe fn isEqualToData_(self, otherData: id) -> id;
+    unsafe fn length(self) -> NSUInteger;
+
+    unsafe fn writeToFile_atomically_(self, path: id, atomically: BOOL) -> BOOL;
+    unsafe fn writeToFile_options_error_(self, path: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> BOOL;
+    unsafe fn writeToURL_atomically_(self, aURL: id, atomically: BOOL) -> BOOL;
+    unsafe fn writeToURL_options_error_(self, aURL: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> BOOL;
+}
+
+impl NSData for id {
+    unsafe fn initWithBase64EncodedData_options_(self, base64Data: id, options: NSDataBase64DecodingOptions)
+                                                 -> id {
+        msg_send![self, initWithBase64EncodedData:base64Data options:options]
+    }
+
+    unsafe fn initWithBase64EncodedString_options_(self, base64String: id, options: NSDataBase64DecodingOptions)
+                                                   -> id {
+        msg_send![self, initWithBase64EncodedString:base64String options:options]
+    }
+
+    unsafe fn initWithBytes_length_(self, bytes: *const libc::c_void, length: NSUInteger) -> id {
+        msg_send![self,initWithBytes:bytes length:length]
+    }
+
+    unsafe fn initWithBytesNoCopy_length_(self, bytes: *const libc::c_void, length: NSUInteger) -> id {
+        msg_send![self, initWithBytesNoCopy:bytes length:length]
+    }
+
+    unsafe fn initWithBytesNoCopy_length_deallocator_(self, bytes: *const libc::c_void, length: NSUInteger,
+                                                      deallocator: *mut Block<(*const libc::c_void, NSUInteger), ()>)
+                                                      -> id {
+        msg_send![self, initWithBytesNoCopy:bytes length:length deallocator:deallocator]
+    }
+
+    unsafe fn initWithBytesNoCopy_length_freeWhenDone_(self, bytes: *const libc::c_void,
+                                                       length: NSUInteger, freeWhenDone: BOOL) -> id {
+        msg_send![self, initWithBytesNoCopy:bytes length:length freeWhenDone:freeWhenDone]
+    }
+
+    unsafe fn initWithContentsOfFile_(self, path: id) -> id {
+        msg_send![self, initWithContentsOfFile:path]
+    }
+
+    unsafe fn initWithContentsOfFile_options_error(self, path: id, mask: NSDataReadingOptions, errorPtr: *mut id)
+                                                   -> id {
+        msg_send![self, initWithContentsOfFile:path options:mask error:errorPtr]
+    }
+
+    unsafe fn initWithContentsOfURL_(self, aURL: id) -> id {
+        msg_send![self, initWithContentsOfURL:aURL]
+    }
+
+    unsafe fn initWithContentsOfURL_options_error_(self, aURL: id, mask: NSDataReadingOptions, errorPtr: *mut id)
+                                                   -> id {
+        msg_send![self, initWithContentsOfURL:aURL options:mask error:errorPtr]
+    }
+
+    unsafe fn initWithData_(self, data: id) -> id {
+        msg_send![self, initWithData:data]
+    }
+
+    unsafe fn bytes(self) -> *const libc::c_void {
+        msg_send![self, bytes]
+    }
+
+    unsafe fn description(self) -> id {
+        msg_send![self, description]
+    }
+
+    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const libc::c_void, NSRange, *mut BOOL), ()>) {
+        msg_send![self, enumerateByteRangesUsingBlock:block]
+    }
+
+    unsafe fn getBytes_length_(self, buffer: *mut libc::c_void, length: NSUInteger) {
+        msg_send![self, getBytes:buffer length:length]
+    }
+
+    unsafe fn getBytes_range_(self, buffer: *mut libc::c_void, range: NSRange) {
+        msg_send![self, getBytes:buffer range:range]
+    }
+
+    unsafe fn subdataWithRange_(self, range: NSRange) -> id {
+        msg_send![self, subdataWithRange:range]
+    }
+
+    unsafe fn rangeOfData_options_range_(self, dataToFind: id, options: NSDataSearchOptions, searchRange: NSRange)
+                                         -> NSRange {
+        msg_send![self, rangeOfData:dataToFind options:options range:searchRange]
+    }
+
+    unsafe fn base64EncodedDataWithOptions_(self, options: NSDataBase64EncodingOptions) -> id {
+        msg_send![self, base64EncodedDataWithOptions:options]
+    }
+
+    unsafe fn base64EncodedStringWithOptions_(self, options: NSDataBase64EncodingOptions) -> id {
+        msg_send![self, base64EncodedStringWithOptions:options]
+    }
+
+    unsafe fn isEqualToData_(self, otherData: id) -> id {
+        msg_send![self, isEqualToData:otherData]
+    }
+
+    unsafe fn length(self) -> NSUInteger {
+        msg_send![self, length]
+    }
+
+    unsafe fn writeToFile_atomically_(self, path: id, atomically: BOOL) -> BOOL {
+        msg_send![self, writeToFile:path atomically:atomically]
+    }
+
+    unsafe fn writeToFile_options_error_(self, path: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> BOOL {
+        msg_send![self, writeToFile:path options:mask error:errorPtr]
+    }
+
+    unsafe fn writeToURL_atomically_(self, aURL: id, atomically: BOOL) -> BOOL {
+        msg_send![self, writeToURL:aURL atomically:atomically]
+    }
+
+    unsafe fn writeToURL_options_error_(self, aURL: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> BOOL {
+        msg_send![self, writeToURL:aURL options:mask error:errorPtr]
+    }
+}
+
+bitflags! {
+    pub flags NSDataReadingOptions: libc::c_ulonglong {
+       const NSDataReadingMappedIfSafe = 1 << 0,
+       const NSDataReadingUncached = 1 << 1,
+       const NSDataReadingMappedAlways = 1 << 3
+    }
+}
+
+bitflags! {
+    pub flags NSDataBase64EncodingOptions: libc::c_ulonglong {
+        const NSDataBase64Encoding64CharacterLineLength = 1 << 0,
+        const NSDataBase64Encoding76CharacterLineLength = 1 << 1,
+        const NSDataBase64EncodingEndLineWithCarriageReturn = 1 << 4,
+        const NSDataBase64EncodingEndLineWithLineFeed = 1 << 5
+    }
+}
+
+bitflags! {
+    pub flags NSDataBase64DecodingOptions: libc::c_ulonglong {
+       const NSDataBase64DecodingIgnoreUnknownCharacters = 1 << 0
+    }
+}
+
+bitflags! {
+    pub flags NSDataWritingOptions: libc::c_ulonglong {
+        const NSDataWritingAtomic = 1 << 0,
+        const NSDataWritingWithoutOverwriting = 1 << 1
+    }
+}
+
+bitflags! {
+    pub flags NSDataSearchOptions: libc::c_ulonglong {
+        const NSDataSearchBackwards = 1 << 0,
+        const NSDataSearchAnchored = 1 << 1
+    }
+}

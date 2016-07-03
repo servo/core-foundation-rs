@@ -12,6 +12,7 @@
 
 #![allow(non_snake_case)]
 
+extern crate block;
 #[macro_use]
 extern crate bitflags;
 extern crate libc;

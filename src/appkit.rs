@@ -68,6 +68,17 @@ extern {
     pub static NSVCardPboardType: id;
     pub static NSFilesPromisePboardType: id;
     pub static NSMultipleTextSelectionPboardType: id;
+
+    // Names of provided pasteboards. (NSString *)
+    pub static NSGeneralPboard: id;
+    pub static NSFontPboard: id;
+    pub static NSRulerPboard: id;
+    pub static NSFindPboard: id;
+    pub static NSDragPboard: id;
+
+    // Pasteboard reading options - OS X v10.6 and later. (NSString *)
+    pub static NSPasteboardURLReadingFileURLsOnlyKey: id;
+    pub static NSPasteboardURLReadingContentsConformToTypesKey: id;
 }
 
 pub const NSAppKitVersionNumber10_0: f64 = 577.0;
@@ -379,6 +390,285 @@ impl NSRunningApplication for id {
     unsafe fn activateWithOptions_(self, options: NSApplicationActivationOptions) -> BOOL {
         msg_send![self, activateWithOptions:options as NSUInteger]
     }
+}
+
+pub trait NSPasteboard {
+    unsafe fn generalPasteboard(_: Self) -> id {
+        msg_send![class("NSPasteboard"), generalPasteboard]
+    }
+
+    unsafe fn pasteboardByFilteringData_ofType(_: Self, data: id, _type: id) -> id {
+        msg_send![class("NSPasteboard"), pasteboardByFilteringData:data ofType:_type]
+    }
+
+    unsafe fn pasteboardByFilteringFile(_: Self, file: id) -> id {
+        msg_send![class("NSPasteboard"), pasteboardByFilteringFile:file]
+    }
+
+    unsafe fn pasteboardByFilteringTypesInPasteboard(_: Self, pboard: id) -> id {
+        msg_send![class("NSPasteboard"), pasteboardByFilteringTypesInPasteboard:pboard]
+    }
+
+    unsafe fn pasteboardWithName(_: Self, name: id) -> id {
+        msg_send![class("NSPasteboard"), pasteboardWithName:name]
+    }
+
+    unsafe fn pasteboardWithUniqueName(_: Self) -> id {
+        msg_send![class("NSPasteboard"), pasteboardWithUniqueName]
+    }
+
+    unsafe fn releaseGlobally(self);
+
+    unsafe fn clearContents(self) -> NSInteger;
+    unsafe fn writeObjects(self, objects: id) -> BOOL;
+    unsafe fn sendData_forType(self, data: id, dataType: id) -> BOOL;
+    unsafe fn setPropertyList_forType(self, plist: id, dataType: id) -> BOOL;
+    unsafe fn setString_forType(self, string: id, dataType: id) -> BOOL;
+
+    unsafe fn readObjectsForClasses_options(self, classArray: id, options: id) -> id;
+    unsafe fn pasteboardItems(self) -> id;
+    unsafe fn indexOfPasteboardItem(self, pasteboardItem: id) -> NSInteger;
+    unsafe fn dataForType(self, dataType: id) -> id;
+    unsafe fn propertyListForType(self, dataType: id) -> id;
+    unsafe fn stringForType(self, dataType: id) -> id;
+
+    unsafe fn availableTypeFromArray(self, types: id) -> id;
+    unsafe fn canReadItemWithDataConformingToTypes(self, types: id) -> BOOL;
+    unsafe fn canReadObjectForClasses_options(self, classArray: id, options: id) -> BOOL;
+    unsafe fn types(self) -> id;
+    unsafe fn typesFilterableTo(_: Self, _type: id) -> id {
+        msg_send![class("NSPasteboard"), typesFilterableTo:_type]
+    }
+
+    unsafe fn name(self) -> id;
+    unsafe fn changeCount(self) -> NSInteger;
+
+    unsafe fn declareTypes_owner(self, newTypes: id, newOwner: id) -> NSInteger;
+    unsafe fn addTypes_owner(self, newTypes: id, newOwner: id) -> NSInteger;
+    unsafe fn writeFileContents(self, filename: id) -> BOOL;
+    unsafe fn writeFileWrapper(self, wrapper: id) -> BOOL;
+
+    unsafe fn readFileContentsType_toFile(self, _type: id, filename: id) -> id;
+    unsafe fn readFileWrapper(self) -> id;
+}
+
+impl NSPasteboard for id {
+    unsafe fn releaseGlobally(self) {
+        msg_send![self, releaseGlobally];
+    }
+
+    unsafe fn clearContents(self) -> NSInteger {
+        msg_send![self, clearContents]
+    }
+
+    unsafe fn writeObjects(self, objects: id) -> BOOL {
+        msg_send![self, writeObjects:objects]
+    }
+
+    unsafe fn sendData_forType(self, data: id, dataType: id) -> BOOL {
+        msg_send![self, sendData:data forType:dataType]
+    }
+
+    unsafe fn setPropertyList_forType(self, plist: id, dataType: id) -> BOOL {
+        msg_send![self, setPropertyList:plist forType:dataType]
+    }
+
+    unsafe fn setString_forType(self, string: id, dataType: id) -> BOOL {
+        msg_send![self, setString:string forType:dataType]
+    }
+
+    unsafe fn readObjectsForClasses_options(self, classArray: id, options: id) -> id {
+        msg_send![self, readObjectsForClasses:classArray options:options]
+    }
+
+    unsafe fn pasteboardItems(self) -> id {
+        msg_send![self, pasteboardItems]
+    }
+
+    unsafe fn indexOfPasteboardItem(self, pasteboardItem: id) -> NSInteger {
+        msg_send![self, indexOfPasteboardItem:pasteboardItem]
+    }
+
+    unsafe fn dataForType(self, dataType: id) -> id {
+        msg_send![self, dataForType:dataType]
+    }
+
+    unsafe fn propertyListForType(self, dataType: id) -> id {
+        msg_send![self, propertyListForType:dataType]
+    }
+
+    unsafe fn stringForType(self, dataType: id) -> id {
+        msg_send![self, stringForType:dataType]
+    }
+
+    unsafe fn availableTypeFromArray(self, types: id) -> id {
+        msg_send![self, availableTypeFromArray:types]
+    }
+
+    unsafe fn canReadItemWithDataConformingToTypes(self, types: id) -> BOOL {
+        msg_send![self, canReadItemWithDataConformingToTypes:types]
+    }
+
+    unsafe fn canReadObjectForClasses_options(self, classArray: id, options: id) -> BOOL {
+        msg_send![self, canReadObjectForClasses:classArray options:options]
+    }
+
+    unsafe fn types(self) -> id {
+        msg_send![self, types]
+    }
+
+    unsafe fn name(self) -> id {
+        msg_send![self, name]
+    }
+
+    unsafe fn changeCount(self) -> NSInteger {
+        msg_send![self, changeCount]
+    }
+
+    unsafe fn declareTypes_owner(self, newTypes: id, newOwner: id) -> NSInteger {
+        msg_send![self, declareTypes:newTypes owner:newOwner]
+    }
+
+    unsafe fn addTypes_owner(self, newTypes: id, newOwner: id) -> NSInteger {
+        msg_send![self, addTypes:newTypes owner:newOwner]
+    }
+
+    unsafe fn writeFileContents(self, filename: id) -> BOOL {
+        msg_send![self, writeFileContents:filename]
+    }
+
+    unsafe fn writeFileWrapper(self, wrapper: id) -> BOOL {
+        msg_send![self, writeFileWrapper:wrapper]
+    }
+
+    unsafe fn readFileContentsType_toFile(self, _type: id, filename: id) -> id {
+        msg_send![self, readFileContentsType:_type toFile:filename]
+    }
+
+    unsafe fn readFileWrapper(self) -> id {
+        msg_send![self, readFileWrapper]
+    }
+
+}
+
+pub trait NSPasteboardItem {
+    unsafe fn types(self) -> id;
+
+    unsafe fn setDataProvider_forTypes(self, dataProvider: id, types: id) -> BOOL;
+    unsafe fn setData_forType(self, data: id, _type: id) -> BOOL;
+    unsafe fn setString_forType(self, string: id, _type: id) -> BOOL;
+    unsafe fn setPropertyList_forType(self, propertyList: id, _type: id) -> BOOL;
+
+    unsafe fn dataForType(self, _type: id) -> id;
+    unsafe fn stringForType(self, _type: id) -> id;
+    unsafe fn propertyListForType(self, _type: id) -> id;
+}
+
+impl NSPasteboardItem for id {
+    unsafe fn types(self) -> id {
+        msg_send![self, types]
+    }
+
+    unsafe fn setDataProvider_forTypes(self, dataProvider: id, types: id) -> BOOL {
+        msg_send![self, setDataProvider:dataProvider forTypes:types]
+    }
+
+    unsafe fn setData_forType(self, data: id, _type: id) -> BOOL {
+        msg_send![self, setData:data forType:_type]
+    }
+
+    unsafe fn setString_forType(self, string: id, _type: id) -> BOOL {
+        msg_send![self, setString:string forType:_type]
+    }
+
+    unsafe fn setPropertyList_forType(self, propertyList: id, _type: id) -> BOOL {
+        msg_send![self, setPropertyList:propertyList forType:_type]
+    }
+
+    unsafe fn dataForType(self, _type: id) -> id {
+        msg_send![self, dataForType:_type]
+    }
+
+    unsafe fn stringForType(self, _type: id) -> id {
+        msg_send![self, stringForType:_type]
+    }
+
+    unsafe fn propertyListForType(self, _type: id) -> id {
+        msg_send![self, propertyListForType:_type]
+    }
+}
+
+pub trait NSPasteboardItemDataProvider {
+    unsafe fn pasteboard_item_provideDataForType(self, pasteboard: id, item: id, _type: id);
+    unsafe fn pasteboardFinishedWithDataProvider(self, pasteboard: id);
+}
+
+impl NSPasteboardItemDataProvider for id {
+    unsafe fn pasteboard_item_provideDataForType(self, pasteboard: id, item: id, _type: id) {
+        msg_send![self, pasteboard:pasteboard item:item provideDataForType:_type]
+    }
+
+    unsafe fn pasteboardFinishedWithDataProvider(self, pasteboard: id) {
+        msg_send![self, pasteboardFinishedWithDataProvider:pasteboard]
+    }
+}
+
+pub trait NSPasteboardWriting {
+    unsafe fn writableTypesForPasteboard(self, pasteboard: id) -> id;
+    unsafe fn writingOptionsForType_pasteboard(self, _type: id, pasteboard: id) -> NSPasteboardWritingOptions;
+
+    unsafe fn pasteboardPropertyListForType(self, _type: id) -> id;
+}
+
+impl NSPasteboardWriting for id {
+    unsafe fn writableTypesForPasteboard(self, pasteboard: id) -> id {
+        msg_send![self, writableTypesForPasteboard:pasteboard]
+    }
+
+    unsafe fn writingOptionsForType_pasteboard(self, _type: id, pasteboard: id) -> NSPasteboardWritingOptions {
+        msg_send![self, writingOptionsForType:_type pasteboard:pasteboard]
+    }
+
+    unsafe fn pasteboardPropertyListForType(self, _type: id) -> id {
+        msg_send![self, pasteboardPropertyListForType:_type]
+    }
+}
+
+pub trait NSPasteboardReading {
+    unsafe fn initWithPasteboardPropertyList_ofType(self, propertyList: id, _type: id) -> id;
+
+    unsafe fn readableTypesForPasteboard(self, pasteboard: id) -> id;
+    unsafe fn readingOptionsForType_pasteboard(self, _type: id, pasteboard: id) -> NSPasteboardReadingOptions;
+}
+
+impl NSPasteboardReading for id {
+    unsafe fn initWithPasteboardPropertyList_ofType(self, propertyList: id, _type: id) -> id {
+        msg_send![self, initWithPasteboardPropertyList:propertyList ofType:_type]
+    }
+
+    unsafe fn readableTypesForPasteboard(self, pasteboard: id) -> id {
+        let class: id = msg_send![self, class];
+        msg_send![class, readableTypesForPasteboard:pasteboard]
+    }
+    unsafe fn readingOptionsForType_pasteboard(self, _type: id, pasteboard: id) -> NSPasteboardReadingOptions {
+        let class: id = msg_send![self, class];
+        msg_send![class, readingOptionsForType:_type pasteboard:pasteboard]
+    }
+}
+
+#[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSPasteboardReadingOptions {
+    NSPasteboardReadingAsData = 0,
+    NSPasteboardReadingAsString = 1 << 0,
+    NSPasteboardReadingAsPropertyList = 1 << 1,
+    NSPasteboardReadingAsKeyedArchive = 1 << 2
+}
+
+#[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSPasteboardWritingOptions {
+    NSPasteboardWritingPromised = 1 << 9,
 }
 
 pub trait NSMenu {

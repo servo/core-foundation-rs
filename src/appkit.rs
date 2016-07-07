@@ -68,6 +68,7 @@ extern {
     pub static NSVCardPboardType: id;
     pub static NSFilesPromisePboardType: id;
     pub static NSMultipleTextSelectionPboardType: id;
+    pub static NSSoundPboardType: id;
 
     // Names of provided pasteboards. (NSString *)
     pub static NSGeneralPboard: id;
@@ -2787,6 +2788,112 @@ impl NSImage for id {
 
     unsafe fn isValid(self) -> BOOL {
         msg_send![self, isValid]
+    }
+}
+
+pub trait NSSound {
+    unsafe fn canInitWithPasteboard_(_: Self, pasteboard: id) -> BOOL {
+        msg_send![class("NSSound"), canInitWithPasteboard:pasteboard]
+    }
+
+    unsafe fn initWithContentsOfFile_withReference_(self, filepath: id, byRef: BOOL) -> id;
+    unsafe fn initWithContentsOfURL_withReference_(self, fileUrl: id, byRef: BOOL) -> id;
+    unsafe fn initWithData_(self, audioData: id) -> id;
+    unsafe fn initWithPasteboard_(self, pasteboard: id) -> id;
+
+    unsafe fn name(self) -> id;
+    unsafe fn volume(self) -> f32;
+    unsafe fn currentTime(self) -> NSTimeInterval;
+    unsafe fn loops(self) -> BOOL;
+    unsafe fn playbackDeviceIdentifier(self) -> id;
+    unsafe fn delegate(self) -> id;
+
+    unsafe fn soundUnfilteredTypes(_: Self) -> id {
+        msg_send![class("NSSound"), soundUnfilteredTypes]
+    }
+
+    unsafe fn soundNamed_(_: Self, soundName: id) -> id {
+        msg_send![class("NSSound"), soundNamed:soundName]
+    }
+
+    unsafe fn duration(self) -> NSTimeInterval;
+
+    unsafe fn playing(self) -> BOOL;
+    unsafe fn pause(self) -> BOOL;
+    unsafe fn play(self) -> BOOL;
+    unsafe fn resume(self) -> BOOL;
+    unsafe fn stop(self) -> BOOL;
+
+    unsafe fn writeToPasteboard_(self, pasteboard: id);
+}
+
+impl NSSound for id {
+    unsafe fn initWithContentsOfFile_withReference_(self, filepath: id, byRef: BOOL) -> id {
+        msg_send![self, initWithContentsOfFile:filepath withReference:byRef]
+    }
+
+    unsafe fn initWithContentsOfURL_withReference_(self, fileUrl: id, byRef: BOOL) -> id {
+        msg_send![self, initWithContentsOfURL:fileUrl withReference:byRef]
+    }
+
+    unsafe fn initWithData_(self, audioData: id) -> id {
+        msg_send![self, initWithData:audioData]
+    }
+
+    unsafe fn initWithPasteboard_(self, pasteboard: id) -> id {
+        msg_send![self, initWithPasteboard:pasteboard]
+    }
+
+    unsafe fn name(self) -> id {
+        msg_send![self, name]
+    }
+
+    unsafe fn volume(self) -> f32 {
+        msg_send![self, volume]
+    }
+
+    unsafe fn currentTime(self) -> NSTimeInterval {
+        msg_send![self, currentTime]
+    }
+
+    unsafe fn loops(self) -> BOOL {
+        msg_send![self, loops]
+    }
+
+    unsafe fn playbackDeviceIdentifier(self) -> id {
+        msg_send![self, playbackDeviceIdentifier]
+    }
+
+    unsafe fn delegate(self) -> id {
+        msg_send![self, delegate]
+    }
+
+    unsafe fn duration(self) -> NSTimeInterval {
+        msg_send![self, duration]
+    }
+
+    unsafe fn playing(self) -> BOOL {
+        msg_send![self, playing]
+    }
+
+    unsafe fn pause(self) -> BOOL {
+        msg_send![self, pause]
+    }
+
+    unsafe fn play(self) -> BOOL {
+        msg_send![self, play]
+    }
+
+    unsafe fn resume(self) -> BOOL {
+        msg_send![self, resume]
+    }
+
+    unsafe fn stop(self) -> BOOL {
+        msg_send![self, stop]
+    }
+
+    unsafe fn writeToPasteboard_(self, pasteboard: id) {
+        msg_send![self, writeToPasteboard:pasteboard]
     }
 }
 

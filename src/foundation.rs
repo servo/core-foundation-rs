@@ -228,6 +228,308 @@ impl NSArray for id {
     }
 }
 
+pub trait NSDictionary {
+    unsafe fn dictionary(_: Self) -> id {
+        msg_send![class("NSDictionary"), dictionary]
+    }
+
+    unsafe fn dictionaryWithContentsOfFile_(_: Self, path: id) -> id {
+        msg_send![class("NSDictionary"), dictionaryWithContentsOfFile:path]
+    }
+
+    unsafe fn dictionaryWithContentsOfURL_(_: Self, aURL: id) -> id {
+        msg_send![class("NSDictionary"), dictionaryWithContentsOfURL:aURL]
+    }
+
+    unsafe fn dictionaryWithDictionary_(_: Self, otherDictionary: id) -> id {
+        msg_send![class("NSDictionary"), dictionaryWithDictionary:otherDictionary]
+    }
+
+    unsafe fn dictionaryWithObject_forKey_(_: Self, anObject: id, aKey: id) -> id {
+        msg_send![class("NSDictionary"), dictionaryWithObject:anObject forKey:aKey]
+    }
+
+    unsafe fn dictionaryWithObjects_forKeys_(_: Self, objects: id, keys: id) -> id {
+        msg_send![class("NSDictionary"), dictionaryWithObjects:objects forKeys:keys]
+    }
+
+    unsafe fn dictionaryWithObjects_forKeys_count_(_: Self, objects: *const id, keys: *const id, count: NSUInteger) -> id {
+        msg_send![class("NSDictionary"), dictionaryWithObjects:objects forKeys:keys count:count]
+    }
+
+    unsafe fn dictionaryWithObjectsAndKeys_(_: Self, firstObject: id) -> id {
+        msg_send![class("NSDictionary"), dictionaryWithObjectsAndKeys:firstObject]
+    }
+
+    unsafe fn init(self) -> id;
+    unsafe fn initWithContentsOfFile_(self, path: id) -> id;
+    unsafe fn initWithContentsOfURL_(self, aURL: id) -> id;
+    unsafe fn initWithDictionary_(self, otherDicitonary: id) -> id;
+    unsafe fn initWithDictionary_copyItems_(self, otherDicitonary: id, flag: BOOL) -> id;
+    unsafe fn initWithObjects_forKeys_(self, objects: id, keys: id) -> id;
+    unsafe fn initWithObjects_forKeys_count_(self, objects: id, keys: id, count: NSUInteger) -> id;
+    unsafe fn initWithObjectsAndKeys_(self, firstObject: id) -> id;
+
+    unsafe fn sharedKeySetForKeys_(_: Self, keys: id) -> id {
+        msg_send![class("NSDictionary"), sharedKeySetForKeys:keys]
+    }
+
+    unsafe fn count(self) -> NSUInteger;
+
+    unsafe fn isEqualToDictionary_(self, otherDictionary: id) -> BOOL;
+
+    unsafe fn allKeys(self) -> id;
+    unsafe fn allKeysForObject_(self, anObject: id) -> id;
+    unsafe fn allValues(self) -> id;
+    unsafe fn objectForKey_(self, aKey: id) -> id;
+    unsafe fn objectForKeyedSubscript_(self, key: id) -> id;
+    unsafe fn objectsForKeys_notFoundMarker_(self, keys: id, anObject: id) -> id;
+    unsafe fn valueForKey_(self, key: id) -> id;
+
+    unsafe fn keyEnumerator(self) -> id;
+    unsafe fn objectEnumerator(self) -> id;
+    unsafe fn enumerateKeysAndObjectsUsingBlock_(self, block: *mut Block<(id, id, *mut BOOL), ()>);
+    unsafe fn enumerateKeysAndObjectsWithOptions_usingBlock_(self, opts: NSEnumerationOptions,
+                                                             block: *mut Block<(id, id, *mut BOOL), ()>);
+
+    unsafe fn keysSortedByValueUsingSelector_(self, comparator: SEL) -> id;
+    unsafe fn keysSortedByValueUsingComparator_(self, cmptr: NSComparator) -> id;
+    unsafe fn keysSortedByValueWithOptions_usingComparator_(self, opts: NSEnumerationOptions, cmptr: NSComparator) -> id;
+
+    unsafe fn keysOfEntriesPassingTest_(self, predicate: *mut Block<(id, id, *mut BOOL), BOOL>) -> id;
+    unsafe fn keysOfEntriesWithOptions_PassingTest_(self, opts: NSEnumerationOptions,
+                                                    predicate: *mut Block<(id, id, *mut BOOL), BOOL>) -> id;
+
+    unsafe fn writeToFile_atomically_(self, path: id, flag: BOOL) -> BOOL;
+    unsafe fn writeToURL_atomically_(self, aURL: id, flag: BOOL) -> BOOL;
+
+    unsafe fn fileCreationDate(self) -> id;
+    unsafe fn fileExtensionHidden(self) -> BOOL;
+    unsafe fn fileGroupOwnerAccountID(self) -> id;
+    unsafe fn fileGroupOwnerAccountName(self) -> id;
+    unsafe fn fileIsAppendOnly(self) -> BOOL;
+    unsafe fn fileIsImmutable(self) -> BOOL;
+    unsafe fn fileModificationDate(self) -> id;
+    unsafe fn fileOwnerAccountID(self) -> id;
+    unsafe fn fileOwnerAccountName(self) -> id;
+    unsafe fn filePosixPermissions(self) -> NSUInteger;
+    unsafe fn fileSize(self) -> libc::c_ulonglong;
+    unsafe fn fileSystemFileNumber(self) -> NSUInteger;
+    unsafe fn fileSystemNumber(self) -> NSInteger;
+    unsafe fn fileType(self) -> id;
+
+    unsafe fn description(self) -> id;
+    unsafe fn descriptionInStringsFileFormat(self) -> id;
+    unsafe fn descriptionWithLocale_(self, locale: id) -> id;
+    unsafe fn descriptionWithLocale_indent_(self, locale: id, indent: NSUInteger) -> id;
+}
+
+impl NSDictionary for id {
+    unsafe fn init(self) -> id {
+        msg_send![self, init]
+    }
+
+    unsafe fn initWithContentsOfFile_(self, path: id) -> id {
+        msg_send![self, initWithContentsOfFile:path]
+    }
+
+    unsafe fn initWithContentsOfURL_(self, aURL: id) -> id {
+        msg_send![self, initWithContentsOfURL:aURL]
+    }
+
+    unsafe fn initWithDictionary_(self, otherDictionary: id) -> id {
+        msg_send![self, initWithDictionary:otherDictionary]
+    }
+
+    unsafe fn initWithDictionary_copyItems_(self, otherDictionary: id, flag: BOOL) -> id {
+        msg_send![self, initWithDictionary:otherDictionary copyItems:flag]
+    }
+
+    unsafe fn initWithObjects_forKeys_(self, objects: id, keys: id) -> id {
+        msg_send![self, initWithObjects:objects forKeys:keys]
+    }
+
+    unsafe fn initWithObjects_forKeys_count_(self, objects: id, keys: id, count: NSUInteger) -> id {
+        msg_send![self, initWithObjects:objects forKeys:keys count:count]
+    }
+
+    unsafe fn initWithObjectsAndKeys_(self, firstObject: id) -> id {
+        msg_send![self, initWithObjectsAndKeys:firstObject]
+    }
+
+    unsafe fn count(self) -> NSUInteger {
+        msg_send![self, count]
+    }
+
+    unsafe fn isEqualToDictionary_(self, otherDictionary: id) -> BOOL {
+        msg_send![self, isEqualToDictionary:otherDictionary]
+    }
+
+    unsafe fn allKeys(self) -> id {
+        msg_send![self, allKeys]
+    }
+
+    unsafe fn allKeysForObject_(self, anObject: id) -> id {
+        msg_send![self, allKeysForObject:anObject]
+    }
+
+    unsafe fn allValues(self) -> id {
+        msg_send![self, allValues]
+    }
+
+    unsafe fn objectForKey_(self, aKey: id) -> id {
+        msg_send![self, objectForKey:aKey]
+    }
+
+    unsafe fn objectForKeyedSubscript_(self, key: id) -> id {
+        msg_send![self, objectForKeyedSubscript:key]
+    }
+
+    unsafe fn objectsForKeys_notFoundMarker_(self, keys: id, anObject: id) -> id {
+        msg_send![self, objectsForKeys:keys notFoundMarker:anObject]
+    }
+
+    unsafe fn valueForKey_(self, key: id) -> id {
+        msg_send![self, valueForKey:key]
+    }
+
+    unsafe fn keyEnumerator(self) -> id {
+        msg_send![self, keyEnumerator]
+    }
+
+    unsafe fn objectEnumerator(self) -> id {
+        msg_send![self, objectEnumerator]
+    }
+
+    unsafe fn enumerateKeysAndObjectsUsingBlock_(self, block: *mut Block<(id, id, *mut BOOL), ()>) {
+        msg_send![self, enumerateKeysAndObjectsUsingBlock:block]
+    }
+
+    unsafe fn enumerateKeysAndObjectsWithOptions_usingBlock_(self, opts: NSEnumerationOptions,
+                                                     block: *mut Block<(id, id, *mut BOOL), ()>) {
+        msg_send![self, enumerateKeysAndObjectsWithOptions:opts usingBlock:block]
+    }
+
+    unsafe fn keysSortedByValueUsingSelector_(self, comparator: SEL) -> id {
+        msg_send![self, keysSortedByValueUsingSelector:comparator]
+    }
+
+    unsafe fn keysSortedByValueUsingComparator_(self, cmptr: NSComparator) -> id {
+        msg_send![self, keysSortedByValueUsingComparator:cmptr]
+    }
+
+    unsafe fn keysSortedByValueWithOptions_usingComparator_(self, opts: NSEnumerationOptions, cmptr: NSComparator) -> id {
+        let rv: id = msg_send![self, keysSortedByValueWithOptions:opts usingComparator:cmptr];
+        rv
+    }
+
+    unsafe fn keysOfEntriesPassingTest_(self, predicate: *mut Block<(id, id, *mut BOOL), BOOL>) -> id {
+        msg_send![self, keysOfEntriesPassingTest:predicate]
+    }
+
+    unsafe fn keysOfEntriesWithOptions_PassingTest_(self, opts: NSEnumerationOptions,
+                                                    predicate: *mut Block<(id, id, *mut BOOL), BOOL>) -> id {
+        msg_send![self, keysOfEntriesWithOptions:opts PassingTest:predicate]
+    }
+
+    unsafe fn writeToFile_atomically_(self, path: id, flag: BOOL) -> BOOL {
+        msg_send![self, writeToFile:path atomically:flag]
+    }
+
+    unsafe fn writeToURL_atomically_(self, aURL: id, flag: BOOL) -> BOOL {
+        msg_send![self, writeToURL:aURL atomically:flag]
+    }
+
+    unsafe fn fileCreationDate(self) -> id {
+        msg_send![self, fileCreationDate]
+    }
+
+    unsafe fn fileExtensionHidden(self) -> BOOL {
+        msg_send![self, fileExtensionHidden]
+    }
+
+    unsafe fn fileGroupOwnerAccountID(self) -> id {
+        msg_send![self, fileGroupOwnerAccountID]
+    }
+
+    unsafe fn fileGroupOwnerAccountName(self) -> id {
+        msg_send![self, fileGroupOwnerAccountName]
+    }
+
+    unsafe fn fileIsAppendOnly(self) -> BOOL {
+        msg_send![self, fileIsAppendOnly]
+    }
+
+    unsafe fn fileIsImmutable(self) -> BOOL {
+        msg_send![self, fileIsImmutable]
+    }
+
+    unsafe fn fileModificationDate(self) -> id {
+        msg_send![self, fileModificationDate]
+    }
+
+    unsafe fn fileOwnerAccountID(self) -> id {
+        msg_send![self, fileOwnerAccountID]
+    }
+
+    unsafe fn fileOwnerAccountName(self) -> id {
+        msg_send![self, fileOwnerAccountName]
+    }
+
+    unsafe fn filePosixPermissions(self) -> NSUInteger {
+        msg_send![self, filePosixPermissions]
+    }
+
+    unsafe fn fileSize(self) -> libc::c_ulonglong {
+        msg_send![self, fileSize]
+    }
+
+    unsafe fn fileSystemFileNumber(self) -> NSUInteger {
+        msg_send![self, fileSystemFileNumber]
+    }
+
+    unsafe fn fileSystemNumber(self) -> NSInteger {
+        msg_send![self, fileSystemNumber]
+    }
+
+    unsafe fn fileType(self) -> id {
+        msg_send![self, fileType]
+    }
+
+    unsafe fn description(self) -> id {
+        msg_send![self, description]
+    }
+
+    unsafe fn descriptionInStringsFileFormat(self) -> id {
+        msg_send![self, descriptionInStringsFileFormat]
+    }
+
+    unsafe fn descriptionWithLocale_(self, locale: id) -> id {
+        msg_send![self, descriptionWithLocale:locale]
+    }
+
+    unsafe fn descriptionWithLocale_indent_(self, locale: id, indent: NSUInteger) -> id {
+        msg_send![self, descriptionWithLocale:locale indent:indent]
+    }
+}
+
+bitflags! {
+    pub flags NSEnumerationOptions: libc::c_ulonglong {
+        const NSEnumerationConcurrent = 1 << 0,
+        const NSEnumerationReverse = 1 << 1
+    }
+}
+
+pub type NSComparator = *mut Block<(id, id), NSComparisonResult>;
+
+#[repr(isize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NSComparisonResult {
+    NSOrderedAscending = -1,
+    NSOrderedSame = 0,
+    NSOrderedDescending = 1
+}
+
 pub trait NSString {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSString"), alloc]

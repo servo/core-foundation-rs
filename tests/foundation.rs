@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate objc;
+extern crate block;
 extern crate cocoa;
 
 #[cfg(test)]
@@ -95,6 +96,83 @@ mod foundation {
                 iter.next();
                 msg_send![mut_components, removeObjectAtIndex:1];
                 iter.next();
+            }
+        }
+    }
+
+    mod nsdictionary {
+        use block::ConcreteBlock;
+        use cocoa::foundation::{NSArray, NSComparisonResult, NSDictionary, NSFastEnumeration, NSString};
+        use cocoa::base::{id, nil};
+
+        #[test]
+        fn test_get() {
+            const KEY: &'static str = "The key";
+            const VALUE: &'static str = "Some value";
+            unsafe {
+                let key = NSString::alloc(nil).init_str(KEY);
+                let value = NSString::alloc(nil).init_str(VALUE);
+                let dict = NSDictionary::dictionaryWithObject_forKey_(nil, value, key);
+
+                let retrieved_value = dict.objectForKey_(key);
+                assert!(retrieved_value.isEqualToString(VALUE));
+            }
+        }
+
+        #[test]
+        fn test_iter() {
+            let mkstr = |s| unsafe { NSString::alloc(nil).init_str(s) };
+            let keys = vec!["a", "b", "c", "d", "e", "f"];
+            let objects = vec!["1", "2", "3", "4", "5", "6"];
+            unsafe {
+                use std::{slice, str};
+                use std::cmp::{Ord, Ordering};
+
+                let keys_raw_vec = keys.clone().into_iter().map(&mkstr).collect::<Vec<_>>();
+                let objs_raw_vec = objects.clone().into_iter().map(&mkstr).collect::<Vec<_>>();
+
+                let keys_array = NSArray::arrayWithObjects(nil, &keys_raw_vec);
+                let objs_array = NSArray::arrayWithObjects(nil, &objs_raw_vec);
+
+                let dict = NSDictionary::dictionaryWithObjects_forKeys_(nil, objs_array, keys_array);
+
+                // NSDictionary does not store its contents in order of insertion, so ask for
+                // sorted iterators to ensure that each item is the same as its counterpart in
+                // the vector.
+
+                // First test cocoa sorting...
+                let mut comparator = ConcreteBlock::new(|s0: id, s1: id| {
+                    let (bytes0, len0) = (s0.UTF8String() as *const u8, s0.len());
+                    let (bytes1, len1) = (s1.UTF8String() as *const u8, s1.len());
+                    let (s0, s1) = (str::from_utf8(slice::from_raw_parts(bytes0, len0)).unwrap(),
+                                    str::from_utf8(slice::from_raw_parts(bytes1, len1)).unwrap());
+                    let (c0, c1) =(s0.chars().next().unwrap(), s1.chars().next().unwrap());
+                    match c0.cmp(&c1) {
+                        Ordering::Less => NSComparisonResult::NSOrderedAscending,
+                        Ordering::Equal => NSComparisonResult::NSOrderedSame,
+                        Ordering::Greater => NSComparisonResult::NSOrderedDescending
+                    }
+                });
+
+                let associated_iter = keys.iter().zip(objects.iter());
+                for (k_id, (k, v)) in dict.keysSortedByValueUsingComparator_(&mut *comparator).iter().zip(associated_iter) {
+                    assert!(k_id.isEqualToString(k));
+                    let v_id = dict.objectForKey_(k_id);
+                    assert!(v_id.isEqualToString(v));
+                }
+
+                // Then use rust sorting
+                let mut keys_arr = dict.allKeys().iter().collect::<Vec<_>>();
+                keys_arr.sort();
+                for (k0, k1) in keys_arr.into_iter().zip(keys.iter()) {
+                    assert!(k0.isEqualToString(k1));
+                }
+
+                let mut objects_arr = dict.allValues().iter().collect::<Vec<_>>();
+                objects_arr.sort();
+                for (v0, v1) in objects_arr.into_iter().zip(objects.iter()) {
+                    assert!(v0.isEqualToString(v1));
+                }
             }
         }
     }

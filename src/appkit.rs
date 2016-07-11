@@ -10,6 +10,7 @@
 #![allow(non_upper_case_globals)]
 
 use base::{id, class, BOOL, SEL};
+use block::Block;
 use foundation::{NSInteger, NSUInteger, NSTimeInterval,
                  NSPoint, NSSize, NSRect, NSRectEdge};
 use libc;
@@ -2764,9 +2765,80 @@ pub trait NSImage {
 
     unsafe fn initByReferencingFile_(self, file_name: id /* (NSString *) */) -> id;
     unsafe fn initWithContentsOfFile_(self, file_name: id /* (NSString *) */) -> id;
+    unsafe fn initWithData_(self, data: id /* (NSData *) */) -> id;
+    unsafe fn initWithDataIgnoringOrientation_(self, data: id /* (NSData *) */) -> id;
+    unsafe fn initWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> id;
+    unsafe fn initWithSize_flipped_drawingHandler_(self, size: NSSize,
+                                                   drawingHandlerShouldBeCalledWithFlippedContext: BOOL,
+                                                   drawingHandler: *mut Block<(NSRect,), BOOL>);
+    unsafe fn initWithSize_(self, aSize: NSSize) -> id;
+
+    unsafe fn imageNamed_(_: Self, name: id /* (NSString *) */) -> id {
+        msg_send![class("NSImage"), imageNamed:name]
+    }
+
     unsafe fn name(self) -> id /* (NSString *) */;
     unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL;
+
+    unsafe fn size(self) -> NSSize;
+    unsafe fn template(self) -> BOOL;
+
+    unsafe fn canInitWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> BOOL;
+    unsafe fn imageTypes(self) -> id /* (NSArray<NSString *> ) */;
+    unsafe fn imageUnfilteredTypes(self) -> id /* (NSArray<NSString *> ) */;
+
+    unsafe fn addRepresentation_(self, imageRep: id /* (NSImageRep *) */);
+    unsafe fn addRepresentations_(self, imageReps: id /* (NSArray<NSImageRep *> *) */);
+    unsafe fn representations(self) -> id /* (NSArray<NSImageRep *> *) */;
+    unsafe fn removeRepresentation_(self, imageRep: id /* (NSImageRep *) */);
+    unsafe fn bestRepresentationForRect_context_hints_(self, rect: NSRect,
+                                                       referenceContext: id /* (NSGraphicsContext *) */,
+                                                       hints: id /* (NSDictionary<NSString *, id> *) */)
+                                                       -> id /* (NSImageRep *) */;
+    unsafe fn prefersColorMatch(self) -> BOOL;
+    unsafe fn usesEPSOnResolutionMismatch(self) -> BOOL;
+    unsafe fn matchesOnMultipleResolution(self) -> BOOL;
+
+    unsafe fn drawInRect_(self, rect: NSRect);
+    unsafe fn drawAtPoint_fromRect_operation_fraction_(self, point: NSPoint, srcRect: NSRect,
+                                                       op: NSCompositingOperation, delta: CGFloat);
+    unsafe fn drawInRect_fromRect_operation_fraction_(self, dstRect: NSRect, srcRect: NSRect,
+                                                      op: NSCompositingOperation, delta: CGFloat);
+    unsafe fn drawInRect_fromRect_operation_fraction_respectFlipped_hints_(self, dstSpacePortionRect: NSRect,
+        srcSpacePortionRect: NSRect, op: NSCompositingOperation, delta: CGFloat, respectContextIsFlipped: BOOL,
+        hints: id /* (NSDictionary<NSString *, id> *) */);
+    unsafe fn drawRepresentation_inRect_(self, imageRep: id /* (NSImageRep *) */, dstRect: NSRect);
+
     unsafe fn isValid(self) -> BOOL;
+    unsafe fn backgroundColor(self) -> id /* (NSColor *) */;
+
+    unsafe fn lockFocus(self);
+    unsafe fn lockFocusFlipped_(self, flipped: BOOL);
+    unsafe fn unlockFocus(self);
+
+    unsafe fn alignmentRect(self) -> NSRect;
+
+    unsafe fn cacheMode(self) -> NSImageCacheMode;
+    unsafe fn recache(self);
+
+    unsafe fn delegate(self) -> id /* (id<NSImageDelegate *> *) */;
+
+    unsafe fn TIFFRepresentation(self) -> id /* (NSData *) */;
+    unsafe fn TIFFRepresentationUsingCompression_factor_(self, comp: NSTIFFCompression, aFloat: f32)
+                                                         -> id /* (NSData *) */;
+
+    unsafe fn cancelIncrementalLoad(self);
+
+    unsafe fn hitTestRect_withImageDestinationRect_context_hints_flipped_(self, testRectDestSpace: NSRect,
+        imageRectDestSpace: NSRect, referenceContext: id /* (NSGraphicsContext *) */,
+        hints: id /* (NSDictionary<NSString *, id> *) */, flipped: BOOL) -> BOOL;
+
+    unsafe fn accessibilityDescription(self) -> id /* (NSString *) */;
+
+    unsafe fn layerContentsForContentsScale_(self, layerContentsScale: CGFloat) -> id /* (id) */;
+    unsafe fn recommendedLayerContentsScale_(self, preferredContentsScale: CGFloat) -> CGFloat;
+
+    unsafe fn matchesOnlyOnBestFittingAxis(self) -> BOOL;
 }
 
 impl NSImage for id {
@@ -2778,6 +2850,30 @@ impl NSImage for id {
         msg_send![self, initWithContentsOfFile:file_name]
     }
 
+    unsafe fn initWithData_(self, data: id /* (NSData *) */) -> id {
+        msg_send![self, initWithData:data]
+    }
+
+    unsafe fn initWithDataIgnoringOrientation_(self, data: id /* (NSData *) */) -> id {
+        msg_send![self, initWithDataIgnoringOrientation:data]
+    }
+
+    unsafe fn initWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> id {
+        msg_send![self, initWithPasteboard:pasteboard]
+    }
+
+    unsafe fn initWithSize_flipped_drawingHandler_(self, size: NSSize,
+                                                   drawingHandlerShouldBeCalledWithFlippedContext: BOOL,
+                                                   drawingHandler: *mut Block<(NSRect,), BOOL>) {
+        msg_send![self, initWithSize:size
+                             flipped:drawingHandlerShouldBeCalledWithFlippedContext
+                      drawingHandler:drawingHandler]
+    }
+
+    unsafe fn initWithSize_(self, aSize: NSSize) -> id {
+        msg_send![self, initWithSize:aSize]
+    }
+
     unsafe fn name(self) -> id /* (NSString *) */ {
         msg_send![self, name]
     }
@@ -2786,9 +2882,289 @@ impl NSImage for id {
         msg_send![self, setName:name]
     }
 
+    unsafe fn size(self) -> NSSize {
+        msg_send![self, size]
+    }
+
+    unsafe fn template(self) -> BOOL {
+        msg_send![self, template]
+    }
+
+    unsafe fn canInitWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> BOOL {
+        msg_send![self, canInitWithPasteboard:pasteboard]
+    }
+
+    unsafe fn imageTypes(self) -> id /* (NSArray<NSString *> ) */ {
+        msg_send![self, imageTypes]
+    }
+
+    unsafe fn imageUnfilteredTypes(self) -> id /* (NSArray<NSString *> ) */ {
+        msg_send![self, imageUnfilteredTypes]
+    }
+
+    unsafe fn addRepresentation_(self, imageRep: id /* (NSImageRep *) */) {
+        msg_send![self, addRepresentation:imageRep]
+    }
+
+    unsafe fn addRepresentations_(self, imageReps: id /* (NSArray<NSImageRep *> *) */) {
+        msg_send![self, addRepresentations:imageReps]
+    }
+
+    unsafe fn representations(self) -> id /* (NSArray<NSImageRep *> *) */ {
+        msg_send![self, representations]
+    }
+
+    unsafe fn removeRepresentation_(self, imageRep: id /* (NSImageRep *) */) {
+        msg_send![self, removeRepresentation:imageRep]
+    }
+
+    unsafe fn bestRepresentationForRect_context_hints_(self, rect: NSRect,
+                                                       referenceContext: id /* (NSGraphicsContext *) */,
+                                                       hints: id /* (NSDictionary<NSString *, id> *) */)
+                                                       -> id /* (NSImageRep *) */ {
+        msg_send![self, bestRepresentationForRect:rect context:referenceContext hints:hints]
+    }
+
+    unsafe fn prefersColorMatch(self) -> BOOL {
+        msg_send![self, prefersColorMatch]
+    }
+
+    unsafe fn usesEPSOnResolutionMismatch(self) -> BOOL {
+        msg_send![self, usesEPSOnResolutionMismatch]
+    }
+
+    unsafe fn matchesOnMultipleResolution(self) -> BOOL {
+        msg_send![self, matchesOnMultipleResolution]
+    }
+
+    unsafe fn drawInRect_(self, rect: NSRect) {
+        msg_send![self, drawInRect:rect]
+    }
+
+    unsafe fn drawAtPoint_fromRect_operation_fraction_(self, point: NSPoint, srcRect: NSRect,
+                                                       op: NSCompositingOperation, delta: CGFloat) {
+        msg_send![self, drawAtPoint:point fromRect:srcRect operation:op fraction:delta]
+    }
+
+    unsafe fn drawInRect_fromRect_operation_fraction_(self, dstRect: NSRect, srcRect: NSRect,
+                                                      op: NSCompositingOperation, delta: CGFloat) {
+        msg_send![self, drawInRect:dstRect fromRect:srcRect operation:op fraction:delta]
+    }
+
+    unsafe fn drawInRect_fromRect_operation_fraction_respectFlipped_hints_(self, dstSpacePortionRect: NSRect,
+        srcSpacePortionRect: NSRect, op: NSCompositingOperation, delta: CGFloat, respectContextIsFlipped: BOOL,
+        hints: id /* (NSDictionary<NSString *, id> *) */) {
+        msg_send![self, drawInRect:dstSpacePortionRect
+                          fromRect:srcSpacePortionRect
+                         operation:op
+                          fraction:delta
+                    respectFlipped:respectContextIsFlipped
+                             hints:hints]
+    }
+
+    unsafe fn drawRepresentation_inRect_(self, imageRep: id /* (NSImageRep *) */, dstRect: NSRect) {
+        msg_send![self, drawRepresentation:imageRep inRect:dstRect]
+    }
+
     unsafe fn isValid(self) -> BOOL {
         msg_send![self, isValid]
     }
+
+    unsafe fn backgroundColor(self) -> id /* (NSColor *) */ {
+        msg_send![self, backgroundColor]
+    }
+
+    unsafe fn lockFocus(self) {
+        msg_send![self, lockFocus]
+    }
+
+    unsafe fn lockFocusFlipped_(self, flipped: BOOL) {
+        msg_send![self, lockFocusFlipped:flipped]
+    }
+
+    unsafe fn unlockFocus(self) {
+        msg_send![self, unlockFocus]
+    }
+
+    unsafe fn alignmentRect(self) -> NSRect {
+        msg_send![self, alignmentRect]
+    }
+
+    unsafe fn cacheMode(self) -> NSImageCacheMode {
+        msg_send![self, cacheMode]
+    }
+
+    unsafe fn recache(self) {
+        msg_send![self, recache]
+    }
+
+    unsafe fn delegate(self) -> id /* (id<NSImageDelegate *> *) */ {
+        msg_send![self, delegate]
+    }
+
+    unsafe fn TIFFRepresentation(self) -> id /* (NSData *) */ {
+        msg_send![self, TIFFRepresentation]
+    }
+
+    unsafe fn TIFFRepresentationUsingCompression_factor_(self, comp: NSTIFFCompression, aFloat: f32)
+                                                         -> id /* (NSData *) */ {
+        msg_send![self, TIFFRepresentationUsingCompression:comp factor:aFloat]
+    }
+
+    unsafe fn cancelIncrementalLoad(self) {
+        msg_send![self, cancelIncrementalLoad]
+    }
+
+    unsafe fn hitTestRect_withImageDestinationRect_context_hints_flipped_(self, testRectDestSpace: NSRect,
+        imageRectDestSpace: NSRect, referenceContext: id /* (NSGraphicsContext *) */,
+        hints: id /* (NSDictionary<NSString *, id> *) */, flipped: BOOL) -> BOOL {
+        msg_send![self, hitTestRect:testRectDestSpace
+           withImageDestinationRect:imageRectDestSpace
+                            context:referenceContext
+                              hints:hints
+                            flipped:flipped]
+    }
+
+    unsafe fn accessibilityDescription(self) -> id /* (NSString *) */ {
+        msg_send![self, accessibilityDescription]
+    }
+
+    unsafe fn layerContentsForContentsScale_(self, layerContentsScale: CGFloat) -> id /* (id) */ {
+        msg_send![self, layerContentsForContentsScale:layerContentsScale]
+    }
+
+    unsafe fn recommendedLayerContentsScale_(self, preferredContentsScale: CGFloat) -> CGFloat {
+        msg_send![self, recommendedLayerContentsScale:preferredContentsScale]
+    }
+
+    unsafe fn matchesOnlyOnBestFittingAxis(self) -> BOOL {
+        msg_send![self, matchesOnlyOnBestFittingAxis]
+    }
+}
+
+#[link(name = "AppKit", kind = "framework")]
+extern {
+    // Image hints (NSString* const)
+    pub static NSImageHintCTM: id;
+    pub static NSImageHintInterpolation: id;
+
+    // System image names (NSString const*)
+    pub static NSImageNameQuickLookTemplate: id;
+    pub static NSImageNameBluetoothTemplate: id;
+    pub static NSImageNameIChatTheaterTemplate: id;
+    pub static NSImageNameSlideshowTemplate: id;
+    pub static NSImageNameActionTemplate: id;
+    pub static NSImageNameSmartBadgeTemplate: id;
+    pub static NSImageNamePathTemplate: id;
+    pub static NSImageNameInvalidDataFreestandingTemplate: id;
+    pub static NSImageNameLockLockedTemplate: id;
+    pub static NSImageNameLockUnlockedTemplate: id;
+    pub static NSImageNameGoRightTemplate: id;
+    pub static NSImageNameGoLeftTemplate: id;
+    pub static NSImageNameRightFacingTriangleTemplate: id;
+    pub static NSImageNameLeftFacingTriangleTemplate: id;
+    pub static NSImageNameAddTemplate: id;
+    pub static NSImageNameRemoveTemplate: id;
+    pub static NSImageNameRevealFreestandingTemplate: id;
+    pub static NSImageNameFollowLinkFreestandingTemplate: id;
+    pub static NSImageNameEnterFullScreenTemplate: id;
+    pub static NSImageNameExitFullScreenTemplate: id;
+    pub static NSImageNameStopProgressTemplate: id;
+    pub static NSImageNameStopProgressFreestandingTemplate: id;
+    pub static NSImageNameRefreshTemplate: id;
+    pub static NSImageNameRefreshFreestandingTemplate: id;
+
+    pub static NSImageNameMultipleDocuments: id;
+
+    pub static NSImageNameUser: id;
+    pub static NSImageNameUserGroup: id;
+    pub static NSImageNameEveryone: id;
+    pub static NSImageNameUserGuest: id;
+
+    pub static NSImageNameBonjour: id;
+    pub static NSImageNameDotMac: id;
+    pub static NSImageNameComputer: id;
+    pub static NSImageNameFolderBurnable: id;
+    pub static NSImageNameFolderSmart: id;
+    pub static NSImageNameNetwork: id;
+
+    pub static NSImageNameUserAccounts: id;
+    pub static NSImageNamePreferencesGeneral: id;
+    pub static NSImageNameAdvanced: id;
+    pub static NSImageNameInfo: id;
+    pub static NSImageNameFontPanel: id;
+    pub static NSImageNameColorPanel: id;
+    pub static NSImageNameFolder: id;
+    pub static NSImageNameTrashEmpty: id;
+    pub static NSImageNameTrashFull: id;
+    pub static NSImageNameHomeTemplate: id;
+    pub static NSImageNameBookmarksTemplate: id;
+    pub static NSImageNameCaution: id;
+    pub static NSImageNameStatusAvailable: id;
+    pub static NSImageNameStatusPartiallyAvailable: id;
+    pub static NSImageNameStatusUnavailable: id;
+    pub static NSImageNameStatusNone: id;
+    pub static NSImageNameApplicationIcon: id;
+    pub static NSImageNameMenuOnStateTemplate: id;
+    pub static NSImageNameMenuMixedStateTemplate: id;
+    pub static NSImageNameMobileMe: id;
+
+    pub static NSImageNameIconViewTemplate: id;
+    pub static NSImageNameListViewTemplate: id;
+    pub static NSImageNameColumnViewTemplate: id;
+    pub static NSImageNameFlowViewTemplate: id;
+    pub static NSImageNameShareTemplate: id;
+}
+
+#[repr(usize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NSCompositingOperation {
+   NSCompositeClear = 0,
+   NSCompositeCopy = 1,
+   NSCompositeSourceOver = 2,
+   NSCompositeSourceIn = 3,
+   NSCompositeSourceOut = 4,
+   NSCompositeSourceAtop = 5,
+   NSCompositeDestinationOver = 6,
+   NSCompositeDestinationIn = 7,
+   NSCompositeDestinationOut = 8,
+   NSCompositeDestinationAtop = 9,
+   NSCompositeXOR = 10,
+   NSCompositePlusDarker = 11,
+   NSCompositeHighlight = 12,
+   NSCompositePlusLighter = 13
+}
+
+#[repr(usize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NSImageCacheMode {
+    NSImageCacheDefault,
+    NSImageCacheAlways,
+    NSImageCacheBySize,
+    NSImageCacheNever
+}
+
+#[repr(usize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NSTIFFCompression {
+    NSTIFFCompressionNone = 1,
+    NSTIFFCompressionCCITTFAX3 = 3,
+    NSTIFFCompressionCCITTFAX4 = 4,
+    NSTIFFCompressionLZW = 5,
+    NSTIFFCompressionJPEG = 6,
+    NSTIFFCompressionNEXT = 32766,
+    NSTIFFCompressionPackBits = 32773,
+    NSTIFFCompressionOldJPEG = 32865
+}
+
+#[repr(usize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NSImageLoadStatus {
+    NSImageLoadStatusCompleted,
+    NSImageLoadStatusCancelled,
+    NSImageLoadStatusInvalidData,
+    NSImageLoadStatusUnexpectedEOF,
+    NSImageLoadStatusReadError
 }
 
 pub trait NSSound {

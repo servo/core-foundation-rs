@@ -1,12 +1,13 @@
 extern crate cocoa;
 
-use cocoa::base::{NSUInteger, selector, nil, YES, NO};
-use cocoa::appkit::{NSApp, NSRect, NSPoint, NSSize,
-					NSAutoreleasePool, NSProcessInfo,
+use cocoa::base::{selector, nil, NO};
+use cocoa::foundation::{NSUInteger, NSRect, NSPoint, NSSize,
+						NSAutoreleasePool, NSProcessInfo, NSString};
+use cocoa::appkit::{NSApp,
 					NSApplication, NSApplicationActivationPolicyRegular,
 					NSWindow, NSTitledWindowMask, NSBackingStoreBuffered,
-					NSString,
-					NSMenu, NSMenuItem};
+					NSMenu, NSMenuItem, NSRunningApplication,
+					NSApplicationActivateIgnoringOtherApps};
 
 fn main() {
 	unsafe {
@@ -23,12 +24,12 @@ fn main() {
 
 		// create Application menu
 		let app_menu = NSMenu::new(nil).autorelease();
-		let quit_prefix = NSString::alloc(nil).init_str("Quit \0");
+		let quit_prefix = NSString::alloc(nil).init_str("Quit");
 		let quit_title = quit_prefix.stringByAppendingString_(
 			NSProcessInfo::processInfo(nil).processName()
 		);
 		let quit_action = selector("terminate:");
-		let quit_key = NSString::alloc(nil).init_str("q\0");
+		let quit_key = NSString::alloc(nil).init_str("q");
 		let quit_item = NSMenuItem::alloc(nil).initWithTitle_action_keyEquivalent_(
 			quit_title,
 			quit_action,
@@ -46,11 +47,11 @@ fn main() {
 		).autorelease();
 		window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
 		window.center();
-		let title = NSString::alloc(nil).init_str("Hello World!\0");
+		let title = NSString::alloc(nil).init_str("Hello World!");
 		window.setTitle_(title);
 		window.makeKeyAndOrderFront_(nil);
-
-		app.activateIgnoringOtherApps_(YES);
+		let current_app = NSRunningApplication::currentApplication(nil);
+		current_app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps);
 		app.run();
 	}
 }

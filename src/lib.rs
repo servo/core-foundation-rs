@@ -10,14 +10,16 @@
 #![crate_name = "cocoa"]
 #![crate_type = "rlib"]
 
-#![allow(missing_copy_implementations, non_snake_case)]
-#![feature(std_misc, hash)]
+#![allow(non_snake_case)]
 
+extern crate block;
 #[macro_use]
 extern crate bitflags;
 extern crate libc;
+extern crate core_graphics;
+#[macro_use]
+extern crate objc;
 
-#[cfg(target_os="macos")]
 pub mod appkit;
-#[cfg(target_os="macos")]
 pub mod base;
+pub mod foundation;

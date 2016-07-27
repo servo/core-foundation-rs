@@ -10,8 +10,6 @@
 #![crate_name = "io_surface"]
 #![crate_type = "rlib"]
 
-#![feature(clone_from_slice)]
-
 extern crate libc;
 extern crate core_foundation;
 extern crate euclid;

@@ -1,7 +1,10 @@
 os: osx
 language: rust
-sudo: false
-rust: nightly
+cache: cargo
+rust:
+  - stable
+  - beta
+  - nightly
 branches:
   except:
     - master

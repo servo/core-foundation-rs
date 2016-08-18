@@ -12,7 +12,6 @@
 
 extern crate libc;
 extern crate core_foundation;
-extern crate euclid;
 extern crate cgl;
 extern crate gleam;
 extern crate leaky_cow;
@@ -22,7 +21,6 @@ extern crate leaky_cow;
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFStringRef;
-use euclid::size::Size2D;
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString};
 use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 use libc::{c_int, c_void, size_t};
@@ -123,14 +121,14 @@ impl IOSurface {
     }
 
     /// Binds to the current GL texture.
-    pub fn bind_to_gl_texture(&self, size: Size2D<i32>) {
+    pub fn bind_to_gl_texture(&self, width: i32, height: i32) {
         unsafe {
             let context = CGLGetCurrentContext();
             let gl_error = CGLTexImageIOSurface2D(context,
                                                   TEXTURE_RECTANGLE_ARB,
                                                   RGBA as GLenum,
-                                                  size.width,
-                                                  size.height,
+                                                  width,
+                                                  height,
                                                   BGRA as GLenum,
                                                   UNSIGNED_INT_8_8_8_8_REV,
                                                   mem::transmute(self.as_concrete_TypeRef()),

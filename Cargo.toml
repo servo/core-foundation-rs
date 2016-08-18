@@ -10,7 +10,6 @@ license = "MIT / Apache-2.0"
 [dependencies]
 libc = "0.2"
 gleam = "0.2"
-euclid = "0.9"
 
 [target.x86_64-apple-darwin.dependencies]
 core-foundation = "0.2"

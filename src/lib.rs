@@ -36,11 +36,10 @@ use std::ffi::CStr;
 type IOReturn = c_int;
 
 #[repr(C)]
-struct __IOSurface;
+pub struct __IOSurface(libc::c_void);
 
 pub type IOSurfaceRef = *const __IOSurface;
 
-#[repr(C)]
 pub struct IOSurface {
     pub obj: IOSurfaceRef,
 }

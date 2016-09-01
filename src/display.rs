@@ -7,6 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![allow(non_upper_case_globals)]
+
 // this file defines CGFloat, as well as stubbed data types.
 extern crate core_foundation;
 // extern crate core_foundation_sys;

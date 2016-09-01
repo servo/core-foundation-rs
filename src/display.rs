@@ -7,11 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-// this file defines CGFloat, as well as stubbed data types.
-extern crate core_foundation;
-// extern crate core_foundation_sys;
+#![allow(non_upper_case_globals)]
 
-pub use libc;
+extern crate core_foundation;
+
+use libc;
 pub use base::{CGError, boolean_t};
 pub use geometry::{CGRect, CGPoint, CGSize};
 

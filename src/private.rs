@@ -91,7 +91,7 @@ mod ffi {
     use libc::{c_int, c_uint};
 
     // This is an enum so that we can't easily make instances of this opaque type.
-    enum CGSRegionObject {}
+    pub enum CGSRegionObject {}
 
     pub type CGError = OSStatus;
     pub type CGSRegionRef = *mut CGSRegionObject;

@@ -41,7 +41,7 @@ impl Serialize for CGFont {
 impl Deserialize for CGFont {
     fn deserialize<D>(deserializer: &mut D) -> Result<Self, D::Error> where D: Deserializer {
         let postscript_name: String = try!(Deserialize::deserialize(deserializer));
-        CGFont::from_name(&CFString::new(&*postscript_name)).map_err(|err| {
+        CGFont::from_name(&CFString::new(&*postscript_name)).map_err(|_| {
             de::Error::invalid_value("Couldn't find a font with that PostScript name!")
         })
     }

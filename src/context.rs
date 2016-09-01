@@ -16,7 +16,7 @@ use std::ptr;
 use std::slice;
 
 #[repr(C)]
-struct __CGContext;
+pub struct __CGContext;
 
 pub type CGContextRef = *const __CGContext;
 

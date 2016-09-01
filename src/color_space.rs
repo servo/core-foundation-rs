@@ -11,7 +11,7 @@ use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use std::mem;
 
 #[repr(C)]
-struct __CGColorSpace;
+pub struct __CGColorSpace;
 
 pub type CGColorSpaceRef = *const __CGColorSpace;
 

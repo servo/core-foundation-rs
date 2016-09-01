@@ -137,6 +137,18 @@ impl CGContext {
             CGContextSetShouldSmoothFonts(self.as_concrete_TypeRef(), should_smooth_fonts)
         }
     }
+
+    pub fn set_allows_antialiasing(&self, allows_antialiasing: bool) {
+        unsafe {
+            CGContextSetAllowsAntialiasing(self.as_concrete_TypeRef(), allows_antialiasing)
+        }
+    }
+
+    pub fn set_should_antialias(&self, should_antialias: bool) {
+        unsafe {
+            CGContextSetShouldAntialias(self.as_concrete_TypeRef(), should_antialias)
+        }
+    }
 }
 
 #[link(name = "ApplicationServices", kind = "framework")]
@@ -156,6 +168,8 @@ extern {
     fn CGContextGetTypeID() -> CFTypeID;
     fn CGContextSetAllowsFontSmoothing(c: CGContextRef, allowsFontSmoothing: bool);
     fn CGContextSetShouldSmoothFonts(c: CGContextRef, shouldSmoothFonts: bool);
+    fn CGContextSetAllowsAntialiasing(c: CGContextRef, allowsAntialiasing: bool);
+    fn CGContextSetShouldAntialias(c: CGContextRef, shouldAntialias: bool);
     fn CGContextSetRGBFillColor(context: CGContextRef,
                                 red: CGFloat,
                                 green: CGFloat,

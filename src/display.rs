@@ -11,7 +11,7 @@
 
 extern crate core_foundation;
 
-pub use libc;
+use libc;
 pub use base::{CGError, boolean_t};
 pub use geometry::{CGRect, CGPoint, CGSize};
 

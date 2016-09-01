@@ -8,9 +8,7 @@
 // except according to those terms.
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
-use libc::{c_void, size_t};
 use std::mem;
-use std::ptr;
 
 #[repr(C)]
 struct __CGColorSpace;

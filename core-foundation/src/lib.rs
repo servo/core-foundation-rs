@@ -177,6 +177,7 @@ pub mod data;
 pub mod date;
 pub mod dictionary;
 pub mod error;
+pub mod filedescriptor;
 pub mod number;
 pub mod set;
 pub mod string;

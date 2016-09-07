@@ -7,26 +7,105 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use libc::c_void;
+use allocator::CFAllocator;
+use base::{CFDowncast, CFIndex, CFObject, CFType, CFTypeID};
+use dictionary::{CFDictionary, CFDictionaryRef};
+use std::os::raw::c_void;
+use string::{CFString, CFStringRef};
+use sync::{CFRef, CFShared};
 
-use base::{CFTypeID, CFIndex};
-use string::CFStringRef;
+pub type CFErrorRef = CFRef<CFError>;
 
 #[repr(C)]
-pub struct __CFError(c_void);
+pub struct CFError { obj: CFObject }
 
-pub type CFErrorRef = *mut __CFError;
+unsafe impl Send for CFError {}
+unsafe impl Sync for CFError {}
 
-extern "C" {
+unsafe impl CFType for CFError {
+    #[inline]
+    fn as_object(&self) -> &CFObject {
+        &self.obj
+    }
+}
+
+unsafe impl CFDowncast for CFError {
+    #[inline]
+    fn type_id() -> CFTypeID {
+        unsafe { CFErrorGetTypeID() }
+    }
+}
+
+impl CFError {
+    #[inline]
+    pub fn new(
+            domain: &CFString, code: CFIndex, user_info: Option<&CFDictionary>)
+            -> CFErrorRef {
+        unsafe {
+            CFRef::from_retained(
+                CFErrorCreate(None, domain, code, user_info))
+        }
+    }
+
+    #[inline]
+    pub fn domain(&self) -> &CFShared<CFString> {
+        unsafe { CFErrorGetDomain(self).unwrap() }
+    }
+
+    #[inline]
+    pub fn code(&self) -> CFIndex {
+        unsafe { CFErrorGetCode(self) }
+    }
+
+    #[inline]
+    pub fn user_info(&self) -> CFDictionaryRef {
+        unsafe { CFRef::from_retained(CFErrorCopyUserInfo(self)) }
+    }
+
+    #[inline]
+    pub fn description(&self) -> CFStringRef {
+        unsafe { CFRef::from_retained(CFErrorCopyDescription(self)) }
+    }
+
+    #[inline]
+    pub fn failure_reason(&self) -> Option<CFStringRef> {
+        unsafe { CFRef::try_from_retained(CFErrorCopyFailureReason(self)).ok() }
+    }
+
+    #[inline]
+    pub fn recovery_suggestion(&self) -> Option<CFStringRef> {
+        unsafe {
+            CFRef::try_from_retained(CFErrorCopyRecoverySuggestion(self)).ok()
+        }
+    }
+}
+
+extern {
     pub fn CFErrorGetTypeID() -> CFTypeID;
 
-    pub static kCFErrorDomainPOSIX: CFStringRef;
-    pub static kCFErrorDomainOSStatus: CFStringRef;
-    pub static kCFErrorDomainMach: CFStringRef;
-    pub static kCFErrorDomainCocoa: CFStringRef;
+    pub fn CFErrorCreate(
+            allocator: Option<&'static CFAllocator>,
+            domain: &CFString,
+            code: CFIndex,
+            userInfo: Option<&CFDictionary>)
+            -> *const CFShared<CFError>;
 
-    pub fn CFErrorGetDomain(err: CFErrorRef) -> CFStringRef;
-    pub fn CFErrorGetCode(err: CFErrorRef) -> CFIndex;
+    pub fn CFErrorCreateWithUserInfoKeysAndValues(
+            allocator: Option<&'static CFAllocator>,
+            domain: &CFShared<CFString>,
+            code: CFIndex,
+            userInfoKeys: *const *const c_void,
+            userInfoValues: *const *const c_void,
+            numUserInfoValues: CFIndex)
+            -> *const CFShared<CFError>;
 
-    pub fn CFErrorCopyDescription(err: CFErrorRef) -> CFStringRef;
+    pub fn CFErrorGetDomain(err: &CFError) -> Option<&CFShared<CFString>>;
+    pub fn CFErrorGetCode(err: &CFError) -> CFIndex;
+    pub fn CFErrorCopyUserInfo(err: &CFError) -> *const CFShared<CFDictionary>;
+    pub fn CFErrorCopyDescription(err: &CFError) -> *const CFShared<CFString>;
+    pub fn CFErrorCopyFailureReason(err: &CFError) -> *const CFShared<CFString>;
+
+    pub fn CFErrorCopyRecoverySuggestion(
+            err: &CFError)
+            -> *const CFShared<CFString>;
 }

@@ -7,20 +7,20 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#![allow(non_snake_case)]
+use base::{CFObject, CFType};
+use sync::CFRef;
 
-extern crate core_foundation_sys;
+pub type CFCharacterSetRef = CFRef<CFCharacterSet>;
 
-pub mod array;
-pub mod base;
-pub mod boolean;
-pub mod bundle;
-pub mod data;
-pub mod dictionary;
-pub mod error;
-pub mod number;
-pub mod runloop;
-pub mod set;
-pub mod string;
-pub mod time;
-pub mod url;
+#[repr(C)]
+pub struct CFCharacterSet { obj: CFObject }
+
+unsafe impl Send for CFCharacterSet {}
+unsafe impl Sync for CFCharacterSet {}
+
+unsafe impl CFType for CFCharacterSet {
+    #[inline]
+    fn as_object(&self) -> &CFObject {
+        &self.obj
+    }
+}

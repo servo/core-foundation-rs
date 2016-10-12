@@ -1,4 +1,4 @@
-// Copyright 2013-2015 The Servo Project Developers. See the COPYRIGHT
+// Copyright 2013-2016 The Servo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -7,9 +7,4 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-pub type CFTimeInterval = f64;
-pub type CFAbsoluteTime = CFTimeInterval;
-
-extern {
-    pub fn CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime;
-}
+pub use core_foundation_sys::time::{CFAbsoluteTime, CFTimeInterval};

@@ -11,6 +11,7 @@ pub type CGKeyCode = libc::uint16_t;
 ///
 /// [Ref] (http://opensource.apple.com//source/IOHIDFamily/IOHIDFamily-308/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
 #[repr(C)]
+#[derive(Clone, Copy, Debug)]
 pub enum CGEventFlags {
   // Device-independent modifier key bits.
   AlphaShift = 0x00010000,
@@ -32,6 +33,7 @@ pub enum CGEventFlags {
 
 /// Possible tapping points for events.
 #[repr(C)]
+#[derive(Clone, Copy, Debug)]
 pub enum CGEventTapLocation {
     HIDEventTap,
     SessionEventTap,

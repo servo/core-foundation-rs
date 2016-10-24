@@ -6,6 +6,7 @@ use std::ptr;
 
 /// Possible source states of an event source.
 #[repr(C)]
+#[derive(Clone, Copy, Debug)]
 pub enum CGEventSourceStateID {
     Private = -1,
     CombinedSessionState = 0,

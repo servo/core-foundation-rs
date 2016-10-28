@@ -81,9 +81,9 @@ pub enum CGMouseButton {
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub enum CGEventTapLocation {
-    HIDEventTap,
-    SessionEventTap,
-    AnnotatedSessionEventTap,
+    HID,
+    Session,
+    AnnotatedSession,
 }
 
 #[repr(C)]
@@ -166,13 +166,13 @@ impl CGEvent {
 
     pub fn new_mouse_event(
         source: CGEventSource,
-        mouseType: CGEventType,
-        mouseCursorPosition: CGPoint,
-        mouseButton: CGMouseButton
+        mouse_type: CGEventType,
+        mouse_cursor_position: CGPoint,
+        mouse_button: CGMouseButton
     ) -> Result<CGEvent, ()> {
         unsafe {
-            let event_ref = CGEventCreateMouseEvent(source.as_concrete_TypeRef(), mouseType,
-                mouseCursorPosition, mouseButton);
+            let event_ref = CGEventCreateMouseEvent(source.as_concrete_TypeRef(), mouse_type,
+                mouse_cursor_position, mouse_button);
             if event_ref != ptr::null() {
                 Ok(TCFType::wrap_under_create_rule(event_ref))
             } else {
@@ -181,9 +181,9 @@ impl CGEvent {
         }
     }
 
-    pub fn post(&self, tapLocation: CGEventTapLocation) {
+    pub fn post(&self, tap_location: CGEventTapLocation) {
         unsafe {
-            CGEventPost(tapLocation, self.as_concrete_TypeRef());
+            CGEventPost(tap_location, self.as_concrete_TypeRef());
         }
     }
 

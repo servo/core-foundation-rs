@@ -1,6 +1,5 @@
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 
-use libc;
 use std::mem;
 use std::ptr;
 
@@ -76,9 +75,9 @@ impl TCFType<CGEventSourceRef> for CGEventSource {
 }
 
 impl CGEventSource {
-    pub fn new(stateID: CGEventSourceStateID) -> Result<CGEventSource, ()> {
+    pub fn new(state_id: CGEventSourceStateID) -> Result<CGEventSource, ()> {
         unsafe {
-            let event_source_ref = CGEventSourceCreate(stateID);
+            let event_source_ref = CGEventSourceCreate(state_id);
             if event_source_ref != ptr::null() {
                 Ok(TCFType::wrap_under_create_rule(event_source_ref))
             } else {

@@ -1,4 +1,5 @@
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use geometry::CGPoint;
 use event_source::{CGEventSource,CGEventSourceRef};
 
 use libc;
@@ -9,7 +10,7 @@ pub type CGKeyCode = libc::uint16_t;
 
 /// Flags for events
 ///
-/// [Ref] (http://opensource.apple.com//source/IOHIDFamily/IOHIDFamily-308/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
+/// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub enum CGEventFlags {
@@ -29,6 +30,51 @@ pub enum CGEventFlags {
 
   // Indicates if mouse/pen movement events are not being coalesced
   NonCoalesced = 0x00000100,
+}
+
+/// Constants that specify the different types of input events.
+///
+/// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub enum CGEventType {
+    Null = 1 << 0,
+
+    // Mouse events.
+    LeftMouseDown = 1 << 1,
+    LeftMouseUp = 1 << 2,
+    RightMouseDown = 1 << 3,
+    RightMouseUp = 1 << 4,
+    MouseMoved = 1 << 5,
+    LeftMouseDragged = 1 << 6,
+    RightMouseDragged = 1 << 7,
+
+    // Keyboard events.
+    KeyDown = 1 << 10,
+    KeyUp = 1 << 11,
+    FlagsChanged = 1 << 12,
+
+    // Specialized control devices.
+    ScrollWheel = 1 << 22,
+    TabletPointer = 1 << 23,
+    TabletProximity = 1 << 24,
+    OtherMouseDown = 1 << 25,
+    OtherMouseUp = 1 << 26,
+    OtherMouseDragged = 1 << 27,
+
+    // Out of band event types. These are delivered to the event tap callback
+    // to notify it of unusual conditions that disable the event tap.
+    TapDisabledByTimeout = 0xFFFFFFFE,
+    TapDisabledByUserInput = 0xFFFFFFFF,
+}
+
+// Constants that specify buttons on a one, two, or three-button mouse.
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub enum CGMouseButton {
+    Left,
+    Right,
+    Center,
 }
 
 /// Possible tapping points for events.
@@ -156,6 +202,22 @@ extern {
     /// and 'z' key must be released:
     fn CGEventCreateKeyboardEvent(source: CGEventSourceRef, keycode: CGKeyCode,
         keydown: bool) -> CGEventRef;
+
+    /// Return a new mouse event.
+    ///
+    /// The event source may be taken from another event, or may be NULL.
+    /// `mouseType' should be one of the mouse event types. `mouseCursorPosition'
+    /// should be the position of the mouse cursor in global coordinates.
+    /// `mouseButton' should be the button that's changing state; `mouseButton'
+    /// is ignored unless `mouseType' is one of `kCGEventOtherMouseDown',
+    /// `kCGEventOtherMouseDragged', or `kCGEventOtherMouseUp'.
+    ///
+    /// The current implemementation of the event system supports a maximum of
+    /// thirty-two buttons. Mouse button 0 is the primary button on the mouse.
+    /// Mouse button 1 is the secondary mouse button (right). Mouse button 2 is
+    /// the center button, and the remaining buttons are in USB device order.
+    fn CGEventCreateMouseEvent(source: CGEventSourceRef, mouseType: CGEventType,
+        mouseCursorPosition: CGPoint, mouseButton: CGMouseButton) -> CGEventRef;
 
     /// Post an event into the event stream at a specified location.
     ///

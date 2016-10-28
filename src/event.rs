@@ -149,9 +149,30 @@ impl TCFType<CGEventRef> for CGEvent {
 }
 
 impl CGEvent {
-    pub fn new(source: CGEventSource, keycode: CGKeyCode, keydown: bool) -> Result<CGEvent, ()> {
+    pub fn new_keyboard_event(
+        source: CGEventSource,
+        keycode: CGKeyCode,
+        keydown: bool
+    ) -> Result<CGEvent, ()> {
         unsafe {
             let event_ref = CGEventCreateKeyboardEvent(source.as_concrete_TypeRef(), keycode, keydown);
+            if event_ref != ptr::null() {
+                Ok(TCFType::wrap_under_create_rule(event_ref))
+            } else {
+                Err(())
+            }
+        }
+    }
+
+    pub fn new_mouse_event(
+        source: CGEventSource,
+        mouseType: CGEventType,
+        mouseCursorPosition: CGPoint,
+        mouseButton: CGMouseButton
+    ) -> Result<CGEvent, ()> {
+        unsafe {
+            let event_ref = CGEventCreateMouseEvent(source.as_concrete_TypeRef(), mouseType,
+                mouseCursorPosition, mouseButton);
             if event_ref != ptr::null() {
                 Ok(TCFType::wrap_under_create_rule(event_ref))
             } else {

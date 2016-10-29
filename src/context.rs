@@ -16,6 +16,17 @@ use std::ptr;
 use std::slice;
 
 #[repr(C)]
+pub enum CGTextDrawingMode {
+    CGTextFill,
+    CGTextStroke,
+    CGTextFillStroke,
+    CGTextInvisible,
+    CGTextFillClip,
+    CGTextStrokeClip,
+    CGTextClip
+}
+
+#[repr(C)]
 pub struct __CGContext;
 
 pub type CGContextRef = *const __CGContext;
@@ -149,6 +160,12 @@ impl CGContext {
             CGContextSetShouldAntialias(self.as_concrete_TypeRef(), should_antialias)
         }
     }
+
+    pub fn set_text_drawing_mode(&self, mode: CGTextDrawingMode) {
+        unsafe {
+            CGContextSetTextDrawingMode(self.as_concrete_TypeRef(), mode)
+        }
+    }
 }
 
 #[link(name = "ApplicationServices", kind = "framework")]
@@ -170,6 +187,7 @@ extern {
     fn CGContextSetShouldSmoothFonts(c: CGContextRef, shouldSmoothFonts: bool);
     fn CGContextSetAllowsAntialiasing(c: CGContextRef, allowsAntialiasing: bool);
     fn CGContextSetShouldAntialias(c: CGContextRef, shouldAntialias: bool);
+    fn CGContextSetTextDrawingMode(c: CGContextRef, mode: CGTextDrawingMode);
     fn CGContextSetRGBFillColor(context: CGContextRef,
                                 red: CGFloat,
                                 green: CGFloat,

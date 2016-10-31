@@ -161,6 +161,30 @@ impl CGContext {
         }
     }
 
+    pub fn set_allows_font_subpixel_quantization(&self, allows_font_subpixel_quantization: bool) {
+        unsafe {
+            CGContextSetAllowsFontSubpixelQuantization(self.as_concrete_TypeRef(), allows_font_subpixel_quantization)
+        }
+    }
+
+    pub fn set_should_subpixel_quantize_fonts(&self, should_subpixel_quantize_fonts: bool) {
+        unsafe {
+            CGContextSetShouldSubpixelQuantizeFonts(self.as_concrete_TypeRef(), should_subpixel_quantize_fonts)
+        }
+    }
+
+    pub fn set_allows_font_subpixel_positioning(&self, allows_font_subpixel_positioning: bool) {
+        unsafe {
+            CGContextSetAllowsFontSubpixelPositioning(self.as_concrete_TypeRef(), allows_font_subpixel_positioning)
+        }
+    }
+
+    pub fn set_should_subpixel_position_fonts(&self, should_subpixel_position_fonts: bool) {
+        unsafe {
+            CGContextSetShouldSubpixelPositionFonts(self.as_concrete_TypeRef(), should_subpixel_position_fonts)
+        }
+    }
+
     pub fn set_text_drawing_mode(&self, mode: CGTextDrawingMode) {
         unsafe {
             CGContextSetTextDrawingMode(self.as_concrete_TypeRef(), mode)
@@ -187,6 +211,14 @@ extern {
     fn CGContextSetShouldSmoothFonts(c: CGContextRef, shouldSmoothFonts: bool);
     fn CGContextSetAllowsAntialiasing(c: CGContextRef, allowsAntialiasing: bool);
     fn CGContextSetShouldAntialias(c: CGContextRef, shouldAntialias: bool);
+    fn CGContextSetAllowsFontSubpixelQuantization(c: CGContextRef,
+                                                  allowsFontSubpixelQuantization: bool);
+    fn CGContextSetShouldSubpixelQuantizeFonts(c: CGContextRef,
+                                               shouldSubpixelQuantizeFonts: bool);
+    fn CGContextSetAllowsFontSubpixelPositioning(c: CGContextRef,
+                                                 allowsFontSubpixelPositioning: bool);
+    fn CGContextSetShouldSubpixelPositionFonts(c: CGContextRef,
+                                               shouldSubpixelPositionFonts: bool);
     fn CGContextSetTextDrawingMode(c: CGContextRef, mode: CGTextDrawingMode);
     fn CGContextSetRGBFillColor(context: CGContextRef,
                                 red: CGFloat,

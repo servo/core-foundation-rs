@@ -1638,6 +1638,9 @@ pub trait NSView {
     unsafe fn setWantsLayer(self, wantsLayer: BOOL);
     unsafe fn layer(self) -> id;
     unsafe fn setLayer(self, layer: id);
+
+    unsafe fn widthAnchor(self) -> id;
+    unsafe fn heightAnchor(self) -> id;
 }
 
 impl NSView for id {
@@ -1699,6 +1702,14 @@ impl NSView for id {
 
     unsafe fn setLayer(self, layer: id) {
         msg_send![self, setLayer:layer]
+    }
+
+    unsafe fn widthAnchor(self) -> id {
+        msg_send![self, widthAnchor]
+    }
+
+    unsafe fn heightAnchor(self) -> id {
+        msg_send![self, heightAnchor]
     }
 }
 
@@ -3621,3 +3632,33 @@ impl NSTabViewItem for id {
         msg_send![self, setTooltip:toolTip]
     }
 }
+
+pub trait NSLayoutConstraint {
+    unsafe fn activateConstraints(_: Self, constraints: id) -> id;
+}
+
+impl NSLayoutConstraint for id {
+    unsafe fn activateConstraints(_: Self, constraints: id) -> id {
+        msg_send![class("NSLayoutConstraint"), activateConstraints:constraints]
+    }
+}
+
+pub trait NSLayoutDimension {
+    unsafe fn constraintEqualToConstant(self, c: CGFloat) -> id;
+    unsafe fn constraintLessThanOrEqualToConstant(self, c: CGFloat) -> id;
+    unsafe fn constraintGreaterThanOrEqualToConstant(self, c: CGFloat) -> id;
+}
+
+impl NSLayoutDimension for id {
+    unsafe fn constraintEqualToConstant(self, c: CGFloat) -> id {
+        msg_send![self, constraintEqualToConstant:c]
+    }
+
+    unsafe fn constraintLessThanOrEqualToConstant(self, c: CGFloat) -> id {
+        msg_send![self, constraintLessThanOrEqualToConstant:c]
+    }
+
+    unsafe fn constraintGreaterThanOrEqualToConstant(self, c: CGFloat) -> id {
+        msg_send![self, constraintGreaterThanOrEqualToConstant:c]
+    }
+ }

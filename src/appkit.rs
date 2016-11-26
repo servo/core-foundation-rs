@@ -3662,3 +3662,13 @@ impl NSLayoutDimension for id {
         msg_send![self, constraintGreaterThanOrEqualToConstant:c]
     }
  }
+
+pub trait NSColor {
+    unsafe fn clearColor(_: Self) -> id;
+}
+
+impl NSColor for id {
+    unsafe fn clearColor(_: Self) -> id {
+        msg_send![class("NSColor"), clearColor]
+    }
+}

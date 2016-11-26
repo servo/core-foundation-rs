@@ -6,8 +6,8 @@ extern crate cocoa;
 #[cfg(test)]
 mod foundation {
     mod nsstring {
-        use cocoa::foundation::{NSString};
-        use cocoa::base::{nil};
+        use cocoa::foundation::NSString;
+        use cocoa::base::nil;
         use std::slice;
         use std::str;
 
@@ -17,7 +17,8 @@ mod foundation {
             unsafe {
                 let built = NSString::alloc(nil).init_str(expected);
                 let bytes = built.UTF8String() as *const u8;
-                let objc_string = str::from_utf8(slice::from_raw_parts(bytes, built.len())).unwrap();
+                let objc_string = str::from_utf8(slice::from_raw_parts(bytes, built.len()))
+                    .unwrap();
                 assert!(objc_string.len() == expected.len());
                 assert!(objc_string == expected);
             }
@@ -29,7 +30,8 @@ mod foundation {
             unsafe {
                 let built = NSString::alloc(nil).init_str(expected);
                 let bytes = built.UTF8String() as *const u8;
-                let objc_string = str::from_utf8(slice::from_raw_parts(bytes, built.len())).unwrap();
+                let objc_string = str::from_utf8(slice::from_raw_parts(bytes, built.len()))
+                    .unwrap();
                 assert!(objc_string.len() == expected.len());
                 assert!(objc_string == expected);
             }
@@ -54,7 +56,8 @@ mod foundation {
                 let built_to_append = NSString::alloc(nil).init_str(to_append);
                 let append_string = built.stringByAppendingString_(built_to_append);
                 let bytes = append_string.UTF8String() as *const u8;
-                let objc_string = str::from_utf8(slice::from_raw_parts(bytes, append_string.len())).unwrap();
+                let objc_string = str::from_utf8(slice::from_raw_parts(bytes, append_string.len()))
+                    .unwrap();
                 assert!(objc_string == expected);
             }
         }
@@ -71,14 +74,17 @@ mod foundation {
             unsafe {
                 let string = NSString::alloc(nil).init_str("this is a test string");
                 let separator = NSString::alloc(nil).init_str(" ");
-                let components: id = msg_send![string, componentsSeparatedByString:separator];
+                let components: id = msg_send![string, componentsSeparatedByString: separator];
 
                 let combined = components.iter()
                     .map(|s| {
                         let bytes = s.UTF8String() as *const u8;
                         str::from_utf8(slice::from_raw_parts(bytes, s.len())).unwrap()
                     })
-                .fold(String::new(), |mut acc, s| { acc.push_str(s); acc });
+                    .fold(String::new(), |mut acc, s| {
+                        acc.push_str(s);
+                        acc
+                    });
 
                 assert_eq!(combined, "thisisateststring");
             }
@@ -90,7 +96,7 @@ mod foundation {
             unsafe {
                 let string = NSString::alloc(nil).init_str("this is a test string");
                 let separator = NSString::alloc(nil).init_str(" ");
-                let components: id = msg_send![string, componentsSeparatedByString:separator];
+                let components: id = msg_send![string, componentsSeparatedByString: separator];
                 let mut_components: id = msg_send![components, mutableCopy];
                 let mut iter = mut_components.iter();
                 iter.next();
@@ -102,7 +108,8 @@ mod foundation {
 
     mod nsdictionary {
         use block::ConcreteBlock;
-        use cocoa::foundation::{NSArray, NSComparisonResult, NSDictionary, NSFastEnumeration, NSString};
+        use cocoa::foundation::{NSArray, NSComparisonResult, NSDictionary, NSFastEnumeration,
+                                NSString};
         use cocoa::base::{id, nil};
 
         #[test]
@@ -134,7 +141,8 @@ mod foundation {
                 let keys_array = NSArray::arrayWithObjects(nil, &keys_raw_vec);
                 let objs_array = NSArray::arrayWithObjects(nil, &objs_raw_vec);
 
-                let dict = NSDictionary::dictionaryWithObjects_forKeys_(nil, objs_array, keys_array);
+                let dict =
+                    NSDictionary::dictionaryWithObjects_forKeys_(nil, objs_array, keys_array);
 
                 // NSDictionary does not store its contents in order of insertion, so ask for
                 // sorted iterators to ensure that each item is the same as its counterpart in
@@ -146,16 +154,18 @@ mod foundation {
                     let (bytes1, len1) = (s1.UTF8String() as *const u8, s1.len());
                     let (s0, s1) = (str::from_utf8(slice::from_raw_parts(bytes0, len0)).unwrap(),
                                     str::from_utf8(slice::from_raw_parts(bytes1, len1)).unwrap());
-                    let (c0, c1) =(s0.chars().next().unwrap(), s1.chars().next().unwrap());
+                    let (c0, c1) = (s0.chars().next().unwrap(), s1.chars().next().unwrap());
                     match c0.cmp(&c1) {
                         Ordering::Less => NSComparisonResult::NSOrderedAscending,
                         Ordering::Equal => NSComparisonResult::NSOrderedSame,
-                        Ordering::Greater => NSComparisonResult::NSOrderedDescending
+                        Ordering::Greater => NSComparisonResult::NSOrderedDescending,
                     }
                 });
 
                 let associated_iter = keys.iter().zip(objects.iter());
-                for (k_id, (k, v)) in dict.keysSortedByValueUsingComparator_(&mut *comparator).iter().zip(associated_iter) {
+                for (k_id, (k, v)) in dict.keysSortedByValueUsingComparator_(&mut *comparator)
+                    .iter()
+                    .zip(associated_iter) {
                     assert!(k_id.isEqualToString(k));
                     let v_id = dict.objectForKey_(k_id);
                     assert!(v_id.isEqualToString(v));

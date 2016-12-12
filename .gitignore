@@ -1,13 +1,4 @@
 *~
-*#
-*.o
-*.a
-*.so
-*.dylib
-*.dSYM
-*.dll
-*.dummy
-cocoa-test
 build
 /target
 /Cargo.lock

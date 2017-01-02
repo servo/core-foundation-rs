@@ -19,6 +19,7 @@ pub mod dictionary;
 pub mod error;
 pub mod messageport;
 pub mod number;
+pub mod propertylist;
 pub mod runloop;
 pub mod set;
 pub mod string;

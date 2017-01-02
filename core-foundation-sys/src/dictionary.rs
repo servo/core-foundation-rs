@@ -72,4 +72,8 @@ extern {
     pub fn CFDictionarySetValue(theDict: CFMutableDictionaryRef,
                                 key: *const c_void,
                                 value: *const c_void);
+    pub fn CFDictionaryGetKeysAndValues(theDict: CFDictionaryRef,
+                                        keys: *mut *const c_void,
+                                        values: *mut *const c_void);
+
 }

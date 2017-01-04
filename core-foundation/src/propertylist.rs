@@ -11,17 +11,19 @@
 
 use std::ptr;
 
+use libc::c_void;
+
 use error::CFError;
 use data::CFData;
-use base::{CFType, TCFType};
+use base::{TCFType};
 
 pub use core_foundation_sys::propertylist::*;
 use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
+use core_foundation_sys::base::{kCFAllocatorDefault};
 
 pub fn create_with_data(data: CFData,
                         options: CFPropertyListMutabilityOptions)
-                        -> Result<(CFType, CFPropertyListFormat), CFError> {
+                        -> Result<(*const c_void, CFPropertyListFormat), CFError> {
     unsafe {
         let mut error: CFErrorRef = ptr::null_mut();
         let mut format: CFPropertyListFormat = 0;
@@ -33,17 +35,16 @@ pub fn create_with_data(data: CFData,
         if property_list.is_null() {
             Err(TCFType::wrap_under_create_rule(error))
         } else {
-            Ok((TCFType::wrap_under_create_rule(property_list), format))
+            Ok((property_list, format))
         }
     }
 }
 
-pub fn create_data(property_list: CFType, format: CFPropertyListFormat) -> Result<CFData, CFError> {
+pub fn create_data(property_list: *const c_void, format: CFPropertyListFormat) -> Result<CFData, CFError> {
     unsafe {
         let mut error: CFErrorRef = ptr::null_mut();
-        let property_list_ref: CFTypeRef = property_list.as_CFTypeRef();
         let data_ref = CFPropertyListCreateData(kCFAllocatorDefault,
-                                                property_list_ref,
+                                                property_list,
                                                 format,
                                                 0,
                                                 &mut error as *mut CFErrorRef);
@@ -77,10 +78,10 @@ pub mod test {
                                                       (baz.as_CFType(), tru.as_CFType()),
                                                       (foo.as_CFType(), n42.as_CFType())]);
 
-        let data = create_data(dict1.as_CFType(), kCFPropertyListXMLFormat_v1_0).unwrap();
+        let data = create_data(dict1.as_CFTypeRef(), kCFPropertyListXMLFormat_v1_0).unwrap();
         let (dict2, _) = create_with_data(data, kCFPropertyListImmutable).unwrap();
         unsafe {
-            assert!(CFEqual(dict1.as_CFTypeRef(), dict2.as_CFTypeRef()) == 1);
+            assert!(CFEqual(dict1.as_CFTypeRef(), dict2) == 1);
         }
     }
 }

@@ -30,8 +30,8 @@ pub fn create_with_data(data: CFData,
         let property_list = CFPropertyListCreateWithData(kCFAllocatorDefault,
                                                          data.as_concrete_TypeRef(),
                                                          options,
-                                                         &mut format as *mut CFPropertyListFormat,
-                                                         &mut error as *mut CFErrorRef);
+                                                         &mut format,
+                                                         &mut error);
         if property_list.is_null() {
             Err(TCFType::wrap_under_create_rule(error))
         } else {
@@ -47,7 +47,7 @@ pub fn create_data(property_list: *const c_void, format: CFPropertyListFormat) -
                                                 property_list,
                                                 format,
                                                 0,
-                                                &mut error as *mut CFErrorRef);
+                                                &mut error);
         if data_ref.is_null() {
             Err(TCFType::wrap_under_create_rule(error))
         } else {

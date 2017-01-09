@@ -149,6 +149,17 @@ impl TCFType<CGEventRef> for CGEvent {
 }
 
 impl CGEvent {
+    pub fn new(source: CGEventSource) -> Result<CGEvent, ()> {
+        unsafe {
+            let event_ref = CGEventCreate(source.as_concrete_TypeRef());
+            if event_ref != ptr::null() {
+                Ok(TCFType::wrap_under_create_rule(event_ref))
+            } else {
+                Err(())
+            }
+        }
+    }
+
     pub fn new_keyboard_event(
         source: CGEventSource,
         keycode: CGKeyCode,
@@ -187,6 +198,12 @@ impl CGEvent {
         }
     }
 
+    pub fn location(&self) -> CGPoint {
+        unsafe {
+            CGEventGetLocation(self.as_concrete_TypeRef())
+        }
+    }
+
     pub fn post_to_pid(&self, pid: libc::pid_t) {
         unsafe {
             CGEventPostToPid(pid, self.as_concrete_TypeRef());
@@ -210,6 +227,10 @@ impl CGEvent {
 extern {
     /// Return the type identifier for the opaque type `CGEventRef'.
     fn CGEventGetTypeID() -> CFTypeID;
+
+    /// Return a new event using the event source `source'. If `source' is NULL,
+    /// the default source is used.
+    fn CGEventCreate(source: CGEventSourceRef) -> CGEventRef;
 
     /// Return a new keyboard event.
     ///
@@ -255,4 +276,8 @@ extern {
 
     /// Return the event flags of an event.
     fn CGEventGetFlags(event: CGEventRef) -> CGEventFlags;
+
+    /// Return the location of an event in global display coordinates.
+    /// CGPointZero is returned if event is not a valid CGEventRef.
+    fn CGEventGetLocation(event: CGEventRef) -> CGPoint;
 }

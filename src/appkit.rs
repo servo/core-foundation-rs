@@ -294,6 +294,23 @@ pub enum NSWindowButton {
     NSWindowFullScreenButton       = 7,
 }
 
+#[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSBezelStyle {
+    NSRoundedBezelStyle            = 1,
+    NSRegularSquareBezelStyle      = 2,
+    NSDisclosureBezelStyle         = 5,
+    NSShadowlessSquareBezelStyle   = 6,
+    NSCircularBezelStyle           = 7,
+    NSTexturedSquareBezelStyle     = 8,
+    NSHelpButtonBezelStyle         = 9,
+    NSSmallSquareBezelStyle        = 10,
+    NSTexturedRoundedBezelStyle    = 11,
+    NSRoundRectBezelStyle          = 12,
+    NSRecessedBezelStyle           = 13,
+    NSRoundedDisclosureBezelStyle  = 14,
+}
+
 pub static NSMainMenuWindowLevel: libc::int32_t = 24;
 
 pub trait NSApplication {
@@ -2761,9 +2778,24 @@ impl NSScreen for id {
 
 pub trait NSButton {
      unsafe fn setImage_(self, img: id /* (NSImage *) */);
+     unsafe fn setBezelStyle_(self, style: NSBezelStyle);
+     unsafe fn setTitle_(self, title: id /* (NSString*) */);
+     unsafe fn alloc(_: Self) -> id {
+         msg_send![class("NSButton"), alloc]
+     }
+     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
 }
 
 impl NSButton for id {
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
+        msg_send![self, initWithFrame:frameRect]
+    }
+    unsafe fn setBezelStyle_(self, style: NSBezelStyle) {
+        msg_send![self, setBezelStyle:style];
+    }
+    unsafe fn setTitle_(self, title: id /* (NSString*) */) {
+        msg_send![self, setTitle:title]
+    }
     unsafe fn setImage_(self, img: id /* (NSImage *) */) {
         msg_send![self, setImage:img]
     }
@@ -3350,6 +3382,26 @@ extern {
     pub fn NSRectFill(rect: NSRect);
 }
 
+pub trait NSTextField {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class("NSTextField"), alloc]
+    }
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
+    unsafe fn setEditable_(self, editable: BOOL);
+    unsafe fn setStringValue_(self, label: id /* NSString */);
+}
+
+impl NSTextField for id {
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
+        msg_send![self, initWithFrame:frameRect]
+    }
+    unsafe fn setEditable_(self, editable: BOOL) {
+        msg_send![self, setEditable:editable];
+    }
+    unsafe fn setStringValue_(self, label: id) {
+        msg_send![self, setStringValue:label];
+    }
+}
 
 #[repr(u64)]
 pub enum NSTabViewType {

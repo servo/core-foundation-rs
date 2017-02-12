@@ -7,6 +7,7 @@ use std::mem;
 use std::ptr;
 
 pub type CGKeyCode = libc::uint16_t;
+pub type CGEventFlagMask = libc::uint64_t;
 
 /// Flags for events
 ///
@@ -211,13 +212,13 @@ impl CGEvent {
         }
     }
 
-    pub fn set_flags(&self, flags: CGEventFlags) {
+    pub fn set_flags(&self, flags: CGEventFlagMask) {
         unsafe {
             CGEventSetFlags(self.as_concrete_TypeRef(), flags);
         }
     }
 
-    pub fn get_flags(&self) -> CGEventFlags {
+    pub fn get_flags(&self) -> CGEventFlagMask {
         unsafe {
             CGEventGetFlags(self.as_concrete_TypeRef())
         }
@@ -274,10 +275,10 @@ extern {
     fn CGEventPostToPid(pid: libc::pid_t, event: CGEventRef);
 
     /// Set the event flags of an event.
-    fn CGEventSetFlags(event: CGEventRef, flags: CGEventFlags);
+    fn CGEventSetFlags(event: CGEventRef, flags: CGEventFlagMask);
 
     /// Return the event flags of an event.
-    fn CGEventGetFlags(event: CGEventRef) -> CGEventFlags;
+    fn CGEventGetFlags(event: CGEventRef) -> CGEventFlagMask;
 
     /// Return the location of an event in global display coordinates.
     /// CGPointZero is returned if event is not a valid CGEventRef.

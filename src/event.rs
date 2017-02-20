@@ -38,29 +38,29 @@ pub enum CGEventFlags {
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub enum CGEventType {
-    Null = 1 << 0,
+    Null = 0,
 
     // Mouse events.
-    LeftMouseDown = 1 << 1,
-    LeftMouseUp = 1 << 2,
-    RightMouseDown = 1 << 3,
-    RightMouseUp = 1 << 4,
-    MouseMoved = 1 << 5,
-    LeftMouseDragged = 1 << 6,
-    RightMouseDragged = 1 << 7,
+    LeftMouseDown = 1,
+    LeftMouseUp = 2,
+    RightMouseDown = 3,
+    RightMouseUp = 4,
+    MouseMoved = 5,
+    LeftMouseDragged = 6,
+    RightMouseDragged = 7,
 
     // Keyboard events.
-    KeyDown = 1 << 10,
-    KeyUp = 1 << 11,
-    FlagsChanged = 1 << 12,
+    KeyDown = 10,
+    KeyUp = 11,
+    FlagsChanged = 12,
 
     // Specialized control devices.
-    ScrollWheel = 1 << 22,
-    TabletPointer = 1 << 23,
-    TabletProximity = 1 << 24,
-    OtherMouseDown = 1 << 25,
-    OtherMouseUp = 1 << 26,
-    OtherMouseDragged = 1 << 27,
+    ScrollWheel = 22,
+    TabletPointer = 23,
+    TabletProximity = 24,
+    OtherMouseDown = 25,
+    OtherMouseUp = 26,
+    OtherMouseDragged = 27,
 
     // Out of band event types. These are delivered to the event tap callback
     // to notify it of unusual conditions that disable the event tap.

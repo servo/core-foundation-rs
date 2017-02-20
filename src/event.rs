@@ -237,7 +237,7 @@ impl CGEvent {
         }
     }
 
-    pub fn set_string_from_utf16(&self, buf: &[u16]) {
+    pub fn set_string_from_utf16_unchecked(&self, buf: &[u16]) {
         let buflen = buf.len() as libc::c_ulong;
         unsafe {
             CGEventKeyboardSetUnicodeString(self.as_concrete_TypeRef(), buflen, buf.as_ptr());
@@ -246,7 +246,7 @@ impl CGEvent {
 
     pub fn set_string(&self, string: &str) {
         let buf: Vec<u16> = string.encode_utf16().collect();
-        self.set_string_from_utf16(&buf);
+        self.set_string_from_utf16_unchecked(&buf);
     }
 }
 

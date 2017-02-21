@@ -11,6 +11,9 @@ extern crate libc;
 extern crate core_foundation;
 extern crate serde;
 
+#[macro_use]
+extern crate bitflags;
+
 pub mod base;
 pub mod color_space;
 pub mod context;

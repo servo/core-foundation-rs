@@ -7,30 +7,31 @@ use std::mem;
 use std::ptr;
 
 pub type CGKeyCode = libc::uint16_t;
-pub type CGEventFlagMask = libc::uint64_t;
 
 /// Flags for events
 ///
 /// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
-#[repr(C)]
-#[derive(Clone, Copy, Debug)]
-pub enum CGEventFlags {
-  // Device-independent modifier key bits.
-  AlphaShift = 0x00010000,
-  Shift = 0x00020000,
-  Control = 0x00040000,
-  Alternate = 0x00080000,
-  Command = 0x00100000,
+bitflags! {
+    pub flags CGEventFlags: u64 {
+        const Null = 0,
 
-  // Special key identifiers.
-  Help = 0x00400000,
-  SecondaryFn = 0x00800000,
+        // Device-independent modifier key bits.
+        const AlphaShift = 0x00010000,
+        const Shift = 0x00020000,
+        const Control = 0x00040000,
+        const Alternate = 0x00080000,
+        const Command = 0x00100000,
 
-  // Identifies key events from numeric keypad area on extended keyboards.
-  NumericPad = 0x00200000,
+        // Special key identifiers.
+        const Help = 0x00400000,
+        const SecondaryFn = 0x00800000,
 
-  // Indicates if mouse/pen movement events are not being coalesced
-  NonCoalesced = 0x00000100,
+        // Identifies key events from numeric keypad area on extended keyboards.
+        const NumericPad = 0x00200000,
+
+        // Indicates if mouse/pen movement events are not being coalesced
+        const NonCoalesced = 0x00000100,
+    }
 }
 
 /// Constants that specify the different types of input events.
@@ -212,13 +213,13 @@ impl CGEvent {
         }
     }
 
-    pub fn set_flags(&self, flags: CGEventFlagMask) {
+    pub fn set_flags(&self, flags: CGEventFlags) {
         unsafe {
             CGEventSetFlags(self.as_concrete_TypeRef(), flags);
         }
     }
 
-    pub fn get_flags(&self) -> CGEventFlagMask {
+    pub fn get_flags(&self) -> CGEventFlags {
         unsafe {
             CGEventGetFlags(self.as_concrete_TypeRef())
         }
@@ -275,10 +276,10 @@ extern {
     fn CGEventPostToPid(pid: libc::pid_t, event: CGEventRef);
 
     /// Set the event flags of an event.
-    fn CGEventSetFlags(event: CGEventRef, flags: CGEventFlagMask);
+    fn CGEventSetFlags(event: CGEventRef, flags: CGEventFlags);
 
     /// Return the event flags of an event.
-    fn CGEventGetFlags(event: CGEventRef) -> CGEventFlagMask;
+    fn CGEventGetFlags(event: CGEventRef) -> CGEventFlags;
 
     /// Return the location of an event in global display coordinates.
     /// CGPointZero is returned if event is not a valid CGEventRef.

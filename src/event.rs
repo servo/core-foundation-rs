@@ -13,24 +13,24 @@ pub type CGKeyCode = libc::uint16_t;
 /// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
 bitflags! {
     pub flags CGEventFlags: u64 {
-        const Null = 0,
+        const CGEventFlagNull = 0,
 
         // Device-independent modifier key bits.
-        const AlphaShift = 0x00010000,
-        const Shift = 0x00020000,
-        const Control = 0x00040000,
-        const Alternate = 0x00080000,
-        const Command = 0x00100000,
+        const CGEventFlagAlphaShift = 0x00010000,
+        const CGEventFlagShift = 0x00020000,
+        const CGEventFlagControl = 0x00040000,
+        const CGEventFlagAlternate = 0x00080000,
+        const CGEventFlagCommand = 0x00100000,
 
         // Special key identifiers.
-        const Help = 0x00400000,
-        const SecondaryFn = 0x00800000,
+        const CGEventFlagHelp = 0x00400000,
+        const CGEventFlagSecondaryFn = 0x00800000,
 
         // Identifies key events from numeric keypad area on extended keyboards.
-        const NumericPad = 0x00200000,
+        const CGEventFlagNumericPad = 0x00200000,
 
         // Indicates if mouse/pen movement events are not being coalesced
-        const NonCoalesced = 0x00000100,
+        const CGEventFlagNonCoalesced = 0x00000100,
     }
 }
 

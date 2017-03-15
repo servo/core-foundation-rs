@@ -81,6 +81,10 @@ extern {
     // Pasteboard reading options - OS X v10.6 and later. (NSString *)
     pub static NSPasteboardURLReadingFileURLsOnlyKey: id;
     pub static NSPasteboardURLReadingContentsConformToTypesKey: id;
+
+    // NSAppearance names. (NSString *)
+    pub static NSAppearanceNameVibrantDark: id;
+    pub static NSAppearanceNameVibrantLight: id;
 }
 
 pub const NSAppKitVersionNumber10_0: f64 = 577.0;

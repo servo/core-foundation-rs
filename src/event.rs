@@ -222,6 +222,18 @@ impl CGEvent {
             CGEventGetFlags(self.as_concrete_TypeRef())
         }
     }
+
+    pub fn set_type(&self, event_type: CGEventType) {
+        unsafe {
+            CGEventSetType(self.as_concrete_TypeRef(), event_type);
+        }
+    }
+
+    pub fn get_type(&self) -> CGEventType {
+        unsafe {
+            CGEventGetType(self.as_concrete_TypeRef())
+        }
+    }
 }
 
 #[link(name = "ApplicationServices", kind = "framework")]
@@ -282,4 +294,10 @@ extern {
     /// Return the location of an event in global display coordinates.
     /// CGPointZero is returned if event is not a valid CGEventRef.
     fn CGEventGetLocation(event: CGEventRef) -> CGPoint;
+
+    /// Set the event type of an event.
+    fn CGEventSetType(event: CGEventRef, eventType: CGEventType);
+
+    /// Return the event type of an event (left mouse down, for example).
+    fn CGEventGetType(event: CGEventRef) -> CGEventType;
 }

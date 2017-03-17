@@ -11,25 +11,27 @@ pub type CGKeyCode = libc::uint16_t;
 /// Flags for events
 ///
 /// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
-#[repr(C)]
-#[derive(Clone, Copy, Debug)]
-pub enum CGEventFlags {
-  // Device-independent modifier key bits.
-  AlphaShift = 0x00010000,
-  Shift = 0x00020000,
-  Control = 0x00040000,
-  Alternate = 0x00080000,
-  Command = 0x00100000,
+bitflags! {
+    pub flags CGEventFlags: u64 {
+        const CGEventFlagNull = 0,
 
-  // Special key identifiers.
-  Help = 0x00400000,
-  SecondaryFn = 0x00800000,
+        // Device-independent modifier key bits.
+        const CGEventFlagAlphaShift = 0x00010000,
+        const CGEventFlagShift = 0x00020000,
+        const CGEventFlagControl = 0x00040000,
+        const CGEventFlagAlternate = 0x00080000,
+        const CGEventFlagCommand = 0x00100000,
 
-  // Identifies key events from numeric keypad area on extended keyboards.
-  NumericPad = 0x00200000,
+        // Special key identifiers.
+        const CGEventFlagHelp = 0x00400000,
+        const CGEventFlagSecondaryFn = 0x00800000,
 
-  // Indicates if mouse/pen movement events are not being coalesced
-  NonCoalesced = 0x00000100,
+        // Identifies key events from numeric keypad area on extended keyboards.
+        const CGEventFlagNumericPad = 0x00200000,
+
+        // Indicates if mouse/pen movement events are not being coalesced
+        const CGEventFlagNonCoalesced = 0x00000100,
+    }
 }
 
 /// Constants that specify the different types of input events.

@@ -236,6 +236,18 @@ impl CGEvent {
             CGEventGetType(self.as_concrete_TypeRef())
         }
     }
+
+    pub fn set_string_from_utf16_unchecked(&self, buf: &[u16]) {
+        let buflen = buf.len() as libc::c_ulong;
+        unsafe {
+            CGEventKeyboardSetUnicodeString(self.as_concrete_TypeRef(), buflen, buf.as_ptr());
+        }
+    }
+
+    pub fn set_string(&self, string: &str) {
+        let buf: Vec<u16> = string.encode_utf16().collect();
+        self.set_string_from_utf16_unchecked(&buf);
+    }
 }
 
 #[link(name = "ApplicationServices", kind = "framework")]
@@ -302,4 +314,16 @@ extern {
 
     /// Return the event type of an event (left mouse down, for example).
     fn CGEventGetType(event: CGEventRef) -> CGEventType;
+
+    /// Set the Unicode string associated with a keyboard event.
+    ///
+    /// By default, the system translates the virtual key code in a keyboard
+    /// event into a Unicode string based on the keyboard ID in the event
+    /// source.  This function allows you to manually override this string.
+    /// Note that application frameworks may ignore the Unicode string in a
+    /// keyboard event and do their own translation based on the virtual
+    /// keycode and perceived event state.
+    fn CGEventKeyboardSetUnicodeString(event: CGEventRef, 
+                                       length: libc::c_ulong,
+                                       string: *const u16);
 }

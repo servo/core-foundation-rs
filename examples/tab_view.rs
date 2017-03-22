@@ -67,11 +67,11 @@ unsafe fn create_app(title: id, content: id) -> id {
     // create Window
     let window = NSWindow::alloc(nil).initWithContentRect_styleMask_backing_defer_(
 		NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
-		NSTitledWindowMask as NSUInteger |
-            NSClosableWindowMask as NSUInteger |
-            NSResizableWindowMask as NSUInteger |
-            NSMiniaturizableWindowMask as NSUInteger |
-            NSUnifiedTitleAndToolbarWindowMask as NSUInteger,
+		NSTitledWindowMask |
+            NSClosableWindowMask |
+            NSResizableWindowMask |
+            NSMiniaturizableWindowMask |
+            NSUnifiedTitleAndToolbarWindowMask,
 		NSBackingStoreBuffered,
 		NO
 	).autorelease();

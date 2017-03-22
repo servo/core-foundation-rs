@@ -20,7 +20,6 @@ pub use core_graphics::geometry::CGPoint;
 
 pub use self::NSApplicationActivationPolicy::*;
 pub use self::NSApplicationActivationOptions::*;
-pub use self::NSWindowMask::*;
 pub use self::NSBackingStoreType::*;
 pub use self::NSOpenGLPixelFormatAttribute::*;
 pub use self::NSOpenGLPFAOpenGLProfiles::*;
@@ -141,22 +140,22 @@ pub enum NSApplicationTerminateReply {
     NSTerminateLater = 2,
 }
 
-#[repr(u64)]
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum NSWindowMask {
-    NSBorderlessWindowMask      = 0,
-    NSTitledWindowMask          = 1 << 0,
-    NSClosableWindowMask        = 1 << 1,
-    NSMiniaturizableWindowMask  = 1 << 2,
-    NSResizableWindowMask       = 1 << 3,
+bitflags! {
+    pub flags NSWindowStyleMask: NSUInteger {
+        const NSBorderlessWindowMask      = 0,
+        const NSTitledWindowMask          = 1 << 0,
+        const NSClosableWindowMask        = 1 << 1,
+        const NSMiniaturizableWindowMask  = 1 << 2,
+        const NSResizableWindowMask       = 1 << 3,
 
-    NSTexturedBackgroundWindowMask  = 1 << 8,
+        const NSTexturedBackgroundWindowMask  = 1 << 8,
 
-    NSUnifiedTitleAndToolbarWindowMask  = 1 << 12,
+        const NSUnifiedTitleAndToolbarWindowMask  = 1 << 12,
 
-    NSFullScreenWindowMask      = 1 << 14,
+        const NSFullScreenWindowMask      = 1 << 14,
 
-    NSFullSizeContentViewWindowMask = 1 << 15
+        const NSFullSizeContentViewWindowMask = 1 << 15
+    }
 }
 
 #[repr(u64)]
@@ -799,19 +798,19 @@ pub trait NSWindow {
     // Creating Windows
     unsafe fn initWithContentRect_styleMask_backing_defer_(self,
                                                            rect: NSRect,
-                                                           style: NSUInteger,
+                                                           style: NSWindowStyleMask,
                                                            backing: NSBackingStoreType,
                                                            defer: BOOL) -> id;
     unsafe fn initWithContentRect_styleMask_backing_defer_screen_(self,
                                                                   rect: NSRect,
-                                                                  style: NSUInteger,
+                                                                  style: NSWindowStyleMask,
                                                                   backing: NSBackingStoreType,
                                                                   defer: BOOL,
                                                                   screen: id) -> id;
 
     // Configuring Windows
-    unsafe fn styleMask(self) -> NSUInteger;
-    unsafe fn setStyleMask_(self, styleMask: NSUInteger);
+    unsafe fn styleMask(self) -> NSWindowStyleMask;
+    unsafe fn setStyleMask_(self, styleMask: NSWindowStyleMask);
     unsafe fn toggleFullScreen_(self, sender: id);
     unsafe fn worksWhenModal(self) -> BOOL;
     unsafe fn alphaValue(self) -> CGFloat;
@@ -846,9 +845,9 @@ pub trait NSWindow {
     // TODO: Accessing Window Information
 
     // Getting Layout Information
-    unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSUInteger) -> NSRect;
-    unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSUInteger) -> NSRect;
-    unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSUInteger) -> CGFloat;
+    unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSWindowStyleMask) -> NSRect;
+    unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSWindowStyleMask) -> NSRect;
+    unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSWindowStyleMask) -> CGFloat;
     unsafe fn contentRectForFrameRect_(self, windowFrame: NSRect) -> NSRect;
     unsafe fn frameRectForContentRect_(self, windowContent: NSRect) -> NSRect;
 
@@ -1025,23 +1024,23 @@ impl NSWindow for id {
 
     unsafe fn initWithContentRect_styleMask_backing_defer_(self,
                                                            rect: NSRect,
-                                                           style: NSUInteger,
+                                                           style: NSWindowStyleMask,
                                                            backing: NSBackingStoreType,
                                                            defer: BOOL) -> id {
         msg_send![self, initWithContentRect:rect
-                                  styleMask:style
+                                  styleMask:style.bits
                                     backing:backing as NSUInteger
                                       defer:defer]
     }
 
     unsafe fn initWithContentRect_styleMask_backing_defer_screen_(self,
                                                                   rect: NSRect,
-                                                                  style: NSUInteger,
+                                                                  style: NSWindowStyleMask,
                                                                   backing: NSBackingStoreType,
                                                                   defer: BOOL,
                                                                   screen: id) -> id {
         msg_send![self, initWithContentRect:rect
-                                  styleMask:style
+                                  styleMask:style.bits
                                     backing:backing as NSUInteger
                                       defer:defer
                                      screen:screen]
@@ -1049,12 +1048,13 @@ impl NSWindow for id {
 
     // Configuring Windows
 
-    unsafe fn styleMask(self) -> NSUInteger {
-        msg_send![self, styleMask]
+    unsafe fn styleMask(self) -> NSWindowStyleMask {
+        let styleMask = NSWindowStyleMask::from_bits_truncate(msg_send![self, styleMask]);
+        styleMask
     }
 
-    unsafe fn setStyleMask_(self, styleMask: NSUInteger) {
-        msg_send![self, setStyleMask:styleMask]
+    unsafe fn setStyleMask_(self, styleMask: NSWindowStyleMask) {
+        msg_send![self, setStyleMask:styleMask.bits]
     }
 
     unsafe fn toggleFullScreen_(self, sender: id) {
@@ -1176,16 +1176,16 @@ impl NSWindow for id {
 
     // Getting Layout Information
 
-    unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSUInteger) -> NSRect {
-        msg_send![self, contentRectForFrameRect:windowFrame styleMask:windowStyle]
+    unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSWindowStyleMask) -> NSRect {
+        msg_send![self, contentRectForFrameRect:windowFrame styleMask:windowStyle.bits]
     }
 
-    unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSUInteger) -> NSRect {
-        msg_send![self, frameRectForContentRect:windowContentRect styleMask:windowStyle]
+    unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSWindowStyleMask) -> NSRect {
+        msg_send![self, frameRectForContentRect:windowContentRect styleMask:windowStyle.bits]
     }
 
-    unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSUInteger) -> CGFloat {
-        msg_send![self, minFrameWidthWithTitle:windowTitle styleMask:windowStyle]
+    unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSWindowStyleMask) -> CGFloat {
+        msg_send![self, minFrameWidthWithTitle:windowTitle styleMask:windowStyle.bits]
     }
 
     unsafe fn contentRectForFrameRect_(self, windowFrame: NSRect) -> NSRect {

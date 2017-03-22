@@ -37,7 +37,7 @@ fn main() {
         let window = NSWindow::alloc(nil)
             .initWithContentRect_styleMask_backing_defer_(NSRect::new(NSPoint::new(0., 0.),
                                                                       NSSize::new(200., 200.)),
-                                                          NSTitledWindowMask as NSUInteger,
+                                                          NSTitledWindowMask,
                                                           NSBackingStoreBuffered,
                                                           NO)
             .autorelease();

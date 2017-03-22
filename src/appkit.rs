@@ -1048,8 +1048,8 @@ impl NSWindow for id {
 
     // Configuring Windows
 
-        let styleMask = msg_send![self, styleMask];
     unsafe fn styleMask(self) -> NSWindowStyleMask {
+        let styleMask = NSWindowStyleMask::from_bits_truncate(msg_send![self, styleMask]);
         styleMask
     }
 

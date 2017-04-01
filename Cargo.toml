@@ -1,0 +1,2 @@
+[workspace]
+members = ["core-foundation", "core-foundation-sys"]

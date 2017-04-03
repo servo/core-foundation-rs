@@ -8,6 +8,7 @@
 // except according to those terms.
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::data::{CFData, CFDataRef};
 
 use libc::{c_void, size_t, off_t};
 use std::mem;
@@ -86,11 +87,16 @@ impl CGDataProvider {
             TCFType::wrap_under_create_rule(result)
         }
     }
+
+    /// Creates a copy of the data from the underlying `CFDataProviderRef`.
+    pub fn copy_data(&self) -> CFData {
+        unsafe { CFData::wrap_under_create_rule(CGDataProviderCopyData(self.obj)) }
+    }
 }
 
 #[link(name = "ApplicationServices", kind = "framework")]
 extern {
-    //fn CGDataProviderCopyData
+    fn CGDataProviderCopyData(provider: CGDataProviderRef) -> CFDataRef;
     //fn CGDataProviderCreateDirect
     //fn CGDataProviderCreateSequential
     //fn CGDataProviderCreateWithCFData

@@ -88,7 +88,8 @@ impl TCFType<CGContextRef> for CGContext {
 }
 
 impl CGContext {
-    pub fn create_bitmap_context(width: size_t,
+    pub fn create_bitmap_context(data: Option<*mut c_void>,
+                                 width: size_t,
                                  height: size_t,
                                  bits_per_component: size_t,
                                  bytes_per_row: size_t,
@@ -96,7 +97,7 @@ impl CGContext {
                                  bitmap_info: u32)
                                  -> CGContext {
         unsafe {
-            let result = CGBitmapContextCreate(ptr::null_mut(),
+            let result = CGBitmapContextCreate(data.unwrap_or(ptr::null_mut()),
                                                width,
                                                height,
                                                bits_per_component,

@@ -9,7 +9,6 @@
 
 extern crate libc;
 extern crate core_foundation;
-extern crate serde;
 
 #[macro_use]
 extern crate bitflags;

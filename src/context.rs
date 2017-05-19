@@ -10,7 +10,7 @@
 use base::CGFloat;
 use color_space::{CGColorSpace, CGColorSpaceRef};
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
-use libc::{c_void, size_t};
+use libc::{c_void, c_int, size_t};
 use std::mem;
 use std::ptr;
 use std::slice;
@@ -146,6 +146,12 @@ impl CGContext {
         }
     }
 
+    fn set_font_smoothing_style(&self, style: i32) {
+        unsafe {
+            CGContextSetFontSmoothingStyle(self.as_concrete_TypeRef(), style as _);
+        }
+    }
+
     pub fn set_should_smooth_fonts(&self, should_smooth_fonts: bool) {
         unsafe {
             CGContextSetShouldSmoothFonts(self.as_concrete_TypeRef(), should_smooth_fonts)
@@ -234,6 +240,7 @@ extern {
     fn CGContextGetTypeID() -> CFTypeID;
     fn CGContextSetAllowsFontSmoothing(c: CGContextRef, allowsFontSmoothing: bool);
     fn CGContextSetShouldSmoothFonts(c: CGContextRef, shouldSmoothFonts: bool);
+    fn CGContextSetFontSmoothingStyle(c: CGContextRef, style: c_int);
     fn CGContextSetAllowsAntialiasing(c: CGContextRef, allowsAntialiasing: bool);
     fn CGContextSetShouldAntialias(c: CGContextRef, shouldAntialias: bool);
     fn CGContextSetAllowsFontSubpixelQuantization(c: CGContextRef,

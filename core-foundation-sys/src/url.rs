@@ -80,7 +80,7 @@ extern {
     // static kCFURLFileResourceTypeKey: CFStringRef;
 
     /* Creating a CFURL */
-    //fn CFURLCopyAbsoluteURL
+    pub fn CFURLCopyAbsoluteURL(anURL: CFURLRef) -> CFURLRef;
     //fn CFURLCreateAbsoluteURLWithBytes
     //fn CFURLCreateByResolvingBookmarkData
     //fn CFURLCreateCopyAppendingPathComponent
@@ -95,7 +95,7 @@ extern {
     //fn CFURLCreateWithBytes
     //fn CFURLCreateWithFileSystemPath
     pub fn CFURLCreateWithFileSystemPath(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean) -> CFURLRef;
-    //fn CFURLCreateWithFileSystemPathRelativeToBase
+    pub fn CFURLCreateWithFileSystemPathRelativeToBase(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean, baseURL: CFURLRef) -> CFURLRef;
     //fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
     //                         baseURL: CFURLRef) -> CFURLRef;
 

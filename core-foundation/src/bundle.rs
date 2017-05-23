@@ -53,7 +53,7 @@ impl CFBundle {
         }
     }
 
-    pub fn exectuable_url(&self) -> Option<CFURL> {
+    pub fn executable_url(&self) -> Option<CFURL> {
         unsafe {
             let exe_url = CFBundleCopyExecutableURL(self.0);
             if exe_url.is_null() {
@@ -68,13 +68,13 @@ impl CFBundle {
 impl_TCFType!(CFBundle, CFBundleRef, CFBundleGetTypeID);
 
 #[test]
-fn safari_exectuable_url() {
+fn safari_executable_url() {
     use string::CFString;
     use url::{CFURL, kCFURLPOSIXPathStyle};
 
     let cfstr_path = CFString::from_static_string("/Applications/Safari.app");
     let cfurl_path = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
-    let cfurl_executable = CFBundle::new(cfurl_path).expect("Safari not present").exectuable_url();
+    let cfurl_executable = CFBundle::new(cfurl_path).expect("Safari not present").executable_url();
     assert!(cfurl_executable.is_some());
     assert_eq!(cfurl_executable.unwrap().absolute().get_file_system_path(kCFURLPOSIXPathStyle).to_string(),
         "/Applications/Safari.app/Contents/MacOS/Safari");

@@ -97,7 +97,7 @@ fn absolute_file_url() {
     let mut absolute_path = PathBuf::from(path);
     absolute_path.push(file);
 
-    assert_eq!(cfurl_relative.get_file_system_path(kCFURLPOSIXPathStyle).to_string(), "bar");
+    assert_eq!(cfurl_relative.get_file_system_path(kCFURLPOSIXPathStyle).to_string(), file);
     assert_eq!(cfurl_relative.absolute().get_file_system_path(kCFURLPOSIXPathStyle).to_string(),
         absolute_path.to_str().unwrap());
 }

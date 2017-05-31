@@ -146,7 +146,7 @@ impl CGContext {
         }
     }
 
-    fn set_font_smoothing_style(&self, style: i32) {
+    pub fn set_font_smoothing_style(&self, style: i32) {
         unsafe {
             CGContextSetFontSmoothingStyle(self.as_concrete_TypeRef(), style as _);
         }

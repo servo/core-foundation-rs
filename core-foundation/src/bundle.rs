@@ -63,6 +63,17 @@ impl CFBundle {
             }
         }
     }
+
+    pub fn private_frameworks_url(&self) -> Option<CFURL> {
+        unsafe {
+            let fw_url = CFBundleCopyPrivateFrameworksURL(self.0);
+            if fw_url.is_null() {
+                None
+            } else {
+                Some(TCFType::wrap_under_create_rule(fw_url))
+            }
+        }
+    }
 }
 
 impl_TCFType!(CFBundle, CFBundleRef, CFBundleGetTypeID);
@@ -74,10 +85,35 @@ fn safari_executable_url() {
 
     let cfstr_path = CFString::from_static_string("/Applications/Safari.app");
     let cfurl_path = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
-    let cfurl_executable = CFBundle::new(cfurl_path).expect("Safari not present").executable_url();
+    let cfurl_executable = CFBundle::new(cfurl_path)
+        .expect("Safari not present")
+        .executable_url();
     assert!(cfurl_executable.is_some());
-    assert_eq!(cfurl_executable.unwrap().absolute().get_file_system_path(kCFURLPOSIXPathStyle).to_string(),
-        "/Applications/Safari.app/Contents/MacOS/Safari");
+    assert_eq!(cfurl_executable
+                   .unwrap()
+                   .absolute()
+                   .get_file_system_path(kCFURLPOSIXPathStyle)
+                   .to_string(),
+               "/Applications/Safari.app/Contents/MacOS/Safari");
+}
+
+#[test]
+fn safari_private_frameworks_url() {
+    use string::CFString;
+    use url::{CFURL, kCFURLPOSIXPathStyle};
+
+    let cfstr_path = CFString::from_static_string("/Applications/Safari.app");
+    let cfurl_path = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
+    let cfurl_executable = CFBundle::new(cfurl_path)
+        .expect("Safari not present")
+        .private_frameworks_url();
+    assert!(cfurl_executable.is_some());
+    assert_eq!(cfurl_executable
+                   .unwrap()
+                   .absolute()
+                   .get_file_system_path(kCFURLPOSIXPathStyle)
+                   .to_string(),
+               "/Applications/Safari.app/Contents/Frameworks");
 }
 
 #[test]

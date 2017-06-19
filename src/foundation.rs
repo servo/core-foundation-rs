@@ -514,9 +514,9 @@ impl NSDictionary for id {
 }
 
 bitflags! {
-    pub flags NSEnumerationOptions: libc::c_ulonglong {
-        const NSEnumerationConcurrent = 1 << 0,
-        const NSEnumerationReverse = 1 << 1
+    pub struct NSEnumerationOptions: libc::c_ulonglong {
+        const NSEnumerationConcurrent = 1 << 0;
+        const NSEnumerationReverse = 1 << 1;
     }
 }
 
@@ -886,38 +886,38 @@ impl NSData for id {
 }
 
 bitflags! {
-    pub flags NSDataReadingOptions: libc::c_ulonglong {
-       const NSDataReadingMappedIfSafe = 1 << 0,
-       const NSDataReadingUncached = 1 << 1,
-       const NSDataReadingMappedAlways = 1 << 3
+    pub struct NSDataReadingOptions: libc::c_ulonglong {
+       const NSDataReadingMappedIfSafe = 1 << 0;
+       const NSDataReadingUncached = 1 << 1;
+       const NSDataReadingMappedAlways = 1 << 3;
     }
 }
 
 bitflags! {
-    pub flags NSDataBase64EncodingOptions: libc::c_ulonglong {
-        const NSDataBase64Encoding64CharacterLineLength = 1 << 0,
-        const NSDataBase64Encoding76CharacterLineLength = 1 << 1,
-        const NSDataBase64EncodingEndLineWithCarriageReturn = 1 << 4,
-        const NSDataBase64EncodingEndLineWithLineFeed = 1 << 5
+    pub struct NSDataBase64EncodingOptions: libc::c_ulonglong {
+        const NSDataBase64Encoding64CharacterLineLength = 1 << 0;
+        const NSDataBase64Encoding76CharacterLineLength = 1 << 1;
+        const NSDataBase64EncodingEndLineWithCarriageReturn = 1 << 4;
+        const NSDataBase64EncodingEndLineWithLineFeed = 1 << 5;
     }
 }
 
 bitflags! {
-    pub flags NSDataBase64DecodingOptions: libc::c_ulonglong {
-       const NSDataBase64DecodingIgnoreUnknownCharacters = 1 << 0
+    pub struct NSDataBase64DecodingOptions: libc::c_ulonglong {
+       const NSDataBase64DecodingIgnoreUnknownCharacters = 1 << 0;
     }
 }
 
 bitflags! {
-    pub flags NSDataWritingOptions: libc::c_ulonglong {
-        const NSDataWritingAtomic = 1 << 0,
-        const NSDataWritingWithoutOverwriting = 1 << 1
+    pub struct NSDataWritingOptions: libc::c_ulonglong {
+        const NSDataWritingAtomic = 1 << 0;
+        const NSDataWritingWithoutOverwriting = 1 << 1;
     }
 }
 
 bitflags! {
-    pub flags NSDataSearchOptions: libc::c_ulonglong {
-        const NSDataSearchBackwards = 1 << 0,
-        const NSDataSearchAnchored = 1 << 1
+    pub struct NSDataSearchOptions: libc::c_ulonglong {
+        const NSDataSearchBackwards = 1 << 0;
+        const NSDataSearchAnchored = 1 << 1;
     }
 }

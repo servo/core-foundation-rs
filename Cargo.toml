@@ -1,15 +1,16 @@
 [package]
 name = "core-text"
-version = "5.0.1"
+version = "6.0.0"
 authors = ["The Servo Project Developers"]
 description = "Bindings to the Core Text framework."
 license = "MIT/Apache-2.0"
 repository = "https://github.com/servo/core-text-rs"
 
 [features]
-default = []
-# For OS X 10.7 compat, use this feature. It will exclude some things
-lion = []
+default = ["mountainlion"]
+# For OS X 10.7 compat, exclude this feature. It will exclude some things from
+# the exposed APIs in the crate.
+mountainlion = []
 
 [dependencies]
 libc = "0.2"

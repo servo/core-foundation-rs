@@ -141,20 +141,20 @@ pub enum NSApplicationTerminateReply {
 }
 
 bitflags! {
-    pub flags NSWindowStyleMask: NSUInteger {
-        const NSBorderlessWindowMask      = 0,
-        const NSTitledWindowMask          = 1 << 0,
-        const NSClosableWindowMask        = 1 << 1,
-        const NSMiniaturizableWindowMask  = 1 << 2,
-        const NSResizableWindowMask       = 1 << 3,
+    pub struct NSWindowStyleMask: NSUInteger {
+        const NSBorderlessWindowMask      = 0;
+        const NSTitledWindowMask          = 1 << 0;
+        const NSClosableWindowMask        = 1 << 1;
+        const NSMiniaturizableWindowMask  = 1 << 2;
+        const NSResizableWindowMask       = 1 << 3;
 
-        const NSTexturedBackgroundWindowMask  = 1 << 8,
+        const NSTexturedBackgroundWindowMask  = 1 << 8;
 
-        const NSUnifiedTitleAndToolbarWindowMask  = 1 << 12,
+        const NSUnifiedTitleAndToolbarWindowMask  = 1 << 12;
 
-        const NSFullScreenWindowMask      = 1 << 14,
+        const NSFullScreenWindowMask      = 1 << 14;
 
-        const NSFullSizeContentViewWindowMask = 1 << 15
+        const NSFullSizeContentViewWindowMask = 1 << 15;
     }
 }
 
@@ -174,46 +174,46 @@ pub enum NSBackingStoreType {
 }
 
 bitflags! {
-    pub flags NSWindowOrderingMode: NSInteger {
-        const NSWindowAbove =  1,
-        const NSWindowBelow = -1,
-        const NSWindowOut   =  0,
+    pub struct NSWindowOrderingMode: NSInteger {
+        const NSWindowAbove =  1;
+        const NSWindowBelow = -1;
+        const NSWindowOut   =  0;
     }
 }
 
 bitflags! {
-    pub flags NSAlignmentOptions: libc::c_ulonglong {
-        const NSAlignMinXInward         = 1 << 0,
-        const NSAlignMinYInward         = 1 << 1,
-        const NSAlignMaxXInward         = 1 << 2,
-        const NSAlignMaxYInward         = 1 << 3,
-        const NSAlignWidthInward        = 1 << 4,
-        const NSAlignHeightInward       = 1 << 5,
-        const NSAlignMinXOutward        = 1 << 8,
-        const NSAlignMinYOutward        = 1 << 9,
-        const NSAlignMaxXOutward        = 1 << 10,
-        const NSAlignMaxYOutward        = 1 << 11,
-        const NSAlignWidthOutward       = 1 << 12,
-        const NSAlignHeightOutward      = 1 << 13,
-        const NSAlignMinXNearest        = 1 << 16,
-        const NSAlignMinYNearest        = 1 << 17,
-        const NSAlignMaxXNearest        = 1 << 18,
-        const NSAlignMaxYNearest        = 1 << 19,
-        const NSAlignWidthNearest       = 1 << 20,
-        const NSAlignHeightNearest      = 1 << 21,
-        const NSAlignRectFlipped        = 1 << 63,
+    pub struct NSAlignmentOptions: libc::c_ulonglong {
+        const NSAlignMinXInward         = 1 << 0;
+        const NSAlignMinYInward         = 1 << 1;
+        const NSAlignMaxXInward         = 1 << 2;
+        const NSAlignMaxYInward         = 1 << 3;
+        const NSAlignWidthInward        = 1 << 4;
+        const NSAlignHeightInward       = 1 << 5;
+        const NSAlignMinXOutward        = 1 << 8;
+        const NSAlignMinYOutward        = 1 << 9;
+        const NSAlignMaxXOutward        = 1 << 10;
+        const NSAlignMaxYOutward        = 1 << 11;
+        const NSAlignWidthOutward       = 1 << 12;
+        const NSAlignHeightOutward      = 1 << 13;
+        const NSAlignMinXNearest        = 1 << 16;
+        const NSAlignMinYNearest        = 1 << 17;
+        const NSAlignMaxXNearest        = 1 << 18;
+        const NSAlignMaxYNearest        = 1 << 19;
+        const NSAlignWidthNearest       = 1 << 20;
+        const NSAlignHeightNearest      = 1 << 21;
+        const NSAlignRectFlipped        = 1 << 63;
         const NSAlignAllEdgesInward     = NSAlignMinXInward.bits
                                         | NSAlignMaxXInward.bits
                                         | NSAlignMinYInward.bits
-                                        | NSAlignMaxYInward.bits,
+                                        | NSAlignMaxYInward.bits;
         const NSAlignAllEdgesOutward    = NSAlignMinXOutward.bits
                                         | NSAlignMaxXOutward.bits
                                         | NSAlignMinYOutward.bits
-                                        | NSAlignMaxYOutward.bits,
+                                        | NSAlignMaxYOutward.bits;
         const NSAlignAllEdgesNearest    = NSAlignMinXNearest.bits
                                         | NSAlignMaxXNearest.bits
                                         | NSAlignMinYNearest.bits
-                                        | NSAlignMaxYNearest.bits,
+                                        | NSAlignMaxYNearest.bits;
     }
 }
 
@@ -767,26 +767,26 @@ impl NSMenuItem for id {
 pub type NSWindowDepth = libc::c_int;
 
 bitflags! {
-    pub flags NSWindowCollectionBehavior: NSUInteger {
-        const NSWindowCollectionBehaviorDefault = 0,
-        const NSWindowCollectionBehaviorCanJoinAllSpaces = 1 << 0,
-        const NSWindowCollectionBehaviorMoveToActiveSpace = 1 << 1,
+    pub struct NSWindowCollectionBehavior: NSUInteger {
+        const NSWindowCollectionBehaviorDefault = 0;
+        const NSWindowCollectionBehaviorCanJoinAllSpaces = 1 << 0;
+        const NSWindowCollectionBehaviorMoveToActiveSpace = 1 << 1;
 
-        const NSWindowCollectionBehaviorManaged = 1 << 2,
-        const NSWindowCollectionBehaviorTransient = 1 << 3,
-        const NSWindowCollectionBehaviorStationary = 1 << 4,
+        const NSWindowCollectionBehaviorManaged = 1 << 2;
+        const NSWindowCollectionBehaviorTransient = 1 << 3;
+        const NSWindowCollectionBehaviorStationary = 1 << 4;
 
-        const NSWindowCollectionBehaviorParticipatesInCycle = 1 << 5,
-        const NSWindowCollectionBehaviorIgnoresCycle = 1 << 6,
+        const NSWindowCollectionBehaviorParticipatesInCycle = 1 << 5;
+        const NSWindowCollectionBehaviorIgnoresCycle = 1 << 6;
 
-        const NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7,
-        const NSWindowCollectionBehaviorFullScreenAuxiliary = 1 << 8,
+        const NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7;
+        const NSWindowCollectionBehaviorFullScreenAuxiliary = 1 << 8;
     }
 }
 
 bitflags! {
-    pub flags NSWindowOcclusionState: NSUInteger {
-        const NSWindowOcclusionStateVisible = 1 << 1
+    pub struct NSWindowOcclusionState: NSUInteger {
+        const NSWindowOcclusionStateVisible = 1 << 1;
     }
 }
 
@@ -1919,9 +1919,9 @@ impl NSOpenGLContext for id {
 }
 
 bitflags! {
-    pub flags NSEventSwipeTrackingOptions: NSUInteger {
-        const NSEventSwipeTrackingLockDirection         = 0x1 << 0,
-        const NSEventSwipeTrackingClampGestureAmount    = 0x1 << 1,
+    pub struct NSEventSwipeTrackingOptions: NSUInteger {
+        const NSEventSwipeTrackingLockDirection         = 0x1 << 0;
+        const NSEventSwipeTrackingClampGestureAmount    = 0x1 << 1;
     }
 }
 
@@ -1933,28 +1933,28 @@ pub enum NSEventGestureAxis {
 }
 
 bitflags! {
-    pub flags NSEventPhase: NSUInteger {
-       const NSEventPhaseNone        = 0,
-       const NSEventPhaseBegan       = 0x1 << 0,
-       const NSEventPhaseStationary  = 0x1 << 1,
-       const NSEventPhaseChanged     = 0x1 << 2,
-       const NSEventPhaseEnded       = 0x1 << 3,
-       const NSEventPhaseCancelled   = 0x1 << 4,
-       const NSEventPhaseMayBegin    = 0x1 << 5,
+    pub struct NSEventPhase: NSUInteger {
+       const NSEventPhaseNone        = 0;
+       const NSEventPhaseBegan       = 0x1 << 0;
+       const NSEventPhaseStationary  = 0x1 << 1;
+       const NSEventPhaseChanged     = 0x1 << 2;
+       const NSEventPhaseEnded       = 0x1 << 3;
+       const NSEventPhaseCancelled   = 0x1 << 4;
+       const NSEventPhaseMayBegin    = 0x1 << 5;
     }
 }
 
 bitflags! {
-    pub flags NSTouchPhase: NSUInteger {
-        const NSTouchPhaseBegan         = 1 << 0,
-        const NSTouchPhaseMoved         = 1 << 1,
-        const NSTouchPhaseStationary    = 1 << 2,
-        const NSTouchPhaseEnded         = 1 << 3,
-        const NSTouchPhaseCancelled     = 1 << 4,
+    pub struct NSTouchPhase: NSUInteger {
+        const NSTouchPhaseBegan         = 1 << 0;
+        const NSTouchPhaseMoved         = 1 << 1;
+        const NSTouchPhaseStationary    = 1 << 2;
+        const NSTouchPhaseEnded         = 1 << 3;
+        const NSTouchPhaseCancelled     = 1 << 4;
         const NSTouchPhaseTouching      = NSTouchPhaseBegan.bits
                                         | NSTouchPhaseMoved.bits
-                                        | NSTouchPhaseStationary.bits,
-        const NSTouchPhaseAny           = !0, // NSUIntegerMax
+                                        | NSTouchPhaseStationary.bits;
+        const NSTouchPhaseAny           = !0; // NSUIntegerMax
     }
 }
 
@@ -1994,37 +1994,37 @@ pub enum NSEventType {
 }
 
 bitflags! {
-    pub flags NSEventMask: libc::c_ulonglong {
-        const NSLeftMouseDownMask         = 1 << NSLeftMouseDown as libc::c_ulonglong,
-        const NSLeftMouseUpMask           = 1 << NSLeftMouseUp as libc::c_ulonglong,
-        const NSRightMouseDownMask        = 1 << NSRightMouseDown as libc::c_ulonglong,
-        const NSRightMouseUpMask          = 1 << NSRightMouseUp as libc::c_ulonglong,
-        const NSMouseMovedMask            = 1 << NSMouseMoved as libc::c_ulonglong,
-        const NSLeftMouseDraggedMask      = 1 << NSLeftMouseDragged as libc::c_ulonglong,
-        const NSRightMouseDraggedMask     = 1 << NSRightMouseDragged as libc::c_ulonglong,
-        const NSMouseEnteredMask          = 1 << NSMouseEntered as libc::c_ulonglong,
-        const NSMouseExitedMask           = 1 << NSMouseExited as libc::c_ulonglong,
-        const NSKeyDownMask               = 1 << NSKeyDown as libc::c_ulonglong,
-        const NSKeyUpMask                 = 1 << NSKeyUp as libc::c_ulonglong,
-        const NSFlagsChangedMask          = 1 << NSFlagsChanged as libc::c_ulonglong,
-        const NSAppKitDefinedMask         = 1 << NSAppKitDefined as libc::c_ulonglong,
-        const NSSystemDefinedMask         = 1 << NSSystemDefined as libc::c_ulonglong,
-        const NSApplicationDefinedMask    = 1 << NSApplicationDefined as libc::c_ulonglong,
-        const NSPeriodicMask              = 1 << NSPeriodic as libc::c_ulonglong,
-        const NSCursorUpdateMask          = 1 << NSCursorUpdate as libc::c_ulonglong,
-        const NSScrollWheelMask           = 1 << NSScrollWheel as libc::c_ulonglong,
-        const NSTabletPointMask           = 1 << NSTabletPoint as libc::c_ulonglong,
-        const NSTabletProximityMask       = 1 << NSTabletProximity as libc::c_ulonglong,
-        const NSOtherMouseDownMask        = 1 << NSOtherMouseDown as libc::c_ulonglong,
-        const NSOtherMouseUpMask          = 1 << NSOtherMouseUp as libc::c_ulonglong,
-        const NSOtherMouseDraggedMask     = 1 << NSOtherMouseDragged as libc::c_ulonglong,
-        const NSEventMaskGesture          = 1 << NSEventTypeGesture as libc::c_ulonglong,
-        const NSEventMaskSwipe            = 1 << NSEventTypeSwipe as libc::c_ulonglong,
-        const NSEventMaskRotate           = 1 << NSEventTypeRotate as libc::c_ulonglong,
-        const NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as libc::c_ulonglong,
-        const NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as libc::c_ulonglong,
-        const NSEventMaskPressure         = 1 << NSEventTypePressure as libc::c_ulonglong,
-        const NSAnyEventMask              = 0xffffffffffffffff,
+    pub struct NSEventMask: libc::c_ulonglong {
+        const NSLeftMouseDownMask         = 1 << NSLeftMouseDown as libc::c_ulonglong;
+        const NSLeftMouseUpMask           = 1 << NSLeftMouseUp as libc::c_ulonglong;
+        const NSRightMouseDownMask        = 1 << NSRightMouseDown as libc::c_ulonglong;
+        const NSRightMouseUpMask          = 1 << NSRightMouseUp as libc::c_ulonglong;
+        const NSMouseMovedMask            = 1 << NSMouseMoved as libc::c_ulonglong;
+        const NSLeftMouseDraggedMask      = 1 << NSLeftMouseDragged as libc::c_ulonglong;
+        const NSRightMouseDraggedMask     = 1 << NSRightMouseDragged as libc::c_ulonglong;
+        const NSMouseEnteredMask          = 1 << NSMouseEntered as libc::c_ulonglong;
+        const NSMouseExitedMask           = 1 << NSMouseExited as libc::c_ulonglong;
+        const NSKeyDownMask               = 1 << NSKeyDown as libc::c_ulonglong;
+        const NSKeyUpMask                 = 1 << NSKeyUp as libc::c_ulonglong;
+        const NSFlagsChangedMask          = 1 << NSFlagsChanged as libc::c_ulonglong;
+        const NSAppKitDefinedMask         = 1 << NSAppKitDefined as libc::c_ulonglong;
+        const NSSystemDefinedMask         = 1 << NSSystemDefined as libc::c_ulonglong;
+        const NSApplicationDefinedMask    = 1 << NSApplicationDefined as libc::c_ulonglong;
+        const NSPeriodicMask              = 1 << NSPeriodic as libc::c_ulonglong;
+        const NSCursorUpdateMask          = 1 << NSCursorUpdate as libc::c_ulonglong;
+        const NSScrollWheelMask           = 1 << NSScrollWheel as libc::c_ulonglong;
+        const NSTabletPointMask           = 1 << NSTabletPoint as libc::c_ulonglong;
+        const NSTabletProximityMask       = 1 << NSTabletProximity as libc::c_ulonglong;
+        const NSOtherMouseDownMask        = 1 << NSOtherMouseDown as libc::c_ulonglong;
+        const NSOtherMouseUpMask          = 1 << NSOtherMouseUp as libc::c_ulonglong;
+        const NSOtherMouseDraggedMask     = 1 << NSOtherMouseDragged as libc::c_ulonglong;
+        const NSEventMaskGesture          = 1 << NSEventTypeGesture as libc::c_ulonglong;
+        const NSEventMaskSwipe            = 1 << NSEventTypeSwipe as libc::c_ulonglong;
+        const NSEventMaskRotate           = 1 << NSEventTypeRotate as libc::c_ulonglong;
+        const NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as libc::c_ulonglong;
+        const NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as libc::c_ulonglong;
+        const NSEventMaskPressure         = 1 << NSEventTypePressure as libc::c_ulonglong;
+        const NSAnyEventMask              = 0xffffffffffffffff;
     }
 }
 
@@ -2035,16 +2035,16 @@ impl NSEventMask {
 }
 
 bitflags! {
-    pub flags NSEventModifierFlags: NSUInteger {
-        const NSAlphaShiftKeyMask                     = 1 << 16,
-        const NSShiftKeyMask                          = 1 << 17,
-        const NSControlKeyMask                        = 1 << 18,
-        const NSAlternateKeyMask                      = 1 << 19,
-        const NSCommandKeyMask                        = 1 << 20,
-        const NSNumericPadKeyMask                     = 1 << 21,
-        const NSHelpKeyMask                           = 1 << 22,
-        const NSFunctionKeyMask                       = 1 << 23,
-        const NSDeviceIndependentModifierFlagsMask    = 0xffff0000,
+    pub struct NSEventModifierFlags: NSUInteger {
+        const NSAlphaShiftKeyMask                     = 1 << 16;
+        const NSShiftKeyMask                          = 1 << 17;
+        const NSControlKeyMask                        = 1 << 18;
+        const NSAlternateKeyMask                      = 1 << 19;
+        const NSCommandKeyMask                        = 1 << 20;
+        const NSNumericPadKeyMask                     = 1 << 21;
+        const NSHelpKeyMask                           = 1 << 22;
+        const NSFunctionKeyMask                       = 1 << 23;
+        const NSDeviceIndependentModifierFlagsMask    = 0xffff0000;
     }
 }
 

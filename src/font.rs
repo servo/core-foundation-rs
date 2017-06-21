@@ -379,7 +379,7 @@ pub fn debug_font_traits(font: &CTFont) {
 //    println!("kCTFontSlantTrait: {}", traits.normalized_slant());
 }
 
-#[cfg(not(feature = "lion"))]
+#[cfg(feature = "mountainlion")]
 pub fn cascade_list_for_languages(font: &CTFont, language_pref_list: &CFArray) -> CFArray {
     unsafe {
         let font_collection_ref =
@@ -464,7 +464,7 @@ extern {
     fn CTFontCopyName(font: CTFontRef, nameKey: CFStringRef) -> CFStringRef;
     //fn CTFontCopyLocalizedName(font: CTFontRef, nameKey: CFStringRef, 
     //                           language: *CFStringRef) -> CFStringRef;
-    #[cfg(not(feature = "lion"))]
+    #[cfg(feature = "mountainlion")]
     fn CTFontCopyDefaultCascadeListForLanguages(font: CTFontRef, languagePrefList: CFArrayRef) -> CFArrayRef;
 
 

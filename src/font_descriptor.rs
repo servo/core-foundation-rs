@@ -274,7 +274,7 @@ impl CTFontDescriptor {
     pub fn font_path(&self) -> Option<String> {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
-            if (value.is_null()) {
+            if value.is_null() {
                 return None;
             }
 

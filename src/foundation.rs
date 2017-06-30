@@ -152,7 +152,7 @@ extern {
     pub static NSDefaultRunLoopMode: id;
 }
 
-pub trait NSAutoreleasePool {
+pub trait NSAutoreleasePool: Sized {
     unsafe fn new(_: Self) -> id {
         msg_send![class("NSAutoreleasePool"), new]
     }
@@ -171,7 +171,7 @@ impl NSAutoreleasePool for id {
     }
 }
 
-pub trait NSProcessInfo {
+pub trait NSProcessInfo: Sized {
     unsafe fn processInfo(_: Self) -> id {
         msg_send![class("NSProcessInfo"), processInfo]
     }
@@ -187,7 +187,7 @@ impl NSProcessInfo for id {
 
 pub type NSTimeInterval = libc::c_double;
 
-pub trait NSValue {
+pub trait NSValue: Sized {
     unsafe fn valueWithPoint(_: Self, point: NSPoint) -> id {
         msg_send![class("NSValue"), valueWithPoint:point]
     }
@@ -200,7 +200,7 @@ pub trait NSValue {
 impl NSValue for id {
 }
 
-pub trait NSArray {
+pub trait NSArray: Sized {
     unsafe fn array(_: Self) -> id {
         msg_send![class("NSArray"), array]
     }
@@ -228,7 +228,7 @@ impl NSArray for id {
     }
 }
 
-pub trait NSDictionary {
+pub trait NSDictionary: Sized {
     unsafe fn dictionary(_: Self) -> id {
         msg_send![class("NSDictionary"), dictionary]
     }
@@ -530,7 +530,7 @@ pub enum NSComparisonResult {
     NSOrderedDescending = 1
 }
 
-pub trait NSString {
+pub trait NSString: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSString"), alloc]
     }
@@ -569,7 +569,7 @@ impl NSString for id {
     }
 }
 
-pub trait NSDate {
+pub trait NSDate: Sized {
     unsafe fn distantPast(_: Self) -> id {
         msg_send![class("NSDate"), distantPast]
     }
@@ -624,7 +624,7 @@ impl Iterator for NSFastIterator {
         if self.idx < self.len {
             let object = unsafe {
                 *self.state.items_ptr.offset(self.idx as isize)
-            };        
+            };
             self.mut_val = Some(new_mut);
             self.idx += 1;
             Some(object)
@@ -634,7 +634,7 @@ impl Iterator for NSFastIterator {
     }
 }
 
-pub trait NSFastEnumeration {
+pub trait NSFastEnumeration: Sized {
     unsafe fn iter(self) -> NSFastIterator;
 }
 
@@ -661,7 +661,7 @@ extern {
     fn NSInsetRect(rect: NSRect, x: CGFloat, y: CGFloat) -> NSRect;
 }
 
-pub trait NSRunLoop {
+pub trait NSRunLoop: Sized {
     unsafe fn currentRunLoop() -> Self;
 
     unsafe fn performSelector_target_argument_order_modes_(self,
@@ -691,7 +691,7 @@ impl NSRunLoop for id {
     }
 }
 
-pub trait NSData {
+pub trait NSData: Sized {
     unsafe fn data(_: Self) -> id {
         msg_send![class("NSData"), data]
     }

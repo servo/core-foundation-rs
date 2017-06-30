@@ -316,7 +316,7 @@ pub enum NSBezelStyle {
 
 pub static NSMainMenuWindowLevel: libc::int32_t = 24;
 
-pub trait NSApplication {
+pub trait NSApplication: Sized {
     unsafe fn sharedApplication(_: Self) -> id {
         msg_send![class("NSApplication"), sharedApplication]
     }
@@ -401,7 +401,7 @@ impl NSApplication for id {
     }
 }
 
-pub trait NSRunningApplication {
+pub trait NSRunningApplication: Sized {
     unsafe fn currentApplication(_: Self) -> id {
         msg_send![class("NSRunningApplication"), currentApplication]
     }
@@ -414,7 +414,7 @@ impl NSRunningApplication for id {
     }
 }
 
-pub trait NSPasteboard {
+pub trait NSPasteboard: Sized {
     unsafe fn generalPasteboard(_: Self) -> id {
         msg_send![class("NSPasteboard"), generalPasteboard]
     }
@@ -573,7 +573,7 @@ impl NSPasteboard for id {
 
 }
 
-pub trait NSPasteboardItem {
+pub trait NSPasteboardItem: Sized {
     unsafe fn types(self) -> id;
 
     unsafe fn setDataProvider_forTypes(self, dataProvider: id, types: id) -> BOOL;
@@ -620,7 +620,7 @@ impl NSPasteboardItem for id {
     }
 }
 
-pub trait NSPasteboardItemDataProvider {
+pub trait NSPasteboardItemDataProvider: Sized {
     unsafe fn pasteboard_item_provideDataForType(self, pasteboard: id, item: id, _type: id);
     unsafe fn pasteboardFinishedWithDataProvider(self, pasteboard: id);
 }
@@ -635,7 +635,7 @@ impl NSPasteboardItemDataProvider for id {
     }
 }
 
-pub trait NSPasteboardWriting {
+pub trait NSPasteboardWriting: Sized {
     unsafe fn writableTypesForPasteboard(self, pasteboard: id) -> id;
     unsafe fn writingOptionsForType_pasteboard(self, _type: id, pasteboard: id) -> NSPasteboardWritingOptions;
 
@@ -656,7 +656,7 @@ impl NSPasteboardWriting for id {
     }
 }
 
-pub trait NSPasteboardReading {
+pub trait NSPasteboardReading: Sized {
     unsafe fn initWithPasteboardPropertyList_ofType(self, propertyList: id, _type: id) -> id;
 
     unsafe fn readableTypesForPasteboard(self, pasteboard: id) -> id;
@@ -693,7 +693,7 @@ pub enum NSPasteboardWritingOptions {
     NSPasteboardWritingPromised = 1 << 9,
 }
 
-pub trait NSMenu {
+pub trait NSMenu: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSMenu"), alloc]
     }
@@ -732,7 +732,7 @@ impl NSMenu for id {
     }
 }
 
-pub trait NSMenuItem {
+pub trait NSMenuItem: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSMenuItem"), alloc]
     }
@@ -790,7 +790,7 @@ bitflags! {
     }
 }
 
-pub trait NSWindow {
+pub trait NSWindow: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSWindow"), alloc]
     }
@@ -1638,7 +1638,7 @@ impl NSWindow for id {
     // TODO: Constraint-Based Layouts
 }
 
-pub trait NSView {
+pub trait NSView: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSView"), alloc]
     }
@@ -1744,7 +1744,7 @@ pub const NSViewMinYMargin: u64 = 8;
 pub const NSViewHeightSizable: u64 = 16;
 pub const NSViewMaxYMargin: u64 = 32;
 
-pub trait NSOpenGLView {
+pub trait NSOpenGLView: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSOpenGLView"), alloc]
     }
@@ -1773,7 +1773,7 @@ impl NSOpenGLView for id {
     }
 }
 
-pub trait NSOpenGLPixelFormat {
+pub trait NSOpenGLPixelFormat: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSOpenGLPixelFormat"), alloc]
     }
@@ -1807,7 +1807,7 @@ impl NSOpenGLPixelFormat for id {
     }
 }
 
-pub trait NSOpenGLContext {
+pub trait NSOpenGLContext: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSOpenGLContext"), alloc]
     }
@@ -2153,7 +2153,7 @@ pub const NSFindFunctionKey: libc::c_ushort = 0xF745;
 pub const NSHelpFunctionKey: libc::c_ushort = 0xF746;
 pub const NSModeSwitchFunctionKey: libc::c_ushort = 0xF747;
 
-pub trait NSEvent {
+pub trait NSEvent: Sized {
     // Creating Events
     unsafe fn keyEventWithType_location_modifierFlags_timestamp_windowNumber_context_characters_charactersIgnoringModifiers_isARepeat_keyCode_(
         _: Self,
@@ -2694,7 +2694,7 @@ impl NSEvent for id {
     }
 }
 
-pub trait NSScreen {
+pub trait NSScreen: Sized {
     // Getting NSScreen Objects
     unsafe fn mainScreen(_: Self) -> id /* (NSScreen *) */;
     unsafe fn deepestScreen(_: Self) -> id /* (NSScreen *) */;
@@ -2780,7 +2780,7 @@ impl NSScreen for id {
     }
 }
 
-pub trait NSButton {
+pub trait NSButton: Sized {
      unsafe fn setImage_(self, img: id /* (NSImage *) */);
      unsafe fn setBezelStyle_(self, style: NSBezelStyle);
      unsafe fn setTitle_(self, title: id /* (NSString*) */);
@@ -2805,7 +2805,7 @@ impl NSButton for id {
     }
 }
 
-pub trait NSImage {
+pub trait NSImage: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSImage"), alloc]
     }
@@ -3214,7 +3214,7 @@ pub enum NSImageLoadStatus {
     NSImageLoadStatusReadError
 }
 
-pub trait NSSound {
+pub trait NSSound: Sized {
     unsafe fn canInitWithPasteboard_(_: Self, pasteboard: id) -> BOOL {
         msg_send![class("NSSound"), canInitWithPasteboard:pasteboard]
     }
@@ -3323,7 +3323,7 @@ impl NSSound for id {
 pub const NSVariableStatusItemLength: CGFloat = -1.0;
 pub const NSSquareStatusItemLength: CGFloat = -2.0;
 
-pub trait NSStatusItem {
+pub trait NSStatusItem: Sized {
     unsafe fn statusBar(self) -> id /* (NSStatusBar *) */;
     unsafe fn button(self) -> id /* (NSStatusBarButton *) */;
     unsafe fn menu(self) -> id;
@@ -3358,7 +3358,7 @@ impl NSStatusItem for id {
     }
 }
 
-pub trait NSStatusBar {
+pub trait NSStatusBar: Sized {
     unsafe fn systemStatusBar(_: Self) -> id {
         msg_send![class("NSStatusBar"), systemStatusBar]
     }
@@ -3386,7 +3386,7 @@ extern {
     pub fn NSRectFill(rect: NSRect);
 }
 
-pub trait NSTextField {
+pub trait NSTextField: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSTextField"), alloc]
     }
@@ -3418,7 +3418,7 @@ pub enum NSTabViewType {
     NSNoTabsNoBorder         = 6
 }
 
-pub trait NSTabView {
+pub trait NSTabView: Sized {
     unsafe fn new(_: Self) -> id  {
         msg_send![class("NSTabView"), new]
     }
@@ -3593,7 +3593,7 @@ pub enum NSTabState {
     NSPressedTab = 2
 }
 
-pub trait NSTabViewItem {
+pub trait NSTabViewItem: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class("NSTabViewItem"), alloc]
     }
@@ -3689,7 +3689,7 @@ impl NSTabViewItem for id {
     }
 }
 
-pub trait NSLayoutConstraint {
+pub trait NSLayoutConstraint: Sized {
     unsafe fn activateConstraints(_: Self, constraints: id) -> id;
 }
 
@@ -3699,7 +3699,7 @@ impl NSLayoutConstraint for id {
     }
 }
 
-pub trait NSLayoutDimension {
+pub trait NSLayoutDimension: Sized {
     unsafe fn constraintEqualToConstant(self, c: CGFloat) -> id;
     unsafe fn constraintLessThanOrEqualToConstant(self, c: CGFloat) -> id;
     unsafe fn constraintGreaterThanOrEqualToConstant(self, c: CGFloat) -> id;
@@ -3719,7 +3719,7 @@ impl NSLayoutDimension for id {
     }
  }
 
-pub trait NSColor {
+pub trait NSColor: Sized {
     unsafe fn clearColor(_: Self) -> id;
 }
 

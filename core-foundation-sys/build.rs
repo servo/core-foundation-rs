@@ -7,6 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use std::env;
+
 fn main() {
-    println!("cargo:rustc-link-lib=framework=CoreFoundation");
+    let target = env::var("TARGET").unwrap();
+
+    if target.ends_with("apple-darwin") || target.ends_with("apple-ios") {
+        println!("cargo:rustc-link-lib=framework=CoreFoundation");
+    }
 }

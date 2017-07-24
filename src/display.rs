@@ -91,5 +91,7 @@ extern {
                                    listOptions: CGWindowListOption,
                                    windowId: CGWindowID,
                                    imageOptions: CGWindowImageOption) -> CGImageRef;
-
+    pub fn CGWindowListCreateImageFromArray(screenBounds: CGRect,
+                                            windowArray: CFArrayRef,
+                                            imageOptions: CGWindowImageOption) -> CGImageRef;
 }

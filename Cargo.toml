@@ -13,5 +13,5 @@ elcapitan = []
 
 [dependencies]
 bitflags = "0.9"
-core-foundation = { path = "../core-foundation-rs/core-foundation" } #"0.4"
+core-foundation = "0.4"
 libc = "0.2"

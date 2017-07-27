@@ -12,6 +12,7 @@ pub type CGKeyCode = libc::uint16_t;
 ///
 /// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
 bitflags! {
+    #[repr(C)]
     pub struct CGEventFlags: u64 {
         const CGEventFlagNull = 0;
 
@@ -88,8 +89,9 @@ pub enum CGEventTapLocation {
     AnnotatedSession,
 }
 
-#[repr(C)]
-pub struct __CGEvent;
+// This is an enum due to zero-sized types warnings.
+// For more details see https://github.com/rust-lang/rust/issues/27303
+pub enum __CGEvent {}
 
 pub type CGEventRef = *const __CGEvent;
 

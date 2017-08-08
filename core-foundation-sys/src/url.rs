@@ -8,8 +8,9 @@
 // except according to those terms.
 use libc::c_void;
 
-use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID, SInt32};
+use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID, CFTypeRef, SInt32};
 use string::CFStringRef;
+use error::CFErrorRef;
 
 #[repr(C)]
 pub struct __CFURL(c_void);
@@ -89,7 +90,7 @@ extern {
     //fn CFURLCreateCopyDeletingPathExtension
     //fn CFURLCreateFilePathURL
     //fn CFURLCreateFileReferenceURL
-    //fn CFURLCreateFromFileSystemRepresentation
+    pub fn CFURLCreateFromFileSystemRepresentation(allocator: CFAllocatorRef, buffer: *const u8, bufLen: CFIndex, isDirectory: Boolean) -> CFURLRef;
     //fn CFURLCreateFromFileSystemRepresentationRelativeToBase
     //fn CFURLCreateFromFSRef
     //fn CFURLCreateWithBytes
@@ -143,7 +144,7 @@ extern {
     //fn CFURLCreateResourcePropertiesForKeysFromBookmarkData
     //fn CFURLCreateResourcePropertyForKeyFromBookmarkData
     //fn CFURLSetResourcePropertiesForKeys
-    //fn CFURLSetResourcePropertyForKey
+    pub fn CFURLSetResourcePropertyForKey(url: CFURLRef, key: CFStringRef, value: CFTypeRef, error: *mut CFErrorRef);
     //fn CFURLSetTemporaryResourcePropertyForKey
 
     /* Working with Bookmark Data */

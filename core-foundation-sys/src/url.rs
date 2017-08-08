@@ -88,12 +88,12 @@ extern {
     //fn CFURLCreateCopyAppendingPathExtension
     //fn CFURLCreateCopyDeletingLastPathComponent
     //fn CFURLCreateCopyDeletingPathExtension
-    pub fn CFURLCreateFilePathURL(allocator: CFAllocatorRef, url: CFURLRef, error: *mut CFErrorRef);
+    pub fn CFURLCreateFilePathURL(allocator: CFAllocatorRef, url: CFURLRef, error: *mut CFErrorRef) -> CFURLRef;
     //fn CFURLCreateFileReferenceURL
     pub fn CFURLCreateFromFileSystemRepresentation(allocator: CFAllocatorRef, buffer: *const u8, bufLen: CFIndex, isDirectory: Boolean) -> CFURLRef;
     //fn CFURLCreateFromFileSystemRepresentationRelativeToBase
     //fn CFURLCreateFromFSRef
-    pub fn CFURLCreateWithBytes(allocator: CFAllocatorRef, URLBytes: *const u8, length: CFIndex, encoding: CFStringEncoding, baseURL: CFURLRef);
+    pub fn CFURLCreateWithBytes(allocator: CFAllocatorRef, URLBytes: *const u8, length: CFIndex, encoding: CFStringEncoding, baseURL: CFURLRef) -> CFURLRef;
     pub fn CFURLCreateWithFileSystemPath(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean) -> CFURLRef;
     pub fn CFURLCreateWithFileSystemPathRelativeToBase(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean, baseURL: CFURLRef) -> CFURLRef;
     //fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
@@ -143,7 +143,7 @@ extern {
     //fn CFURLCreateResourcePropertiesForKeysFromBookmarkData
     //fn CFURLCreateResourcePropertyForKeyFromBookmarkData
     //fn CFURLSetResourcePropertiesForKeys
-    pub fn CFURLSetResourcePropertyForKey(url: CFURLRef, key: CFStringRef, value: CFTypeRef, error: *mut CFErrorRef);
+    pub fn CFURLSetResourcePropertyForKey(url: CFURLRef, key: CFStringRef, value: CFTypeRef, error: *mut CFErrorRef) -> Boolean;
     //fn CFURLSetTemporaryResourcePropertyForKey
 
     /* Working with Bookmark Data */

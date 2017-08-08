@@ -8,8 +8,9 @@
 // except according to those terms.
 use libc::c_void;
 
-use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID, SInt32};
-use string::CFStringRef;
+use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID, CFTypeRef, SInt32};
+use string::{CFStringRef, CFStringEncoding};
+use error::CFErrorRef;
 
 #[repr(C)]
 pub struct __CFURL(c_void);
@@ -44,36 +45,33 @@ extern {
      */
 
     /* Common File System Resource Keys */
-    // static kCFURLAttributeModificationDateKey: CFStringRef;
-    // static kCFURLContentAccessDateKey: CFStringRef;
-    // static kCFURLContentModificationDateKey: CFStringRef;
-    // static kCFURLCreationDateKey: CFStringRef;
-    // static kCFURLCustomIconKey: CFStringRef;
-    // static kCFURLEffectiveIconKey: CFStringRef;
-    // static kCFURLFileResourceIdentifierKey: CFStringRef;
-    // static kCFURLFileSecurityKey: CFStringRef;
-    // static kCFURLHasHiddenExtensionKey: CFStringRef;
-    // static kCFURLIsDirectoryKey: CFStringRef;
-    // static kCFURLIsExecutableKey: CFStringRef;
-    // static kCFURLIsHiddenKey: CFStringRef;
-    // static kCFURLIsPackageKey: CFStringRef;
-    // static kCFURLIsReadableKey: CFStringRef;
-    // static kCFURLIsRegularFileKey: CFStringRef;
-    // static kCFURLIsSymbolicLinkKey: CFStringRef;
-    // static kCFURLIsSystemImmutableKey: CFStringRef;
-    // static kCFURLIsUserImmutableKey: CFStringRef;
-    // static kCFURLIsVolumeKey: CFStringRef;
-    // static kCFURLIsWritableKey: CFStringRef;
-    // static kCFURLLabelColorKey: CFStringRef;
-    // static kCFURLLabelNumberKey: CFStringRef;
-    // static kCFURLLinkCountKey: CFStringRef;
-    // static kCFURLLocalizedLabelKey: CFStringRef;
-    // static kCFURLLocalizedNameKey: CFStringRef;
-    // static kCFURLLocalizedTypeDescriptionKey: CFStringRef;
-    // static kCFURLNameKey: CFStringRef;
-    // static kCFURLParentDirectoryURLKey: CFStringRef;
-    // static kCFURLPreferredIOBlockSizeKey: CFStringRef;
-    // static kCFURLTypeIdentifierKey: CFStringRef;
+    pub static kCFURLAttributeModificationDateKey: CFStringRef;
+    pub static kCFURLContentAccessDateKey: CFStringRef;
+    pub static kCFURLContentModificationDateKey: CFStringRef;
+    pub static kCFURLCreationDateKey: CFStringRef;
+    pub static kCFURLFileResourceIdentifierKey: CFStringRef;
+    pub static kCFURLFileSecurityKey: CFStringRef;
+    pub static kCFURLHasHiddenExtensionKey: CFStringRef;
+    pub static kCFURLIsDirectoryKey: CFStringRef;
+    pub static kCFURLIsExecutableKey: CFStringRef;
+    pub static kCFURLIsHiddenKey: CFStringRef;
+    pub static kCFURLIsPackageKey: CFStringRef;
+    pub static kCFURLIsReadableKey: CFStringRef;
+    pub static kCFURLIsRegularFileKey: CFStringRef;
+    pub static kCFURLIsSymbolicLinkKey: CFStringRef;
+    pub static kCFURLIsSystemImmutableKey: CFStringRef;
+    pub static kCFURLIsUserImmutableKey: CFStringRef;
+    pub static kCFURLIsVolumeKey: CFStringRef;
+    pub static kCFURLIsWritableKey: CFStringRef;
+    pub static kCFURLLabelNumberKey: CFStringRef;
+    pub static kCFURLLinkCountKey: CFStringRef;
+    pub static kCFURLLocalizedLabelKey: CFStringRef;
+    pub static kCFURLLocalizedNameKey: CFStringRef;
+    pub static kCFURLLocalizedTypeDescriptionKey: CFStringRef;
+    pub static kCFURLNameKey: CFStringRef;
+    pub static kCFURLParentDirectoryURLKey: CFStringRef;
+    pub static kCFURLPreferredIOBlockSizeKey: CFStringRef;
+    pub static kCFURLTypeIdentifierKey: CFStringRef;
     // static kCFURLVolumeIdentifierKey: CFStringRef;
     // static kCFURLVolumeURLKey: CFStringRef;
     // static kCFURLIsExcludedFromBackupKey: CFStringRef;
@@ -87,13 +85,12 @@ extern {
     //fn CFURLCreateCopyAppendingPathExtension
     //fn CFURLCreateCopyDeletingLastPathComponent
     //fn CFURLCreateCopyDeletingPathExtension
-    //fn CFURLCreateFilePathURL
+    pub fn CFURLCreateFilePathURL(allocator: CFAllocatorRef, url: CFURLRef, error: *mut CFErrorRef);
     //fn CFURLCreateFileReferenceURL
-    //fn CFURLCreateFromFileSystemRepresentation
+    pub fn CFURLCreateFromFileSystemRepresentation(allocator: CFAllocatorRef, buffer: *const u8, bufLen: CFIndex, isDirectory: Boolean) -> CFURLRef;
     //fn CFURLCreateFromFileSystemRepresentationRelativeToBase
     //fn CFURLCreateFromFSRef
-    //fn CFURLCreateWithBytes
-    //fn CFURLCreateWithFileSystemPath
+    pub fn CFURLCreateWithBytes(allocator: CFAllocatorRef, URLBytes: *const u8, length: CFIndex, encoding: CFStringEncoding, baseURL: CFURLRef);
     pub fn CFURLCreateWithFileSystemPath(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean) -> CFURLRef;
     pub fn CFURLCreateWithFileSystemPathRelativeToBase(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean, baseURL: CFURLRef) -> CFURLRef;
     //fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
@@ -136,14 +133,14 @@ extern {
     //fn CFURLResourceIsReachable
 
     /* Getting and Setting File System Resource Properties */
-    //fn CFURLClearResourcePropertyCache
+    pub fn CFURLClearResourcePropertyCache(url: CFURLRef);
     //fn CFURLClearResourcePropertyCacheForKey
     //fn CFURLCopyResourcePropertiesForKeys
     //fn CFURLCopyResourcePropertyForKey
     //fn CFURLCreateResourcePropertiesForKeysFromBookmarkData
     //fn CFURLCreateResourcePropertyForKeyFromBookmarkData
     //fn CFURLSetResourcePropertiesForKeys
-    //fn CFURLSetResourcePropertyForKey
+    pub fn CFURLSetResourcePropertyForKey(url: CFURLRef, key: CFStringRef, value: CFTypeRef, error: *mut CFErrorRef);
     //fn CFURLSetTemporaryResourcePropertyForKey
 
     /* Working with Bookmark Data */

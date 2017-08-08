@@ -85,13 +85,12 @@ extern {
     //fn CFURLCreateCopyAppendingPathExtension
     //fn CFURLCreateCopyDeletingLastPathComponent
     //fn CFURLCreateCopyDeletingPathExtension
-    //fn CFURLCreateFilePathURL
+    pub fn CFURLCreateFilePathURL(allocator: CFAllocatorRef, url: CFURLRef, error: *mut CFErrorRef);
     //fn CFURLCreateFileReferenceURL
     pub fn CFURLCreateFromFileSystemRepresentation(allocator: CFAllocatorRef, buffer: *const u8, bufLen: CFIndex, isDirectory: Boolean) -> CFURLRef;
     //fn CFURLCreateFromFileSystemRepresentationRelativeToBase
     //fn CFURLCreateFromFSRef
-    //fn CFURLCreateWithBytes
-    //fn CFURLCreateWithFileSystemPath
+    pub fn CFURLCreateWithBytes(allocator: CFAllocatorRef, URLBytes: *const u8, length: CFIndex, encoding: CFStringEncoding, baseURL: CFURLRef);
     pub fn CFURLCreateWithFileSystemPath(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean) -> CFURLRef;
     pub fn CFURLCreateWithFileSystemPathRelativeToBase(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean, baseURL: CFURLRef) -> CFURLRef;
     //fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
@@ -134,7 +133,7 @@ extern {
     //fn CFURLResourceIsReachable
 
     /* Getting and Setting File System Resource Properties */
-    //fn CFURLClearResourcePropertyCache
+    pub fn CFURLClearResourcePropertyCache(url: CFURLRef);
     //fn CFURLClearResourcePropertyCacheForKey
     //fn CFURLCopyResourcePropertiesForKeys
     //fn CFURLCopyResourcePropertyForKey

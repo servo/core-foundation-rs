@@ -11,11 +11,13 @@
 
 pub use core_foundation_sys::url::*;
 
-use base::{TCFType};
+use base::{TCFType, CFIndex};
 use string::{CFString};
 
 use core_foundation_sys::base::{kCFAllocatorDefault, CFRelease};
 use std::fmt;
+use std::ptr;
+use std::path::Path;
 
 pub struct CFURL(CFURLRef);
 
@@ -40,6 +42,21 @@ impl fmt::Debug for CFURL {
 }
 
 impl CFURL {
+    pub fn from_path<P: AsRef<Path>>(path: P, isDirectory: bool) -> Option<CFURL> {
+        let path = match path.as_ref().to_str() {
+            Some(path) => path,
+            None => return None,
+        };
+
+        unsafe {
+            let url_ref = CFURLCreateFromFileSystemRepresentation(ptr::null_mut(), path.as_ptr(), path.len() as CFIndex, isDirectory as u8);
+            if url_ref.is_null() {
+                return None;
+            }
+            Some(TCFType::wrap_under_create_rule(url_ref))
+        }
+    }
+
     pub fn from_file_system_path(filePath: CFString, pathStyle: CFURLPathStyle, isDirectory: bool) -> CFURL {
         unsafe {
             let url_ref = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, filePath.as_concrete_TypeRef(), pathStyle, isDirectory as u8);

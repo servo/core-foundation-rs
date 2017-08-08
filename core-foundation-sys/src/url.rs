@@ -72,10 +72,13 @@ extern {
     pub static kCFURLParentDirectoryURLKey: CFStringRef;
     pub static kCFURLPreferredIOBlockSizeKey: CFStringRef;
     pub static kCFURLTypeIdentifierKey: CFStringRef;
-    // static kCFURLVolumeIdentifierKey: CFStringRef;
-    // static kCFURLVolumeURLKey: CFStringRef;
-    // static kCFURLIsExcludedFromBackupKey: CFStringRef;
-    // static kCFURLFileResourceTypeKey: CFStringRef;
+    pub static kCFURLVolumeIdentifierKey: CFStringRef;
+    pub static kCFURLVolumeURLKey: CFStringRef;
+
+    #[cfg(feature="mac_os_10_8_features")]
+    #[cfg_attr(feature = "mac_os_10_7_support", linkage = "extern_weak")]
+    pub static kCFURLIsExcludedFromBackupKey: CFStringRef;
+    pub static kCFURLFileResourceTypeKey: CFStringRef;
 
     /* Creating a CFURL */
     pub fn CFURLCopyAbsoluteURL(anURL: CFURLRef) -> CFURLRef;
@@ -150,4 +153,10 @@ extern {
     //fn CFURLWriteBookmarkDataToFile
     //fn CFURLStartAccessingSecurityScopedResource
     //fn CFURLStopAccessingSecurityScopedResource
+}
+
+#[test]
+#[cfg(feature="mac_os_10_8_features")]
+fn can_see_excluded_from_backup_key() {
+    let _ = unsafe { kCFURLIsExcludedFromBackupKey };
 }

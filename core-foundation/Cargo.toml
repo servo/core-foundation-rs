@@ -13,3 +13,7 @@ version = "0.4.2"
 
 [dependencies]
 libc = "0.2"
+
+[features]
+mac_os_10_7_support = ["core-foundation-sys/mac_os_10_7_support"] # backwards compatibility
+mac_os_10_8_features = ["core-foundation-sys/mac_os_10_8_features"] # enables new features

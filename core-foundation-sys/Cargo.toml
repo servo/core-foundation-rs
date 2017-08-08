@@ -10,3 +10,7 @@ build = "build.rs"
 
 [dependencies]
 libc = "0.2"
+
+[features]
+mac_os_10_7_support = [] # backwards compatibility
+mac_os_10_8_features = [] # enables new features

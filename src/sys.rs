@@ -7,3 +7,7 @@ pub type CGColorSpaceRef = *mut CGColorSpace;
 pub enum CGDataProvider {}
 pub type CGDataProviderRef = *mut CGDataProvider;
 
+pub enum CGFont {}
+pub type CGFontRef = *mut CGFont;
+
+

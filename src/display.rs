@@ -9,8 +9,6 @@
 
 #![allow(non_upper_case_globals)]
 
-extern crate core_foundation;
-
 use libc;
 pub use base::{CGError, boolean_t};
 pub use geometry::{CGRect, CGPoint, CGSize};

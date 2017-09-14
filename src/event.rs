@@ -1,3 +1,5 @@
+#![allow(non_upper_case_globals)]
+
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use geometry::CGPoint;
 use event_source::{CGEventSource,CGEventSourceRef};

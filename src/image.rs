@@ -1,9 +1,9 @@
-use core_foundation::base::{CFRetain, CFTypeID, TCFType};
+use core_foundation::base::{CFRetain, CFTypeID};
 use core_foundation::data::CFData;
 use color_space::CGColorSpace;
-use data_provider::{CGDataProvider, CGDataProviderRef};
+use data_provider::CGDataProviderRef;
 use libc::size_t;
-use foreign_types::ForeignType;
+use foreign_types::{ForeignType, ForeignTypeRef};
 
 #[repr(C)]
 pub enum CGImageAlphaInfo {
@@ -85,7 +85,7 @@ impl CGImageRef {
     /// underlying buffer.
     pub fn data(&self) -> CFData {
         let data_provider = unsafe {
-            CGDataProvider::wrap_under_get_rule(CGImageGetDataProvider(self.as_ptr()))
+            CGDataProviderRef::from_ptr(CGImageGetDataProvider(self.as_ptr()))
         };
         data_provider.copy_data()
     }
@@ -100,7 +100,7 @@ extern {
     fn CGImageGetBitsPerPixel(image: ::sys::CGImageRef) -> size_t;
     fn CGImageGetBytesPerRow(image: ::sys::CGImageRef) -> size_t;
     fn CGImageGetColorSpace(image: ::sys::CGImageRef) -> ::sys::CGColorSpaceRef;
-    fn CGImageGetDataProvider(image: ::sys::CGImageRef) -> CGDataProviderRef;
+    fn CGImageGetDataProvider(image: ::sys::CGImageRef) -> ::sys::CGDataProviderRef;
     fn CGImageRelease(image: ::sys::CGImageRef);
 
     //fn CGImageGetAlphaInfo(image: ::sys::CGImageRef) -> CGImageAlphaInfo;

@@ -9,7 +9,8 @@
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::string::{CFString, CFStringRef};
-use data_provider::{CGDataProvider, CGDataProviderRef};
+use data_provider::CGDataProvider;
+use foreign_types::ForeignType;
 
 use libc;
 use std::mem;
@@ -86,7 +87,7 @@ impl TCFType<CGFontRef> for CGFont {
 impl CGFont {
     pub fn from_data_provider(provider: CGDataProvider) -> Result<CGFont, ()> {
         unsafe {
-            let font_ref = CGFontCreateWithDataProvider(provider.as_concrete_TypeRef());
+            let font_ref = CGFontCreateWithDataProvider(provider.as_ptr());
             if font_ref != ptr::null() {
                 Ok(TCFType::wrap_under_create_rule(font_ref))
             } else {
@@ -117,7 +118,7 @@ impl CGFont {
 #[link(name = "ApplicationServices", kind = "framework")]
 extern {
     // TODO: basically nothing has bindings (even commented-out) besides what we use.
-    fn CGFontCreateWithDataProvider(provider: CGDataProviderRef) -> CGFontRef;
+    fn CGFontCreateWithDataProvider(provider: ::sys::CGDataProviderRef) -> CGFontRef;
     fn CGFontCreateWithFontName(name: CFStringRef) -> CGFontRef;
     fn CGFontGetTypeID() -> CFTypeID;
 

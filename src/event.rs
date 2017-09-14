@@ -1,8 +1,8 @@
 #![allow(non_upper_case_globals)]
 
-use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
 use geometry::CGPoint;
-use event_source::{CGEventSource,CGEventSourceRef};
+use event_source::CGEventSource;
 
 use libc;
 
@@ -109,7 +109,7 @@ impl CGEvent {
 
     pub fn new(source: CGEventSource) -> Result<CGEvent, ()> {
         unsafe {
-            let event_ref = CGEventCreate(source.as_concrete_TypeRef());
+            let event_ref = CGEventCreate(source.as_ptr());
             if !event_ref.is_null() {
                 Ok(Self::from_ptr(event_ref))
             } else {
@@ -124,7 +124,7 @@ impl CGEvent {
         keydown: bool
     ) -> Result<CGEvent, ()> {
         unsafe {
-            let event_ref = CGEventCreateKeyboardEvent(source.as_concrete_TypeRef(), keycode, keydown);
+            let event_ref = CGEventCreateKeyboardEvent(source.as_ptr(), keycode, keydown);
             if !event_ref.is_null() {
                 Ok(Self::from_ptr(event_ref))
             } else {
@@ -140,7 +140,7 @@ impl CGEvent {
         mouse_button: CGMouseButton
     ) -> Result<CGEvent, ()> {
         unsafe {
-            let event_ref = CGEventCreateMouseEvent(source.as_concrete_TypeRef(), mouse_type,
+            let event_ref = CGEventCreateMouseEvent(source.as_ptr(), mouse_type,
                 mouse_cursor_position, mouse_button);
             if !event_ref.is_null() {
                 Ok(Self::from_ptr(event_ref))
@@ -213,7 +213,7 @@ extern {
 
     /// Return a new event using the event source `source'. If `source' is NULL,
     /// the default source is used.
-    fn CGEventCreate(source: CGEventSourceRef) -> ::sys::CGEventRef;
+    fn CGEventCreate(source: ::sys::CGEventSourceRef) -> ::sys::CGEventRef;
 
     /// Return a new keyboard event.
     ///
@@ -225,7 +225,7 @@ extern {
     /// SHIFT, CONTROL, OPTION, and COMMAND keys. For example, to produce a 'Z',
     /// the SHIFT key must be down, the 'z' key must go down, and then the SHIFT
     /// and 'z' key must be released:
-    fn CGEventCreateKeyboardEvent(source: CGEventSourceRef, keycode: CGKeyCode,
+    fn CGEventCreateKeyboardEvent(source: ::sys::CGEventSourceRef, keycode: CGKeyCode,
         keydown: bool) -> ::sys::CGEventRef;
 
     /// Return a new mouse event.
@@ -241,7 +241,7 @@ extern {
     /// thirty-two buttons. Mouse button 0 is the primary button on the mouse.
     /// Mouse button 1 is the secondary mouse button (right). Mouse button 2 is
     /// the center button, and the remaining buttons are in USB device order.
-    fn CGEventCreateMouseEvent(source: CGEventSourceRef, mouseType: CGEventType,
+    fn CGEventCreateMouseEvent(source: ::sys::CGEventSourceRef, mouseType: CGEventType,
         mouseCursorPosition: CGPoint, mouseButton: CGMouseButton) -> ::sys::CGEventRef;
 
     /// Post an event into the event stream at a specified location.

@@ -13,4 +13,7 @@ pub type CGFontRef = *mut CGFont;
 pub enum CGEvent {}
 pub type CGEventRef = *mut CGEvent;
 
+pub enum CGContext {}
+pub type CGContextRef = *mut CGContext;
+
 

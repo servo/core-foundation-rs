@@ -92,6 +92,7 @@ pub enum CGEventTapLocation {
 }
 
 foreign_type! {
+    #[doc(hidden)]
     type CType = ::sys::CGEvent;
     fn drop = |p| CFRelease(p as *mut _);
     fn clone = |p| CFRetain(p as *const _) as *mut _;

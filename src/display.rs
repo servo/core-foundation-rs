@@ -13,8 +13,6 @@ use libc;
 pub use base::{CGError, boolean_t};
 pub use geometry::{CGRect, CGPoint, CGSize};
 
-use image::CGImageRef;
-
 pub type CGDirectDisplayID = libc::uint32_t;
 pub type CGWindowID        = libc::uint32_t;
 
@@ -74,7 +72,7 @@ extern {
     pub fn CGDisplayPixelsHigh(display: CGDirectDisplayID) -> libc::size_t;
     pub fn CGDisplayPixelsWide(display: CGDirectDisplayID) -> libc::size_t;
     pub fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
-    pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> CGImageRef;
+    pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> ::sys::CGImageRef;
 
     // mouse stuff
     pub fn CGDisplayHideCursor(display: CGDirectDisplayID) -> CGError;
@@ -88,8 +86,8 @@ extern {
     pub fn CGWindowListCreateImage(screenBounds: CGRect,
                                    listOptions: CGWindowListOption,
                                    windowId: CGWindowID,
-                                   imageOptions: CGWindowImageOption) -> CGImageRef;
+                                   imageOptions: CGWindowImageOption) -> ::sys::CGImageRef;
     pub fn CGWindowListCreateImageFromArray(screenBounds: CGRect,
                                             windowArray: CFArrayRef,
-                                            imageOptions: CGWindowImageOption) -> CGImageRef;
+                                            imageOptions: CGWindowImageOption) -> ::sys::CGImageRef;
 }

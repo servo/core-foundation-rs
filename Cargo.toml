@@ -14,4 +14,5 @@ elcapitan = []
 [dependencies]
 bitflags = "0.9"
 core-foundation = "0.4"
+foreign-types = "0.3.0"
 libc = "0.2"

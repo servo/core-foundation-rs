@@ -15,7 +15,8 @@ use std::mem;
 use std::ptr;
 use std::slice;
 use geometry::CGRect;
-use image::{CGImage, CGImageRef};
+use image::CGImage;
+use foreign_types::ForeignType;
 
 #[repr(C)]
 pub enum CGTextDrawingMode {
@@ -210,14 +211,14 @@ impl CGContext {
 
     pub fn draw_image(&self, rect: CGRect, image: &CGImage) {
         unsafe {
-            CGContextDrawImage(self.as_concrete_TypeRef(), rect, image.as_concrete_TypeRef());
+            CGContextDrawImage(self.as_concrete_TypeRef(), rect, image.as_ptr());
         }
     }
 
     pub fn create_image(&self) -> Option<CGImage> {
         let image = unsafe { CGBitmapContextCreateImage(self.as_concrete_TypeRef()) };
-        if image != ptr::null() {
-            Some(unsafe { CGImage::wrap_under_create_rule(image) })
+        if !image.is_null() {
+            Some(unsafe { CGImage::from_ptr(image) })
         } else {
             None
         }
@@ -262,7 +263,7 @@ extern {
     fn CGBitmapContextGetWidth(context: CGContextRef) -> size_t;
     fn CGBitmapContextGetHeight(context: CGContextRef) -> size_t;
     fn CGBitmapContextGetBytesPerRow(context: CGContextRef) -> size_t;
-    fn CGBitmapContextCreateImage(context: CGContextRef) -> CGImageRef;
+    fn CGBitmapContextCreateImage(context: CGContextRef) -> ::sys::CGImageRef;
     fn CGContextGetTypeID() -> CFTypeID;
     fn CGContextSetAllowsFontSmoothing(c: CGContextRef, allowsFontSmoothing: bool);
     fn CGContextSetShouldSmoothFonts(c: CGContextRef, shouldSmoothFonts: bool);
@@ -285,6 +286,6 @@ extern {
                                 alpha: CGFloat);
     fn CGContextFillRect(context: CGContextRef,
                          rect: CGRect);
-    fn CGContextDrawImage(c: CGContextRef, rect: CGRect, image: CGImageRef);
+    fn CGContextDrawImage(c: CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
 }
 

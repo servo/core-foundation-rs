@@ -10,4 +10,7 @@ pub type CGDataProviderRef = *mut CGDataProvider;
 pub enum CGFont {}
 pub type CGFontRef = *mut CGFont;
 
+pub enum CGEvent {}
+pub type CGEventRef = *mut CGEvent;
+
 

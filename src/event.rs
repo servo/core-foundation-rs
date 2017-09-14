@@ -1,12 +1,12 @@
 #![allow(non_upper_case_globals)]
 
-use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use geometry::CGPoint;
 use event_source::{CGEventSource,CGEventSourceRef};
 
 use libc;
-use std::mem;
-use std::ptr;
+
+use foreign_types::ForeignType;
 
 pub type CGKeyCode = libc::uint16_t;
 
@@ -91,75 +91,26 @@ pub enum CGEventTapLocation {
     AnnotatedSession,
 }
 
-// This is an enum due to zero-sized types warnings.
-// For more details see https://github.com/rust-lang/rust/issues/27303
-pub enum __CGEvent {}
-
-pub type CGEventRef = *const __CGEvent;
-
-pub struct CGEvent {
-    obj: CGEventRef,
+foreign_type! {
+    type CType = ::sys::CGEvent;
+    fn drop = |p| CFRelease(p as *mut _);
+    fn clone = |p| CFRetain(p as *const _) as *mut _;
+    pub struct CGEvent;
+    pub struct CGEventRef;
 }
 
-impl Clone for CGEvent {
-    #[inline]
-    fn clone(&self) -> CGEvent {
-        unsafe {
-            TCFType::wrap_under_get_rule(self.obj)
-        }
-    }
-}
-
-impl Drop for CGEvent {
-    fn drop(&mut self) {
-        unsafe {
-            let ptr = self.as_CFTypeRef();
-            assert!(ptr != ptr::null());
-            CFRelease(ptr);
-        }
-    }
-}
-
-impl TCFType<CGEventRef> for CGEvent {
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CGEventRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CGEventRef) -> CGEvent {
-        let reference: CGEventRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    #[inline]
-    unsafe fn wrap_under_create_rule(obj: CGEventRef) -> CGEvent {
-        CGEvent {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
+impl CGEvent {
+    pub fn type_id() -> CFTypeID {
         unsafe {
             CGEventGetTypeID()
         }
     }
-}
 
-impl CGEvent {
     pub fn new(source: CGEventSource) -> Result<CGEvent, ()> {
         unsafe {
             let event_ref = CGEventCreate(source.as_concrete_TypeRef());
-            if event_ref != ptr::null() {
-                Ok(TCFType::wrap_under_create_rule(event_ref))
+            if !event_ref.is_null() {
+                Ok(Self::from_ptr(event_ref))
             } else {
                 Err(())
             }
@@ -173,8 +124,8 @@ impl CGEvent {
     ) -> Result<CGEvent, ()> {
         unsafe {
             let event_ref = CGEventCreateKeyboardEvent(source.as_concrete_TypeRef(), keycode, keydown);
-            if event_ref != ptr::null() {
-                Ok(TCFType::wrap_under_create_rule(event_ref))
+            if !event_ref.is_null() {
+                Ok(Self::from_ptr(event_ref))
             } else {
                 Err(())
             }
@@ -190,8 +141,8 @@ impl CGEvent {
         unsafe {
             let event_ref = CGEventCreateMouseEvent(source.as_concrete_TypeRef(), mouse_type,
                 mouse_cursor_position, mouse_button);
-            if event_ref != ptr::null() {
-                Ok(TCFType::wrap_under_create_rule(event_ref))
+            if !event_ref.is_null() {
+                Ok(Self::from_ptr(event_ref))
             } else {
                 Err(())
             }
@@ -200,13 +151,13 @@ impl CGEvent {
 
     pub fn post(&self, tap_location: CGEventTapLocation) {
         unsafe {
-            CGEventPost(tap_location, self.as_concrete_TypeRef());
+            CGEventPost(tap_location, self.as_ptr());
         }
     }
 
     pub fn location(&self) -> CGPoint {
         unsafe {
-            CGEventGetLocation(self.as_concrete_TypeRef())
+            CGEventGetLocation(self.as_ptr())
         }
     }
 
@@ -219,32 +170,32 @@ impl CGEvent {
 
     pub fn set_flags(&self, flags: CGEventFlags) {
         unsafe {
-            CGEventSetFlags(self.as_concrete_TypeRef(), flags);
+            CGEventSetFlags(self.as_ptr(), flags);
         }
     }
 
     pub fn get_flags(&self) -> CGEventFlags {
         unsafe {
-            CGEventGetFlags(self.as_concrete_TypeRef())
+            CGEventGetFlags(self.as_ptr())
         }
     }
 
     pub fn set_type(&self, event_type: CGEventType) {
         unsafe {
-            CGEventSetType(self.as_concrete_TypeRef(), event_type);
+            CGEventSetType(self.as_ptr(), event_type);
         }
     }
 
     pub fn get_type(&self) -> CGEventType {
         unsafe {
-            CGEventGetType(self.as_concrete_TypeRef())
+            CGEventGetType(self.as_ptr())
         }
     }
 
     pub fn set_string_from_utf16_unchecked(&self, buf: &[u16]) {
         let buflen = buf.len() as libc::c_ulong;
         unsafe {
-            CGEventKeyboardSetUnicodeString(self.as_concrete_TypeRef(), buflen, buf.as_ptr());
+            CGEventKeyboardSetUnicodeString(self.as_ptr(), buflen, buf.as_ptr());
         }
     }
 
@@ -261,7 +212,7 @@ extern {
 
     /// Return a new event using the event source `source'. If `source' is NULL,
     /// the default source is used.
-    fn CGEventCreate(source: CGEventSourceRef) -> CGEventRef;
+    fn CGEventCreate(source: CGEventSourceRef) -> ::sys::CGEventRef;
 
     /// Return a new keyboard event.
     ///
@@ -274,7 +225,7 @@ extern {
     /// the SHIFT key must be down, the 'z' key must go down, and then the SHIFT
     /// and 'z' key must be released:
     fn CGEventCreateKeyboardEvent(source: CGEventSourceRef, keycode: CGKeyCode,
-        keydown: bool) -> CGEventRef;
+        keydown: bool) -> ::sys::CGEventRef;
 
     /// Return a new mouse event.
     ///
@@ -290,34 +241,34 @@ extern {
     /// Mouse button 1 is the secondary mouse button (right). Mouse button 2 is
     /// the center button, and the remaining buttons are in USB device order.
     fn CGEventCreateMouseEvent(source: CGEventSourceRef, mouseType: CGEventType,
-        mouseCursorPosition: CGPoint, mouseButton: CGMouseButton) -> CGEventRef;
+        mouseCursorPosition: CGPoint, mouseButton: CGMouseButton) -> ::sys::CGEventRef;
 
     /// Post an event into the event stream at a specified location.
     ///
     /// This function posts the specified event immediately before any event taps
     /// instantiated for that location, and the event passes through any such
     /// taps.
-    fn CGEventPost(tapLocation: CGEventTapLocation, event: CGEventRef);
+    fn CGEventPost(tapLocation: CGEventTapLocation, event: ::sys::CGEventRef);
 
     #[cfg(feature = "elcapitan")]
     /// Post an event to a specified process ID
-    fn CGEventPostToPid(pid: libc::pid_t, event: CGEventRef);
+    fn CGEventPostToPid(pid: libc::pid_t, event: ::sys::CGEventRef);
 
     /// Set the event flags of an event.
-    fn CGEventSetFlags(event: CGEventRef, flags: CGEventFlags);
+    fn CGEventSetFlags(event: ::sys::CGEventRef, flags: CGEventFlags);
 
     /// Return the event flags of an event.
-    fn CGEventGetFlags(event: CGEventRef) -> CGEventFlags;
+    fn CGEventGetFlags(event: ::sys::CGEventRef) -> CGEventFlags;
 
     /// Return the location of an event in global display coordinates.
-    /// CGPointZero is returned if event is not a valid CGEventRef.
-    fn CGEventGetLocation(event: CGEventRef) -> CGPoint;
+    /// CGPointZero is returned if event is not a valid ::sys::CGEventRef.
+    fn CGEventGetLocation(event: ::sys::CGEventRef) -> CGPoint;
 
     /// Set the event type of an event.
-    fn CGEventSetType(event: CGEventRef, eventType: CGEventType);
+    fn CGEventSetType(event: ::sys::CGEventRef, eventType: CGEventType);
 
     /// Return the event type of an event (left mouse down, for example).
-    fn CGEventGetType(event: CGEventRef) -> CGEventType;
+    fn CGEventGetType(event: ::sys::CGEventRef) -> CGEventType;
 
     /// Set the Unicode string associated with a keyboard event.
     ///
@@ -327,7 +278,7 @@ extern {
     /// Note that application frameworks may ignore the Unicode string in a
     /// keyboard event and do their own translation based on the virtual
     /// keycode and perceived event state.
-    fn CGEventKeyboardSetUnicodeString(event: CGEventRef, 
+    fn CGEventKeyboardSetUnicodeString(event: ::sys::CGEventRef,
                                        length: libc::c_ulong,
                                        string: *const u16);
 }

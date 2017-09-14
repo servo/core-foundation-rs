@@ -1,6 +1,6 @@
 use core_foundation::base::{CFRetain, CFTypeID, TCFType};
 use core_foundation::data::CFData;
-use color_space::{CGColorSpace, CGColorSpaceRef};
+use color_space::CGColorSpace;
 use data_provider::{CGDataProvider, CGDataProviderRef};
 use libc::size_t;
 use foreign_types::ForeignType;
@@ -75,7 +75,9 @@ impl CGImageRef {
 
     pub fn color_space(&self) -> CGColorSpace {
         unsafe {
-            TCFType::wrap_under_get_rule(CGImageGetColorSpace(self.as_ptr()))
+            let cs = CGImageGetColorSpace(self.as_ptr());
+            CFRetain(cs as *mut _);
+            CGColorSpace::from_ptr(cs)
         }
     }
 
@@ -97,10 +99,10 @@ extern {
     fn CGImageGetBitsPerComponent(image: ::sys::CGImageRef) -> size_t;
     fn CGImageGetBitsPerPixel(image: ::sys::CGImageRef) -> size_t;
     fn CGImageGetBytesPerRow(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetColorSpace(image: ::sys::CGImageRef) -> CGColorSpaceRef;
+    fn CGImageGetColorSpace(image: ::sys::CGImageRef) -> ::sys::CGColorSpaceRef;
     fn CGImageGetDataProvider(image: ::sys::CGImageRef) -> CGDataProviderRef;
     fn CGImageRelease(image: ::sys::CGImageRef);
 
     //fn CGImageGetAlphaInfo(image: ::sys::CGImageRef) -> CGImageAlphaInfo;
-    //fn CGImageCreateCopyWithColorSpace(image: ::sys::CGImageRef, space: CGColorSpaceRef) -> ::sys::CGImageRef
+    //fn CGImageCreateCopyWithColorSpace(image: ::sys::CGImageRef, space: ::sys::CGColorSpaceRef) -> ::sys::CGImageRef
 }

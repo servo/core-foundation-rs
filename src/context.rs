@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use base::CGFloat;
-use color_space::{CGColorSpace, CGColorSpaceRef};
+use color_space::CGColorSpace;
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
 use libc::{c_void, c_int, size_t};
 use std::mem;
@@ -104,7 +104,7 @@ impl CGContext {
                                                height,
                                                bits_per_component,
                                                bytes_per_row,
-                                               space.as_concrete_TypeRef(),
+                                               space.as_ptr(),
                                                bitmap_info);
             assert!(!result.is_null());
             TCFType::wrap_under_create_rule(result)
@@ -256,7 +256,7 @@ extern {
                              height: size_t,
                              bitsPerComponent: size_t,
                              bytesPerRow: size_t,
-                             space: CGColorSpaceRef,
+                             space: ::sys::CGColorSpaceRef,
                              bitmapInfo: u32)
                              -> CGContextRef;
     fn CGBitmapContextGetData(context: CGContextRef) -> *mut c_void;

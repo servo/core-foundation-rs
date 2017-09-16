@@ -165,7 +165,7 @@ impl CGEvent {
     #[cfg(feature = "elcapitan")]
     pub fn post_to_pid(&self, pid: libc::pid_t) {
         unsafe {
-            CGEventPostToPid(pid, self.as_concrete_TypeRef());
+            CGEventPostToPid(pid, self.as_ptr());
         }
     }
 

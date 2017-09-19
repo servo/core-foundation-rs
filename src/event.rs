@@ -283,7 +283,7 @@ extern {
     /// is ignored unless `mouseType' is one of `kCGEventOtherMouseDown',
     /// `kCGEventOtherMouseDragged', or `kCGEventOtherMouseUp'.
     ///
-    /// The current implemementation of the event system supports a maximum of
+    /// The current implementation of the event system supports a maximum of
     /// thirty-two buttons. Mouse button 0 is the primary button on the mouse.
     /// Mouse button 1 is the secondary mouse button (right). Mouse button 2 is
     /// the center button, and the remaining buttons are in USB device order.

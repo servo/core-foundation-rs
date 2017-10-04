@@ -314,6 +314,13 @@ pub enum NSBezelStyle {
     NSRoundedDisclosureBezelStyle  = 14,
 }
 
+#[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSRequestUserAttentionType {
+    NSCriticalRequest      = 0,
+    NSInformationalRequest = 10,
+}
+
 pub static NSMainMenuWindowLevel: libc::int32_t = 24;
 
 pub trait NSApplication: Sized {
@@ -338,6 +345,7 @@ pub trait NSApplication: Sized {
     unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL);
     unsafe fn stop_(self, sender: id);
     unsafe fn setApplicationIconImage_(self, image: id);
+    unsafe fn requestUserAttention_(self, requestType: NSRequestUserAttentionType);
 }
 
 impl NSApplication for id {
@@ -398,6 +406,10 @@ impl NSApplication for id {
 
     unsafe fn setApplicationIconImage_(self, icon: id) {
         msg_send![self, setApplicationIconImage:icon]
+    }
+
+    unsafe fn requestUserAttention_(self, requestType: NSRequestUserAttentionType) {
+        msg_send![self, requestUserAttention:requestType]
     }
 }
 

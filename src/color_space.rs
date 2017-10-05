@@ -8,6 +8,7 @@
 // except according to those terms.
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
+use core_foundation::string::CFStringRef;
 use foreign_types::ForeignType;
 
 foreign_type! {
@@ -26,6 +27,13 @@ impl CGColorSpace {
         }
     }
 
+    pub fn create_with_name(name: CFStringRef) -> Option<CGColorSpace> {
+        unsafe {
+            let p = CGColorSpaceCreateWithName(name);
+            if !p.is_null() {Some(CGColorSpace::from_ptr(p))} else {None}
+        }
+    }
+
     pub fn create_device_rgb() -> CGColorSpace {
         unsafe {
             let result = CGColorSpaceCreateDeviceRGB();
@@ -36,7 +44,16 @@ impl CGColorSpace {
 
 #[link(name = "ApplicationServices", kind = "framework")]
 extern {
+    pub static kCGColorSpaceSRGB: CFStringRef;
+    pub static kCGColorSpaceAdobeRGB1998: CFStringRef;
+    pub static kCGColorSpaceGenericGray: CFStringRef;
+    pub static kCGColorSpaceGenericRGB: CFStringRef;
+    pub static kCGColorSpaceGenericCMYK: CFStringRef;
+    pub static kCGColorSpaceGenericRGBLinear: CFStringRef;
+    pub static kCGColorSpaceGenericGrayGamma2_2: CFStringRef;
+
     fn CGColorSpaceCreateDeviceRGB() -> ::sys::CGColorSpaceRef;
+    fn CGColorSpaceCreateWithName(name: CFStringRef) -> ::sys::CGColorSpaceRef;
     fn CGColorSpaceGetTypeID() -> CFTypeID;
 }
 

@@ -8,6 +8,7 @@ use libc;
 
 use foreign_types::ForeignType;
 
+pub type CGEventField = libc::uint32_t;
 pub type CGKeyCode = libc::uint16_t;
 
 /// Flags for events
@@ -71,6 +72,234 @@ pub enum CGEventType {
     // to notify it of unusual conditions that disable the event tap.
     TapDisabledByTimeout = 0xFFFFFFFE,
     TapDisabledByUserInput = 0xFFFFFFFF,
+}
+
+/// Constants used as keys to access specialized fields in low-level events.
+///
+/// [Ref](https://developer.apple.com/documentation/coregraphics/cgeventfield)
+pub struct EventField;
+impl EventField {
+    /// Key to access an integer field that contains the mouse button event
+    /// number. Matching mouse-down and mouse-up events will have the same
+    /// event number.
+    pub const MOUSE_EVENT_NUMBER: CGEventField = 0;
+
+    /// Key to access an integer field that contains the mouse button click
+    /// state. A click state of 1 represents a single click. A click state of
+    /// 2 represents a double-click. A click state of 3 represents a
+    /// triple-click.
+    pub const MOUSE_EVENT_CLICK_STATE: CGEventField = 1;
+
+    /// Key to access a double field that contains the mouse button pressure.
+    /// The pressure value may range from 0 to 1, with 0 representing the
+    /// mouse being up. This value is commonly set by tablet pens mimicking a
+    /// mouse.
+    pub const MOUSE_EVENT_PRESSURE: CGEventField = 2;
+
+    /// Key to access an integer field that contains the mouse button number.
+    pub const MOUSE_EVENT_BUTTON_NUMBER: CGEventField = 3;
+
+    /// Key to access an integer field that contains the horizontal mouse
+    /// delta since the last mouse movement event.
+    pub const MOUSE_EVENT_DELTA_X: CGEventField = 4;
+
+    /// Key to access an integer field that contains the vertical mouse delta
+    /// since the last mouse movement event.
+    pub const MOUSE_EVENT_DELTA_Y: CGEventField = 5;
+
+    /// Key to access an integer field. The value is non-zero if the event
+    /// should be ignored by the Inkwell subsystem.
+    pub const MOUSE_EVENT_INSTANT_MOUSER: CGEventField = 6;
+
+    /// Key to access an integer field that encodes the mouse event subtype as
+    /// a `kCFNumberIntType'.
+    pub const MOUSE_EVENT_SUB_TYPE: CGEventField = 7;
+
+    /// Key to access an integer field, non-zero when this is an autorepeat of
+    /// a key-down, and zero otherwise.
+    pub const KEYBOARD_EVENT_AUTOREPEAT: CGEventField = 8;
+
+    /// Key to access an integer field that contains the virtual keycode of the
+    /// key-down or key-up event.
+    pub const KEYBOARD_EVENT_KEYCODE: CGEventField = 9;
+
+    /// Key to access an integer field that contains the keyboard type
+    /// identifier.
+    pub const KEYBOARD_EVENT_KEYBOARD_TYPE: CGEventField = 10;
+
+    /// Key to access an integer field that contains scrolling data. This field
+    /// typically contains the change in vertical position since the last
+    /// scrolling event from a Mighty Mouse scroller or a single-wheel mouse
+    /// scroller.
+    pub const SCROLL_WHEEL_EVENT_DELTA_AXIS_1: CGEventField = 11;
+
+    /// Key to access an integer field that contains scrolling data. This field
+    /// typically contains the change in horizontal position since the last
+    /// scrolling event from a Mighty Mouse scroller.
+    pub const SCROLL_WHEEL_EVENT_DELTA_AXIS_2: CGEventField = 12;
+
+    /// Key to access a field that contains scrolling data. The scrolling data
+    /// represents a line-based or pixel-based change in vertical position
+    /// since the last scrolling event from a Mighty Mouse scroller or a
+    /// single-wheel mouse scroller. The scrolling data uses a fixed-point
+    /// 16.16 signed integer format. If this key is passed to
+    /// `CGEventGetDoubleValueField', the fixed-point value is converted to a
+    /// double value.
+    pub const SCROLL_WHEEL_EVENT_FIXED_POINT_DELTA_AXIS_1: CGEventField = 93;
+
+    /// Key to access a field that contains scrolling data. The scrolling data
+    /// represents a line-based or pixel-based change in horizontal position
+    /// since the last scrolling event from a Mighty Mouse scroller. The
+    /// scrolling data uses a fixed-point 16.16 signed integer format. If this
+    /// key is passed to `CGEventGetDoubleValueField', the fixed-point value is
+    /// converted to a double value.
+    pub const SCROLL_WHEEL_EVENT_FIXED_POINT_DELTA_AXIS_2: CGEventField = 94;
+
+    /// Key to access an integer field that contains pixel-based scrolling
+    /// data. The scrolling data represents the change in vertical position
+    /// since the last scrolling event from a Mighty Mouse scroller or a
+    /// single-wheel mouse scroller.
+    pub const SCROLL_WHEEL_EVENT_POINT_DELTA_AXIS_1: CGEventField = 96;
+
+    /// Key to access an integer field that contains pixel-based scrolling
+    /// data. The scrolling data represents the change in horizontal position
+    /// since the last scrolling event from a Mighty Mouse scroller.
+    pub const SCROLL_WHEEL_EVENT_POINT_DELTA_AXIS_2: CGEventField = 97;
+
+    /// Key to access an integer field that indicates whether the event should
+    /// be ignored by the Inkwell subsystem. If the value is non-zero, the
+    /// event should be ignored.
+    pub const SCROLL_WHEEL_EVENT_INSTANT_MOUSER: CGEventField = 14;
+
+    /// Key to access an integer field that contains the absolute X coordinate
+    /// in tablet space at full tablet resolution.
+    pub const TABLET_EVENT_POINT_X: CGEventField = 15;
+
+    /// Key to access an integer field that contains the absolute Y coordinate
+    /// in tablet space at full tablet resolution.
+    pub const TABLET_EVENT_POINT_Y: CGEventField = 16;
+
+    /// Key to access an integer field that contains the absolute Z coordinate
+    /// in tablet space at full tablet resolution.
+    pub const TABLET_EVENT_POINT_Z: CGEventField = 17;
+
+    /// Key to access an integer field that contains the tablet button state.
+    /// Bit 0 is the first button, and a set bit represents a closed or pressed
+    /// button. Up to 16 buttons are supported.
+    pub const TABLET_EVENT_POINT_BUTTONS: CGEventField = 18;
+
+    /// Key to access a double field that contains the tablet pen pressure. A
+    /// value of 0.0 represents no pressure, and 1.0 represents maximum
+    /// pressure.
+    pub const TABLET_EVENT_POINT_PRESSURE: CGEventField = 19;
+
+    /// Key to access a double field that contains the horizontal tablet pen
+    /// tilt. A value of 0 represents no tilt, and 1 represents maximum tilt.
+    pub const TABLET_EVENT_TILT_X: CGEventField = 20;
+
+    /// Key to access a double field that contains the vertical tablet pen
+    /// tilt. A value of 0 represents no tilt, and 1 represents maximum tilt.
+    pub const TABLET_EVENT_TILT_Y: CGEventField = 21;
+
+    /// Key to access a double field that contains the tablet pen rotation.
+    pub const TABLET_EVENT_ROTATION: CGEventField = 22;
+
+    /// Key to access a double field that contains the tangential pressure on
+    /// the device. A value of 0.0 represents no pressure, and 1.0 represents
+    /// maximum pressure.
+    pub const TABLET_EVENT_TANGENTIAL_PRESSURE: CGEventField = 23;
+
+    /// Key to access an integer field that contains the system-assigned unique
+    /// device ID.
+    pub const TABLET_EVENT_DEVICE_ID: CGEventField = 24;
+
+    /// Key to access an integer field that contains a vendor-specified value.
+    pub const TABLET_EVENT_VENDOR_1: CGEventField = 25;
+
+    /// Key to access an integer field that contains a vendor-specified value.
+    pub const TABLET_EVENT_VENDOR_2: CGEventField = 26;
+
+    /// Key to access an integer field that contains a vendor-specified value.
+    pub const TABLET_EVENT_VENDOR_3: CGEventField = 27;
+
+    /// Key to access an integer field that contains the vendor-defined ID,
+    /// typically the USB vendor ID.
+    pub const TABLET_PROXIMITY_EVENT_VENDOR_ID: CGEventField = 28;
+
+    /// Key to access an integer field that contains the vendor-defined tablet
+    /// ID, typically the USB product ID.
+    pub const TABLET_PROXIMITY_EVENT_TABLET_ID: CGEventField = 29;
+
+    /// Key to access an integer field that contains the vendor-defined ID of
+    /// the pointing device.
+    pub const TABLET_PROXIMITY_EVENT_POINTER_ID: CGEventField = 30;
+
+    /// Key to access an integer field that contains the system-assigned
+    /// device ID.
+    pub const TABLET_PROXIMITY_EVENT_DEVICE_ID: CGEventField = 31;
+
+    /// Key to access an integer field that contains the system-assigned
+    /// unique tablet ID.
+    pub const TABLET_PROXIMITY_EVENT_SYSTEM_TABLET_ID: CGEventField = 32;
+
+    /// Key to access an integer field that contains the vendor-assigned
+    /// pointer type.
+    pub const TABLET_PROXIMITY_EVENT_VENDOR_POINTER_TYPE: CGEventField = 33;
+
+    /// Key to access an integer field that contains the vendor-defined
+    /// pointer serial number.
+    pub const TABLET_PROXIMITY_EVENT_VENDOR_POINTER_SERIAL_NUMBER: CGEventField = 34;
+
+    /// Key to access an integer field that contains the vendor-defined unique
+    /// ID.
+    pub const TABLET_PROXIMITY_EVENT_VENDOR_UNIQUE_ID: CGEventField = 35;
+
+    /// Key to access an integer field that contains the device capabilities
+    /// mask.
+    pub const TABLET_PROXIMITY_EVENT_CAPABILITY_MASK: CGEventField = 36;
+
+    /// Key to access an integer field that contains the pointer type.
+    pub const TABLET_PROXIMITY_EVENT_POINTER_TYPE: CGEventField = 37;
+
+    /// Key to access an integer field that indicates whether the pen is in
+    /// proximity to the tablet. The value is non-zero if the pen is in
+    /// proximity to the tablet and zero when leaving the tablet.
+    pub const TABLET_PROXIMITY_EVENT_ENTER_PROXIMITY: CGEventField = 38;
+
+    /// Key to access a field that contains the event target process serial
+    /// number. The value is a 64-bit value.
+    pub const EVENT_TARGET_PROCESS_SERIAL_NUMBER: CGEventField = 39;
+
+    /// Key to access a field that contains the event target Unix process ID.
+    pub const EVENT_TARGET_UNIX_PROCESS_ID: CGEventField = 40;
+
+    /// Key to access a field that contains the event source Unix process ID.
+    pub const EVENT_SOURCE_UNIX_PROCESS_ID: CGEventField = 41;
+
+    /// Key to access a field that contains the event source user-supplied
+    /// data, up to 64 bits.
+    pub const EVENT_SOURCE_USER_DATA: CGEventField = 42;
+
+    /// Key to access a field that contains the event source Unix effective UID.
+    pub const EVENT_SOURCE_USER_ID: CGEventField = 43;
+
+    /// Key to access a field that contains the event source Unix effective
+    /// GID.
+    pub const EVENT_SOURCE_GROUP_ID: CGEventField = 44;
+
+    /// Key to access a field that contains the event source state ID used to
+    /// create this event.
+    pub const EVENT_SOURCE_STATE_ID: CGEventField = 45;
+
+    /// Key to access an integer field that indicates whether a scrolling event
+    /// contains continuous, pixel-based scrolling data. The value is non-zero
+    /// when the scrolling data is pixel-based and zero when the scrolling data
+    /// is line-based.
+    pub const SCROLL_WHEEL_EVENT_IS_CONTINUOUS: CGEventField = 88;
+
+    /// Added in 10.5; made public in 10.7.
+    pub const MOUSE_EVENT_WINDOW_UNDER_MOUSE_POINTER: CGEventField = 91;
+    pub const MOUSE_EVENT_WINDOW_UNDER_MOUSE_POINTER_THAT_CAN_HANDLE_THIS_EVENT: CGEventField = 92;
 }
 
 // Constants that specify buttons on a one, two, or three-button mouse.
@@ -204,6 +433,22 @@ impl CGEvent {
         let buf: Vec<u16> = string.encode_utf16().collect();
         self.set_string_from_utf16_unchecked(&buf);
     }
+
+    pub fn get_integer_value_field(&self, field: CGEventField) -> i64 {
+        unsafe { CGEventGetIntegerValueField(self.as_ptr(), field) }
+    }
+
+    pub fn set_integer_value_field(&self, field: CGEventField, value: i64) {
+        unsafe { CGEventSetIntegerValueField(self.as_ptr(), field, value) }
+    }
+
+    pub fn get_double_value_field(&self, field: CGEventField) -> f64 {
+        unsafe { CGEventGetDoubleValueField(self.as_ptr(), field) }
+    }
+
+    pub fn set_double_value_field(&self, field: CGEventField, value: f64) {
+        unsafe { CGEventSetDoubleValueField(self.as_ptr(), field, value) }
+    }
 }
 
 #[link(name = "ApplicationServices", kind = "framework")]
@@ -282,4 +527,37 @@ extern {
     fn CGEventKeyboardSetUnicodeString(event: ::sys::CGEventRef,
                                        length: libc::c_ulong,
                                        string: *const u16);
+
+    /// Return the integer value of a field in an event.
+    fn CGEventGetIntegerValueField(event: ::sys::CGEventRef, field: CGEventField) -> i64;
+
+    /// Set the integer value of a field in an event.
+    ///
+    /// Before calling this function, the event type must be set using a typed
+    /// event creation function such as `CGEventCreateMouseEvent', or by
+    /// calling `CGEventSetType'.
+    ///
+    /// If you are creating a mouse event generated by a tablet, call this
+    /// function and specify the field `kCGMouseEventSubtype' with a value of
+    /// `kCGEventMouseSubtypeTabletPoint' or
+    /// `kCGEventMouseSubtypeTabletProximity' before setting other parameters.
+    fn CGEventSetIntegerValueField(event: ::sys::CGEventRef, field: CGEventField, value: i64);
+
+    /// Return the floating-point value of a field in an event.
+    ///
+    /// In cases where the field value is represented within the event by a fixed
+    /// point number or an integer, the result is scaled to the appropriate range
+    /// as part of creating the floating-point representation.
+    fn CGEventGetDoubleValueField(event: ::sys::CGEventRef, field: CGEventField) -> f64;
+
+    /// Set the floating-point value of a field in an event.
+    ///
+    /// Before calling this function, the event type must be set using a typed
+    /// event creation function such as `CGEventCreateMouseEvent', or by calling
+    /// `CGEventSetType'.
+    ///
+    /// In cases where the field’s value is represented within the event by a
+    /// fixed point number or integer, the value parameter is scaled as needed
+    /// and converted to the appropriate type.
+    fn CGEventSetDoubleValueField(event: ::sys::CGEventRef, field: CGEventField, value: f64);
 }

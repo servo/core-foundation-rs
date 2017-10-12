@@ -202,18 +202,18 @@ bitflags! {
         const NSAlignWidthNearest       = 1 << 20;
         const NSAlignHeightNearest      = 1 << 21;
         const NSAlignRectFlipped        = 1 << 63;
-        const NSAlignAllEdgesInward     = NSAlignMinXInward.bits
-                                        | NSAlignMaxXInward.bits
-                                        | NSAlignMinYInward.bits
-                                        | NSAlignMaxYInward.bits;
-        const NSAlignAllEdgesOutward    = NSAlignMinXOutward.bits
-                                        | NSAlignMaxXOutward.bits
-                                        | NSAlignMinYOutward.bits
-                                        | NSAlignMaxYOutward.bits;
-        const NSAlignAllEdgesNearest    = NSAlignMinXNearest.bits
-                                        | NSAlignMaxXNearest.bits
-                                        | NSAlignMinYNearest.bits
-                                        | NSAlignMaxYNearest.bits;
+        const NSAlignAllEdgesInward     = NSAlignmentOptions::NSAlignMinXInward.bits
+                                        | NSAlignmentOptions::NSAlignMaxXInward.bits
+                                        | NSAlignmentOptions::NSAlignMinYInward.bits
+                                        | NSAlignmentOptions::NSAlignMaxYInward.bits;
+        const NSAlignAllEdgesOutward    = NSAlignmentOptions::NSAlignMinXOutward.bits
+                                        | NSAlignmentOptions::NSAlignMaxXOutward.bits
+                                        | NSAlignmentOptions::NSAlignMinYOutward.bits
+                                        | NSAlignmentOptions::NSAlignMaxYOutward.bits;
+        const NSAlignAllEdgesNearest    = NSAlignmentOptions::NSAlignMinXNearest.bits
+                                        | NSAlignmentOptions::NSAlignMaxXNearest.bits
+                                        | NSAlignmentOptions::NSAlignMinYNearest.bits
+                                        | NSAlignmentOptions::NSAlignMaxYNearest.bits;
     }
 }
 
@@ -1963,9 +1963,9 @@ bitflags! {
         const NSTouchPhaseStationary    = 1 << 2;
         const NSTouchPhaseEnded         = 1 << 3;
         const NSTouchPhaseCancelled     = 1 << 4;
-        const NSTouchPhaseTouching      = NSTouchPhaseBegan.bits
-                                        | NSTouchPhaseMoved.bits
-                                        | NSTouchPhaseStationary.bits;
+        const NSTouchPhaseTouching      = NSTouchPhase::NSTouchPhaseBegan.bits
+                                        | NSTouchPhase::NSTouchPhaseMoved.bits
+                                        | NSTouchPhase::NSTouchPhaseStationary.bits;
         const NSTouchPhaseAny           = !0; // NSUIntegerMax
     }
 }

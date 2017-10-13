@@ -4,7 +4,7 @@ use cocoa::base::{selector, nil, NO};
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
                         NSString};
 use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSWindow,
-                    NSTitledWindowMask, NSBackingStoreBuffered, NSMenu, NSMenuItem,
+                    NSBackingStoreBuffered, NSMenu, NSMenuItem, NSWindowStyleMask,
                     NSRunningApplication, NSApplicationActivateIgnoringOtherApps};
 
 fn main() {
@@ -37,7 +37,7 @@ fn main() {
         let window = NSWindow::alloc(nil)
             .initWithContentRect_styleMask_backing_defer_(NSRect::new(NSPoint::new(0., 0.),
                                                                       NSSize::new(200., 200.)),
-                                                          NSTitledWindowMask,
+                                                          NSWindowStyleMask::NSTitledWindowMask,
                                                           NSBackingStoreBuffered,
                                                           NO)
             .autorelease();

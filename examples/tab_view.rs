@@ -6,9 +6,7 @@ use cocoa::base::{selector, id, nil, NO};
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
                         NSString};
 use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSWindow,
-                    NSTitledWindowMask, NSBackingStoreBuffered, NSClosableWindowMask,
-                    NSResizableWindowMask, NSMiniaturizableWindowMask,
-                    NSUnifiedTitleAndToolbarWindowMask, NSMenu, NSMenuItem, NSTabView,
+                    NSMenu, NSMenuItem, NSTabView, NSWindowStyleMask, NSBackingStoreType,
                     NSTabViewItem, NSRunningApplication, NSApplicationActivateIgnoringOtherApps};
 
 
@@ -67,12 +65,12 @@ unsafe fn create_app(title: id, content: id) -> id {
     // create Window
     let window = NSWindow::alloc(nil).initWithContentRect_styleMask_backing_defer_(
 		NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
-		NSTitledWindowMask |
-            NSClosableWindowMask |
-            NSResizableWindowMask |
-            NSMiniaturizableWindowMask |
-            NSUnifiedTitleAndToolbarWindowMask,
-		NSBackingStoreBuffered,
+		NSWindowStyleMask::NSTitledWindowMask |
+            NSWindowStyleMask::NSClosableWindowMask |
+            NSWindowStyleMask::NSResizableWindowMask |
+            NSWindowStyleMask::NSMiniaturizableWindowMask |
+            NSWindowStyleMask::NSUnifiedTitleAndToolbarWindowMask,
+		NSBackingStoreType::NSBackingStoreBuffered,
 		NO
 	).autorelease();
     window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));

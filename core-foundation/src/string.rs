@@ -113,8 +113,7 @@ impl CFString {
                                                      string.as_ptr(),
                                                      string.len().to_CFIndex(),
                                                      kCFStringEncodingUTF8,
-                                                     false as Boolean,
-                                                     kCFAllocatorNull);
+                                                     false as Boolean);
             CFString::wrap_under_create_rule(string_ref)
         }
     }

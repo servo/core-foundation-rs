@@ -46,6 +46,29 @@ impl Drop for CFType {
     }
 }
 
+/// An allocator for Core Foundation objects.
+pub struct CFAllocator(CFAllocatorRef);
+
+impl Drop for CFAllocator {
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.as_CFTypeRef())
+        }
+    }
+}
+
+impl_TCFType!(CFAllocator, CFAllocatorRef, CFAllocatorGetTypeID);
+
+impl CFAllocator {
+    #[inline]
+    pub fn new(mut context: CFAllocatorContext) -> CFAllocator {
+        unsafe {
+            let allocator_ref = CFAllocatorCreate(kCFAllocatorDefault, &mut context);
+            TCFType::wrap_under_create_rule(allocator_ref)
+        }
+    }
+}
+
 /// All Core Foundation types implement this trait. The type parameter `TypeRef` specifies the
 /// associated Core Foundation type: e.g. for `CFType` this is `CFTypeRef`; for `CFArray` this is
 /// `CFArrayRef`.

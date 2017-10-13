@@ -28,7 +28,6 @@ impl Drop for CFNumber {
 
 impl_TCFType!(CFNumber, CFNumberRef, CFNumberGetTypeID);
 
-// TODO(pcwalton): Floating point.
 impl CFNumber {
     #[inline]
     pub fn from_i32(value: i32) -> CFNumber {
@@ -50,6 +49,15 @@ impl CFNumber {
     }
 
     #[inline]
+    pub fn to_f32(&self) -> Option<f32> {
+        unsafe {
+            let mut value: f32 = 0.0;
+            let ok = CFNumberGetValue(self.0, kCFNumberFloat32Type, mem::transmute(&mut value));
+            if ok { Some(value) } else { None }
+        }
+    }
+
+    #[inline]
     pub fn to_f64(&self) -> Option<f64> {
         unsafe {
             let mut value: f64 = 0.0;
@@ -63,6 +71,16 @@ impl CFNumber {
         unsafe {
             let number_ref = CFNumberCreate(kCFAllocatorDefault,
                                             kCFNumberSInt64Type,
+                                            mem::transmute(&value));
+            TCFType::wrap_under_create_rule(number_ref)
+        }
+    }
+
+    #[inline]
+    pub fn from_f32(value: f32) -> CFNumber {
+        unsafe {
+            let number_ref = CFNumberCreate(kCFAllocatorDefault,
+                                            kCFNumberFloat32Type,
                                             mem::transmute(&value));
             TCFType::wrap_under_create_rule(number_ref)
         }

@@ -22,7 +22,7 @@ fn main() {
 
         // create Application menu
         let app_menu = NSMenu::new(nil).autorelease();
-        let quit_prefix = NSString::alloc(nil).init_str("Quit");
+        let quit_prefix = NSString::alloc(nil).init_str("Quit ");
         let quit_title =
             quit_prefix.stringByAppendingString_(NSProcessInfo::processInfo(nil).processName());
         let quit_action = selector("terminate:");

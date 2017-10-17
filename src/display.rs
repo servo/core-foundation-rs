@@ -399,7 +399,7 @@ impl CGDisplayMode {
     }
 }
 
-#[link(name = "ApplicationServices", kind = "framework")]
+#[link(name = "CoreGraphics", kind = "framework")]
 extern "C" {
     pub static CGRectNull: CGRect;
     pub static CGRectInfinite: CGRect;

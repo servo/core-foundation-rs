@@ -66,7 +66,7 @@ impl CGFont {
     }
 }
 
-#[link(name = "ApplicationServices", kind = "framework")]
+#[link(name = "CoreGraphics", kind = "framework")]
 extern {
     // TODO: basically nothing has bindings (even commented-out) besides what we use.
     fn CGFontCreateWithDataProvider(provider: ::sys::CGDataProviderRef) -> ::sys::CGFontRef;

@@ -108,7 +108,7 @@ mod ffi {
     use geometry::CGRect;
     use core_foundation::dictionary::CFDictionaryRef;
 
-    #[link(name = "ApplicationServices", kind = "framework")]
+    #[link(name = "CoreGraphics", kind = "framework")]
     extern {
         pub fn CGRectInset(rect: CGRect, dx: CGFloat, dy: CGFloat) -> CGRect;
         pub fn CGRectMakeWithDictionaryRepresentation(dict: CFDictionaryRef,

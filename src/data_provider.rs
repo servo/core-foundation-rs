@@ -61,7 +61,7 @@ impl CGDataProviderRef {
     }
 }
 
-#[link(name = "ApplicationServices", kind = "framework")]
+#[link(name = "CoreGraphics", kind = "framework")]
 extern {
     fn CGDataProviderCopyData(provider: ::sys::CGDataProviderRef) -> CFDataRef;
     //fn CGDataProviderCreateDirect

@@ -20,6 +20,7 @@ extern crate core_graphics;
 #[macro_use]
 extern crate objc;
 
+#[cfg(target_os = "macos")]
 pub mod appkit;
 pub mod base;
 pub mod foundation;

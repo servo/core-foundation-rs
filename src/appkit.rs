@@ -3740,3 +3740,15 @@ impl NSColor for id {
         msg_send![class("NSColor"), clearColor]
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    pub fn test_nsapp() {
+        unsafe {
+            let _nsApp = NSApp();
+        }
+    }
+}

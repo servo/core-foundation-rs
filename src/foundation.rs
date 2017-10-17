@@ -9,14 +9,11 @@
 
 #![allow(non_upper_case_globals)]
 
-use std::mem;
 use std::ptr;
 use base::{id, class, BOOL, NO, SEL, nil};
 use block::Block;
-use core_graphics::base::CGFloat;
-use core_graphics::geometry::CGRect;
 use libc;
-use objc;
+
 
 #[cfg(target_pointer_width = "32")]
 pub type NSInteger = libc::c_int;
@@ -30,88 +27,122 @@ pub type NSUInteger = libc::c_ulong;
 
 const UTF8_ENCODING: usize = 4;
 
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct NSPoint {
-    pub x: f64,
-    pub y: f64,
-}
+#[cfg(target_os = "macos")]
+mod macos {
+    use std::mem;
+    use core_graphics::base::CGFloat;
+    use core_graphics::geometry::CGRect;
+    use objc;
 
-impl NSPoint {
-    #[inline]
-    pub fn new(x: f64, y: f64) -> NSPoint {
-        NSPoint {
-            x: x,
-            y: y,
-        }
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct NSPoint {
+        pub x: f64,
+        pub y: f64,
     }
-}
 
-unsafe impl objc::Encode for NSPoint {
-    fn encode() -> objc::Encoding {
-        let encoding = format!("{{CGPoint={}{}}}",
-                               f64::encode().as_str(),
-                               f64::encode().as_str());
-        unsafe { objc::Encoding::from_str(&encoding) }
-    }
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct NSSize {
-    pub width: f64,
-    pub height: f64,
-}
-
-impl NSSize {
-    #[inline]
-    pub fn new(width: f64, height: f64) -> NSSize {
-        NSSize {
-            width: width,
-            height: height,
-        }
-    }
-}
-
-unsafe impl objc::Encode for NSSize {
-    fn encode() -> objc::Encoding {
-        let encoding = format!("{{CGSize={}{}}}",
-                               f64::encode().as_str(),
-                               f64::encode().as_str());
-        unsafe { objc::Encoding::from_str(&encoding) }
-    }
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct NSRect {
-    pub origin: NSPoint,
-    pub size: NSSize,
-}
-
-impl NSRect {
-    #[inline]
-    pub fn new(origin: NSPoint, size: NSSize) -> NSRect {
-        NSRect {
-            origin: origin,
-            size: size
+    impl NSPoint {
+        #[inline]
+        pub fn new(x: f64, y: f64) -> NSPoint {
+            NSPoint {
+                x: x,
+                y: y,
+            }
         }
     }
 
-    #[inline]
-    pub fn as_CGRect(&self) -> &CGRect {
-        unsafe {
-            mem::transmute::<&NSRect, &CGRect>(self)
+    unsafe impl objc::Encode for NSPoint {
+        fn encode() -> objc::Encoding {
+            let encoding = format!("{{CGPoint={}{}}}",
+                                   f64::encode().as_str(),
+                                   f64::encode().as_str());
+            unsafe { objc::Encoding::from_str(&encoding) }
         }
     }
 
-    #[inline]
-    pub fn inset(&self, x: CGFloat, y: CGFloat) -> NSRect {
-        unsafe {
-            NSInsetRect(*self, x, y)
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct NSSize {
+        pub width: f64,
+        pub height: f64,
+    }
+
+    impl NSSize {
+        #[inline]
+        pub fn new(width: f64, height: f64) -> NSSize {
+            NSSize {
+                width: width,
+                height: height,
+            }
         }
     }
+
+    unsafe impl objc::Encode for NSSize {
+        fn encode() -> objc::Encoding {
+            let encoding = format!("{{CGSize={}{}}}",
+                                   f64::encode().as_str(),
+                                   f64::encode().as_str());
+            unsafe { objc::Encoding::from_str(&encoding) }
+        }
+    }
+
+    #[repr(C)]
+    #[derive(Copy, Clone)]
+    pub struct NSRect {
+        pub origin: NSPoint,
+        pub size: NSSize,
+    }
+
+    impl NSRect {
+        #[inline]
+        pub fn new(origin: NSPoint, size: NSSize) -> NSRect {
+            NSRect {
+                origin: origin,
+                size: size
+            }
+        }
+
+        #[inline]
+        pub fn as_CGRect(&self) -> &CGRect {
+            unsafe {
+                mem::transmute::<&NSRect, &CGRect>(self)
+            }
+        }
+
+        #[inline]
+        pub fn inset(&self, x: CGFloat, y: CGFloat) -> NSRect {
+            unsafe {
+                NSInsetRect(*self, x, y)
+            }
+        }
+    }
+
+    unsafe impl objc::Encode for NSRect {
+        fn encode() -> objc::Encoding {
+            let encoding = format!("{{CGRect={}{}}}",
+                                   NSPoint::encode().as_str(),
+                                   NSSize::encode().as_str());
+            unsafe { objc::Encoding::from_str(&encoding) }
+        }
+    }
+
+    // Same as CGRectEdge
+    #[repr(u32)]
+    pub enum NSRectEdge {
+        NSRectMinXEdge,
+        NSRectMinYEdge,
+        NSRectMaxXEdge,
+        NSRectMaxYEdge,
+    }
+
+    #[link(name = "Foundation", kind = "framework")]
+    extern {
+        fn NSInsetRect(rect: NSRect, x: CGFloat, y: CGFloat) -> NSRect;
+    }
 }
+
+#[cfg(target_os = "macos")]
+pub use self::macos::*;
 
 #[repr(C)]
 pub struct NSRange {
@@ -127,24 +158,6 @@ impl NSRange {
             length: length
         }
     }
-}
-
-unsafe impl objc::Encode for NSRect {
-    fn encode() -> objc::Encoding {
-        let encoding = format!("{{CGRect={}{}}}",
-                               NSPoint::encode().as_str(),
-                               NSSize::encode().as_str());
-        unsafe { objc::Encoding::from_str(&encoding) }
-    }
-}
-
-// Same as CGRectEdge
-#[repr(u32)]
-pub enum NSRectEdge {
-    NSRectMinXEdge,
-    NSRectMinYEdge,
-    NSRectMaxXEdge,
-    NSRectMaxYEdge,
 }
 
 #[link(name = "Foundation", kind = "framework")]
@@ -654,11 +667,6 @@ impl NSFastEnumeration for id {
             object: self
         }
     }
-}
-
-#[link(name = "Foundation", kind = "framework")]
-extern {
-    fn NSInsetRect(rect: NSRect, x: CGFloat, y: CGFloat) -> NSRect;
 }
 
 pub trait NSRunLoop: Sized {

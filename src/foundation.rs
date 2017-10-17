@@ -11,7 +11,7 @@
 
 use std::mem;
 use std::ptr;
-use base::{id, class, BOOL, SEL, nil};
+use base::{id, class, BOOL, NO, SEL, nil};
 use block::Block;
 use core_graphics::base::CGFloat;
 use core_graphics::geometry::CGRect;
@@ -546,7 +546,7 @@ impl NSString for id {
     unsafe fn isEqualToString(self, other: &str) -> bool {
         let other = NSString::alloc(nil).init_str(other);
         let rv: BOOL = msg_send![self, isEqualToString:other];
-        rv != 0
+        rv != NO
     }
 
     unsafe fn stringByAppendingString_(self, other: id) -> id {

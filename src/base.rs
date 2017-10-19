@@ -35,15 +35,3 @@ pub fn class(name: &str) -> Class {
 pub fn selector(name: &str) -> SEL {
     runtime::Sel::register(name)
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    pub fn test_nsapp() {
-        unsafe {
-            let _nsApp: id = msg_send![class("NSApplication"), sharedApplication];
-        }
-    }
-}

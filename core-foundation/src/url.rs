@@ -19,6 +19,9 @@ use std::fmt;
 use std::ptr;
 use std::path::Path;
 
+#[cfg(unix)]
+use std::os::unix::ffi::OsStrExt;
+
 pub struct CFURL(CFURLRef);
 
 impl Drop for CFURL {
@@ -43,13 +46,23 @@ impl fmt::Debug for CFURL {
 
 impl CFURL {
     pub fn from_path<P: AsRef<Path>>(path: P, isDirectory: bool) -> Option<CFURL> {
-        let path = match path.as_ref().to_str() {
-            Some(path) => path,
-            None => return None,
-        };
+        let path_bytes;
+        #[cfg(unix)]
+        {
+            path_bytes = path.as_ref().as_os_str().as_bytes()
+        }
+        #[cfg(not(unix))]
+        {
+            // XXX: Getting non-valid UTF8 paths into CoreFoundation on Windows is going to be unpleasant
+            // CFURLGetWideFileSystemRepresentation might help
+            path_bytes = match path.as_ref().to_str() {
+                Some(path) => path,
+                None => return None,
+            }
+        }
 
         unsafe {
-            let url_ref = CFURLCreateFromFileSystemRepresentation(ptr::null_mut(), path.as_ptr(), path.len() as CFIndex, isDirectory as u8);
+            let url_ref = CFURLCreateFromFileSystemRepresentation(ptr::null_mut(), path_bytes.as_ptr(), path_bytes.len() as CFIndex, isDirectory as u8);
             if url_ref.is_null() {
                 return None;
             }
@@ -90,6 +103,18 @@ fn file_url_from_path() {
     let cfurl = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
     assert_eq!(cfurl.get_string().to_string(), "file:///usr/local/foo/");
 }
+
+#[cfg(unix)]
+#[test]
+fn non_utf8() {
+    use std::ffi::OsStr;
+    let path = b"/\xC0/blame";
+    let cfurl = CFURL::from_path(OsStr::from_bytes(path), false);
+    assert!(cfurl.is_some());
+    let len = unsafe { CFURLGetBytes(cfurl.unwrap().as_concrete_TypeRef(), ptr::null_mut(), 0) };
+    assert_eq!(len, 17);
+}
+
 
 #[test]
 fn absolute_file_url() {

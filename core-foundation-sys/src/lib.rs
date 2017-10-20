@@ -26,3 +26,4 @@ pub mod runloop;
 pub mod set;
 pub mod string;
 pub mod url;
+pub mod uuid;

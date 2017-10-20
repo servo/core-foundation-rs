@@ -130,7 +130,7 @@ extern {
 
     /* Getting URL Properties */
     //fn CFURLGetBaseURL(anURL: CFURLRef) -> CFURLRef;
-    //fn CFURLGetBytes
+    pub fn CFURLGetBytes(anURL: CFURLRef, buffer: *mut u8, bufferLength: CFIndex) -> CFIndex;
     //fn CFURLGetByteRangeForComponent
     pub fn CFURLGetTypeID() -> CFTypeID;
     //fn CFURLResourceIsReachable

@@ -22,6 +22,7 @@ use core_graphics::base::CGFloat;
 use core_graphics::context::CGContext;
 use core_graphics::font::{CGGlyph, CGFont};
 use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
+use core_graphics::path::CGPath;
 
 use foreign_types::ForeignType;
 use libc::{self, size_t, c_void};
@@ -350,6 +351,18 @@ impl CTFont {
             }
         }
     }
+
+    pub fn create_path_for_glyph(&self, glyph: CGGlyph, matrix: &CGAffineTransform)
+                                 -> Result<CGPath, ()> {
+        unsafe {
+            let path = CTFontCreatePathForGlyph(self.obj, glyph, matrix);
+            if path.is_null() {
+                Err(())
+            } else {
+                Ok(CGPath::from_ptr(path))
+            }
+        }
+    }
 }
 
 // Helper methods
@@ -502,7 +515,8 @@ extern {
     fn CTFontGetXHeight(font: CTFontRef) -> CGFloat;
 
     /* Getting Glyph Data */
-    //fn CTFontCreatePathForGlyph
+    fn CTFontCreatePathForGlyph(font: CTFontRef, glyph: CGGlyph, matrix: *const CGAffineTransform)
+                                -> CGPathRef;
     //fn CTFontGetGlyphWithName
     fn CTFontGetBoundingRectsForGlyphs(font: CTFontRef,
                                        orientation: CTFontOrientation,

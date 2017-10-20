@@ -124,7 +124,8 @@ extern {
     //fn CFURLCreateStringByAddingPercentEscapes
     //fn CFURLCreateStringByReplacingPercentEscapes
     //fn CFURLCreateStringByReplacingPercentEscapesUsingEncoding
-    //fn CFURLGetFileSystemRepresentation
+    pub fn CFURLGetFileSystemRepresentation(anURL: CFURLRef, resolveAgainstBase: Boolean, buffer: *mut u8, maxBufLen: CFIndex) -> Boolean;
+
     //fn CFURLGetFSRef
     pub fn CFURLGetString(anURL: CFURLRef) -> CFStringRef;
 

@@ -14,13 +14,18 @@ pub use core_foundation_sys::url::*;
 use base::{TCFType, CFIndex};
 use string::{CFString};
 
-use core_foundation_sys::base::{kCFAllocatorDefault, CFRelease};
+use core_foundation_sys::base::{kCFAllocatorDefault, CFRelease, Boolean};
 use std::fmt;
 use std::ptr;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::mem;
+
+use libc::{strlen, PATH_MAX};
 
 #[cfg(unix)]
 use std::os::unix::ffi::OsStrExt;
+#[cfg(unix)]
+use std::ffi::OsStr;
 
 pub struct CFURL(CFURLRef);
 
@@ -77,6 +82,18 @@ impl CFURL {
         }
     }
 
+    #[cfg(unix)]
+    pub fn to_path(&self) -> PathBuf {
+        // implementing this on Windows is more complicated because of the different OsStr representation
+        unsafe {
+            let mut buf: [u8; PATH_MAX as usize] = mem::uninitialized();
+            CFURLGetFileSystemRepresentation(self.0, true as Boolean, buf.as_mut_ptr(), buf.len() as CFIndex);
+            let len = strlen(buf.as_ptr() as *const i8);
+            let path = OsStr::from_bytes(&buf[0..len]);
+            PathBuf::from(path)
+        }
+    }
+
     pub fn get_string(&self) -> CFString {
         unsafe {
             TCFType::wrap_under_get_rule(CFURLGetString(self.0))
@@ -108,13 +125,12 @@ fn file_url_from_path() {
 #[test]
 fn non_utf8() {
     use std::ffi::OsStr;
-    let path = b"/\xC0/blame";
-    let cfurl = CFURL::from_path(OsStr::from_bytes(path), false);
-    assert!(cfurl.is_some());
-    let len = unsafe { CFURLGetBytes(cfurl.unwrap().as_concrete_TypeRef(), ptr::null_mut(), 0) };
+    let path = Path::new(OsStr::from_bytes(b"/\xC0/blame"));
+    let cfurl = CFURL::from_path(path, false).unwrap();
+    assert_eq!(cfurl.to_path(), path);
+    let len = unsafe { CFURLGetBytes(cfurl.as_concrete_TypeRef(), ptr::null_mut(), 0) };
     assert_eq!(len, 17);
 }
-
 
 #[test]
 fn absolute_file_url() {

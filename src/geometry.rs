@@ -16,8 +16,24 @@ pub const CG_ZERO_POINT: CGPoint = CGPoint {
     y: 0.0,
 };
 
+pub const CG_ZERO_SIZE: CGSize = CGSize {
+    width: 0.0,
+    height: 0.0,
+};
+
+pub const CG_ZERO_RECT: CGRect = CGRect {
+    origin: CG_ZERO_POINT,
+    size: CG_ZERO_SIZE,
+};
+
+pub const CG_AFFINE_TRANSFORM_IDENTITY: CGAffineTransform = CGAffineTransform {
+    a: 1.0, b: 0.0,
+    c: 0.0, d: 1.0,
+    tx: 0.0, ty: 0.0,
+};
+
 #[repr(C)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct CGSize {
     pub width: CGFloat,
     pub height: CGFloat,
@@ -34,7 +50,7 @@ impl CGSize {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct CGPoint {
     pub x: CGFloat,
     pub y: CGFloat,
@@ -51,7 +67,7 @@ impl CGPoint {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct CGRect {
     pub origin: CGPoint,
     pub size: CGSize
@@ -101,6 +117,16 @@ impl CGRect {
             ffi::CGRectIntersectsRect(*self, *other) == 1
         }
     }
+}
+
+#[repr(C)]
+pub struct CGAffineTransform {
+    pub a: CGFloat,
+    pub b: CGFloat,
+    pub c: CGFloat,
+    pub d: CGFloat,
+    pub tx: CGFloat,
+    pub ty: CGFloat,
 }
 
 mod ffi {

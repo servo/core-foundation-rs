@@ -10,10 +10,11 @@
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use core_foundation::string::{CFString, CFStringRef};
 use data_provider::CGDataProvider;
+use geometry::CGRect;
 
 use foreign_types::ForeignType;
 
-use libc;
+use libc::{self, c_int, size_t};
 
 pub type CGGlyph = libc::c_ushort;
 
@@ -64,6 +65,26 @@ impl CGFont {
             TCFType::wrap_under_create_rule(string_ref)
         }
     }
+
+    pub fn get_glyph_b_boxes(&self, glyphs: &[CGGlyph], bboxes: &mut [CGRect]) -> bool {
+        unsafe {
+            assert!(bboxes.len() >= glyphs.len());
+            CGFontGetGlyphBBoxes(self.as_ptr(),
+                                 glyphs.as_ptr(),
+                                 glyphs.len(),
+                                 bboxes.as_mut_ptr())
+        }
+    }
+
+    pub fn get_glyph_advances(&self, glyphs: &[CGGlyph], advances: &mut [c_int]) -> bool {
+        unsafe {
+            assert!(advances.len() >= glyphs.len());
+            CGFontGetGlyphAdvances(self.as_ptr(),
+                                   glyphs.as_ptr(),
+                                   glyphs.len(),
+                                   advances.as_mut_ptr())
+        }
+    }
 }
 
 #[link(name = "CoreGraphics", kind = "framework")]
@@ -79,4 +100,15 @@ extern {
     // gracefully handle a NULL argument. We don't use them.
     //fn CGFontRetain(font: ::sys::CGFontRef);
     //fn CGFontRelease(font: ::sys::CGFontRef);
+
+    fn CGFontGetGlyphBBoxes(font: ::sys::CGFontRef,
+                            glyphs: *const CGGlyph,
+                            count: size_t,
+                            bboxes: *mut CGRect)
+                            -> bool;
+    fn CGFontGetGlyphAdvances(font: ::sys::CGFontRef,
+                              glyphs: *const CGGlyph,
+                              count: size_t,
+                              advances: *mut c_int)
+                              -> bool;
 }

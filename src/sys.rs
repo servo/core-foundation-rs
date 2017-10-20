@@ -4,6 +4,9 @@ pub type CGImageRef = *mut CGImage;
 pub enum CGColorSpace {}
 pub type CGColorSpaceRef = *mut CGColorSpace;
 
+pub enum CGPath {}
+pub type CGPathRef = *mut CGPath;
+
 pub enum CGDataProvider {}
 pub type CGDataProviderRef = *mut CGDataProvider;
 

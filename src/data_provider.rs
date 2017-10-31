@@ -11,7 +11,8 @@ use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
 
 use libc::{c_void, size_t, off_t};
-use std::ptr;
+use std::mem;
+use std::sync::Arc;
 
 use foreign_types::{ForeignType, ForeignTypeRef};
 
@@ -43,13 +44,21 @@ impl CGDataProvider {
         }
     }
 
-    pub fn from_buffer(buffer: &[u8]) -> Self {
+    /// Creates a data provider from the given reference-counted buffer.
+    ///
+    /// The `CGDataProvider` object takes ownership of the reference. Once the data provider
+    /// is destroyed, the reference count of the buffer is automatically decremented.
+    pub fn from_buffer(buffer: Arc<Vec<u8>>) -> Self {
         unsafe {
-            let result = CGDataProviderCreateWithData(ptr::null_mut(),
-                                                      buffer.as_ptr() as *const c_void,
-                                                      buffer.len() as size_t,
-                                                      None);
-            CGDataProvider::from_ptr(result)
+            let ptr = (*buffer).as_ptr() as *const c_void;
+            let len = buffer.len() as size_t;
+            let info = mem::transmute::<Arc<Vec<u8>>, *mut c_void>(buffer);
+            let result = CGDataProviderCreateWithData(info, ptr, len, Some(release));
+            return CGDataProvider::from_ptr(result);
+        }
+
+        unsafe extern "C" fn release(info: *mut c_void, _: *const c_void, _: size_t) {
+            drop(mem::transmute::<*mut c_void, Arc<Vec<u8>>>(info))
         }
     }
 }

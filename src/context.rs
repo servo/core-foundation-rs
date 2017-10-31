@@ -10,8 +10,11 @@
 use base::CGFloat;
 use color_space::CGColorSpace;
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
+use font::{CGFont, CGGlyph};
+use geometry::CGPoint;
 use libc::{c_void, c_int, size_t};
 
+use std::cmp;
 use std::ptr;
 use std::slice;
 use geometry::CGRect;
@@ -178,6 +181,28 @@ impl CGContext {
             None
         }
     }
+
+    pub fn set_font(&self, font: &CGFont) {
+        unsafe {
+            CGContextSetFont(self.as_ptr(), font.as_ptr())
+        }
+    }
+
+    pub fn set_font_size(&self, size: CGFloat) {
+        unsafe {
+            CGContextSetFontSize(self.as_ptr(), size)
+        }
+    }
+
+    pub fn show_glyphs_at_positions(&self, glyphs: &[CGGlyph], positions: &[CGPoint]) {
+        unsafe {
+            let count = cmp::min(glyphs.len(), positions.len());
+            CGContextShowGlyphsAtPositions(self.as_ptr(),
+                                           glyphs.as_ptr(),
+                                           positions.as_ptr(),
+                                           count)
+        }
+    }
 }
 
 #[test]
@@ -242,5 +267,11 @@ extern {
     fn CGContextFillRect(context: ::sys::CGContextRef,
                          rect: CGRect);
     fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
+    fn CGContextSetFont(c: ::sys::CGContextRef, font: ::sys::CGFontRef);
+    fn CGContextSetFontSize(c: ::sys::CGContextRef, size: CGFloat);
+    fn CGContextShowGlyphsAtPositions(c: ::sys::CGContextRef,
+                                      glyphs: *const CGGlyph,
+                                      positions: *const CGPoint,
+                                      count: size_t);
 }
 

@@ -30,6 +30,7 @@ const UTF8_ENCODING: usize = 4;
 #[cfg(target_os = "macos")]
 mod macos {
     use std::mem;
+    use base::{id, class};
     use core_graphics::base::CGFloat;
     use core_graphics::geometry::CGRect;
     use objc;
@@ -139,6 +140,19 @@ mod macos {
     extern {
         fn NSInsetRect(rect: NSRect, x: CGFloat, y: CGFloat) -> NSRect;
     }
+
+    pub trait NSValue: Sized {
+        unsafe fn valueWithPoint(_: Self, point: NSPoint) -> id {
+            msg_send![class("NSValue"), valueWithPoint:point]
+        }
+
+        unsafe fn valueWithSize(_: Self, size: NSSize) -> id {
+            msg_send![class("NSValue"), valueWithSize:size]
+        }
+    }
+
+    impl NSValue for id {
+    }
 }
 
 #[cfg(target_os = "macos")]
@@ -199,19 +213,6 @@ impl NSProcessInfo for id {
 }
 
 pub type NSTimeInterval = libc::c_double;
-
-pub trait NSValue: Sized {
-    unsafe fn valueWithPoint(_: Self, point: NSPoint) -> id {
-        msg_send![class("NSValue"), valueWithPoint:point]
-    }
-
-    unsafe fn valueWithSize(_: Self, size: NSSize) -> id {
-        msg_send![class("NSValue"), valueWithSize:size]
-    }
-}
-
-impl NSValue for id {
-}
 
 pub trait NSArray: Sized {
     unsafe fn array(_: Self) -> id {

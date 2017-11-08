@@ -102,7 +102,7 @@ pub mod array;
 pub mod base;
 pub mod boolean;
 pub mod data;
-pub use core_foundation_sys::date; // back compat
+pub mod date;
 pub mod dictionary;
 pub mod error;
 pub mod number;

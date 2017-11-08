@@ -13,9 +13,9 @@ pub use core_foundation_sys::runloop::*;
 use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 use core_foundation_sys::string::CFStringRef;
-use core_foundation_sys::date::{CFAbsoluteTime, CFTimeInterval};
 
 use base::{TCFType};
+use date::{CFAbsoluteTime, CFTimeInterval};
 use string::{CFString};
 
 pub struct CFRunLoop(CFRunLoopRef);
@@ -108,14 +108,14 @@ impl CFRunLoopTimer {
 #[cfg(test)]
 mod test {
     use super::*;
-    use core_foundation_sys::date::{CFAbsoluteTime, CFAbsoluteTimeGetCurrent};
+    use date::{CFDate, CFAbsoluteTime};
     use std::mem;
     use libc::c_void;
 
     #[test]
     fn wait_200_milliseconds() {
         let run_loop = CFRunLoop::get_current();
-        let mut now = unsafe { CFAbsoluteTimeGetCurrent() };
+        let mut now = CFDate::now().abs_time();
         let mut context = unsafe { CFRunLoopTimerContext {
             version: 0,
             info: mem::transmute(&mut now),
@@ -135,7 +135,7 @@ mod test {
     extern "C" fn timer_popped(_timer: CFRunLoopTimerRef, _info: *mut c_void) {
         let previous_now_ptr: *const CFAbsoluteTime = unsafe { mem::transmute(_info) };
         let previous_now = unsafe { *previous_now_ptr };
-        let now = unsafe { CFAbsoluteTimeGetCurrent() };
+        let now = CFDate::now().abs_time();
         assert!(now - previous_now > 0.19 && now - previous_now < 0.21);
         CFRunLoop::get_current().stop();
     }

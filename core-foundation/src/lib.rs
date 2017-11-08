@@ -66,6 +66,27 @@ macro_rules! impl_TCFType {
     }
 }
 
+#[macro_export]
+macro_rules! impl_CFComparison {
+    ($ty:ident, $compare:ident) => {
+        impl PartialOrd for $ty {
+            #[inline]
+            fn partial_cmp(&self, other: &$ty) -> Option<::std::cmp::Ordering> {
+                unsafe {
+                    Some($compare(self.as_concrete_TypeRef(), other.as_concrete_TypeRef(), ::std::ptr::null_mut()).into())
+                }
+            }
+        }
+
+        impl Ord for $ty {
+            #[inline]
+            fn cmp(&self, other: &$ty) -> ::std::cmp::Ordering {
+                self.partial_cmp(other).unwrap()
+            }
+        }
+    }
+}
+
 pub mod array;
 pub mod base;
 pub mod boolean;

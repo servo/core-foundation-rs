@@ -11,6 +11,9 @@
 extern crate core_foundation_sys;
 extern crate libc;
 
+#[cfg(feature = "with-chrono")]
+extern crate chrono;
+
 #[macro_export]
 macro_rules! impl_TCFType {
     ($ty:ident, $raw:ident, $ty_id:ident) => {

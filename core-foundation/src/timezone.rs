@@ -15,6 +15,9 @@ use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
 use base::TCFType;
 use date::{CFDate, CFTimeInterval};
 
+#[cfg(feature = "with-chrono")]
+use chrono::{FixedOffset, NaiveDateTime};
+
 /// A time zone.
 pub struct CFTimeZone(CFTimeZoneRef);
 
@@ -40,9 +43,9 @@ impl Default for CFTimeZone {
 
 impl CFTimeZone {
     #[inline]
-    pub fn new(offset: CFTimeInterval) -> CFTimeZone {
+    pub fn new(interval: CFTimeInterval) -> CFTimeZone {
         unsafe {
-            let tz_ref = CFTimeZoneCreateWithTimeIntervalFromGMT(kCFAllocatorDefault, offset);
+            let tz_ref = CFTimeZoneCreateWithTimeIntervalFromGMT(kCFAllocatorDefault, interval);
             TCFType::wrap_under_create_rule(tz_ref)
         }
     }
@@ -60,16 +63,39 @@ impl CFTimeZone {
             CFTimeZoneGetSecondsFromGMT(self.0, date.abs_time())
         }
     }
+
+    #[cfg(feature = "with-chrono")]
+    pub fn offset_at_date(&self, date: NaiveDateTime) -> FixedOffset {
+        let date = CFDate::from_naive_utc(date);
+        FixedOffset::east(self.seconds_from_gmt(date) as i32)
+    }
+
+    #[cfg(feature = "with-chrono")]
+    pub fn from_offset(offset: FixedOffset) -> CFTimeZone {
+        CFTimeZone::new(offset.local_minus_utc() as f64)
+    }
 }
 
 #[cfg(test)]
 mod test {
     use super::CFTimeZone;
 
+    #[cfg(feature = "with-chrono")]
+    use chrono::{NaiveDateTime, FixedOffset};
+
     #[test]
     fn timezone_comparison() {
         let system = CFTimeZone::system();
         let default = CFTimeZone::default();
         assert_eq!(system, default);
+    }
+
+    #[test]
+    #[cfg(feature = "with-chrono")]
+    fn timezone_chrono_conversion() {
+        let offset = FixedOffset::west(28800);
+        let tz = CFTimeZone::from_offset(offset);
+        let converted = tz.offset_at_date(NaiveDateTime::from_timestamp(0, 0));
+        assert_eq!(offset, converted);
     }
 }

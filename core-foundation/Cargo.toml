@@ -13,7 +13,9 @@ version = "0.4.4"
 
 [dependencies]
 libc = "0.2"
+uuid = { version = "0.5", optional = true }
 
 [features]
 mac_os_10_7_support = ["core-foundation-sys/mac_os_10_7_support"] # backwards compatibility
 mac_os_10_8_features = ["core-foundation-sys/mac_os_10_8_features"] # enables new features
+with-uuid = ["uuid"]

@@ -8,7 +8,7 @@
 // except according to those terms.
 use libc::c_void;
 
-use base::CFAllocatorRef;
+use base::{CFAllocatorRef, CFTypeID};
 
 #[repr(C)]
 pub struct __CFUUID(c_void);
@@ -16,28 +16,33 @@ pub struct __CFUUID(c_void);
 pub type CFUUIDRef = *const __CFUUID;
 
 #[repr(C)]
+#[derive(Clone, Copy, Default)]
 pub struct CFUUIDBytes {
-    byte0:  u8,
-    byte1:  u8,
-    byte2:  u8,
-    byte3:  u8,
-    byte4:  u8,
-    byte5:  u8,
-    byte6:  u8,
-    byte7:  u8,
-    byte8:  u8,
-    byte9:  u8,
-    byte10: u8,
-    byte11: u8,
-    byte12: u8,
-    byte13: u8,
-    byte14: u8,
-    byte15: u8
+    pub byte0:  u8,
+    pub byte1:  u8,
+    pub byte2:  u8,
+    pub byte3:  u8,
+    pub byte4:  u8,
+    pub byte5:  u8,
+    pub byte6:  u8,
+    pub byte7:  u8,
+    pub byte8:  u8,
+    pub byte9:  u8,
+    pub byte10: u8,
+    pub byte11: u8,
+    pub byte12: u8,
+    pub byte13: u8,
+    pub byte14: u8,
+    pub byte15: u8
 }
 
 extern {
     /*
      * CFUUID.h
      */
+    pub fn CFUUIDCreate(allocator: CFAllocatorRef) -> CFUUIDRef;
     pub fn CFUUIDCreateFromUUIDBytes(allocator: CFAllocatorRef, bytes: CFUUIDBytes) -> CFUUIDRef;
+    pub fn CFUUIDGetUUIDBytes(uuid: CFUUIDRef) -> CFUUIDBytes;
+
+    pub fn CFUUIDGetTypeID() -> CFTypeID;
 }

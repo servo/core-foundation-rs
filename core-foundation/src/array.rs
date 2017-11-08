@@ -47,6 +47,12 @@ impl<'a> Iterator for CFArrayIterator<'a> {
     }
 }
 
+impl<'a> ExactSizeIterator for CFArrayIterator<'a> {
+    fn len(&self) -> usize {
+        (self.array.len() - self.index) as usize
+    }
+}
+
 impl_TCFType!(CFArray, CFArrayRef, CFArrayGetTypeID);
 
 impl CFArray {
@@ -120,6 +126,7 @@ impl<'a> IntoIterator for &'a CFArray {
 fn should_box_and_unbox() {
     use number::{CFNumber, number};
 
+    let n0 = number(0);
     let n1 = number(1);
     let n2 = number(2);
     let n3 = number(3);
@@ -127,6 +134,7 @@ fn should_box_and_unbox() {
     let n5 = number(5);
 
     let arr = CFArray::from_CFTypes(&[
+        n0.as_CFType(),
         n1.as_CFType(),
         n2.as_CFType(),
         n3.as_CFType(),
@@ -134,7 +142,8 @@ fn should_box_and_unbox() {
         n5.as_CFType(),
     ]);
 
-    assert!(arr.get_all_values() == &[n1.as_CFTypeRef(),
+    assert!(arr.get_all_values() == &[n0.as_CFTypeRef(),
+                                      n1.as_CFTypeRef(),
                                       n2.as_CFTypeRef(),
                                       n3.as_CFTypeRef(),
                                       n4.as_CFTypeRef(),
@@ -143,7 +152,12 @@ fn should_box_and_unbox() {
     unsafe {
         let mut sum = 0;
 
-        for elem in arr.iter() {
+        let mut iter = arr.iter();
+        assert_eq!(iter.len(), 6);
+        assert!(iter.next().is_some());
+        assert_eq!(iter.len(), 5);
+
+        for elem in iter {
             let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
             sum += number.to_i64().unwrap()
         }

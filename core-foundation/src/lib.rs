@@ -62,6 +62,7 @@ pub mod url;
 pub mod bundle;
 pub mod propertylist;
 pub mod runloop;
+pub mod uuid;
 
 #[cfg(test)]
 pub mod test {

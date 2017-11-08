@@ -45,6 +45,45 @@ macro_rules! impl_TCFType {
                 }
             }
         }
+
+        impl Clone for $ty {
+            #[inline]
+            fn clone(&self) -> $ty {
+                unsafe {
+                    $ty::wrap_under_get_rule(self.0)
+                }
+            }
+        }
+
+        impl PartialEq for $ty {
+            #[inline]
+            fn eq(&self, other: &$ty) -> bool {
+                self.as_CFType().eq(&other.as_CFType())
+            }
+        }
+
+        impl Eq for $ty { }
+    }
+}
+
+#[macro_export]
+macro_rules! impl_CFComparison {
+    ($ty:ident, $compare:ident) => {
+        impl PartialOrd for $ty {
+            #[inline]
+            fn partial_cmp(&self, other: &$ty) -> Option<::std::cmp::Ordering> {
+                unsafe {
+                    Some($compare(self.as_concrete_TypeRef(), other.as_concrete_TypeRef(), ::std::ptr::null_mut()).into())
+                }
+            }
+        }
+
+        impl Ord for $ty {
+            #[inline]
+            fn cmp(&self, other: &$ty) -> ::std::cmp::Ordering {
+                self.partial_cmp(other).unwrap()
+            }
+        }
     }
 }
 

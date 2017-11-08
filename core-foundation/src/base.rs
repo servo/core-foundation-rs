@@ -38,6 +38,15 @@ impl Clone for CFType {
     }
 }
 
+impl PartialEq for CFType {
+    #[inline]
+    fn eq(&self, other: &CFType) -> bool {
+        unsafe {
+            CFEqual(self.as_CFTypeRef(), other.as_CFTypeRef()) != 0
+        }
+    }
+}
+
 impl Drop for CFType {
     fn drop(&mut self) {
         unsafe {

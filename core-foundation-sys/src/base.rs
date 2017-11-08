@@ -7,6 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use std::cmp::Ordering;
 use libc::{c_uint, c_long, c_ulong, c_void, c_int};
 use string::CFStringRef;
 
@@ -21,6 +22,24 @@ pub type CFTypeRef = *const c_void;
 pub type CFOptionFlags = u32;
 pub type OSStatus = i32;
 pub type SInt32 = c_int;
+
+#[repr(i64)]
+#[derive(Clone, Copy)]
+pub enum CFComparisonResult {
+    LessThan = -1,
+    EqualTo = 0,
+    GreaterThan = 1,
+}
+
+impl Into<Ordering> for CFComparisonResult {
+    fn into(self) -> Ordering {
+        match self {
+            CFComparisonResult::LessThan => Ordering::Less,
+            CFComparisonResult::EqualTo => Ordering::Equal,
+            CFComparisonResult::GreaterThan => Ordering::Greater
+        }
+    }
+}
 
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -93,7 +112,6 @@ extern {
 
     //fn CFCopyDescription
     //fn CFCopyTypeIDDescription
-    //fn CFEqual
     //fn CFGetAllocator
     pub fn CFEqual(cf1: CFTypeRef, cf2: CFTypeRef) -> Boolean;
     pub fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;

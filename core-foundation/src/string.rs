@@ -23,15 +23,6 @@ use std::ffi::CStr;
 /// An immutable string in one of a variety of encodings.
 pub struct CFString(CFStringRef);
 
-impl Clone for CFString {
-    #[inline]
-    fn clone(&self) -> CFString {
-        unsafe {
-            TCFType::wrap_under_get_rule(self.0)
-        }
-    }
-}
-
 impl Drop for CFString {
     fn drop(&mut self) {
         unsafe {

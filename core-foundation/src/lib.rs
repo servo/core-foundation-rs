@@ -46,6 +46,15 @@ macro_rules! impl_TCFType {
             }
         }
 
+        impl Clone for $ty {
+            #[inline]
+            fn clone(&self) -> $ty {
+                unsafe {
+                    $ty::wrap_under_get_rule(self.0)
+                }
+            }
+        }
+
         impl PartialEq for $ty {
             #[inline]
             fn eq(&self, other: &$ty) -> bool {

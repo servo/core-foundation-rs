@@ -93,7 +93,6 @@ extern {
 
     //fn CFCopyDescription
     //fn CFCopyTypeIDDescription
-    //fn CFEqual
     //fn CFGetAllocator
     pub fn CFEqual(cf1: CFTypeRef, cf2: CFTypeRef) -> Boolean;
     pub fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;

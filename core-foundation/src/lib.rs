@@ -45,6 +45,15 @@ macro_rules! impl_TCFType {
                 }
             }
         }
+
+        impl PartialEq for $ty {
+            #[inline]
+            fn eq(&self, other: &$ty) -> bool {
+                self.as_CFType().eq(&other.as_CFType())
+            }
+        }
+
+        impl Eq for $ty { }
     }
 }
 

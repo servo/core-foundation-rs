@@ -112,6 +112,7 @@ pub mod url;
 pub mod bundle;
 pub mod propertylist;
 pub mod runloop;
+pub mod timezone;
 pub mod uuid;
 
 #[cfg(test)]

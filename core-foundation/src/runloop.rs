@@ -29,6 +29,7 @@ impl Drop for CFRunLoop {
 }
 
 impl_TCFType!(CFRunLoop, CFRunLoopRef, CFRunLoopGetTypeID);
+impl_CFTypeDescription!(CFRunLoop);
 
 impl CFRunLoop {
     pub fn get_current() -> CFRunLoop {

@@ -28,6 +28,7 @@ impl Drop for CFBoolean {
 }
 
 impl_TCFType!(CFBoolean, CFBooleanRef, CFBooleanGetTypeID);
+impl_CFTypeDescription!(CFBoolean);
 
 impl CFBoolean {
     pub fn true_value() -> CFBoolean {

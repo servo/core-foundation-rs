@@ -67,6 +67,17 @@ macro_rules! impl_TCFType {
 }
 
 #[macro_export]
+macro_rules! impl_CFTypeDescription {
+    ($ty:ident) => {
+        impl ::std::fmt::Debug for $ty {
+            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                self.as_CFType().fmt(f)
+            }
+        }
+    }
+}
+
+#[macro_export]
 macro_rules! impl_CFComparison {
     ($ty:ident, $compare:ident) => {
         impl PartialOrd for $ty {

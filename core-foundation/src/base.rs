@@ -7,7 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use std::fmt;
+
 pub use core_foundation_sys::base::*;
+
+use string::CFString;
 
 pub trait CFIndexConvertible {
     /// Always use this method to construct a `CFIndex` value. It performs bounds checking to
@@ -28,6 +32,15 @@ impl CFIndexConvertible for usize {
 
 /// Superclass of all Core Foundation objects.
 pub struct CFType(CFTypeRef);
+
+impl fmt::Debug for CFType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let desc = unsafe {
+            CFString::wrap_under_create_rule(CFCopyDescription(self.0))
+        };
+        desc.fmt(f)
+    }
+}
 
 impl Clone for CFType {
     #[inline]

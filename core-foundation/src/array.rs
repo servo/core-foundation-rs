@@ -54,6 +54,7 @@ impl<'a> ExactSizeIterator for CFArrayIterator<'a> {
 }
 
 impl_TCFType!(CFArray, CFArrayRef, CFArrayGetTypeID);
+impl_CFTypeDescription!(CFArray);
 
 impl CFArray {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.

@@ -110,9 +110,9 @@ extern {
 
     /* CFType Reference */
 
-    //fn CFCopyDescription
     //fn CFCopyTypeIDDescription
     //fn CFGetAllocator
+    pub fn CFCopyDescription(cf: CFTypeRef) -> CFStringRef;
     pub fn CFEqual(cf1: CFTypeRef, cf2: CFTypeRef) -> Boolean;
     pub fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;
     pub fn CFGetTypeID(cf: CFTypeRef) -> CFTypeID;

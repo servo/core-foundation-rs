@@ -27,6 +27,7 @@ impl Drop for CFNumber {
 }
 
 impl_TCFType!(CFNumber, CFNumberRef, CFNumberGetTypeID);
+impl_CFTypeDescription!(CFNumber);
 impl_CFComparison!(CFNumber, CFNumberCompare);
 
 impl CFNumber {

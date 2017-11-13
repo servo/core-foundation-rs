@@ -32,6 +32,7 @@ impl Drop for CFUUID {
 }
 
 impl_TCFType!(CFUUID, CFUUIDRef, CFUUIDGetTypeID);
+impl_CFTypeDescription!(CFUUID);
 
 impl CFUUID {
     #[inline]

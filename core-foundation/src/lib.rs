@@ -11,6 +11,9 @@
 extern crate core_foundation_sys;
 extern crate libc;
 
+#[cfg(feature = "with-chrono")]
+extern crate chrono;
+
 #[macro_export]
 macro_rules! impl_TCFType {
     ($ty:ident, $raw:ident, $ty_id:ident) => {
@@ -67,6 +70,17 @@ macro_rules! impl_TCFType {
 }
 
 #[macro_export]
+macro_rules! impl_CFTypeDescription {
+    ($ty:ident) => {
+        impl ::std::fmt::Debug for $ty {
+            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                self.as_CFType().fmt(f)
+            }
+        }
+    }
+}
+
+#[macro_export]
 macro_rules! impl_CFComparison {
     ($ty:ident, $compare:ident) => {
         impl PartialOrd for $ty {
@@ -91,7 +105,7 @@ pub mod array;
 pub mod base;
 pub mod boolean;
 pub mod data;
-pub use core_foundation_sys::date; // back compat
+pub mod date;
 pub mod dictionary;
 pub mod error;
 pub mod number;
@@ -101,6 +115,7 @@ pub mod url;
 pub mod bundle;
 pub mod propertylist;
 pub mod runloop;
+pub mod timezone;
 pub mod uuid;
 
 #[cfg(test)]

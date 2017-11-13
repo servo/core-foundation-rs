@@ -30,6 +30,7 @@ impl Drop for CFDictionary {
 }
 
 impl_TCFType!(CFDictionary, CFDictionaryRef, CFDictionaryGetTypeID);
+impl_CFTypeDescription!(CFDictionary);
 
 impl CFDictionary {
     pub fn from_CFType_pairs<R1, R2, K, V>(pairs: &[(K, V)]) -> CFDictionary

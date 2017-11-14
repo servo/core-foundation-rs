@@ -85,6 +85,12 @@ impl CGFont {
                                    advances.as_mut_ptr())
         }
     }
+
+    pub fn get_units_per_em(&self) -> c_int {
+        unsafe {
+            CGFontGetUnitsPerEm(self.as_ptr())
+        }
+    }
 }
 
 #[link(name = "CoreGraphics", kind = "framework")]
@@ -111,4 +117,5 @@ extern {
                               count: size_t,
                               advances: *mut c_int)
                               -> bool;
+    fn CGFontGetUnitsPerEm(font: ::sys::CGFontRef) -> c_int;
 }

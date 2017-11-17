@@ -404,63 +404,63 @@ extern "C" {
     pub static CGRectNull: CGRect;
     pub static CGRectInfinite: CGRect;
 
-    fn CGDisplayModeRelease(mode: ::sys::CGDisplayModeRef);
+    pub fn CGDisplayModeRelease(mode: ::sys::CGDisplayModeRef);
 
-    fn CGMainDisplayID() -> CGDirectDisplayID;
-    fn CGDisplayIsActive(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayIsAlwaysInMirrorSet(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayIsAsleep(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayIsBuiltin(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayIsInHWMirrorSet(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayIsInMirrorSet(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayIsMain(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayIsOnline(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayIsStereo(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayMirrorsDisplay(display: CGDirectDisplayID) -> CGDirectDisplayID;
-    fn CGDisplayPrimaryDisplay(display: CGDirectDisplayID) -> CGDirectDisplayID;
-    fn CGDisplayRotation(display: CGDirectDisplayID) -> libc::c_double;
-    fn CGDisplayScreenSize(display: CGDirectDisplayID) -> CGSize;
-    fn CGDisplaySerialNumber(display: CGDirectDisplayID) -> libc::uint32_t;
-    fn CGDisplayUnitNumber(display: CGDirectDisplayID) -> libc::uint32_t;
-    fn CGDisplayUsesOpenGLAcceleration(display: CGDirectDisplayID) -> boolean_t;
-    fn CGDisplayVendorNumber(display: CGDirectDisplayID) -> libc::uint32_t;
-    fn CGGetActiveDisplayList(
+    pub fn CGMainDisplayID() -> CGDirectDisplayID;
+    pub fn CGDisplayIsActive(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayIsAlwaysInMirrorSet(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayIsAsleep(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayIsBuiltin(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayIsInHWMirrorSet(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayIsInMirrorSet(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayIsMain(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayIsOnline(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayIsStereo(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayMirrorsDisplay(display: CGDirectDisplayID) -> CGDirectDisplayID;
+    pub fn CGDisplayPrimaryDisplay(display: CGDirectDisplayID) -> CGDirectDisplayID;
+    pub fn CGDisplayRotation(display: CGDirectDisplayID) -> libc::c_double;
+    pub fn CGDisplayScreenSize(display: CGDirectDisplayID) -> CGSize;
+    pub fn CGDisplaySerialNumber(display: CGDirectDisplayID) -> libc::uint32_t;
+    pub fn CGDisplayUnitNumber(display: CGDirectDisplayID) -> libc::uint32_t;
+    pub fn CGDisplayUsesOpenGLAcceleration(display: CGDirectDisplayID) -> boolean_t;
+    pub fn CGDisplayVendorNumber(display: CGDirectDisplayID) -> libc::uint32_t;
+    pub fn CGGetActiveDisplayList(
         max_displays: libc::uint32_t,
         active_displays: *mut CGDirectDisplayID,
         display_count: *mut libc::uint32_t,
     ) -> CGError;
-    fn CGDisplayModelNumber(display: CGDirectDisplayID) -> libc::uint32_t;
-    fn CGDisplayPixelsHigh(display: CGDirectDisplayID) -> libc::size_t;
-    fn CGDisplayPixelsWide(display: CGDirectDisplayID) -> libc::size_t;
-    fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
-    fn CGDisplayCreateImage(display: CGDirectDisplayID) -> ::sys::CGImageRef;
+    pub fn CGDisplayModelNumber(display: CGDirectDisplayID) -> libc::uint32_t;
+    pub fn CGDisplayPixelsHigh(display: CGDirectDisplayID) -> libc::size_t;
+    pub fn CGDisplayPixelsWide(display: CGDirectDisplayID) -> libc::size_t;
+    pub fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
+    pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> ::sys::CGImageRef;
 
-    fn CGDisplayCopyDisplayMode(display: CGDirectDisplayID) -> ::sys::CGDisplayModeRef;
-    fn CGDisplayModeGetHeight(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
-    fn CGDisplayModeGetWidth(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
-    fn CGDisplayModeGetPixelHeight(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
-    fn CGDisplayModeGetPixelWidth(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
-    fn CGDisplayModeGetRefreshRate(mode: ::sys::CGDisplayModeRef) -> libc::c_double;
+    pub fn CGDisplayCopyDisplayMode(display: CGDirectDisplayID) -> ::sys::CGDisplayModeRef;
+    pub fn CGDisplayModeGetHeight(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
+    pub fn CGDisplayModeGetWidth(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
+    pub fn CGDisplayModeGetPixelHeight(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
+    pub fn CGDisplayModeGetPixelWidth(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
+    pub fn CGDisplayModeGetRefreshRate(mode: ::sys::CGDisplayModeRef) -> libc::c_double;
 
     // mouse stuff
-    fn CGDisplayHideCursor(display: CGDirectDisplayID) -> CGError;
-    fn CGDisplayShowCursor(display: CGDirectDisplayID) -> CGError;
-    fn CGDisplayMoveCursorToPoint(display: CGDirectDisplayID, point: CGPoint) -> CGError;
-    fn CGWarpMouseCursorPosition(point: CGPoint) -> CGError;
-    fn CGAssociateMouseAndMouseCursorPosition(connected: boolean_t) -> CGError;
+    pub fn CGDisplayHideCursor(display: CGDirectDisplayID) -> CGError;
+    pub fn CGDisplayShowCursor(display: CGDirectDisplayID) -> CGError;
+    pub fn CGDisplayMoveCursorToPoint(display: CGDirectDisplayID, point: CGPoint) -> CGError;
+    pub fn CGWarpMouseCursorPosition(point: CGPoint) -> CGError;
+    pub fn CGAssociateMouseAndMouseCursorPosition(connected: boolean_t) -> CGError;
 
     // Window Services Reference
-    fn CGWindowListCopyWindowInfo(
+    pub fn CGWindowListCopyWindowInfo(
         option: CGWindowListOption,
         relativeToWindow: CGWindowID,
     ) -> CFArrayRef;
-    fn CGWindowListCreateImage(
+    pub fn CGWindowListCreateImage(
         screenBounds: CGRect,
         listOptions: CGWindowListOption,
         windowId: CGWindowID,
         imageOptions: CGWindowImageOption,
     ) -> ::sys::CGImageRef;
-    fn CGWindowListCreateImageFromArray(
+    pub fn CGWindowListCreateImageFromArray(
         screenBounds: CGRect,
         windowArray: CFArrayRef,
         imageOptions: CGWindowImageOption,

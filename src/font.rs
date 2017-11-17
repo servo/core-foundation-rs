@@ -63,7 +63,7 @@ impl CGFont {
     pub fn create_copy_from_variations(&self, vars: &CFDictionary) -> Result<CGFont, ()> {
         unsafe {
             let font_ref = CGFontCreateCopyWithVariations(self.as_ptr(),
-            vars.as_concrete_TypeRef());
+                                                          vars.as_concrete_TypeRef());
             if !font_ref.is_null() {
                 Ok(CGFont::from_ptr(font_ref))
             } else {

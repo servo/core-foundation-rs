@@ -12,15 +12,40 @@
 pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
+use base::CFType;
 use libc::c_void;
 use std::mem;
+use std::marker::PhantomData;
 
 use base::{CFIndexConvertible, TCFType, CFRange};
 
 /// A heterogeneous immutable array.
-pub struct CFArray(CFArrayRef);
+pub struct CFArray<T = *const c_void>(CFArrayRef, PhantomData<T>);
 
-impl Drop for CFArray {
+/// A trait describing how to convert from the stored *const c_void to the desired T
+pub trait FromVoid<T> {
+    fn from_void(x: *const c_void) -> T;
+}
+
+impl FromVoid<u32> for u32 {
+    fn from_void(x: *const c_void) -> u32 {
+        x as usize as u32
+    }
+}
+
+impl FromVoid<*const c_void> for *const c_void {
+    fn from_void(x: *const c_void) -> *const c_void {
+        x
+    }
+}
+
+impl FromVoid<CFType> for CFType {
+    fn from_void(x: *const c_void) -> CFType {
+        unsafe { TCFType::wrap_under_get_rule(mem::transmute(x)) }
+    }
+}
+
+impl<T> Drop for CFArray<T> {
     fn drop(&mut self) {
         unsafe {
             CFRelease(self.as_CFTypeRef())
@@ -28,15 +53,15 @@ impl Drop for CFArray {
     }
 }
 
-pub struct CFArrayIterator<'a> {
-    array: &'a CFArray,
+pub struct CFArrayIterator<'a, T: 'a> {
+    array: &'a CFArray<T>,
     index: CFIndex,
 }
 
-impl<'a> Iterator for CFArrayIterator<'a> {
-    type Item = *const c_void;
+impl<'a, T: FromVoid<T>> Iterator for CFArrayIterator<'a, T> {
+    type Item = T;
 
-    fn next(&mut self) -> Option<*const c_void> {
+    fn next(&mut self) -> Option<T> {
         if self.index >= self.array.len() {
             None
         } else {
@@ -47,18 +72,18 @@ impl<'a> Iterator for CFArrayIterator<'a> {
     }
 }
 
-impl<'a> ExactSizeIterator for CFArrayIterator<'a> {
+impl<'a, T: FromVoid<T>> ExactSizeIterator for CFArrayIterator<'a, T> {
     fn len(&self) -> usize {
         (self.array.len() - self.index) as usize
     }
 }
 
-impl_TCFType!(CFArray, CFArrayRef, CFArrayGetTypeID);
-impl_CFTypeDescription!(CFArray);
+impl_TCFTypeGeneric!(CFArray, CFArrayRef, CFArrayGetTypeID);
+impl_CFTypeDescriptionGeneric!(CFArray);
 
-impl CFArray {
+impl<T> CFArray<T> {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    pub fn from_CFTypes<R, T>(elems: &[T]) -> CFArray where T: TCFType<R> {
+    pub fn from_CFTypes<R>(elems: &[T]) -> CFArray<T> where T: TCFType<R> {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
@@ -69,13 +94,17 @@ impl CFArray {
         }
     }
 
+    pub fn to_untyped(self) -> CFArray {
+        CFArray(self.0, PhantomData)
+    }
+
     /// Iterates over the elements of this `CFArray`.
     ///
     /// Careful; the loop body must wrap the reference properly. Generally, when array elements are
     /// Core Foundation objects (not always true), they need to be wrapped with
     /// `TCFType::wrap_under_get_rule()`.
     #[inline]
-    pub fn iter<'a>(&'a self) -> CFArrayIterator<'a> {
+    pub fn iter<'a>(&'a self) -> CFArrayIterator<'a, T> {
         CFArrayIterator {
             array: self,
             index: 0
@@ -90,11 +119,9 @@ impl CFArray {
     }
 
     #[inline]
-    pub fn get(&self, index: CFIndex) -> *const c_void {
+    pub fn get(&self, index: CFIndex) -> T where T: FromVoid<T> {
         assert!(index < self.len());
-        unsafe {
-            CFArrayGetValueAtIndex(self.0, index)
-        }
+        T::from_void(unsafe { CFArrayGetValueAtIndex(self.0, index) })
     }
 
     pub fn get_values(&self, range: CFRange) -> Vec<*const c_void> {
@@ -114,11 +141,11 @@ impl CFArray {
     }
 }
 
-impl<'a> IntoIterator for &'a CFArray {
-    type Item = *const c_void;
-    type IntoIter = CFArrayIterator<'a>;
+impl<'a, T: FromVoid<T>> IntoIterator for &'a CFArray<T> {
+    type Item = T;
+    type IntoIter = CFArrayIterator<'a, T>;
 
-    fn into_iter(self) -> CFArrayIterator<'a> {
+    fn into_iter(self) -> CFArrayIterator<'a, T> {
         self.iter()
     }
 }

@@ -15,7 +15,5 @@ mountainlion = []
 [dependencies]
 foreign-types = "0.3"
 libc = "0.2"
-
-[target.x86_64-apple-darwin.dependencies]
 core-foundation = "0.4"
 core-graphics = "0.11"

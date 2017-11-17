@@ -69,10 +69,79 @@ macro_rules! impl_TCFType {
     }
 }
 
+// This is basically identical to the implementation above. I can't
+// think of a clean way to have them share code
+#[macro_export]
+macro_rules! impl_TCFTypeGeneric {
+    ($ty:ident, $raw:ident, $ty_id:ident) => {
+        impl<T> $crate::base::TCFType<$raw> for $ty<T> {
+            #[inline]
+            fn as_concrete_TypeRef(&self) -> $raw {
+                self.0
+            }
+
+            #[inline]
+            unsafe fn wrap_under_get_rule(reference: $raw) -> $ty<T> {
+                let reference = ::std::mem::transmute(::core_foundation_sys::base::CFRetain(::std::mem::transmute(reference)));
+                $crate::base::TCFType::wrap_under_create_rule(reference)
+            }
+
+            #[inline]
+            fn as_CFTypeRef(&self) -> ::core_foundation_sys::base::CFTypeRef {
+                unsafe {
+                    ::std::mem::transmute(self.as_concrete_TypeRef())
+                }
+            }
+
+            #[inline]
+            unsafe fn wrap_under_create_rule(obj: $raw) -> $ty<T> {
+                $ty(obj, PhantomData)
+            }
+
+            #[inline]
+            fn type_id() -> ::core_foundation_sys::base::CFTypeID {
+                unsafe {
+                    $ty_id()
+                }
+            }
+        }
+
+        impl<T> Clone for $ty<T> {
+            #[inline]
+            fn clone(&self) -> $ty<T> {
+                unsafe {
+                    $ty::wrap_under_get_rule(self.0)
+                }
+            }
+        }
+
+        impl<T> PartialEq for $ty<T> {
+            #[inline]
+            fn eq(&self, other: &$ty<T>) -> bool {
+                self.as_CFType().eq(&other.as_CFType())
+            }
+        }
+
+        impl<T> Eq for $ty<T> { }
+    }
+}
+
 #[macro_export]
 macro_rules! impl_CFTypeDescription {
     ($ty:ident) => {
         impl ::std::fmt::Debug for $ty {
+            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                self.as_CFType().fmt(f)
+            }
+        }
+    }
+}
+
+// The same as impl_CFTypeDescription but with a type parameter
+#[macro_export]
+macro_rules! impl_CFTypeDescriptionGeneric {
+    ($ty:ident) => {
+        impl<T> ::std::fmt::Debug for $ty<T> {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                 self.as_CFType().fmt(f)
             }

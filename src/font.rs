@@ -9,6 +9,7 @@
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use core_foundation::string::{CFString, CFStringRef};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use data_provider::CGDataProvider;
 use geometry::CGRect;
 
@@ -59,6 +60,18 @@ impl CGFont {
         }
     }
 
+    pub fn create_copy_from_variations(&self, vars: &CFDictionary) -> Result<CGFont, ()> {
+        unsafe {
+            let font_ref = CGFontCreateCopyWithVariations(self.as_ptr(),
+                                                          vars.as_concrete_TypeRef());
+            if !font_ref.is_null() {
+                Ok(CGFont::from_ptr(font_ref))
+            } else {
+                Err(())
+            }
+        }
+    }
+
     pub fn postscript_name(&self) -> CFString {
         unsafe {
             let string_ref = CGFontCopyPostScriptName(self.as_ptr());
@@ -98,6 +111,7 @@ extern {
     // TODO: basically nothing has bindings (even commented-out) besides what we use.
     fn CGFontCreateWithDataProvider(provider: ::sys::CGDataProviderRef) -> ::sys::CGFontRef;
     fn CGFontCreateWithFontName(name: CFStringRef) -> ::sys::CGFontRef;
+    fn CGFontCreateCopyWithVariations(font: ::sys::CGFontRef, vars: CFDictionaryRef) -> ::sys::CGFontRef;
     fn CGFontGetTypeID() -> CFTypeID;
 
     fn CGFontCopyPostScriptName(font: ::sys::CGFontRef) -> CFStringRef;

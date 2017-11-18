@@ -1,6 +1,6 @@
 [package]
 name = "core-text"
-version = "7.0.0"
+version = "8.0.0"
 authors = ["The Servo Project Developers"]
 description = "Bindings to the Core Text framework."
 license = "MIT/Apache-2.0"
@@ -16,4 +16,4 @@ mountainlion = []
 foreign-types = "0.3"
 libc = "0.2"
 core-foundation = "0.4"
-core-graphics = "0.11"
+core-graphics = "0.12.1"

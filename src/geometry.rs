@@ -47,6 +47,13 @@ impl CGSize {
             height: height,
         }
     }
+
+    #[inline]
+    pub fn apply_transform(&self, t: &CGAffineTransform) -> CGSize {
+        unsafe {
+            ffi::CGSizeApplyAffineTransform(*self, *t)
+        }
+    }
 }
 
 #[repr(C)]
@@ -62,6 +69,13 @@ impl CGPoint {
         CGPoint {
             x: x,
             y: y,
+        }
+    }
+
+    #[inline]
+    pub fn apply_transform(&self, t: &CGAffineTransform) -> CGPoint {
+        unsafe {
+            ffi::CGPointApplyAffineTransform(*self, *t)
         }
     }
 }
@@ -117,9 +131,17 @@ impl CGRect {
             ffi::CGRectIntersectsRect(*self, *other) == 1
         }
     }
+
+    #[inline]
+    pub fn apply_transform(&self, t: &CGAffineTransform) -> CGRect {
+        unsafe {
+            ffi::CGRectApplyAffineTransform(*self, *t)
+        }
+    }
 }
 
 #[repr(C)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct CGAffineTransform {
     pub a: CGFloat,
     pub b: CGFloat,
@@ -129,9 +151,30 @@ pub struct CGAffineTransform {
     pub ty: CGFloat,
 }
 
+impl CGAffineTransform {
+    #[inline]
+    pub fn new(
+        a: CGFloat,
+        b: CGFloat,
+        c: CGFloat,
+        d: CGFloat,
+        tx: CGFloat,
+        ty: CGFloat,
+    ) -> CGAffineTransform {
+        CGAffineTransform { a, b, c, d, tx, ty }
+    }
+
+    #[inline]
+    pub fn invert(&self) -> CGAffineTransform {
+        unsafe {
+            ffi::CGAffineTransformInvert(*self)
+        }
+    }
+}
+
 mod ffi {
     use base::{CGFloat, boolean_t};
-    use geometry::CGRect;
+    use geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
     use core_foundation::dictionary::CFDictionaryRef;
 
     #[link(name = "CoreGraphics", kind = "framework")]
@@ -141,6 +184,12 @@ mod ffi {
                                                       rect: *mut CGRect) -> boolean_t;
         pub fn CGRectIsEmpty(rect: CGRect) -> boolean_t;
         pub fn CGRectIntersectsRect(rect1: CGRect, rect2: CGRect) -> boolean_t;
+
+        pub fn CGAffineTransformInvert(t: CGAffineTransform) -> CGAffineTransform;
+
+        pub fn CGPointApplyAffineTransform(point: CGPoint, t: CGAffineTransform) -> CGPoint;
+        pub fn CGRectApplyAffineTransform(rect: CGRect, t: CGAffineTransform) -> CGRect;
+        pub fn CGSizeApplyAffineTransform(size: CGSize, t: CGAffineTransform) -> CGSize;
     }
 }
 

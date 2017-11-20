@@ -17,7 +17,7 @@ use libc::{c_void, c_int, size_t};
 use std::cmp;
 use std::ptr;
 use std::slice;
-use geometry::CGRect;
+use geometry::{CGAffineTransform, CGRect};
 use image::CGImage;
 use foreign_types::ForeignType;
 
@@ -194,6 +194,12 @@ impl CGContext {
         }
     }
 
+    pub fn set_text_matrix(&self, t: &CGAffineTransform) {
+        unsafe {
+            CGContextSetTextMatrix(self.as_ptr(), *t)
+        }
+    }
+
     pub fn show_glyphs_at_positions(&self, glyphs: &[CGGlyph], positions: &[CGPoint]) {
         unsafe {
             let count = cmp::min(glyphs.len(), positions.len());
@@ -269,6 +275,7 @@ extern {
     fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
     fn CGContextSetFont(c: ::sys::CGContextRef, font: ::sys::CGFontRef);
     fn CGContextSetFontSize(c: ::sys::CGContextRef, size: CGFloat);
+    fn CGContextSetTextMatrix(c: ::sys::CGContextRef, t: CGAffineTransform);
     fn CGContextShowGlyphsAtPositions(c: ::sys::CGContextRef,
                                       glyphs: *const CGGlyph,
                                       positions: *const CGPoint,

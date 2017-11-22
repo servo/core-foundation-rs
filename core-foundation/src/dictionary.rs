@@ -102,10 +102,7 @@ impl CFDictionary {
     /// of panicking.
     #[inline]
     pub fn get(&self, key: *const c_void) -> *const c_void {
-        match self.find(key) {
-            None => panic!("No entry found for key {:p}", key),
-            Some(value) => value
-        }
+        self.find(key).expect(&format!("No entry found for key {:p}", key))
     }
 
     /// A convenience function to retrieve `CFType` instances.

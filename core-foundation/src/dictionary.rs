@@ -70,6 +70,13 @@ impl CFDictionary {
         }
     }
 
+    /// Similar to `contains_key` but acts on a higher level, automatically converting from any
+    /// `TCFType` to the raw pointer of its concrete TypeRef.
+    #[inline]
+    pub fn contains_key2<X, K: TCFType<*const X>>(&self, key: &K) -> bool {
+        self.contains_key(key.as_concrete_TypeRef() as *const c_void)
+    }
+
     #[inline]
     pub fn find(&self, key: *const c_void) -> Option<*const c_void> {
         unsafe {
@@ -80,6 +87,13 @@ impl CFDictionary {
                 None
             }
         }
+    }
+
+    /// Similar to `find` but acts on a higher level, automatically converting from any `TCFType`
+    /// to the raw pointer of its concrete TypeRef.
+    #[inline]
+    pub fn find2<X, K: TCFType<*const X>>(&self, key: &K) -> Option<*const c_void> {
+        self.find(key.as_concrete_TypeRef() as *const c_void)
     }
 
     #[inline]

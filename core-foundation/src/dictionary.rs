@@ -96,13 +96,16 @@ impl CFDictionary {
         self.find(key.as_concrete_TypeRef() as *const c_void)
     }
 
+    /// # Panics
+    ///
+    /// Panics if the key is not present in the dictionary. Use `find` to get an `Option` instead
+    /// of panicking.
     #[inline]
     pub fn get(&self, key: *const c_void) -> *const c_void {
-        let value = self.find(key);
-        if value.is_none() {
-            panic!("No entry found for key {:p}", key);
+        match self.find(key) {
+            None => panic!("No entry found for key {:p}", key),
+            Some(value) => value
         }
-        value.unwrap()
     }
 
     /// A convenience function to retrieve `CFType` instances.

@@ -43,6 +43,13 @@ impl FromStr for CFString {
     }
 }
 
+impl<'a> From<&'a str> for CFString {
+    #[inline]
+    fn from(string: &'a str) -> CFString {
+        CFString::new(string)
+    }
+}
+
 impl fmt::Display for CFString {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         unsafe {

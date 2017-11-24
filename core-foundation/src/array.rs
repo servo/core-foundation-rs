@@ -81,7 +81,7 @@ impl_CFTypeDescriptionGeneric!(CFArray);
 
 impl<T> CFArray<T> {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    pub fn from_CFTypes<R>(elems: &[T]) -> CFArray<T> where T: TCFType<R> {
+    pub fn from_CFTypes(elems: &[T]) -> CFArray<T> where T: TCFType {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
@@ -215,14 +215,14 @@ mod tests {
         assert_eq!(iter.len(), 5);
 
         for elem in iter {
-            let number: CFNumber = elem.downcast::<_, CFNumber>().unwrap();
+            let number: CFNumber = elem.downcast::<CFNumber>().unwrap();
             sum += number.to_i64().unwrap()
         }
 
         assert!(sum == 15);
 
         for elem in arr.iter() {
-            let number: CFNumber = elem.downcast::<_, CFNumber>().unwrap();
+            let number: CFNumber = elem.downcast::<CFNumber>().unwrap();
             sum += number.to_i64().unwrap()
         }
 

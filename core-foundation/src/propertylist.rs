@@ -60,9 +60,13 @@ pub fn create_data(property_list: *const c_void, format: CFPropertyListFormat) -
 }
 
 
-/// Trait for all subclasses of CFPropertyList.
+/// Trait for all subclasses of [`CFPropertyList`].
+///
+/// [`CFPropertyList`]: struct.CFPropertyList.html
 pub trait CFPropertyListSubClass<Raw>: TCFType<*const Raw> {
-    /// Create an instance of the superclass type `CFPropertyList` for this instance.
+    /// Create an instance of the superclass type [`CFPropertyList`] for this instance.
+    ///
+    /// [`CFPropertyList`]: struct.CFPropertyList.html
     fn to_CFPropertyList(&self) -> CFPropertyList {
         unsafe { CFPropertyList::wrap_under_get_rule(self.as_concrete_TypeRef() as *const c_void) }
     }
@@ -76,12 +80,22 @@ impl CFPropertyListSubClass<::date::__CFDate> for ::date::CFDate {}
 impl CFPropertyListSubClass<::number::__CFBoolean> for ::boolean::CFBoolean {}
 impl CFPropertyListSubClass<::number::__CFNumber> for ::number::CFNumber {}
 
-/// A CFPropertyList struct. This is superclass to CFData, CFString, CFArray, CFDictionary,
-/// CFDate, CFBoolean, and CFNumber.
+/// A CFPropertyList struct. This is superclass to [`CFData`], [`CFString`], [`CFArray`],
+/// [`CFDictionary`], [`CFDate`], [`CFBoolean`], and [`CFNumber`].
 ///
-/// This superclass type does not have its own CFTypeID, instead each instance has the CFTypeID of
-/// the subclass it is an instance of. Thus, this type cannot implement the `TCFType` trait, since
-/// it cannot implement the static `TCFType::type_id()` method.
+/// This superclass type does not have its own `CFTypeID`, instead each instance has the `CFTypeID`
+/// of the subclass it is an instance of. Thus, this type cannot implement the [`TCFType`] trait,
+/// since it cannot implement the static [`TCFType::type_id()`] method.
+///
+/// [`CFData`]: ../data/struct.CFData.html
+/// [`CFString`]: ../string/struct.CFString.html
+/// [`CFArray`]: ../array/struct.CFArray.html
+/// [`CFDictionary`]: ../dictionary/struct.CFDictionary.html
+/// [`CFDate`]: ../date/struct.CFDate.html
+/// [`CFBoolean`]: ../boolean/struct.CFBoolean.html
+/// [`CFNumber`]: ../number/struct.CFNumber.html
+/// [`TCFType`]: ../base/trait.TCFType.html
+/// [`TCFType::type_id()`]: ../base/trait.TCFType.html#method.type_of
 pub struct CFPropertyList(CFPropertyListRef);
 
 impl Drop for CFPropertyList {
@@ -162,9 +176,9 @@ impl PartialEq for CFPropertyList {
 impl Eq for CFPropertyList {}
 
 impl CFPropertyList {
-    /// Try to downcast the CFPropertyList to a subclass. Checking if the instance is the correct
+    /// Try to downcast the [`CFPropertyList`] to a subclass. Checking if the instance is the correct
     /// subclass happens at runtime and an error is returned if it is not the correct type.
-    /// Works similar to `Box::downcast`.
+    /// Works similar to [`Box::downcast`].
     ///
     /// # Examples
     ///
@@ -179,6 +193,9 @@ impl CFPropertyList {
     /// // Cast it down again.
     /// assert!(propertylist.downcast::<_, CFString>().unwrap().to_string() == "FooBar");
     /// ```
+    ///
+    /// [`CFPropertyList`]: struct.CFPropertyList.html
+    /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
     pub fn downcast<Raw, T: CFPropertyListSubClass<Raw>>(&self) -> Result<T, CFPropertyListCastError> {
         if self.instance_of::<_, T>() {
             Ok(unsafe { T::wrap_under_get_rule(self.0 as *const Raw) })

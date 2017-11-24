@@ -197,9 +197,9 @@ impl CFPropertyList {
     /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
     pub fn downcast<T: CFPropertyListSubClass>(&self) -> Option<T> {
         if self.instance_of::<T>() {
-            let ptr = &self.0 as *const _ as *const <T as TCFType>::ConcreteTypeRef;
+            let ptr = &self.0 as *const _ as *const <T as TCFType>::TypeRef;
             unsafe {
-                let reference: &<T as TCFType>::ConcreteTypeRef = &*ptr;
+                let reference: &<T as TCFType>::TypeRef = &*ptr;
                 Some(T::wrap_under_get_rule(mem::transmute_copy(reference)))
             }
         } else {

@@ -96,14 +96,14 @@ impl CFAllocator {
 /// `CFArrayRef`.
 pub trait TCFType {
     /// The reference type wrapped inside this type.
-    type ConcreteTypeRef;
+    type TypeRef;
 
     /// Returns the object as its concrete TypeRef.
-    fn as_concrete_TypeRef(&self) -> Self::ConcreteTypeRef;
+    fn as_concrete_TypeRef(&self) -> Self::TypeRef;
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
     /// when following Core Foundation's "Create Rule". The reference count is *not* bumped.
-    unsafe fn wrap_under_create_rule(obj: Self::ConcreteTypeRef) -> Self;
+    unsafe fn wrap_under_create_rule(obj: Self::TypeRef) -> Self;
 
     /// Returns the type ID for this class.
     fn type_id() -> CFTypeID;
@@ -121,7 +121,7 @@ pub trait TCFType {
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
     /// when following Core Foundation's "Get Rule". The reference count *is* bumped.
-    unsafe fn wrap_under_get_rule(reference: Self::ConcreteTypeRef) -> Self;
+    unsafe fn wrap_under_get_rule(reference: Self::TypeRef) -> Self;
 
     /// Returns the reference count of the object. It is unwise to do anything other than test
     /// whether the return value of this method is greater than zero.
@@ -155,7 +155,7 @@ pub trait TCFType {
 }
 
 impl TCFType for CFType {
-    type ConcreteTypeRef = CFTypeRef;
+    type TypeRef = CFTypeRef;
 
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFTypeRef {

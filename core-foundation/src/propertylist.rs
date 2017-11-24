@@ -16,7 +16,7 @@ use libc::c_void;
 
 use error::CFError;
 use data::CFData;
-use base::{CFType, TCFType};
+use base::{CFType, TCFType, TCFTypeRef};
 
 pub use core_foundation_sys::propertylist::*;
 use core_foundation_sys::error::CFErrorRef;
@@ -62,13 +62,13 @@ pub fn create_data(property_list: *const c_void, format: CFPropertyListFormat) -
 /// Trait for all subclasses of [`CFPropertyList`].
 ///
 /// [`CFPropertyList`]: struct.CFPropertyList.html
-pub trait CFPropertyListSubClass<Raw>: TCFType<*const Raw> {
+pub trait CFPropertyListSubClass: TCFType {
     /// Create an instance of the superclass type [`CFPropertyList`] for this instance.
     ///
     /// [`CFPropertyList`]: struct.CFPropertyList.html
     #[inline]
     fn to_CFPropertyList(&self) -> CFPropertyList {
-        unsafe { CFPropertyList::wrap_under_get_rule(self.as_concrete_TypeRef() as *const c_void) }
+        unsafe { CFPropertyList::wrap_under_get_rule(self.as_concrete_TypeRef().as_void_ptr()) }
     }
 
     /// Equal to [`to_CFPropertyList`], but consumes self and avoids changing the reference count.
@@ -78,19 +78,19 @@ pub trait CFPropertyListSubClass<Raw>: TCFType<*const Raw> {
     fn into_CFPropertyList(self) -> CFPropertyList
     where Self: Sized
     {
-        let reference = self.as_concrete_TypeRef() as *const c_void;
+        let reference = self.as_concrete_TypeRef().as_void_ptr();
         mem::forget(self);
         unsafe { CFPropertyList::wrap_under_create_rule(reference) }
     }
 }
 
-impl CFPropertyListSubClass<::data::__CFData> for ::data::CFData {}
-impl CFPropertyListSubClass<::string::__CFString> for ::string::CFString {}
-impl CFPropertyListSubClass<::array::__CFArray> for ::array::CFArray {}
-impl CFPropertyListSubClass<::dictionary::__CFDictionary> for ::dictionary::CFDictionary {}
-impl CFPropertyListSubClass<::date::__CFDate> for ::date::CFDate {}
-impl CFPropertyListSubClass<::number::__CFBoolean> for ::boolean::CFBoolean {}
-impl CFPropertyListSubClass<::number::__CFNumber> for ::number::CFNumber {}
+impl CFPropertyListSubClass for ::data::CFData {}
+impl CFPropertyListSubClass for ::string::CFString {}
+impl CFPropertyListSubClass for ::array::CFArray {}
+impl CFPropertyListSubClass for ::dictionary::CFDictionary {}
+impl CFPropertyListSubClass for ::date::CFDate {}
+impl CFPropertyListSubClass for ::boolean::CFBoolean {}
+impl CFPropertyListSubClass for ::number::CFNumber {}
 
 
 declare_TCFType!{
@@ -170,10 +170,8 @@ impl CFPropertyList {
 
     /// Returns true if this value is an instance of another type.
     #[inline]
-    pub fn instance_of<OtherConcreteTypeRef, OtherCFType: TCFType<OtherConcreteTypeRef>>(
-        &self,
-    ) -> bool {
-        self.type_of() == <OtherCFType as TCFType<_>>::type_id()
+    pub fn instance_of<OtherCFType: TCFType>(&self) -> bool {
+        self.type_of() == OtherCFType::type_id()
     }
 }
 
@@ -209,15 +207,17 @@ impl CFPropertyList {
     /// // Cast it up to a property list.
     /// let propertylist: CFPropertyList = string.to_CFPropertyList();
     /// // Cast it down again.
-    /// assert!(propertylist.downcast::<_, CFString>().unwrap().to_string() == "FooBar");
+    /// assert!(propertylist.downcast::<CFString>().unwrap().to_string() == "FooBar");
     /// ```
     ///
     /// [`CFPropertyList`]: struct.CFPropertyList.html
     /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
-    /// [`CFType::downcast`]: ../base/struct.CFType.html#method.downcast
-    pub fn downcast<Raw, T: CFPropertyListSubClass<Raw>>(&self) -> Option<T> {
-        if self.instance_of::<_, T>() {
-            Some(unsafe { T::wrap_under_get_rule(self.0 as *const Raw) })
+    pub fn downcast<T: CFPropertyListSubClass>(&self) -> Option<T> {
+        if self.instance_of::<T>() {
+            unsafe {
+                let subclass_ref = T::Ref::from_void_ptr(self.0);
+                Some(T::wrap_under_get_rule(subclass_ref))
+            }
         } else {
             None
         }
@@ -226,11 +226,13 @@ impl CFPropertyList {
     /// Similar to [`downcast`], but consumes self and can thus avoid touching the retain count.
     ///
     /// [`downcast`]: #method.downcast
-    pub fn downcast_into<Raw, T: CFPropertyListSubClass<Raw>>(self) -> Option<T> {
-        if self.instance_of::<_, T>() {
-            let reference = self.0 as *const Raw;
-            mem::forget(self);
-            unsafe { Some(T::wrap_under_create_rule(reference)) }
+    pub fn downcast_into<T: CFPropertyListSubClass>(self) -> Option<T> {
+        if self.instance_of::<T>() {
+            unsafe {
+                let subclass_ref = T::Ref::from_void_ptr(self.0);
+                mem::forget(self);
+                Some(T::wrap_under_create_rule(subclass_ref))
+            }
         } else {
             None
         }
@@ -288,15 +290,15 @@ pub mod test {
     #[test]
     fn downcast_string() {
         let propertylist = CFString::from_static_string("Bar").to_CFPropertyList();
-        assert!(propertylist.downcast::<_, CFString>().unwrap().to_string() == "Bar");
-        assert!(propertylist.downcast::<_, CFBoolean>().is_none());
+        assert!(propertylist.downcast::<CFString>().unwrap().to_string() == "Bar");
+        assert!(propertylist.downcast::<CFBoolean>().is_none());
     }
 
     #[test]
     fn downcast_boolean() {
         let propertylist = CFBoolean::true_value().to_CFPropertyList();
-        assert!(propertylist.downcast::<_, CFBoolean>().is_some());
-        assert!(propertylist.downcast::<_, CFString>().is_none());
+        assert!(propertylist.downcast::<CFBoolean>().is_some());
+        assert!(propertylist.downcast::<CFString>().is_none());
     }
 
     #[test]
@@ -305,7 +307,7 @@ pub mod test {
         let propertylist = string.to_CFPropertyList();
         assert_eq!(string.retain_count(), 2);
 
-        assert!(propertylist.downcast_into::<_, CFBoolean>().is_none());
+        assert!(propertylist.downcast_into::<CFBoolean>().is_none());
         assert_eq!(string.retain_count(), 1);
     }
 
@@ -315,7 +317,7 @@ pub mod test {
         let propertylist = string.to_CFPropertyList();
         assert_eq!(string.retain_count(), 2);
 
-        let string2 = propertylist.downcast_into::<_, CFString>().unwrap();
+        let string2 = propertylist.downcast_into::<CFString>().unwrap();
         assert!(string2.to_string() == "Bar");
         assert_eq!(string2.retain_count(), 2);
     }

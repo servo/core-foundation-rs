@@ -33,8 +33,8 @@ impl_TCFType!(CFDictionary, CFDictionaryRef, CFDictionaryGetTypeID);
 impl_CFTypeDescription!(CFDictionary);
 
 impl CFDictionary {
-    pub fn from_CFType_pairs<R1, R2, K, V>(pairs: &[(K, V)]) -> CFDictionary
-            where K: TCFType<R1>, V: TCFType<R2> {
+    pub fn from_CFType_pairs<K, V>(pairs: &[(K, V)]) -> CFDictionary
+            where K: TCFType, V: TCFType {
         let (keys, values): (Vec<CFTypeRef>,Vec<CFTypeRef>) =
             pairs.iter()
             .map(|&(ref key, ref value)| (key.as_CFTypeRef(), value.as_CFTypeRef()))
@@ -73,7 +73,7 @@ impl CFDictionary {
     /// Similar to `contains_key` but acts on a higher level, automatically converting from any
     /// `TCFType` to the raw pointer of its concrete TypeRef.
     #[inline]
-    pub fn contains_key2<X, K: TCFType<*const X>>(&self, key: &K) -> bool {
+    pub fn contains_key2<X, K: TCFType<ConcreteTypeRef=*const X>>(&self, key: &K) -> bool {
         self.contains_key(key.as_concrete_TypeRef() as *const c_void)
     }
 
@@ -92,7 +92,7 @@ impl CFDictionary {
     /// Similar to `find` but acts on a higher level, automatically converting from any `TCFType`
     /// to the raw pointer of its concrete TypeRef.
     #[inline]
-    pub fn find2<X, K: TCFType<*const X>>(&self, key: &K) -> Option<*const c_void> {
+    pub fn find2<X, K: TCFType<ConcreteTypeRef=*const X>>(&self, key: &K) -> Option<*const c_void> {
         self.find(key.as_concrete_TypeRef() as *const c_void)
     }
 

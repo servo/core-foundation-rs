@@ -11,6 +11,7 @@
 
 use std::ptr;
 use std::mem;
+use std::fmt;
 
 use libc::c_void;
 
@@ -178,14 +179,32 @@ impl CFPropertyList {
     /// // Cast it down again.
     /// assert!(propertylist.downcast::<_, CFString>().unwrap().to_string() == "FooBar");
     /// ```
-    pub fn downcast<Raw, T: CFPropertyListSubClass<Raw>>(&self) -> Result<T, ()> {
+    pub fn downcast<Raw, T: CFPropertyListSubClass<Raw>>(&self) -> Result<T, CFPropertyListCastError> {
         if self.instance_of::<_, T>() {
             Ok(unsafe { T::wrap_under_get_rule(self.0 as *const Raw) })
         } else {
-            Err(())
+            Err(CFPropertyListCastError)
         }
     }
 }
+
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CFPropertyListCastError;
+
+impl fmt::Display for CFPropertyListCastError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use ::std::error::Error;
+        f.write_str(self.description())
+    }
+}
+
+impl ::std::error::Error for CFPropertyListCastError {
+    fn description(&self) -> &str {
+        "This CFPropertyList is not an instance of the requested type"
+    }
+}
+
 
 
 #[cfg(test)]

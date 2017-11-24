@@ -73,8 +73,9 @@ impl CFDictionary {
     /// Similar to `contains_key` but acts on a higher level, automatically converting from any
     /// `TCFType` to the raw pointer of its concrete TypeRef.
     #[inline]
-    pub fn contains_key2<X, K: TCFType<ConcreteTypeRef=*const X>>(&self, key: &K) -> bool {
-        self.contains_key(key.as_concrete_TypeRef() as *const c_void)
+    pub fn contains_key2<K: TCFType>(&self, key: &K) -> bool {
+        let type_ref_ptr = &key.as_concrete_TypeRef() as *const _ as *const *const c_void;
+        self.contains_key(unsafe { *type_ref_ptr })
     }
 
     #[inline]
@@ -92,8 +93,9 @@ impl CFDictionary {
     /// Similar to `find` but acts on a higher level, automatically converting from any `TCFType`
     /// to the raw pointer of its concrete TypeRef.
     #[inline]
-    pub fn find2<X, K: TCFType<ConcreteTypeRef=*const X>>(&self, key: &K) -> Option<*const c_void> {
-        self.find(key.as_concrete_TypeRef() as *const c_void)
+    pub fn find2<K: TCFType>(&self, key: &K) -> Option<*const c_void> {
+        let type_ref_ptr = &key.as_concrete_TypeRef() as *const _ as *const *const c_void;
+        self.find(unsafe { *type_ref_ptr })
     }
 
     /// # Panics
@@ -129,5 +131,32 @@ impl CFDictionary {
         }
 
         (keys, values)
+    }
+}
+
+
+#[cfg(test)]
+pub mod test {
+    use super::*;
+    use ::string::CFString;
+    use ::boolean::{CFBoolean, CFBooleanRef};
+
+    #[test]
+    fn dict_find2_and_contains_key2() {
+        let dict = CFDictionary::from_CFType_pairs(&[
+            (
+                CFString::from_static_string("hello"),
+                CFBoolean::true_value(),
+            ),
+        ]);
+        let key = CFString::from_static_string("hello");
+        let invalid_key = CFString::from_static_string("foobar");
+
+        assert!(dict.contains_key2(&key));
+        assert!(!dict.contains_key2(&invalid_key));
+
+        let value = unsafe { CFBoolean::wrap_under_get_rule(dict.find2(&key).unwrap() as CFBooleanRef) };
+        assert_eq!(value, CFBoolean::true_value());
+        assert_eq!(dict.find2(&invalid_key), None);
     }
 }

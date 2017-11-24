@@ -11,7 +11,6 @@
 
 use std::ptr;
 use std::mem;
-use std::fmt;
 
 use libc::c_void;
 
@@ -196,29 +195,12 @@ impl CFPropertyList {
     ///
     /// [`CFPropertyList`]: struct.CFPropertyList.html
     /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
-    pub fn downcast<Raw, T: CFPropertyListSubClass<Raw>>(&self) -> Result<T, CFPropertyListCastError> {
+    pub fn downcast<Raw, T: CFPropertyListSubClass<Raw>>(&self) -> Option<T> {
         if self.instance_of::<_, T>() {
-            Ok(unsafe { T::wrap_under_get_rule(self.0 as *const Raw) })
+            Some(unsafe { T::wrap_under_get_rule(self.0 as *const Raw) })
         } else {
-            Err(CFPropertyListCastError)
+            None
         }
-    }
-}
-
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CFPropertyListCastError;
-
-impl fmt::Display for CFPropertyListCastError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use ::std::error::Error;
-        f.write_str(self.description())
-    }
-}
-
-impl ::std::error::Error for CFPropertyListCastError {
-    fn description(&self) -> &str {
-        "This CFPropertyList is not an instance of the requested type"
     }
 }
 
@@ -261,13 +243,13 @@ pub mod test {
     fn downcast_string() {
         let propertylist = CFString::from_static_string("Bar").to_CFPropertyList();
         assert!(propertylist.downcast::<_, CFString>().unwrap().to_string() == "Bar");
-        assert!(propertylist.downcast::<_, CFBoolean>().is_err());
+        assert!(propertylist.downcast::<_, CFBoolean>().is_none());
     }
 
     #[test]
     fn downcast_boolean() {
         let propertylist = CFBoolean::true_value().to_CFPropertyList();
-        assert!(propertylist.downcast::<_, CFBoolean>().is_ok());
-        assert!(propertylist.downcast::<_, CFString>().is_err());
+        assert!(propertylist.downcast::<_, CFBoolean>().is_some());
+        assert!(propertylist.downcast::<_, CFString>().is_none());
     }
 }

@@ -17,7 +17,9 @@ extern crate chrono;
 #[macro_export]
 macro_rules! impl_TCFType {
     ($ty:ident, $raw:ident, $ty_id:ident) => {
-        impl $crate::base::TCFType<$raw> for $ty {
+        impl $crate::base::TCFType for $ty {
+            type ConcreteTypeRef = $raw;
+
             #[inline]
             fn as_concrete_TypeRef(&self) -> $raw {
                 self.0
@@ -74,7 +76,9 @@ macro_rules! impl_TCFType {
 #[macro_export]
 macro_rules! impl_TCFTypeGeneric {
     ($ty:ident, $raw:ident, $ty_id:ident) => {
-        impl<T> $crate::base::TCFType<$raw> for $ty<T> {
+        impl<T> $crate::base::TCFType for $ty<T> {
+            type ConcreteTypeRef = $raw;
+
             #[inline]
             fn as_concrete_TypeRef(&self) -> $raw {
                 self.0

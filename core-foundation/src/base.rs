@@ -91,16 +91,20 @@ impl CFAllocator {
     }
 }
 
+
 /// All Core Foundation types implement this trait. The type parameter `TypeRef` specifies the
 /// associated Core Foundation type: e.g. for `CFType` this is `CFTypeRef`; for `CFArray` this is
 /// `CFArrayRef`.
-pub trait TCFType<ConcreteTypeRef> {
+pub trait TCFType {
+    /// The reference type wrapped inside this type.
+    type Ref: TCFTypeRef;
+
     /// Returns the object as its concrete TypeRef.
-    fn as_concrete_TypeRef(&self) -> ConcreteTypeRef;
+    fn as_concrete_TypeRef(&self) -> Self::Ref;
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
     /// when following Core Foundation's "Create Rule". The reference count is *not* bumped.
-    unsafe fn wrap_under_create_rule(obj: ConcreteTypeRef) -> Self;
+    unsafe fn wrap_under_create_rule(obj: Self::Ref) -> Self;
 
     /// Returns the type ID for this class.
     fn type_id() -> CFTypeID;
@@ -118,7 +122,7 @@ pub trait TCFType<ConcreteTypeRef> {
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
     /// when following Core Foundation's "Get Rule". The reference count *is* bumped.
-    unsafe fn wrap_under_get_rule(reference: ConcreteTypeRef) -> Self;
+    unsafe fn wrap_under_get_rule(reference: Self::Ref) -> Self;
 
     /// Returns the reference count of the object. It is unwise to do anything other than test
     /// whether the return value of this method is greater than zero.
@@ -146,12 +150,14 @@ pub trait TCFType<ConcreteTypeRef> {
 
     /// Returns true if this value is an instance of another type.
     #[inline]
-    fn instance_of<OtherConcreteTypeRef,OtherCFType:TCFType<OtherConcreteTypeRef>>(&self) -> bool {
-        self.type_of() == <OtherCFType as TCFType<_>>::type_id()
+    fn instance_of<OtherCFType: TCFType>(&self) -> bool {
+        self.type_of() == <OtherCFType as TCFType>::type_id()
     }
 }
 
-impl TCFType<CFTypeRef> for CFType {
+impl TCFType for CFType {
+    type Ref = CFTypeRef;
+
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFTypeRef {
         self.0
@@ -191,7 +197,7 @@ mod tests {
         let string = CFString::from_static_string("foo");
         let cftype = string.as_CFType();
 
-        assert!(cftype.instance_of::<_, CFString>());
-        assert!(!cftype.instance_of::<_, CFBoolean>());
+        assert!(cftype.instance_of::<CFString>());
+        assert!(!cftype.instance_of::<CFBoolean>());
     }
 }

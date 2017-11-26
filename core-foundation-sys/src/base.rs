@@ -80,6 +80,23 @@ pub struct CFAllocatorContext {
     pub preferredSize: CFAllocatorPreferredSizeCallBack
 }
 
+/// Trait for all types which are Core Foundation reference types.
+pub trait TCFReference {
+    fn as_void_ptr(&self) -> *const c_void;
+
+    fn from_void_ptr(ptr: *const c_void) -> Self;
+}
+
+impl<T> TCFReference for *const T {
+    fn as_void_ptr(&self) -> *const c_void {
+        (*self) as *const c_void
+    }
+
+    fn from_void_ptr(ptr: *const c_void) -> Self {
+        ptr as *const T
+    }
+}
+
 extern {
     /*
      * CFBase.h

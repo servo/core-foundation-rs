@@ -15,7 +15,7 @@ use string::CFStringRef;
 #[repr(C)]
 pub struct __CFError(c_void);
 
-pub type CFErrorRef = *mut __CFError;
+pub type CFErrorRef = *const __CFError;
 
 extern "C" {
     pub fn CFErrorGetTypeID() -> CFTypeID;

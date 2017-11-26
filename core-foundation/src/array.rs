@@ -23,25 +23,25 @@ use base::{CFIndexConvertible, TCFType, CFRange};
 pub struct CFArray<T = *const c_void>(CFArrayRef, PhantomData<T>);
 
 /// A trait describing how to convert from the stored *const c_void to the desired T
-pub trait FromVoid {
-    fn from_void(x: *const c_void) -> Self;
+pub unsafe trait FromVoid {
+    unsafe fn from_void(x: *const c_void) -> Self;
 }
 
-impl FromVoid for u32 {
-    fn from_void(x: *const c_void) -> u32 {
+unsafe impl FromVoid for u32 {
+    unsafe fn from_void(x: *const c_void) -> u32 {
         x as usize as u32
     }
 }
 
-impl FromVoid for *const c_void {
-    fn from_void(x: *const c_void) -> *const c_void {
+unsafe impl FromVoid for *const c_void {
+    unsafe fn from_void(x: *const c_void) -> *const c_void {
         x
     }
 }
 
-impl FromVoid for CFType {
-    fn from_void(x: *const c_void) -> CFType {
-        unsafe { TCFType::wrap_under_get_rule(mem::transmute(x)) }
+unsafe impl FromVoid for CFType {
+    unsafe fn from_void(x: *const c_void) -> CFType {
+        TCFType::wrap_under_get_rule(mem::transmute(x))
     }
 }
 
@@ -121,7 +121,7 @@ impl<T> CFArray<T> {
     #[inline]
     pub fn get(&self, index: CFIndex) -> T where T: FromVoid {
         assert!(index < self.len());
-        T::from_void(unsafe { CFArrayGetValueAtIndex(self.0, index) })
+        unsafe { T::from_void(CFArrayGetValueAtIndex(self.0, index)) }
     }
 
     pub fn get_values(&self, range: CFRange) -> Vec<*const c_void> {

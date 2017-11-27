@@ -152,14 +152,14 @@ impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
 
 #[test]
 fn should_box_and_unbox() {
-    use number::{CFNumber, number};
+    use number::CFNumber;
 
-    let n0 = number(0);
-    let n1 = number(1);
-    let n2 = number(2);
-    let n3 = number(3);
-    let n4 = number(4);
-    let n5 = number(5);
+    let n0 = CFNumber::from(0);
+    let n1 = CFNumber::from(1);
+    let n2 = CFNumber::from(2);
+    let n3 = CFNumber::from(3);
+    let n4 = CFNumber::from(4);
+    let n5 = CFNumber::from(5);
 
     let arr = CFArray::from_CFTypes(&[
         n0.as_CFType(),

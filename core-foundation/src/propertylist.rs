@@ -216,7 +216,7 @@ pub mod test {
     fn test_property_list_serialization() {
         use base::{TCFType, CFEqual};
         use boolean::CFBoolean;
-        use number::number;
+        use number::CFNumber;
         use dictionary::CFDictionary;
         use string::CFString;
         use super::*;
@@ -226,7 +226,7 @@ pub mod test {
         let boo = CFString::from_static_string("Boo");
         let foo = CFString::from_static_string("Foo");
         let tru = CFBoolean::true_value();
-        let n42 = number(42);
+        let n42 = CFNumber::from(42);
 
         let dict1 = CFDictionary::from_CFType_pairs(&[(bar.as_CFType(), boo.as_CFType()),
                                                       (baz.as_CFType(), tru.as_CFType()),

@@ -94,8 +94,13 @@ impl<T> CFArray<T> {
         }
     }
 
+    #[deprecated(note = "please use `as_untyped` instead")]
     pub fn to_untyped(self) -> CFArray {
-        CFArray(self.0, PhantomData)
+        unsafe { CFArray::wrap_under_get_rule(self.0) }
+    }
+
+    pub fn as_untyped(&self) -> CFArray {
+        unsafe { CFArray::wrap_under_get_rule(self.0) }
     }
 
     /// Iterates over the elements of this `CFArray`.

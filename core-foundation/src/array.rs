@@ -165,6 +165,15 @@ mod tests {
         let array = CFArray::<CFType>::from_CFTypes(&[]);
         assert_eq!(array.retain_count(), 1);
 
+        let untyped_array = array.to_untyped();
+        assert_eq!(untyped_array.retain_count(), 1);
+    }
+
+    #[test]
+    fn as_untyped_correct_retain_count() {
+        let array = CFArray::<CFType>::from_CFTypes(&[]);
+        assert_eq!(array.retain_count(), 1);
+
         let untyped_array = array.as_untyped();
         assert_eq!(array.retain_count(), 2);
         assert_eq!(untyped_array.retain_count(), 2);

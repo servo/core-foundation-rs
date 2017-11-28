@@ -178,10 +178,20 @@ impl TCFType<CFTypeRef> for CFType {
         // FIXME(pcwalton): Is this right?
         0
     }
+}
 
-    #[inline]
-    fn instance_of<OtherConcreteTypeRef,OtherCFType:TCFType<OtherConcreteTypeRef>>(&self) -> bool {
-        // Since this is the root of the type hierarchy, we always answer yes.
-        true
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use boolean::CFBoolean;
+
+    #[test]
+    fn cftype_instance_of() {
+        let string = CFString::from_static_string("foo");
+        let cftype = string.as_CFType();
+
+        assert!(cftype.instance_of::<_, CFString>());
+        assert!(!cftype.instance_of::<_, CFBoolean>());
     }
 }

@@ -155,53 +155,72 @@ impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
     }
 }
 
-#[test]
-fn should_box_and_unbox() {
-    use number::CFNumber;
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::mem;
 
-    let n0 = CFNumber::from(0);
-    let n1 = CFNumber::from(1);
-    let n2 = CFNumber::from(2);
-    let n3 = CFNumber::from(3);
-    let n4 = CFNumber::from(4);
-    let n5 = CFNumber::from(5);
+    #[test]
+    fn to_untyped_correct_retain_count() {
+        let array = CFArray::<CFType>::from_CFTypes(&[]);
+        assert_eq!(array.retain_count(), 1);
 
-    let arr = CFArray::from_CFTypes(&[
-        n0.as_CFType(),
-        n1.as_CFType(),
-        n2.as_CFType(),
-        n3.as_CFType(),
-        n4.as_CFType(),
-        n5.as_CFType(),
-    ]);
+        let untyped_array = array.as_untyped();
+        assert_eq!(array.retain_count(), 2);
+        assert_eq!(untyped_array.retain_count(), 2);
 
-    assert!(arr.get_all_values() == &[n0.as_CFTypeRef(),
-                                      n1.as_CFTypeRef(),
-                                      n2.as_CFTypeRef(),
-                                      n3.as_CFTypeRef(),
-                                      n4.as_CFTypeRef(),
-                                      n5.as_CFTypeRef()]);
+        mem::drop(array);
+        assert_eq!(untyped_array.retain_count(), 1);
+    }
 
-    unsafe {
-        let mut sum = 0;
+    #[test]
+    fn should_box_and_unbox() {
+        use number::CFNumber;
 
-        let mut iter = arr.iter();
-        assert_eq!(iter.len(), 6);
-        assert!(iter.next().is_some());
-        assert_eq!(iter.len(), 5);
+        let n0 = CFNumber::from(0);
+        let n1 = CFNumber::from(1);
+        let n2 = CFNumber::from(2);
+        let n3 = CFNumber::from(3);
+        let n4 = CFNumber::from(4);
+        let n5 = CFNumber::from(5);
 
-        for elem in iter {
-            let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
-            sum += number.to_i64().unwrap()
+        let arr = CFArray::from_CFTypes(&[
+            n0.as_CFType(),
+            n1.as_CFType(),
+            n2.as_CFType(),
+            n3.as_CFType(),
+            n4.as_CFType(),
+            n5.as_CFType(),
+        ]);
+
+        assert!(arr.get_all_values() == &[n0.as_CFTypeRef(),
+                                        n1.as_CFTypeRef(),
+                                        n2.as_CFTypeRef(),
+                                        n3.as_CFTypeRef(),
+                                        n4.as_CFTypeRef(),
+                                        n5.as_CFTypeRef()]);
+
+        unsafe {
+            let mut sum = 0;
+
+            let mut iter = arr.iter();
+            assert_eq!(iter.len(), 6);
+            assert!(iter.next().is_some());
+            assert_eq!(iter.len(), 5);
+
+            for elem in iter {
+                let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
+                sum += number.to_i64().unwrap()
+            }
+
+            assert!(sum == 15);
+
+            for elem in arr.iter() {
+                let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
+                sum += number.to_i64().unwrap()
+            }
+
+            assert!(sum == 30);
         }
-
-        assert!(sum == 15);
-
-        for elem in arr.iter() {
-            let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
-            sum += number.to_i64().unwrap()
-        }
-
-        assert!(sum == 30);
     }
 }

@@ -102,7 +102,9 @@ impl Clone for CTFont {
     }
 }
 
-impl TCFType<CTFontRef> for CTFont {
+impl TCFType for CTFont {
+    type Ref = CTFontRef;
+
     #[inline]
     fn as_concrete_TypeRef(&self) -> CTFontRef {
         self.obj

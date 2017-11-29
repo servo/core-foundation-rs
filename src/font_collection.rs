@@ -40,7 +40,9 @@ impl Drop for CTFontCollection {
     }
 }
 
-impl TCFType<CTFontCollectionRef> for CTFontCollection {
+impl TCFType for CTFontCollection {
+    type Ref = CTFontCollectionRef;
+
     #[inline]
     fn as_concrete_TypeRef(&self) -> CTFontCollectionRef {
         self.obj

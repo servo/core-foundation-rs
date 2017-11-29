@@ -63,7 +63,9 @@ impl Clone for IOSurface {
     }
 }
 
-impl TCFType<IOSurfaceRef> for IOSurface {
+impl TCFType for IOSurface {
+    type Ref = IOSurfaceRef;
+
     #[inline]
     fn as_concrete_TypeRef(&self) -> IOSurfaceRef {
         self.obj

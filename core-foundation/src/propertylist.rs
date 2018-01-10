@@ -152,7 +152,7 @@ impl CFPropertyList {
     /// Returns true if this value is an instance of another type.
     #[inline]
     pub fn instance_of<OtherCFType: TCFType>(&self) -> bool {
-        self.type_of() == <OtherCFType as TCFType>::type_id()
+        self.type_of() == OtherCFType::type_id()
     }
 }
 
@@ -196,7 +196,7 @@ impl CFPropertyList {
     pub fn downcast<T: CFPropertyListSubClass>(&self) -> Option<T> {
         if self.instance_of::<T>() {
             unsafe {
-                let subclass_ref = <T as TCFType>::Ref::from_void_ptr(self.0);
+                let subclass_ref = T::Ref::from_void_ptr(self.0);
                 Some(T::wrap_under_get_rule(subclass_ref))
             }
         } else {

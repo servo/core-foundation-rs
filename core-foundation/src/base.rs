@@ -151,7 +151,7 @@ pub trait TCFType {
     /// Returns true if this value is an instance of another type.
     #[inline]
     fn instance_of<OtherCFType: TCFType>(&self) -> bool {
-        self.type_of() == <OtherCFType as TCFType>::type_id()
+        self.type_of() == OtherCFType::type_id()
     }
 }
 

@@ -94,11 +94,6 @@ impl<T> CFArray<T> {
         }
     }
 
-    #[deprecated(note = "please use `as_untyped` instead")]
-    pub fn to_untyped(self) -> CFArray {
-        unsafe { CFArray::wrap_under_get_rule(self.0) }
-    }
-
     pub fn as_untyped(&self) -> CFArray {
         unsafe { CFArray::wrap_under_get_rule(self.0) }
     }
@@ -159,15 +154,6 @@ impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
 mod tests {
     use super::*;
     use std::mem;
-
-    #[test]
-    fn to_untyped_correct_retain_count() {
-        let array = CFArray::<CFType>::from_CFTypes(&[]);
-        assert_eq!(array.retain_count(), 1);
-
-        let untyped_array = array.to_untyped();
-        assert_eq!(untyped_array.retain_count(), 1);
-    }
 
     #[test]
     fn as_untyped_correct_retain_count() {

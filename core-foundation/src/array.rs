@@ -47,9 +47,7 @@ unsafe impl FromVoid for CFType {
 
 impl<T> Drop for CFArray<T> {
     fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
+        unsafe { CFRelease(self.as_CFTypeRef()) }
     }
 }
 

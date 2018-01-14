@@ -79,28 +79,25 @@ impl CFPropertyListSubClass<::date::__CFDate> for ::date::CFDate {}
 impl CFPropertyListSubClass<::number::__CFBoolean> for ::boolean::CFBoolean {}
 impl CFPropertyListSubClass<::number::__CFNumber> for ::number::CFNumber {}
 
-/// A CFPropertyList struct. This is superclass to [`CFData`], [`CFString`], [`CFArray`],
-/// [`CFDictionary`], [`CFDate`], [`CFBoolean`], and [`CFNumber`].
-///
-/// This superclass type does not have its own `CFTypeID`, instead each instance has the `CFTypeID`
-/// of the subclass it is an instance of. Thus, this type cannot implement the [`TCFType`] trait,
-/// since it cannot implement the static [`TCFType::type_id()`] method.
-///
-/// [`CFData`]: ../data/struct.CFData.html
-/// [`CFString`]: ../string/struct.CFString.html
-/// [`CFArray`]: ../array/struct.CFArray.html
-/// [`CFDictionary`]: ../dictionary/struct.CFDictionary.html
-/// [`CFDate`]: ../date/struct.CFDate.html
-/// [`CFBoolean`]: ../boolean/struct.CFBoolean.html
-/// [`CFNumber`]: ../number/struct.CFNumber.html
-/// [`TCFType`]: ../base/trait.TCFType.html
-/// [`TCFType::type_id()`]: ../base/trait.TCFType.html#method.type_of
-pub struct CFPropertyList(CFPropertyListRef);
 
-impl Drop for CFPropertyList {
-    fn drop(&mut self) {
-        unsafe { CFRelease(self.as_CFTypeRef()) }
-    }
+declare_TCFType!{
+    /// A CFPropertyList struct. This is superclass to [`CFData`], [`CFString`], [`CFArray`],
+    /// [`CFDictionary`], [`CFDate`], [`CFBoolean`], and [`CFNumber`].
+    ///
+    /// This superclass type does not have its own `CFTypeID`, instead each instance has the `CFTypeID`
+    /// of the subclass it is an instance of. Thus, this type cannot implement the [`TCFType`] trait,
+    /// since it cannot implement the static [`TCFType::type_id()`] method.
+    ///
+    /// [`CFData`]: ../data/struct.CFData.html
+    /// [`CFString`]: ../string/struct.CFString.html
+    /// [`CFArray`]: ../array/struct.CFArray.html
+    /// [`CFDictionary`]: ../dictionary/struct.CFDictionary.html
+    /// [`CFDate`]: ../date/struct.CFDate.html
+    /// [`CFBoolean`]: ../boolean/struct.CFBoolean.html
+    /// [`CFNumber`]: ../number/struct.CFNumber.html
+    /// [`TCFType`]: ../base/trait.TCFType.html
+    /// [`TCFType::type_id()`]: ../base/trait.TCFType.html#method.type_of
+    CFPropertyList, CFPropertyListRef
 }
 
 impl CFPropertyList {

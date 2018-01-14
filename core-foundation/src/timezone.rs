@@ -18,17 +18,11 @@ use date::{CFDate, CFTimeInterval};
 #[cfg(feature = "with-chrono")]
 use chrono::{FixedOffset, NaiveDateTime};
 
-/// A time zone.
-pub struct CFTimeZone(CFTimeZoneRef);
 
-impl Drop for CFTimeZone {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    /// A time zone.
+    CFTimeZone, CFTimeZoneRef
 }
-
 impl_TCFType!(CFTimeZone, CFTimeZoneRef, CFTimeZoneGetTypeID);
 impl_CFTypeDescription!(CFTimeZone);
 

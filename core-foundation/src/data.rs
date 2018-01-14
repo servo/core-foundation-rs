@@ -17,17 +17,11 @@ use std::slice;
 
 use base::{CFIndexConvertible, TCFType};
 
-/// A byte buffer.
-pub struct CFData(CFDataRef);
 
-impl Drop for CFData {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    /// A byte buffer.
+    CFData, CFDataRef
 }
-
 impl_TCFType!(CFData, CFDataRef, CFDataGetTypeID);
 impl_CFTypeDescription!(CFData);
 

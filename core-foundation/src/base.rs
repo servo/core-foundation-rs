@@ -30,8 +30,10 @@ impl CFIndexConvertible for usize {
     }
 }
 
-/// Superclass of all Core Foundation objects.
-pub struct CFType(CFTypeRef);
+declare_TCFType!{
+    /// Superclass of all Core Foundation objects.
+    CFType, CFTypeRef
+}
 
 impl fmt::Debug for CFType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -60,25 +62,7 @@ impl PartialEq for CFType {
     }
 }
 
-impl Drop for CFType {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.0)
-        }
-    }
-}
-
-/// An allocator for Core Foundation objects.
-pub struct CFAllocator(CFAllocatorRef);
-
-impl Drop for CFAllocator {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
+declare_TCFType!(CFAllocator, CFAllocatorRef);
 impl_TCFType!(CFAllocator, CFAllocatorRef, CFAllocatorGetTypeID);
 
 impl CFAllocator {

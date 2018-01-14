@@ -15,6 +15,23 @@ extern crate libc;
 extern crate chrono;
 
 #[macro_export]
+macro_rules! declare_TCFType {
+    (
+        $(#[$doc:meta])*
+        $ty:ident, $raw:ident
+    ) => {
+        $(#[$doc])*
+        pub struct $ty($raw);
+
+        impl Drop for $ty {
+            fn drop(&mut self) {
+                unsafe { CFRelease(self.as_CFTypeRef()) }
+            }
+        }
+    }
+}
+
+#[macro_export]
 macro_rules! impl_TCFType {
     ($ty:ident, $raw:ident, $ty_id:ident) => {
         impl $crate::base::TCFType<$raw> for $ty {

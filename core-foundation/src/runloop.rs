@@ -20,16 +20,8 @@ use string::{CFString};
 
 pub type CFRunLoopMode = CFStringRef;
 
-pub struct CFRunLoop(CFRunLoopRef);
 
-impl Drop for CFRunLoop {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
+declare_TCFType!(CFRunLoop, CFRunLoopRef);
 impl_TCFType!(CFRunLoop, CFRunLoopRef, CFRunLoopGetTypeID);
 impl_CFTypeDescription!(CFRunLoop);
 
@@ -128,16 +120,8 @@ impl CFRunLoop {
 
 }
 
-pub struct CFRunLoopTimer(CFRunLoopTimerRef);
 
-impl Drop for CFRunLoopTimer {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
+declare_TCFType!(CFRunLoopTimer, CFRunLoopTimerRef);
 impl_TCFType!(CFRunLoopTimer, CFRunLoopTimerRef, CFRunLoopTimerGetTypeID);
 
 impl CFRunLoopTimer {
@@ -150,29 +134,10 @@ impl CFRunLoopTimer {
 }
 
 
-pub struct CFRunLoopSource(CFRunLoopSourceRef);
-
-impl Drop for CFRunLoopSource {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
+declare_TCFType!(CFRunLoopSource, CFRunLoopSourceRef);
 impl_TCFType!(CFRunLoopSource, CFRunLoopSourceRef, CFRunLoopSourceGetTypeID);
 
-
-pub struct CFRunLoopObserver(CFRunLoopObserverRef);
-
-impl Drop for CFRunLoopObserver {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
+declare_TCFType!(CFRunLoopObserver, CFRunLoopObserverRef);
 impl_TCFType!(CFRunLoopObserver, CFRunLoopObserverRef, CFRunLoopObserverGetTypeID);
 
 #[cfg(test)]

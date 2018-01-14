@@ -20,17 +20,11 @@ use std::str::{self, FromStr};
 use std::ptr;
 use std::ffi::CStr;
 
-/// An immutable string in one of a variety of encodings.
-pub struct CFString(CFStringRef);
 
-impl Drop for CFString {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    /// An immutable string in one of a variety of encodings.
+    CFString, CFStringRef
 }
-
 impl_TCFType!(CFString, CFStringRef, CFStringGetTypeID);
 
 impl FromStr for CFString {

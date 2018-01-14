@@ -17,17 +17,11 @@ use base::{CFIndexConvertible, TCFType};
 
 use std::mem;
 
-/// An immutable bag of elements.
-pub struct CFSet(CFSetRef);
 
-impl Drop for CFSet {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    /// An immutable bag of elements.
+    CFSet, CFSetRef
 }
-
 impl_TCFType!(CFSet, CFSetRef, CFSetGetTypeID);
 impl_CFTypeDescription!(CFSet);
 

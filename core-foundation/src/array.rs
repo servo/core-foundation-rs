@@ -207,27 +207,25 @@ mod tests {
                                         n4.as_CFTypeRef(),
                                         n5.as_CFTypeRef()]);
 
-        unsafe {
-            let mut sum = 0;
+        let mut sum = 0;
 
-            let mut iter = arr.iter();
-            assert_eq!(iter.len(), 6);
-            assert!(iter.next().is_some());
-            assert_eq!(iter.len(), 5);
+        let mut iter = arr.iter();
+        assert_eq!(iter.len(), 6);
+        assert!(iter.next().is_some());
+        assert_eq!(iter.len(), 5);
 
-            for elem in iter {
-                let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
-                sum += number.to_i64().unwrap()
-            }
-
-            assert!(sum == 15);
-
-            for elem in arr.iter() {
-                let number: CFNumber = TCFType::wrap_under_get_rule(mem::transmute(elem));
-                sum += number.to_i64().unwrap()
-            }
-
-            assert!(sum == 30);
+        for elem in iter {
+            let number: CFNumber = elem.downcast::<_, CFNumber>().unwrap();
+            sum += number.to_i64().unwrap()
         }
+
+        assert!(sum == 15);
+
+        for elem in arr.iter() {
+            let number: CFNumber = elem.downcast::<_, CFNumber>().unwrap();
+            sum += number.to_i64().unwrap()
+        }
+
+        assert!(sum == 30);
     }
 }

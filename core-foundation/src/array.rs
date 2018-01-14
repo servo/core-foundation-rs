@@ -12,7 +12,6 @@
 pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
-use base::CFType;
 use libc::c_void;
 use std::mem;
 use std::marker::PhantomData;
@@ -33,15 +32,15 @@ unsafe impl FromVoid for u32 {
     }
 }
 
-unsafe impl FromVoid for *const c_void {
-    unsafe fn from_void(x: *const c_void) -> *const c_void {
-        x
+unsafe impl<T> FromVoid for *const T {
+    unsafe fn from_void(x: *const c_void) -> Self {
+        mem::transmute(x)
     }
 }
 
-unsafe impl FromVoid for CFType {
-    unsafe fn from_void(x: *const c_void) -> CFType {
-        TCFType::wrap_under_get_rule(mem::transmute(x))
+unsafe impl<T: TCFType> FromVoid for T where T::Ref: FromVoid {
+    unsafe fn from_void(x: *const c_void) -> Self {
+        TCFType::wrap_under_get_rule(T::Ref::from_void(x))
     }
 }
 

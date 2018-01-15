@@ -66,10 +66,15 @@ pub trait CFPropertyListSubClass<Raw>: TCFType<*const Raw> {
     /// Create an instance of the superclass type [`CFPropertyList`] for this instance.
     ///
     /// [`CFPropertyList`]: struct.CFPropertyList.html
+    #[inline]
     fn to_CFPropertyList(&self) -> CFPropertyList {
         unsafe { CFPropertyList::wrap_under_get_rule(self.as_concrete_TypeRef() as *const c_void) }
     }
 
+    /// Equal to [`to_CFPropertyList`], but consumes self and avoids changing the reference count.
+    ///
+    /// [`to_CFPropertyList`]: #method.to_CFPropertyList
+    #[inline]
     fn into_CFPropertyList(self) -> CFPropertyList
     where Self: Sized
     {
@@ -189,9 +194,9 @@ impl PartialEq for CFPropertyList {
 impl Eq for CFPropertyList {}
 
 impl CFPropertyList {
-    /// Try to downcast the [`CFPropertyList`] to a subclass. Checking if the instance is the correct
-    /// subclass happens at runtime and an error is returned if it is not the correct type.
-    /// Works similar to [`Box::downcast`].
+    /// Try to downcast the [`CFPropertyList`] to a subclass. Checking if the instance is the
+    /// correct subclass happens at runtime and `None` is returned if it is not the correct type.
+    /// Works similar to [`Box::downcast`] and [`CFType::downcast`].
     ///
     /// # Examples
     ///
@@ -209,6 +214,7 @@ impl CFPropertyList {
     ///
     /// [`CFPropertyList`]: struct.CFPropertyList.html
     /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
+    /// [`CFType::downcast`]: ../base/struct.CFType.html#method.downcast
     pub fn downcast<Raw, T: CFPropertyListSubClass<Raw>>(&self) -> Option<T> {
         if self.instance_of::<_, T>() {
             Some(unsafe { T::wrap_under_get_rule(self.0 as *const Raw) })
@@ -218,6 +224,8 @@ impl CFPropertyList {
     }
 
     /// Similar to [`downcast`], but consumes self and can thus avoid touching the retain count.
+    ///
+    /// [`downcast`]: #method.downcast
     pub fn downcast_into<Raw, T: CFPropertyListSubClass<Raw>>(self) -> Option<T> {
         if self.instance_of::<_, T>() {
             let reference = self.0 as *const Raw;

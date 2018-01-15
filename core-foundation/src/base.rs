@@ -37,6 +37,30 @@ declare_TCFType!{
 }
 
 impl CFType {
+    /// Try to downcast the `CFType` to a subclass. Checking if the instance is the
+    /// correct subclass happens at runtime and `None` is returned if it is not the correct type.
+    /// Works similar to [`Box::downcast`] and [`CFPropertyList::downcast`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use core_foundation::string::CFString;
+    /// # use core_foundation::boolean::CFBoolean;
+    /// # use core_foundation::base::{CFType, TCFType};
+    /// #
+    /// // Create a string.
+    /// let string: CFString = CFString::from_static_string("FooBar");
+    /// // Cast it up to a CFType.
+    /// let cf_type: CFType = string.as_CFType();
+    /// // Cast it down again.
+    /// assert!(cf_type.downcast::<_, CFString>().unwrap().to_string() == "FooBar");
+    /// // Casting it to some other type will yield `None`
+    /// assert!(cf_type.downcast::<_, CFBoolean>().is_none());
+    /// ```
+    ///
+    /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
+    /// [`CFPropertyList::downcast`]: ../propertylist/struct.CFPropertyList.html#method.downcast
+    #[inline]
     pub fn downcast<Raw, T: TCFType<*const Raw>>(&self) -> Option<T> {
         if self.instance_of::<_, T>() {
             unsafe {
@@ -47,6 +71,10 @@ impl CFType {
         }
     }
 
+    /// Similar to [`downcast`], but consumes self and can thus avoid touching the retain count.
+    ///
+    /// [`downcast`]: #method.downcast
+    #[inline]
     pub fn downcast_into<Raw, T: TCFType<*const Raw>>(self) -> Option<T> {
         if self.instance_of::<_, T>() {
             let reference = self.0 as *const Raw;

@@ -94,5 +94,98 @@ impl CFRunLoopSource {
 
 #[cfg(test)]
 mod test {
+    extern crate libc;
+
     use super::*;
+    use std::ffi::CString;
+    use libc::{c_void, O_RDWR};
+    use core_foundation_sys::base::{CFOptionFlags};
+    use core_foundation_sys::runloop::{kCFRunLoopDefaultMode};
+    use runloop::{CFRunLoop};
+
+    #[test]
+    fn test_consumed() {
+        let path = CString::new("/dev/null").unwrap();
+        let raw_fd = unsafe { libc::open(path.as_ptr(), O_RDWR, 0) };
+        let cf_fd = CFFileDescriptor::new(raw_fd, true, never_callback, None);
+
+        assert!(cf_fd.valid());
+        cf_fd.invalidate();
+
+        // close() should fail
+        assert_eq!(unsafe { libc::close(raw_fd) }, -1);
+    }
+
+    #[test]
+    fn test_unconsumed() {
+        let path = CString::new("/dev/null").unwrap();
+        let raw_fd = unsafe { libc::open(path.as_ptr(), O_RDWR, 0) };
+        let cf_fd = CFFileDescriptor::new(raw_fd, false, never_callback, None);
+
+        assert!(cf_fd.valid());
+        cf_fd.invalidate();
+
+        // close() should succeed
+        assert_eq!(unsafe { libc::close(raw_fd) }, 0);
+    }
+
+    extern "C" fn never_callback(_f: CFFileDescriptorRef,
+                                 _callback_types: CFOptionFlags,
+                                 _info_ptr: *mut c_void) {
+        // should never be called
+        assert!(false);
+    }
+
+    struct TestInfo {
+        value: CFOptionFlags
+    }
+
+    #[test]
+    fn test_callback() {
+        let mut info = TestInfo { value: 0 };
+        let context = CFFileDescriptorContext {
+            version: 0,
+            info: &mut info as *mut _ as *mut c_void,
+            retain: None,
+            release: None,
+            copyDescription: None
+        };
+
+        let path = CString::new("/dev/null").unwrap();
+        let raw_fd = unsafe { libc::open(path.as_ptr(), O_RDWR, 0) };
+        let cf_fd = CFFileDescriptor::new(raw_fd, true, callback, Some(&context));
+
+        assert!(cf_fd.valid());
+
+        let runloop = CFRunLoop::get_current();
+        let source = CFRunLoopSource::from_file_descriptor(&cf_fd, 0);
+        unsafe {
+            runloop.add_source(&source, kCFRunLoopDefaultMode);
+        }
+
+        info.value = 0;
+        cf_fd.enable_callbacks(kCFFileDescriptorReadCallBack);
+        CFRunLoop::run_current();
+        assert_eq!(info.value, kCFFileDescriptorReadCallBack);
+
+        info.value = 0;
+        cf_fd.enable_callbacks(kCFFileDescriptorWriteCallBack);
+        CFRunLoop::run_current();
+        assert_eq!(info.value, kCFFileDescriptorWriteCallBack);
+
+        info.value = 0;
+        cf_fd.disable_callbacks(kCFFileDescriptorReadCallBack|kCFFileDescriptorWriteCallBack);
+
+        cf_fd.invalidate();
+    }
+
+    extern "C" fn callback(_f: CFFileDescriptorRef, callback_types: CFOptionFlags, info_ptr: *mut c_void) {
+        assert!(info_ptr != ptr::null_mut());
+
+        let info: *mut TestInfo = info_ptr as *mut TestInfo;
+
+        unsafe { (*info).value = callback_types };
+
+        CFRunLoop::get_current().stop();
+    }
 }

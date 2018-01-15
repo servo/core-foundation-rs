@@ -81,6 +81,17 @@ impl AsRawFd for CFFileDescriptor {
     }
 }
 
+use runloop::{CFRunLoopSource};
+
+impl CFRunLoopSource {
+    pub fn from_file_descriptor(fd: &CFFileDescriptor, order: CFIndex) -> CFRunLoopSource {
+        unsafe {
+            let source_ref = CFFileDescriptorCreateRunLoopSource(kCFAllocatorDefault, fd.0, order);
+            TCFType::wrap_under_create_rule(source_ref)
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

@@ -5,7 +5,9 @@ use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 
 use base::{TCFType};
 
+use std::mem;
 use std::os::unix::io::{AsRawFd, RawFd};
+use std::ptr;
 
 pub struct CFFileDescriptor(CFFileDescriptorRef);
 
@@ -20,16 +22,30 @@ impl Drop for CFFileDescriptor {
 impl_TCFType!(CFFileDescriptor, CFFileDescriptorRef, CFFileDescriptorGetTypeID);
 
 impl CFFileDescriptor {
-    pub unsafe fn new(fd: RawFd,
-                      closeOnInvalidate: bool,
-                      callout: CFFileDescriptorCallBack,
-                      context: *const CFFileDescriptorContext) -> CFFileDescriptor {
-        let fd_ref = CFFileDescriptorCreate(kCFAllocatorDefault,
-                                            fd,
-                                            closeOnInvalidate as Boolean,
-                                            callout,
-                                            context);
-        TCFType::wrap_under_create_rule(fd_ref)
+    pub fn new(fd: RawFd,
+               closeOnInvalidate: bool,
+               callout: CFFileDescriptorCallBack,
+               context: Option<&CFFileDescriptorContext>) -> CFFileDescriptor {
+        unsafe {
+            let fd_ref = CFFileDescriptorCreate(kCFAllocatorDefault,
+                                                fd,
+                                                closeOnInvalidate as Boolean,
+                                                callout,
+                                                if let Some(context) = context {
+                                                    context
+                                                } else {
+                                                    ptr::null()
+                                                });
+            TCFType::wrap_under_create_rule(fd_ref)
+        }
+    }
+
+    pub fn context(&self) -> CFFileDescriptorContext {
+        unsafe {
+            let mut context: CFFileDescriptorContext = mem::uninitialized();
+            CFFileDescriptorGetContext(self.0, &mut context);
+            context
+        }
     }
 
     pub fn enable_callbacks(&self, callback_types: CFOptionFlags) {

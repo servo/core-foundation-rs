@@ -5,7 +5,7 @@ os: osx
 script:
   - cd core-foundation
   - cargo build --verbose
-  - cargo test --verbose
+  - cargo test --verbose -- --nocapture
 
 notifications:
   webhooks: http://build.servo.org:54856/travis

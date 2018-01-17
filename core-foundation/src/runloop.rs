@@ -181,14 +181,21 @@ mod test {
     use date::{CFDate, CFAbsoluteTime};
     use std::mem;
     use libc::c_void;
+    use std::sync::mpsc;
 
     #[test]
     fn wait_200_milliseconds() {
         let run_loop = CFRunLoop::get_current();
-        let mut now = CFDate::now().abs_time();
+
+        let now = CFDate::now().abs_time();
+        let (elapsed_tx, elapsed_rx) = mpsc::channel();
+        let mut info = Info {
+            start_time: now,
+            elapsed_tx,
+        };
         let mut context = unsafe { CFRunLoopTimerContext {
             version: 0,
-            info: mem::transmute(&mut now),
+            info: &mut info as *mut _ as *mut c_void,
             retain: mem::zeroed(),
             release: mem::zeroed(),
             copyDescription: mem::zeroed(),
@@ -200,13 +207,21 @@ mod test {
             run_loop.add_timer(&run_loop_timer, kCFRunLoopDefaultMode);
         }
         CFRunLoop::run_current();
+        let elapsed = elapsed_rx.try_recv().unwrap();
+        println!("wait_200_milliseconds, elapsed: {}", elapsed);
+        assert!(elapsed > 0.19 && elapsed < 0.30);
     }
 
-    extern "C" fn timer_popped(_timer: CFRunLoopTimerRef, info: *mut c_void) {
-        let previous_now_ptr: *const CFAbsoluteTime = unsafe { mem::transmute(info) };
-        let previous_now = unsafe { *previous_now_ptr };
+    struct Info {
+        start_time: CFAbsoluteTime,
+        elapsed_tx: mpsc::Sender<f64>,
+    }
+
+    extern "C" fn timer_popped(_timer: CFRunLoopTimerRef, raw_info: *mut c_void) {
+        let info: *mut Info = unsafe { mem::transmute(raw_info) };
         let now = CFDate::now().abs_time();
-        assert!(now - previous_now > 0.19 && now - previous_now < 0.21);
+        let elapsed = now - unsafe { (*info).start_time };
+        let _ = unsafe { (*info).elapsed_tx.send(elapsed) };
         CFRunLoop::get_current().stop();
     }
 }

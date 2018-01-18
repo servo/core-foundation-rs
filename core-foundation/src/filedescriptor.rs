@@ -26,16 +26,13 @@ impl CFFileDescriptor {
                closeOnInvalidate: bool,
                callout: CFFileDescriptorCallBack,
                context: Option<&CFFileDescriptorContext>) -> Option<CFFileDescriptor> {
+        let context = context.map_or(ptr::null(), |c| c as *const _);
         unsafe {
             let fd_ref = CFFileDescriptorCreate(kCFAllocatorDefault,
                                                 fd,
                                                 closeOnInvalidate as Boolean,
                                                 callout,
-                                                if let Some(context) = context {
-                                                    context
-                                                } else {
-                                                    ptr::null()
-                                                });
+                                                context);
             if fd_ref.is_null() {
                 None
             } else {
@@ -121,6 +118,7 @@ mod test {
 
         assert!(cf_fd.valid());
         cf_fd.invalidate();
+        assert!(!cf_fd.valid());
 
         // close() should fail
         assert_eq!(unsafe { libc::close(raw_fd) }, -1);
@@ -136,6 +134,7 @@ mod test {
 
         assert!(cf_fd.valid());
         cf_fd.invalidate();
+        assert!(!cf_fd.valid());
 
         // close() should succeed
         assert_eq!(unsafe { libc::close(raw_fd) }, 0);
@@ -144,8 +143,7 @@ mod test {
     extern "C" fn never_callback(_f: CFFileDescriptorRef,
                                  _callback_types: CFOptionFlags,
                                  _info_ptr: *mut c_void) {
-        // should never be called
-        assert!(false);
+        unreachable!();
     }
 
     struct TestInfo {
@@ -189,13 +187,14 @@ mod test {
         assert_eq!(info.value, kCFFileDescriptorWriteCallBack);
 
         info.value = 0;
-        cf_fd.disable_callbacks(kCFFileDescriptorReadCallBack|kCFFileDescriptorWriteCallBack);
+        cf_fd.disable_callbacks(kCFFileDescriptorReadCallBack | kCFFileDescriptorWriteCallBack);
 
         cf_fd.invalidate();
+        assert!(!cf_fd.valid());
     }
 
     extern "C" fn callback(_f: CFFileDescriptorRef, callback_types: CFOptionFlags, info_ptr: *mut c_void) {
-        assert!(info_ptr != ptr::null_mut());
+        assert!(!info_ptr.is_null());
 
         let info: *mut TestInfo = info_ptr as *mut TestInfo;
 

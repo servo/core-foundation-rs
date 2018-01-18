@@ -25,7 +25,7 @@ impl CFFileDescriptor {
     pub fn new(fd: RawFd,
                closeOnInvalidate: bool,
                callout: CFFileDescriptorCallBack,
-               context: Option<&CFFileDescriptorContext>) -> CFFileDescriptor {
+               context: Option<&CFFileDescriptorContext>) -> Option<CFFileDescriptor> {
         unsafe {
             let fd_ref = CFFileDescriptorCreate(kCFAllocatorDefault,
                                                 fd,
@@ -36,7 +36,11 @@ impl CFFileDescriptor {
                                                 } else {
                                                     ptr::null()
                                                 });
-            TCFType::wrap_under_create_rule(fd_ref)
+            if fd_ref.is_null() {
+                None
+            } else {
+                Some(TCFType::wrap_under_create_rule(fd_ref))
+            }
         }
     }
 
@@ -84,10 +88,14 @@ impl AsRawFd for CFFileDescriptor {
 use runloop::{CFRunLoopSource};
 
 impl CFRunLoopSource {
-    pub fn from_file_descriptor(fd: &CFFileDescriptor, order: CFIndex) -> CFRunLoopSource {
+    pub fn from_file_descriptor(fd: &CFFileDescriptor, order: CFIndex) -> Option<CFRunLoopSource> {
         unsafe {
             let source_ref = CFFileDescriptorCreateRunLoopSource(kCFAllocatorDefault, fd.0, order);
-            TCFType::wrap_under_create_rule(source_ref)
+            if source_ref.is_null() {
+                None
+            } else {
+                Some(TCFType::wrap_under_create_rule(source_ref))
+            }
         }
     }
 }
@@ -108,6 +116,8 @@ mod test {
         let path = CString::new("/dev/null").unwrap();
         let raw_fd = unsafe { libc::open(path.as_ptr(), O_RDWR, 0) };
         let cf_fd = CFFileDescriptor::new(raw_fd, true, never_callback, None);
+        assert!(cf_fd.is_some());
+        let cf_fd = cf_fd.unwrap();
 
         assert!(cf_fd.valid());
         cf_fd.invalidate();
@@ -121,6 +131,8 @@ mod test {
         let path = CString::new("/dev/null").unwrap();
         let raw_fd = unsafe { libc::open(path.as_ptr(), O_RDWR, 0) };
         let cf_fd = CFFileDescriptor::new(raw_fd, false, never_callback, None);
+        assert!(cf_fd.is_some());
+        let cf_fd = cf_fd.unwrap();
 
         assert!(cf_fd.valid());
         cf_fd.invalidate();
@@ -154,13 +166,16 @@ mod test {
         let path = CString::new("/dev/null").unwrap();
         let raw_fd = unsafe { libc::open(path.as_ptr(), O_RDWR, 0) };
         let cf_fd = CFFileDescriptor::new(raw_fd, true, callback, Some(&context));
+        assert!(cf_fd.is_some());
+        let cf_fd = cf_fd.unwrap();
 
         assert!(cf_fd.valid());
 
         let runloop = CFRunLoop::get_current();
         let source = CFRunLoopSource::from_file_descriptor(&cf_fd, 0);
+        assert!(source.is_some());
         unsafe {
-            runloop.add_source(&source, kCFRunLoopDefaultMode);
+            runloop.add_source(&source.unwrap(), kCFRunLoopDefaultMode);
         }
 
         info.value = 0;

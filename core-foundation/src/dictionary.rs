@@ -121,15 +121,9 @@ impl CFDictionary {
     }
 }
 
-/// An mutable dictionary of key-value pairs.
-pub struct CFMutableDictionary(CFMutableDictionaryRef);
-
-impl Drop for CFMutableDictionary {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    /// An mutable dictionary of key-value pairs.
+    CFMutableDictionary, CFMutableDictionaryRef
 }
 
 impl_TCFType!(CFMutableDictionary, CFMutableDictionaryRef, CFDictionaryGetTypeID);

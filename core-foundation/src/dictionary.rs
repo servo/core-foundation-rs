@@ -316,3 +316,63 @@ impl CFMutableDictionary {
         unsafe { CFDictionaryRemoveAllValues(self.0) }
     }
 }
+
+
+#[cfg(test)]
+pub mod test {
+    use super::*;
+    use base::TCFType;
+    use boolean::CFBoolean;
+    use number::CFNumber;
+    use string::CFString;
+
+    #[test]
+    fn dictionary() {
+        let bar = CFString::from_static_string("Bar");
+        let baz = CFString::from_static_string("Baz");
+        let boo = CFString::from_static_string("Boo");
+        let foo = CFString::from_static_string("Foo");
+        let tru = CFBoolean::true_value();
+        let n42 = CFNumber::from(42);
+
+        let d = CFDictionary::from_CFType_pairs(&[
+            (bar.as_CFType(), boo.as_CFType()),
+            (baz.as_CFType(), tru.as_CFType()),
+            (foo.as_CFType(), n42.as_CFType()),
+        ]);
+
+        let (v1, v2) = d.get_keys_and_values();
+        assert!(v1 == &[bar.as_CFTypeRef(), baz.as_CFTypeRef(), foo.as_CFTypeRef()]);
+        assert!(v2 == &[boo.as_CFTypeRef(), tru.as_CFTypeRef(), n42.as_CFTypeRef()]);
+    }
+
+    #[test]
+    fn mutable_dictionary() {
+        let bar = CFString::from_static_string("Bar");
+        let baz = CFString::from_static_string("Baz");
+        let boo = CFString::from_static_string("Boo");
+        let foo = CFString::from_static_string("Foo");
+        let tru = CFBoolean::true_value();
+        let n42 = CFNumber::from(42);
+
+        let d = CFMutableDictionary::new();
+        d.add2(&bar, &boo);
+        d.add2(&baz, &tru);
+        d.add2(&foo, &n42);
+        assert_eq!(d.len(), 3);
+
+        let (v1, v2) = d.get_keys_and_values();
+        assert!(v1 == &[bar.as_CFTypeRef(), baz.as_CFTypeRef(), foo.as_CFTypeRef()]);
+        assert!(v2 == &[boo.as_CFTypeRef(), tru.as_CFTypeRef(), n42.as_CFTypeRef()]);
+
+        d.remove2(&baz);
+        assert_eq!(d.len(), 2);
+
+        let (v1, v2) = d.get_keys_and_values();
+        assert!(v1 == &[bar.as_CFTypeRef(), foo.as_CFTypeRef()]);
+        assert!(v2 == &[boo.as_CFTypeRef(), n42.as_CFTypeRef()]);
+
+        d.remove_all();
+        assert_eq!(d.len(), 0)
+    }
+}

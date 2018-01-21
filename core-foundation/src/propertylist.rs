@@ -76,7 +76,8 @@ pub trait CFPropertyListSubClass: TCFType {
     /// [`to_CFPropertyList`]: #method.to_CFPropertyList
     #[inline]
     fn into_CFPropertyList(self) -> CFPropertyList
-    where Self: Sized
+    where
+        Self: Sized,
     {
         let reference = self.as_concrete_TypeRef().as_void_ptr();
         mem::forget(self);
@@ -132,7 +133,8 @@ impl CFPropertyList {
 
     #[inline]
     pub fn into_CFType(self) -> CFType
-    where Self: Sized
+    where
+        Self: Sized,
     {
         let reference = self.as_CFTypeRef();
         mem::forget(self);

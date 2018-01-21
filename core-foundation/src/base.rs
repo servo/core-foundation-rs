@@ -159,7 +159,8 @@ pub trait TCFType {
     /// count.
     #[inline]
     fn into_CFType(self) -> CFType
-    where Self: Sized
+    where
+        Self: Sized,
     {
         let reference = self.as_CFTypeRef();
         mem::forget(self);

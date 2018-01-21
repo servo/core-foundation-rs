@@ -9,7 +9,8 @@
 
 //! Core Foundation errors.
 
-use core_foundation_sys::error::*;
+pub use core_foundation_sys::error::*;
+
 use std::error::Error;
 use std::fmt;
 

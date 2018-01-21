@@ -14,7 +14,7 @@ use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
 
 use base::TCFType;
 use url::CFURL;
-use dictionary::CFDictionary;
+use dictionary::CFMutableDictionary;
 
 
 declare_TCFType!{
@@ -42,7 +42,7 @@ impl CFBundle {
         }
     }
 
-    pub fn info_dictionary(&self) -> CFDictionary {
+    pub fn info_dictionary(&self) -> CFMutableDictionary {
         unsafe {
             let info_dictionary = CFBundleGetInfoDictionary(self.0);
             TCFType::wrap_under_get_rule(info_dictionary)

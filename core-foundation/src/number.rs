@@ -13,19 +13,13 @@ use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
 pub use core_foundation_sys::number::*;
 use std::mem;
 
-use base::{TCFType};
+use base::TCFType;
 
-/// An immutable numeric value.
-pub struct CFNumber(CFNumberRef);
 
-impl Drop for CFNumber {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    /// An immutable numeric value.
+    CFNumber, CFNumberRef
 }
-
 impl_TCFType!(CFNumber, CFNumberRef, CFNumberGetTypeID);
 impl_CFTypeDescription!(CFNumber);
 impl_CFComparison!(CFNumber, CFNumberCompare);

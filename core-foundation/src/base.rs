@@ -8,6 +8,7 @@
 // except according to those terms.
 
 use std::fmt;
+use std::mem;
 
 pub use core_foundation_sys::base::*;
 
@@ -30,8 +31,60 @@ impl CFIndexConvertible for usize {
     }
 }
 
-/// Superclass of all Core Foundation objects.
-pub struct CFType(CFTypeRef);
+declare_TCFType!{
+    /// Superclass of all Core Foundation objects.
+    CFType, CFTypeRef
+}
+
+impl CFType {
+    /// Try to downcast the `CFType` to a subclass. Checking if the instance is the
+    /// correct subclass happens at runtime and `None` is returned if it is not the correct type.
+    /// Works similar to [`Box::downcast`] and [`CFPropertyList::downcast`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use core_foundation::string::CFString;
+    /// # use core_foundation::boolean::CFBoolean;
+    /// # use core_foundation::base::{CFType, TCFType};
+    /// #
+    /// // Create a string.
+    /// let string: CFString = CFString::from_static_string("FooBar");
+    /// // Cast it up to a CFType.
+    /// let cf_type: CFType = string.as_CFType();
+    /// // Cast it down again.
+    /// assert!(cf_type.downcast::<_, CFString>().unwrap().to_string() == "FooBar");
+    /// // Casting it to some other type will yield `None`
+    /// assert!(cf_type.downcast::<_, CFBoolean>().is_none());
+    /// ```
+    ///
+    /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
+    /// [`CFPropertyList::downcast`]: ../propertylist/struct.CFPropertyList.html#method.downcast
+    #[inline]
+    pub fn downcast<Raw, T: TCFType<*const Raw>>(&self) -> Option<T> {
+        if self.instance_of::<_, T>() {
+            unsafe {
+                Some(T::wrap_under_get_rule(self.0 as *const Raw))
+            }
+        } else {
+            None
+        }
+    }
+
+    /// Similar to [`downcast`], but consumes self and can thus avoid touching the retain count.
+    ///
+    /// [`downcast`]: #method.downcast
+    #[inline]
+    pub fn downcast_into<Raw, T: TCFType<*const Raw>>(self) -> Option<T> {
+        if self.instance_of::<_, T>() {
+            let reference = self.0 as *const Raw;
+            mem::forget(self);
+            unsafe { Some(T::wrap_under_create_rule(reference)) }
+        } else {
+            None
+        }
+    }
+}
 
 impl fmt::Debug for CFType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -60,25 +113,7 @@ impl PartialEq for CFType {
     }
 }
 
-impl Drop for CFType {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.0)
-        }
-    }
-}
-
-/// An allocator for Core Foundation objects.
-pub struct CFAllocator(CFAllocatorRef);
-
-impl Drop for CFAllocator {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
+declare_TCFType!(CFAllocator, CFAllocatorRef);
 impl_TCFType!(CFAllocator, CFAllocatorRef, CFAllocatorGetTypeID);
 
 impl CFAllocator {
@@ -111,6 +146,17 @@ pub trait TCFType<ConcreteTypeRef> {
         unsafe {
             TCFType::wrap_under_get_rule(self.as_CFTypeRef())
         }
+    }
+
+    /// Returns the object as a wrapped `CFType`. Consumes self and avoids changing the reference
+    /// count.
+    #[inline]
+    fn into_CFType(self) -> CFType
+    where Self: Sized
+    {
+        let reference = self.as_CFTypeRef();
+        mem::forget(self);
+        unsafe { TCFType::wrap_under_create_rule(reference) }
     }
 
     /// Returns the object as a raw `CFTypeRef`. The reference count is not adjusted.
@@ -184,6 +230,7 @@ impl TCFType<CFTypeRef> for CFType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::mem;
     use boolean::CFBoolean;
 
     #[test]
@@ -193,5 +240,44 @@ mod tests {
 
         assert!(cftype.instance_of::<_, CFString>());
         assert!(!cftype.instance_of::<_, CFBoolean>());
+    }
+
+    #[test]
+    fn as_cftype_retain_count() {
+        let string = CFString::from_static_string("bar");
+        assert_eq!(string.retain_count(), 1);
+        let cftype = string.as_CFType();
+        assert_eq!(cftype.retain_count(), 2);
+        mem::drop(string);
+        assert_eq!(cftype.retain_count(), 1);
+    }
+
+    #[test]
+    fn into_cftype_retain_count() {
+        let string = CFString::from_static_string("bar");
+        assert_eq!(string.retain_count(), 1);
+        let cftype = string.into_CFType();
+        assert_eq!(cftype.retain_count(), 1);
+    }
+
+    #[test]
+    fn as_cftype_and_downcast() {
+        let string = CFString::from_static_string("bar");
+        let cftype = string.as_CFType();
+        let string2 = cftype.downcast::<_, CFString>().unwrap();
+        assert_eq!(string2.to_string(), "bar");
+
+        assert_eq!(string.retain_count(), 3);
+        assert_eq!(cftype.retain_count(), 3);
+        assert_eq!(string2.retain_count(), 3);
+    }
+
+    #[test]
+    fn into_cftype_and_downcast_into() {
+        let string = CFString::from_static_string("bar");
+        let cftype = string.into_CFType();
+        let string2 = cftype.downcast_into::<_, CFString>().unwrap();
+        assert_eq!(string2.to_string(), "bar");
+        assert_eq!(string2.retain_count(), 1);
     }
 }

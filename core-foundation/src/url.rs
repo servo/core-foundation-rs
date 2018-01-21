@@ -27,16 +27,8 @@ use std::os::unix::ffi::OsStrExt;
 #[cfg(unix)]
 use std::ffi::OsStr;
 
-pub struct CFURL(CFURLRef);
 
-impl Drop for CFURL {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
+declare_TCFType!(CFURL, CFURLRef);
 impl_TCFType!(CFURL, CFURLRef, CFURLGetTypeID);
 
 impl fmt::Debug for CFURL {

@@ -18,17 +18,11 @@ use std::ptr;
 
 use base::{CFType, CFIndexConvertible, TCFType};
 
-/// An immutable dictionary of key-value pairs.
-pub struct CFDictionary(CFDictionaryRef);
 
-impl Drop for CFDictionary {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    /// An immutable dictionary of key-value pairs.
+    CFDictionary, CFDictionaryRef
 }
-
 impl_TCFType!(CFDictionary, CFDictionaryRef, CFDictionaryGetTypeID);
 impl_CFTypeDescription!(CFDictionary);
 
@@ -127,15 +121,9 @@ impl CFDictionary {
     }
 }
 
-/// An mutable dictionary of key-value pairs.
-pub struct CFMutableDictionary(CFMutableDictionaryRef);
-
-impl Drop for CFMutableDictionary {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    /// An mutable dictionary of key-value pairs.
+    CFMutableDictionary, CFMutableDictionaryRef
 }
 
 impl_TCFType!(CFMutableDictionary, CFMutableDictionaryRef, CFDictionaryGetTypeID);

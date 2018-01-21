@@ -164,11 +164,11 @@ mod test {
 
         assert!(cf_fd.valid());
 
-        let runloop = CFRunLoop::get_current();
+        let run_loop = CFRunLoop::get_current();
         let source = CFRunLoopSource::from_file_descriptor(&cf_fd, 0);
         assert!(source.is_some());
         unsafe {
-            runloop.add_source(&source.unwrap(), kCFRunLoopDefaultMode);
+            run_loop.add_source(&source.unwrap(), kCFRunLoopDefaultMode);
         }
 
         info.value = 0;

@@ -9,16 +9,10 @@ use std::mem;
 use std::os::unix::io::{AsRawFd, RawFd};
 use std::ptr;
 
-pub struct CFFileDescriptor(CFFileDescriptorRef);
 
-impl Drop for CFFileDescriptor {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    CFFileDescriptor, CFFileDescriptorRef
 }
-
 impl_TCFType!(CFFileDescriptor, CFFileDescriptorRef, CFFileDescriptorGetTypeID);
 
 impl CFFileDescriptor {

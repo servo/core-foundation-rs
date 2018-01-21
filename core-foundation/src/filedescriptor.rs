@@ -3,7 +3,8 @@ pub use core_foundation_sys::filedescriptor::*;
 use core_foundation_sys::base::{Boolean, CFIndex, CFRelease};
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 
-use base::{TCFType};
+use base::TCFType;
+use runloop::CFRunLoopSource;
 
 use std::mem;
 use std::os::unix::io::{AsRawFd, RawFd};
@@ -72,6 +73,21 @@ impl CFFileDescriptor {
             CFFileDescriptorInvalidate(self.0)
         }
     }
+
+    pub fn to_run_loop_source(&self, order: CFIndex) -> Option<CFRunLoopSource> {
+        unsafe {
+            let source_ref = CFFileDescriptorCreateRunLoopSource(
+                kCFAllocatorDefault,
+                self.0,
+                order
+            );
+            if source_ref.is_null() {
+                None
+            } else {
+                Some(TCFType::wrap_under_create_rule(source_ref))
+            }
+        }
+    }
 }
 
 impl AsRawFd for CFFileDescriptor {
@@ -82,20 +98,6 @@ impl AsRawFd for CFFileDescriptor {
     }
 }
 
-use runloop::{CFRunLoopSource};
-
-impl CFRunLoopSource {
-    pub fn from_file_descriptor(fd: &CFFileDescriptor, order: CFIndex) -> Option<CFRunLoopSource> {
-        unsafe {
-            let source_ref = CFFileDescriptorCreateRunLoopSource(kCFAllocatorDefault, fd.0, order);
-            if source_ref.is_null() {
-                None
-            } else {
-                Some(TCFType::wrap_under_create_rule(source_ref))
-            }
-        }
-    }
-}
 
 #[cfg(test)]
 mod test {

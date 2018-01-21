@@ -16,6 +16,7 @@ use core_foundation_sys::string::CFStringRef;
 
 use base::{TCFType};
 use date::{CFAbsoluteTime, CFTimeInterval};
+use filedescriptor::CFFileDescriptor;
 use string::{CFString};
 
 pub type CFRunLoopMode = CFStringRef;
@@ -136,6 +137,12 @@ impl CFRunLoopTimer {
 
 declare_TCFType!(CFRunLoopSource, CFRunLoopSourceRef);
 impl_TCFType!(CFRunLoopSource, CFRunLoopSourceRef, CFRunLoopSourceGetTypeID);
+
+impl CFRunLoopSource {
+    pub fn from_file_descriptor(fd: &CFFileDescriptor, order: CFIndex) -> Option<CFRunLoopSource> {
+        fd.to_run_loop_source(order)
+    }
+}
 
 declare_TCFType!(CFRunLoopObserver, CFRunLoopObserverRef);
 impl_TCFType!(CFRunLoopObserver, CFRunLoopObserverRef, CFRunLoopObserverGetTypeID);

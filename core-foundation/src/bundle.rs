@@ -10,7 +10,7 @@
 //! Core Foundation Bundle Type
 
 pub use core_foundation_sys::bundle::*;
-use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
+use core_foundation_sys::base::kCFAllocatorDefault;
 
 use base::TCFType;
 use url::CFURL;

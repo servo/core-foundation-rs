@@ -25,7 +25,7 @@ macro_rules! declare_TCFType {
 
         impl Drop for $ty {
             fn drop(&mut self) {
-                unsafe { CFRelease(self.as_CFTypeRef()) }
+                unsafe { $crate::base::CFRelease(self.as_CFTypeRef()) }
             }
         }
     }
@@ -42,12 +42,13 @@ macro_rules! impl_TCFType {
 
             #[inline]
             unsafe fn wrap_under_get_rule(reference: $raw) -> $ty {
-                let reference = ::std::mem::transmute(::core_foundation_sys::base::CFRetain(::std::mem::transmute(reference)));
+                use std::mem;
+                let reference = mem::transmute($crate::base::CFRetain(mem::transmute(reference)));
                 $crate::base::TCFType::wrap_under_create_rule(reference)
             }
 
             #[inline]
-            fn as_CFTypeRef(&self) -> ::core_foundation_sys::base::CFTypeRef {
+            fn as_CFTypeRef(&self) -> $crate::base::CFTypeRef {
                 unsafe {
                     ::std::mem::transmute(self.as_concrete_TypeRef())
                 }
@@ -59,7 +60,7 @@ macro_rules! impl_TCFType {
             }
 
             #[inline]
-            fn type_id() -> ::core_foundation_sys::base::CFTypeID {
+            fn type_id() -> $crate::base::CFTypeID {
                 unsafe {
                     $ty_id()
                 }
@@ -99,7 +100,8 @@ macro_rules! impl_TCFTypeGeneric {
 
             #[inline]
             unsafe fn wrap_under_get_rule(reference: $raw) -> $ty<T> {
-                let reference = ::std::mem::transmute(::core_foundation_sys::base::CFRetain(::std::mem::transmute(reference)));
+                use std::mem;
+                let reference = mem::transmute($crate::base::CFRetain(mem::transmute(reference)));
                 $crate::base::TCFType::wrap_under_create_rule(reference)
             }
 

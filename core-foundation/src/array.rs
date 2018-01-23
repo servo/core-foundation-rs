@@ -92,8 +92,18 @@ impl<T> CFArray<T> {
         }
     }
 
-    pub fn as_untyped(&self) -> CFArray {
+    #[inline]
+    pub fn to_untyped(&self) -> CFArray {
         unsafe { CFArray::wrap_under_get_rule(self.0) }
+    }
+
+    /// Returns the same array, but with the type reset to void pointers.
+    /// Equal to `to_untyped`, but is faster since it does not increment the retain count.
+    #[inline]
+    pub fn into_untyped(self) -> CFArray {
+        let reference = self.0;
+        mem::forget(self);
+        unsafe { CFArray::wrap_under_create_rule(reference) }
     }
 
     /// Iterates over the elements of this `CFArray`.
@@ -154,15 +164,28 @@ mod tests {
     use std::mem;
 
     #[test]
-    fn as_untyped_correct_retain_count() {
+    fn to_untyped_correct_retain_count() {
         let array = CFArray::<CFType>::from_CFTypes(&[]);
         assert_eq!(array.retain_count(), 1);
 
-        let untyped_array = array.as_untyped();
+        let untyped_array = array.to_untyped();
         assert_eq!(array.retain_count(), 2);
         assert_eq!(untyped_array.retain_count(), 2);
 
         mem::drop(array);
+        assert_eq!(untyped_array.retain_count(), 1);
+    }
+
+    #[test]
+    fn into_untyped() {
+        let array = CFArray::<CFType>::from_CFTypes(&[]);
+        let array2 = array.to_untyped();
+        assert_eq!(array.retain_count(), 2);
+
+        let untyped_array = array.into_untyped();
+        assert_eq!(untyped_array.retain_count(), 2);
+
+        mem::drop(array2);
         assert_eq!(untyped_array.retain_count(), 1);
     }
 

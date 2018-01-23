@@ -10,7 +10,7 @@
 //! Core Foundation date objects.
 
 pub use core_foundation_sys::date::*;
-use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
+use core_foundation_sys::base::kCFAllocatorDefault;
 
 use base::TCFType;
 

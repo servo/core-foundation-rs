@@ -9,7 +9,7 @@
 
 //! Immutable numbers.
 
-use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
+use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::number::*;
 use std::mem;
 

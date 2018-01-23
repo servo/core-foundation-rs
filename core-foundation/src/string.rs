@@ -13,7 +13,7 @@ pub use core_foundation_sys::string::*;
 
 use base::{CFIndexConvertible, TCFType};
 
-use core_foundation_sys::base::{Boolean, CFIndex, CFRange, CFRelease};
+use core_foundation_sys::base::{Boolean, CFIndex, CFRange};
 use core_foundation_sys::base::{kCFAllocatorDefault, kCFAllocatorNull};
 use std::fmt;
 use std::str::{self, FromStr};

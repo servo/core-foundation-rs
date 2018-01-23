@@ -20,7 +20,7 @@ use base::{CFType, TCFType};
 
 pub use core_foundation_sys::propertylist::*;
 use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::base::{CFGetRetainCount, CFGetTypeID, CFIndex, CFRelease, CFRetain,
+use core_foundation_sys::base::{CFGetRetainCount, CFGetTypeID, CFIndex, CFRetain,
                                 CFShow, CFTypeID, kCFAllocatorDefault};
 
 pub fn create_with_data(data: CFData,

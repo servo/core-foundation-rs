@@ -1,24 +1,18 @@
 pub use core_foundation_sys::filedescriptor::*;
 
-use core_foundation_sys::base::{Boolean, CFIndex, CFRelease};
+use core_foundation_sys::base::{Boolean, CFIndex};
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 
-use base::{TCFType};
+use base::TCFType;
+use runloop::CFRunLoopSource;
 
 use std::mem;
 use std::os::unix::io::{AsRawFd, RawFd};
 use std::ptr;
 
-pub struct CFFileDescriptor(CFFileDescriptorRef);
-
-impl Drop for CFFileDescriptor {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
+declare_TCFType!{
+    CFFileDescriptor, CFFileDescriptorRef
 }
-
 impl_TCFType!(CFFileDescriptor, CFFileDescriptorRef, CFFileDescriptorGetTypeID);
 
 impl CFFileDescriptor {
@@ -72,6 +66,21 @@ impl CFFileDescriptor {
             CFFileDescriptorInvalidate(self.0)
         }
     }
+
+    pub fn to_run_loop_source(&self, order: CFIndex) -> Option<CFRunLoopSource> {
+        unsafe {
+            let source_ref = CFFileDescriptorCreateRunLoopSource(
+                kCFAllocatorDefault,
+                self.0,
+                order
+            );
+            if source_ref.is_null() {
+                None
+            } else {
+                Some(TCFType::wrap_under_create_rule(source_ref))
+            }
+        }
+    }
 }
 
 impl AsRawFd for CFFileDescriptor {
@@ -82,20 +91,6 @@ impl AsRawFd for CFFileDescriptor {
     }
 }
 
-use runloop::{CFRunLoopSource};
-
-impl CFRunLoopSource {
-    pub fn from_file_descriptor(fd: &CFFileDescriptor, order: CFIndex) -> Option<CFRunLoopSource> {
-        unsafe {
-            let source_ref = CFFileDescriptorCreateRunLoopSource(kCFAllocatorDefault, fd.0, order);
-            if source_ref.is_null() {
-                None
-            } else {
-                Some(TCFType::wrap_under_create_rule(source_ref))
-            }
-        }
-    }
-}
 
 #[cfg(test)]
 mod test {
@@ -169,11 +164,11 @@ mod test {
 
         assert!(cf_fd.valid());
 
-        let runloop = CFRunLoop::get_current();
+        let run_loop = CFRunLoop::get_current();
         let source = CFRunLoopSource::from_file_descriptor(&cf_fd, 0);
         assert!(source.is_some());
         unsafe {
-            runloop.add_source(&source.unwrap(), kCFRunLoopDefaultMode);
+            run_loop.add_source(&source.unwrap(), kCFRunLoopDefaultMode);
         }
 
         info.value = 0;

@@ -10,7 +10,7 @@
 //! Core Foundation time zone objects.
 
 pub use core_foundation_sys::timezone::*;
-use core_foundation_sys::base::{CFRelease, kCFAllocatorDefault};
+use core_foundation_sys::base::kCFAllocatorDefault;
 
 use base::TCFType;
 use date::{CFDate, CFTimeInterval};

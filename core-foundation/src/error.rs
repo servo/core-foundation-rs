@@ -9,8 +9,8 @@
 
 //! Core Foundation errors.
 
-use core_foundation_sys::error::*;
-use core_foundation_sys::base::CFRelease;
+pub use core_foundation_sys::error::*;
+
 use std::error::Error;
 use std::fmt;
 

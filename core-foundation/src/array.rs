@@ -12,36 +12,52 @@
 pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
-use base::CFType;
 use libc::c_void;
 use std::mem;
+use std::mem::ManuallyDrop;
 use std::marker::PhantomData;
+use std;
+use std::ops::Deref;
+use std::fmt::{Debug, Formatter};
 
-use base::{CFIndexConvertible, TCFType, CFRange};
+use base::{CFIndexConvertible, TCFType, TCFTypeRef, CFRange};
 
 /// A heterogeneous immutable array.
 pub struct CFArray<T = *const c_void>(CFArrayRef, PhantomData<T>);
 
+/// A reference to an element inside the array
+pub struct ItemRef<'a, T: 'a>(ManuallyDrop<T>, PhantomData<&'a T>);
+
+impl<'a, T> Deref for ItemRef<'a, T> {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        &self.0
+    }
+}
+
+impl<'a, T: Debug> Debug for ItemRef<'a, T> {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), std::fmt::Error> {
+        self.0.fmt(f)
+    }
+}
+
 /// A trait describing how to convert from the stored *const c_void to the desired T
 pub unsafe trait FromVoid {
-    unsafe fn from_void(x: *const c_void) -> Self;
+    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> where Self: std::marker::Sized;
 }
 
 unsafe impl FromVoid for u32 {
-    unsafe fn from_void(x: *const c_void) -> u32 {
-        x as usize as u32
+    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
+        // Functions like CGFontCopyTableTags treat the void*'s as u32's
+        // so we convert by casting directly
+        ItemRef(ManuallyDrop::new(x as u32), PhantomData)
     }
 }
 
-unsafe impl FromVoid for *const c_void {
-    unsafe fn from_void(x: *const c_void) -> *const c_void {
-        x
-    }
-}
-
-unsafe impl FromVoid for CFType {
-    unsafe fn from_void(x: *const c_void) -> CFType {
-        TCFType::wrap_under_get_rule(mem::transmute(x))
+unsafe impl<T: TCFType> FromVoid for T {
+    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
+        ItemRef(ManuallyDrop::new(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x))), PhantomData)
     }
 }
 
@@ -57,9 +73,9 @@ pub struct CFArrayIterator<'a, T: 'a> {
 }
 
 impl<'a, T: FromVoid> Iterator for CFArrayIterator<'a, T> {
-    type Item = T;
+    type Item = ItemRef<'a, T>;
 
-    fn next(&mut self) -> Option<T> {
+    fn next(&mut self) -> Option<ItemRef<'a, T>> {
         if self.index >= self.array.len() {
             None
         } else {
@@ -127,7 +143,7 @@ impl<T> CFArray<T> {
     }
 
     #[inline]
-    pub fn get(&self, index: CFIndex) -> T where T: FromVoid {
+    pub fn get<'a>(&'a self, index: CFIndex) -> ItemRef<'a, T> where T: FromVoid {
         assert!(index < self.len());
         unsafe { T::from_void(CFArrayGetValueAtIndex(self.0, index)) }
     }
@@ -150,7 +166,7 @@ impl<T> CFArray<T> {
 }
 
 impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
-    type Item = T;
+    type Item = ItemRef<'a, T>;
     type IntoIter = CFArrayIterator<'a, T>;
 
     fn into_iter(self) -> CFArrayIterator<'a, T> {
@@ -162,6 +178,7 @@ impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
 mod tests {
     use super::*;
     use std::mem;
+    use base::CFType;
 
     #[test]
     fn to_untyped_correct_retain_count() {
@@ -187,6 +204,28 @@ mod tests {
 
         mem::drop(array2);
         assert_eq!(untyped_array.retain_count(), 1);
+    }
+
+    #[test]
+    fn borrow() {
+        use string::CFString;
+
+        let string = CFString::from_static_string("bar");
+        assert_eq!(string.retain_count(), 1);
+        let x;
+        {
+            let arr: CFArray<CFString> = CFArray::from_CFTypes(&[string]);
+            {
+                let p = arr.get(0);
+                assert_eq!(p.retain_count(), 1);
+            }
+            {
+                x = arr.get(0).clone();
+                assert_eq!(x.retain_count(), 2);
+                assert_eq!(x.to_string(), "bar");
+            }
+        }
+        assert_eq!(x.retain_count(), 1);
     }
 
     #[test]

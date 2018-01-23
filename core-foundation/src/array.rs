@@ -14,7 +14,10 @@ pub use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
+use base::CFType;
 use std::marker::PhantomData;
+use std;
+use std::ops::Deref;
 
 use base::{CFIndexConvertible, TCFType, CFRange};
 
@@ -41,6 +44,41 @@ unsafe impl<T> FromVoid for *const T {
 unsafe impl<T: TCFType> FromVoid for T where T::Ref: FromVoid {
     unsafe fn from_void(x: *const c_void) -> Self {
         TCFType::wrap_under_get_rule(T::Ref::from_void(x))
+    }
+}
+
+
+
+
+pub struct TCFTypeBorrow<'a, T: 'a>(T, PhantomData<&'a T>);
+
+impl<'a, T> Deref for TCFTypeBorrow<'a, T> {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        &self.0
+    }
+}
+/// A trait describing how to convert from the stored *const c_void to the desired T
+pub unsafe trait FromVoidBorrow {
+    unsafe fn from_void_borrow<'a>(x: *const c_void) -> TCFTypeBorrow<'a, Self> where Self: std::marker::Sized;
+}
+
+unsafe impl FromVoidBorrow for u32 {
+    unsafe fn from_void_borrow<'a>(x: *const c_void) -> TCFTypeBorrow<'a, Self> {
+        TCFTypeBorrow(x as usize as u32, PhantomData)
+    }
+}
+
+unsafe impl<T> FromVoidBorrow for *const T {
+    unsafe fn from_void_borrow<'a>(x: *const c_void) -> TCFTypeBorrow<'a, Self> {
+        TCFTypeBorrow(x as *const T, PhantomData)
+    }
+}
+
+unsafe impl<T: TCFType> FromVoidBorrow for T where T::Ref: FromVoidBorrow {
+    unsafe fn from_void_borrow<'a>(x: *const c_void) -> TCFTypeBorrow<'a, Self> {
+        TCFTypeBorrow(TCFType::wrap_under_create_rule(T::Ref::from_void_borrow(x).0), PhantomData)
     }
 }
 
@@ -74,6 +112,7 @@ impl<'a, T: FromVoid> ExactSizeIterator for CFArrayIterator<'a, T> {
         (self.array.len() - self.index) as usize
     }
 }
+
 
 impl_TCFTypeGeneric!(CFArray, CFArrayRef, CFArrayGetTypeID);
 impl_CFTypeDescriptionGeneric!(CFArray);
@@ -121,6 +160,12 @@ impl<T> CFArray<T> {
         unsafe { T::from_void(CFArrayGetValueAtIndex(self.0, index)) }
     }
 
+    #[inline]
+    pub fn get_borrow<'a>(&'a self, index: CFIndex) -> TCFTypeBorrow<'a, T> where T: FromVoidBorrow {
+        assert!(index < self.len());
+        unsafe { T::from_void_borrow(CFArrayGetValueAtIndex(self.0, index)) }
+    }
+
     pub fn get_values(&self, range: CFRange) -> Vec<*const c_void> {
         let mut vec = Vec::with_capacity(range.length as usize);
         unsafe {
@@ -163,6 +208,25 @@ mod tests {
 
         mem::drop(array);
         assert_eq!(untyped_array.retain_count(), 1);
+    }
+
+    #[test]
+    fn borrow() {
+        use number::CFNumber;
+
+        let n0 = CFNumber::from(0);
+        let n1 = CFNumber::from(1);
+
+            let arr:CFArray<CFNumber> = CFArray::from_CFTypes(&[
+                n0,
+                n1
+            ]);
+        let p =
+            arr.get_borrow(0);
+
+        println!("{:?}", p.to_i64().unwrap());
+
+
     }
 
     #[test]

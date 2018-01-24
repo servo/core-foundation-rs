@@ -33,15 +33,17 @@ macro_rules! declare_TCFType {
 
 #[macro_export]
 macro_rules! impl_TCFType {
-    ($ty:ident, $raw:ident, $ty_id:ident) => {
-        impl $crate::base::TCFType<$raw> for $ty {
+    ($ty:ident, $ty_ref:ident, $ty_id:ident) => {
+        impl $crate::base::TCFType for $ty {
+            type Ref = $ty_ref;
+
             #[inline]
-            fn as_concrete_TypeRef(&self) -> $raw {
+            fn as_concrete_TypeRef(&self) -> $ty_ref {
                 self.0
             }
 
             #[inline]
-            unsafe fn wrap_under_get_rule(reference: $raw) -> $ty {
+            unsafe fn wrap_under_get_rule(reference: $ty_ref) -> $ty {
                 use std::mem;
                 let reference = mem::transmute($crate::base::CFRetain(mem::transmute(reference)));
                 $crate::base::TCFType::wrap_under_create_rule(reference)
@@ -55,8 +57,8 @@ macro_rules! impl_TCFType {
             }
 
             #[inline]
-            unsafe fn wrap_under_create_rule(obj: $raw) -> $ty {
-                $ty(obj)
+            unsafe fn wrap_under_create_rule(reference: $ty_ref) -> $ty {
+                $ty(reference)
             }
 
             #[inline]
@@ -91,15 +93,17 @@ macro_rules! impl_TCFType {
 // think of a clean way to have them share code
 #[macro_export]
 macro_rules! impl_TCFTypeGeneric {
-    ($ty:ident, $raw:ident, $ty_id:ident) => {
-        impl<T> $crate::base::TCFType<$raw> for $ty<T> {
+    ($ty:ident, $ty_ref:ident, $ty_id:ident) => {
+        impl<T> $crate::base::TCFType for $ty<T> {
+            type Ref = $ty_ref;
+
             #[inline]
-            fn as_concrete_TypeRef(&self) -> $raw {
+            fn as_concrete_TypeRef(&self) -> $ty_ref {
                 self.0
             }
 
             #[inline]
-            unsafe fn wrap_under_get_rule(reference: $raw) -> $ty<T> {
+            unsafe fn wrap_under_get_rule(reference: $ty_ref) -> $ty<T> {
                 use std::mem;
                 let reference = mem::transmute($crate::base::CFRetain(mem::transmute(reference)));
                 $crate::base::TCFType::wrap_under_create_rule(reference)
@@ -113,7 +117,7 @@ macro_rules! impl_TCFTypeGeneric {
             }
 
             #[inline]
-            unsafe fn wrap_under_create_rule(obj: $raw) -> $ty<T> {
+            unsafe fn wrap_under_create_rule(obj: $ty_ref) -> $ty<T> {
                 $ty(obj, PhantomData)
             }
 

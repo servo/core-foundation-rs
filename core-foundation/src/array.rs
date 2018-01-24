@@ -12,36 +12,51 @@
 pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::{CFIndex, CFRelease};
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
-use base::CFType;
 use libc::c_void;
 use std::mem;
 use std::marker::PhantomData;
+use std;
+use std::ops::Deref;
+use std::fmt::{Debug, Formatter};
 
-use base::{CFIndexConvertible, TCFType, CFRange};
+use base::{CFIndexConvertible, TCFType, TCFTypeRef, CFRange};
 
 /// A heterogeneous immutable array.
 pub struct CFArray<T = *const c_void>(CFArrayRef, PhantomData<T>);
 
+/// A reference to an element inside the array
+pub struct ItemRef<'a, T: 'a>(T, PhantomData<&'a T>);
+
+impl<'a, T> Deref for ItemRef<'a, T> {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        &self.0
+    }
+}
+
+impl<'a, T: Debug> Debug for ItemRef<'a, T> {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), std::fmt::Error> {
+        self.0.fmt(f)
+    }
+}
+
 /// A trait describing how to convert from the stored *const c_void to the desired T
 pub unsafe trait FromVoid {
-    unsafe fn from_void(x: *const c_void) -> Self;
+    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> where Self: std::marker::Sized;
 }
 
 unsafe impl FromVoid for u32 {
-    unsafe fn from_void(x: *const c_void) -> u32 {
-        x as usize as u32
+    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
+        // Functions like CGFontCopyTableTags treat the void*'s as u32's
+        // so we convert by casting directly
+        ItemRef(x as u32, PhantomData)
     }
 }
 
-unsafe impl FromVoid for *const c_void {
-    unsafe fn from_void(x: *const c_void) -> *const c_void {
-        x
-    }
-}
-
-unsafe impl FromVoid for CFType {
-    unsafe fn from_void(x: *const c_void) -> CFType {
-        TCFType::wrap_under_get_rule(mem::transmute(x))
+unsafe impl<T: TCFType> FromVoid for T {
+    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
+        ItemRef(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x)), PhantomData)
     }
 }
 
@@ -57,9 +72,9 @@ pub struct CFArrayIterator<'a, T: 'a> {
 }
 
 impl<'a, T: FromVoid> Iterator for CFArrayIterator<'a, T> {
-    type Item = T;
+    type Item = ItemRef<'a, T>;
 
-    fn next(&mut self) -> Option<T> {
+    fn next(&mut self) -> Option<ItemRef<'a, T>> {
         if self.index >= self.array.len() {
             None
         } else {
@@ -81,7 +96,7 @@ impl_CFTypeDescriptionGeneric!(CFArray);
 
 impl<T> CFArray<T> {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    pub fn from_CFTypes<R>(elems: &[T]) -> CFArray<T> where T: TCFType<R> {
+    pub fn from_CFTypes(elems: &[T]) -> CFArray<T> where T: TCFType {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
@@ -90,11 +105,6 @@ impl<T> CFArray<T> {
                                           &kCFTypeArrayCallBacks);
             TCFType::wrap_under_create_rule(array_ref)
         }
-    }
-
-    #[deprecated(note = "please use `as_untyped` instead")]
-    pub fn to_untyped(self) -> CFArray {
-        unsafe { CFArray::wrap_under_get_rule(self.0) }
     }
 
     pub fn as_untyped(&self) -> CFArray {
@@ -122,7 +132,7 @@ impl<T> CFArray<T> {
     }
 
     #[inline]
-    pub fn get(&self, index: CFIndex) -> T where T: FromVoid {
+    pub fn get<'a>(&'a self, index: CFIndex) -> ItemRef<'a, T> where T: FromVoid {
         assert!(index < self.len());
         unsafe { T::from_void(CFArrayGetValueAtIndex(self.0, index)) }
     }
@@ -145,7 +155,7 @@ impl<T> CFArray<T> {
 }
 
 impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
-    type Item = T;
+    type Item = ItemRef<'a, T>;
     type IntoIter = CFArrayIterator<'a, T>;
 
     fn into_iter(self) -> CFArrayIterator<'a, T> {
@@ -157,15 +167,7 @@ impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
 mod tests {
     use super::*;
     use std::mem;
-
-    #[test]
-    fn to_untyped_correct_retain_count() {
-        let array = CFArray::<CFType>::from_CFTypes(&[]);
-        assert_eq!(array.retain_count(), 1);
-
-        let untyped_array = array.to_untyped();
-        assert_eq!(untyped_array.retain_count(), 1);
-    }
+    use base::CFType;
 
     #[test]
     fn as_untyped_correct_retain_count() {
@@ -178,6 +180,21 @@ mod tests {
 
         mem::drop(array);
         assert_eq!(untyped_array.retain_count(), 1);
+    }
+
+    #[test]
+    fn borrow() {
+        use number::CFNumber;
+
+        let n0 = CFNumber::from(0);
+        let n1 = CFNumber::from(1);
+
+        let arr: CFArray<CFNumber> = CFArray::from_CFTypes(&[
+            n0,
+            n1
+        ]);
+        let p = arr.get(0);
+        assert_eq!(p.to_i64().unwrap(), 0)
     }
 
     #[test]
@@ -215,14 +232,14 @@ mod tests {
         assert_eq!(iter.len(), 5);
 
         for elem in iter {
-            let number: CFNumber = elem.downcast::<_, CFNumber>().unwrap();
+            let number: CFNumber = elem.downcast::<CFNumber>().unwrap();
             sum += number.to_i64().unwrap()
         }
 
         assert!(sum == 15);
 
         for elem in arr.iter() {
-            let number: CFNumber = elem.downcast::<_, CFNumber>().unwrap();
+            let number: CFNumber = elem.downcast::<CFNumber>().unwrap();
             sum += number.to_i64().unwrap()
         }
 

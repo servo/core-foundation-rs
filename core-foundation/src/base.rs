@@ -53,18 +53,19 @@ impl CFType {
     /// // Cast it up to a CFType.
     /// let cf_type: CFType = string.as_CFType();
     /// // Cast it down again.
-    /// assert!(cf_type.downcast::<_, CFString>().unwrap().to_string() == "FooBar");
+    /// assert!(cf_type.downcast::<CFString>().unwrap().to_string() == "FooBar");
     /// // Casting it to some other type will yield `None`
-    /// assert!(cf_type.downcast::<_, CFBoolean>().is_none());
+    /// assert!(cf_type.downcast::<CFBoolean>().is_none());
     /// ```
     ///
     /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
     /// [`CFPropertyList::downcast`]: ../propertylist/struct.CFPropertyList.html#method.downcast
     #[inline]
-    pub fn downcast<Raw, T: TCFType<*const Raw>>(&self) -> Option<T> {
-        if self.instance_of::<_, T>() {
+    pub fn downcast<T: TCFType>(&self) -> Option<T> {
+        if self.instance_of::<T>() {
             unsafe {
-                Some(T::wrap_under_get_rule(self.0 as *const Raw))
+                let reference = T::Ref::from_void_ptr(self.0);
+                Some(T::wrap_under_get_rule(reference))
             }
         } else {
             None
@@ -75,11 +76,13 @@ impl CFType {
     ///
     /// [`downcast`]: #method.downcast
     #[inline]
-    pub fn downcast_into<Raw, T: TCFType<*const Raw>>(self) -> Option<T> {
-        if self.instance_of::<_, T>() {
-            let reference = self.0 as *const Raw;
-            mem::forget(self);
-            unsafe { Some(T::wrap_under_create_rule(reference)) }
+    pub fn downcast_into<T: TCFType>(self) -> Option<T> {
+        if self.instance_of::<T>() {
+            unsafe {
+                let reference = T::Ref::from_void_ptr(self.0);
+                mem::forget(self);
+                Some(T::wrap_under_create_rule(reference))
+            }
         } else {
             None
         }
@@ -126,16 +129,20 @@ impl CFAllocator {
     }
 }
 
-/// All Core Foundation types implement this trait. The type parameter `TypeRef` specifies the
+
+/// All Core Foundation types implement this trait. The associated type `Ref` specifies the
 /// associated Core Foundation type: e.g. for `CFType` this is `CFTypeRef`; for `CFArray` this is
 /// `CFArrayRef`.
-pub trait TCFType<ConcreteTypeRef> {
+pub trait TCFType {
+    /// The reference type wrapped inside this type.
+    type Ref: TCFTypeRef;
+
     /// Returns the object as its concrete TypeRef.
-    fn as_concrete_TypeRef(&self) -> ConcreteTypeRef;
+    fn as_concrete_TypeRef(&self) -> Self::Ref;
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
     /// when following Core Foundation's "Create Rule". The reference count is *not* bumped.
-    unsafe fn wrap_under_create_rule(obj: ConcreteTypeRef) -> Self;
+    unsafe fn wrap_under_create_rule(obj: Self::Ref) -> Self;
 
     /// Returns the type ID for this class.
     fn type_id() -> CFTypeID;
@@ -152,7 +159,8 @@ pub trait TCFType<ConcreteTypeRef> {
     /// count.
     #[inline]
     fn into_CFType(self) -> CFType
-    where Self: Sized
+    where
+        Self: Sized,
     {
         let reference = self.as_CFTypeRef();
         mem::forget(self);
@@ -164,7 +172,7 @@ pub trait TCFType<ConcreteTypeRef> {
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
     /// when following Core Foundation's "Get Rule". The reference count *is* bumped.
-    unsafe fn wrap_under_get_rule(reference: ConcreteTypeRef) -> Self;
+    unsafe fn wrap_under_get_rule(reference: Self::Ref) -> Self;
 
     /// Returns the reference count of the object. It is unwise to do anything other than test
     /// whether the return value of this method is greater than zero.
@@ -192,12 +200,14 @@ pub trait TCFType<ConcreteTypeRef> {
 
     /// Returns true if this value is an instance of another type.
     #[inline]
-    fn instance_of<OtherConcreteTypeRef,OtherCFType:TCFType<OtherConcreteTypeRef>>(&self) -> bool {
-        self.type_of() == <OtherCFType as TCFType<_>>::type_id()
+    fn instance_of<OtherCFType: TCFType>(&self) -> bool {
+        self.type_of() == OtherCFType::type_id()
     }
 }
 
-impl TCFType<CFTypeRef> for CFType {
+impl TCFType for CFType {
+    type Ref = CFTypeRef;
+
     #[inline]
     fn as_concrete_TypeRef(&self) -> CFTypeRef {
         self.0
@@ -238,8 +248,8 @@ mod tests {
         let string = CFString::from_static_string("foo");
         let cftype = string.as_CFType();
 
-        assert!(cftype.instance_of::<_, CFString>());
-        assert!(!cftype.instance_of::<_, CFBoolean>());
+        assert!(cftype.instance_of::<CFString>());
+        assert!(!cftype.instance_of::<CFBoolean>());
     }
 
     #[test]
@@ -264,7 +274,7 @@ mod tests {
     fn as_cftype_and_downcast() {
         let string = CFString::from_static_string("bar");
         let cftype = string.as_CFType();
-        let string2 = cftype.downcast::<_, CFString>().unwrap();
+        let string2 = cftype.downcast::<CFString>().unwrap();
         assert_eq!(string2.to_string(), "bar");
 
         assert_eq!(string.retain_count(), 3);
@@ -276,7 +286,7 @@ mod tests {
     fn into_cftype_and_downcast_into() {
         let string = CFString::from_static_string("bar");
         let cftype = string.into_CFType();
-        let string2 = cftype.downcast_into::<_, CFString>().unwrap();
+        let string2 = cftype.downcast_into::<CFString>().unwrap();
         assert_eq!(string2.to_string(), "bar");
         assert_eq!(string2.retain_count(), 1);
     }

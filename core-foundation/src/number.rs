@@ -51,30 +51,6 @@ impl CFNumber {
             if ok { Some(value) } else { None }
         }
     }
-
-    #[deprecated(note = "please use `CFNumber::from` instead")]
-    #[inline]
-    pub fn from_i32(value: i32) -> CFNumber {
-        CFNumber::from(value)
-    }
-
-    #[deprecated(note = "please use `CFNumber::from` instead")]
-    #[inline]
-    pub fn from_i64(value: i64) -> CFNumber {
-        Self::from(value)
-    }
-
-    #[deprecated(note = "please use `CFNumber::from` instead")]
-    #[inline]
-    pub fn from_f32(value: f32) -> CFNumber {
-        Self::from(value)
-    }
-
-    #[deprecated(note = "please use `CFNumber::from` instead")]
-    #[inline]
-    pub fn from_f64(value: f64) -> CFNumber {
-        Self::from(value)
-    }
 }
 
 impl From<i32> for CFNumber {
@@ -131,10 +107,4 @@ impl From<f64> for CFNumber {
             TCFType::wrap_under_create_rule(number_ref)
         }
     }
-}
-
-/// A convenience function to create CFNumbers.
-#[deprecated(note = "please use `CFNumber::from` instead")]
-pub fn number(value: i64) -> CFNumber {
-    CFNumber::from(value)
 }

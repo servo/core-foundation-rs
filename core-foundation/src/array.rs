@@ -70,16 +70,17 @@ impl<T> Drop for CFArray<T> {
 pub struct CFArrayIterator<'a, T: 'a> {
     array: &'a CFArray<T>,
     index: CFIndex,
+    len: CFIndex,
 }
 
 impl<'a, T: FromVoid> Iterator for CFArrayIterator<'a, T> {
     type Item = ItemRef<'a, T>;
 
     fn next(&mut self) -> Option<ItemRef<'a, T>> {
-        if self.index >= self.array.len() {
+        if self.index >= self.len {
             None
         } else {
-            let value = self.array.get(self.index);
+            let value = unsafe { self.array.get_unchecked(self.index) };
             self.index += 1;
             Some(value)
         }
@@ -131,7 +132,8 @@ impl<T> CFArray<T> {
     pub fn iter<'a>(&'a self) -> CFArrayIterator<'a, T> {
         CFArrayIterator {
             array: self,
-            index: 0
+            index: 0,
+            len: self.len(),
         }
     }
 
@@ -143,9 +145,17 @@ impl<T> CFArray<T> {
     }
 
     #[inline]
-    pub fn get<'a>(&'a self, index: CFIndex) -> ItemRef<'a, T> where T: FromVoid {
-        assert!(index < self.len());
-        unsafe { T::from_void(CFArrayGetValueAtIndex(self.0, index)) }
+    pub unsafe fn get_unchecked<'a>(&'a self, index: CFIndex) -> ItemRef<'a, T> where T: FromVoid {
+        T::from_void(CFArrayGetValueAtIndex(self.0, index))
+    }
+
+    #[inline]
+    pub fn get<'a>(&'a self, index: CFIndex) -> Option<ItemRef<'a, T>> where T: FromVoid {
+        if index < self.len() {
+            Some(unsafe { T::from_void(CFArrayGetValueAtIndex(self.0, index)) } )
+        } else {
+            None
+        }
     }
 
     pub fn get_values(&self, range: CFRange) -> Vec<*const c_void> {
@@ -217,11 +227,11 @@ mod tests {
             string,
         ]);
         {
-            let p = arr.get(0);
+            let p = arr.get(0).unwrap();
             assert_eq!(p.retain_count(), 1);
         }
         {
-            let p = arr.get(0).clone();
+            let p = arr.get(0).unwrap().clone();
             assert_eq!(p.retain_count(), 2);
             assert_eq!(p.to_string(), "bar");
         }

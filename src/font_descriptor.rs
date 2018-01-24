@@ -85,7 +85,7 @@ pub trait StylisticClassAccessors {
 
 impl StylisticClassAccessors for CTFontStylisticClass {
     fn is_serif(&self) -> bool {
-        let any_serif_class = kCTFontOldStyleSerifsClass 
+        let any_serif_class = kCTFontOldStyleSerifsClass
             | kCTFontTransitionalSerifsClass
             | kCTFontModernSerifsClass
             | kCTFontClarendonSerifsClass
@@ -254,8 +254,8 @@ impl CTFontDescriptor {
 impl CTFontDescriptor {
     pub fn family_name(&self) -> String {
         unsafe {
-            let value = self.get_string_attribute(kCTFontDisplayNameAttribute);
-            value.expect("A font2 must have a non-null font family name.")
+            let value = self.get_string_attribute(kCTFontFamilyNameAttribute);
+            value.expect("A font must have a non-null family name.")
         }
     }
 
@@ -359,12 +359,12 @@ extern {
     pub fn CTFontDescriptorCopyLocalizedAttribute(descriptor: CTFontDescriptorRef,
                                                   attribute: CFStringRef,
                                                   language: *mut CFStringRef) -> CFTypeRef;
-    pub fn CTFontDescriptorCreateCopyWithAttributes(original: CTFontDescriptorRef, 
+    pub fn CTFontDescriptorCreateCopyWithAttributes(original: CTFontDescriptorRef,
                                                     attributes: CFDictionaryRef) -> CTFontDescriptorRef;
     pub fn CTFontDescriptorCreateCopyWithFeature(original: CTFontDescriptorRef,
                                                  featureTypeIdentifier: CFNumberRef,
                                                  featureSelectorIdentifier: CFNumberRef) -> CTFontDescriptorRef;
-    pub fn CTFontDescriptorCreateCopyWithVariation(original: CTFontDescriptorRef, 
+    pub fn CTFontDescriptorCreateCopyWithVariation(original: CTFontDescriptorRef,
                                                    variationIdentifier: CFNumberRef,
                                                    variationValue: CGFloat) -> CTFontDescriptorRef;
     pub fn CTFontDescriptorCreateMatchingFontDescriptor(descriptor: CTFontDescriptorRef,

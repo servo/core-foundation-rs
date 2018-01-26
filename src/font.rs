@@ -410,7 +410,7 @@ pub fn debug_font_traits(font: &CTFont) {
 }
 
 #[cfg(feature = "mountainlion")]
-pub fn cascade_list_for_languages(font: &CTFont, language_pref_list: &CFArray) -> CFArray {
+pub fn cascade_list_for_languages(font: &CTFont, language_pref_list: &CFArray<CFString>) -> CFArray<CTFontDescriptor> {
     unsafe {
         let font_collection_ref =
             CTFontCopyDefaultCascadeListForLanguages(font.as_concrete_TypeRef(),

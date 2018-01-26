@@ -8,7 +8,7 @@ pub type CFFileDescriptorNativeDescriptor = c_int;
 #[repr(C)]
 pub struct __CFFileDescriptor(c_void);
 
-pub type CFFileDescriptorRef = *const __CFFileDescriptor;
+pub type CFFileDescriptorRef = *mut __CFFileDescriptor;
 
 /* Callback Reason Types */
 pub const kCFFileDescriptorReadCallBack: CFOptionFlags  = 1 << 0;

@@ -45,7 +45,7 @@ pub struct CFDictionaryValueCallBacks {
 pub struct __CFDictionary(c_void);
 
 pub type CFDictionaryRef = *const __CFDictionary;
-pub type CFMutableDictionaryRef = *const __CFDictionary;
+pub type CFMutableDictionaryRef = *mut __CFDictionary;
 
 extern {
     /*

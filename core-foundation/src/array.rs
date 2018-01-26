@@ -10,8 +10,8 @@
 //! Heterogeneous immutable arrays.
 
 pub use core_foundation_sys::array::*;
-pub use core_foundation_sys::base::{CFIndex, CFRelease};
-use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
+pub use core_foundation_sys::base::CFIndex;
+use core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
 use libc::c_void;
 use std::mem;
 use std::mem::ManuallyDrop;

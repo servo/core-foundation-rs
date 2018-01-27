@@ -15,7 +15,7 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
 use core_foundation::string::{CFString, CFStringRef};
-use core_foundation::url::{CFURL, CFURLRef};
+use core_foundation::url::CFURL;
 use core_graphics::base::CGFloat;
 
 use libc::c_void;
@@ -130,7 +130,7 @@ trait TraitAccessorPrivate {
 impl TraitAccessorPrivate for CTFontTraits {
     unsafe fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
         let cftype = self.get_CFType(mem::transmute(key));
-        assert!(cftype.instance_of::<CFNumberRef,CFNumber>());
+        assert!(cftype.instance_of::<CFNumber>());
         TCFType::wrap_under_get_rule(mem::transmute(cftype.as_CFTypeRef()))
     }
 
@@ -200,7 +200,9 @@ impl Drop for CTFontDescriptor {
     }
 }
 
-impl TCFType<CTFontDescriptorRef> for CTFontDescriptor {
+impl TCFType for CTFontDescriptor {
+    type Ref = CTFontDescriptorRef;
+
     #[inline]
     fn as_concrete_TypeRef(&self) -> CTFontDescriptorRef {
         self.obj
@@ -243,7 +245,7 @@ impl CTFontDescriptor {
             }
 
             let value: CFType = TCFType::wrap_under_get_rule(value);
-            assert!(value.instance_of::<CFStringRef,CFString>());
+            assert!(value.instance_of::<CFString>());
             let s: CFString = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
             Some(s.to_string())
         }
@@ -288,7 +290,7 @@ impl CTFontDescriptor {
             }
 
             let value: CFType = TCFType::wrap_under_get_rule(value);
-            assert!(value.instance_of::<CFURLRef,CFURL>());
+            assert!(value.instance_of::<CFURL>());
             let url: CFURL = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
             Some(format!("{:?}", url))
         }

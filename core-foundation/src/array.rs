@@ -55,6 +55,12 @@ unsafe impl FromVoid for u32 {
     }
 }
 
+unsafe impl FromVoid for *const c_void {
+    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
+        ItemRef(ManuallyDrop::new(x), PhantomData)
+    }
+}
+
 unsafe impl<T: TCFType> FromVoid for T {
     unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
         ItemRef(ManuallyDrop::new(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x))), PhantomData)
@@ -236,6 +242,21 @@ mod tests {
             }
         }
         assert_eq!(x.retain_count(), 1);
+    }
+
+    #[test]
+    fn iter_untyped_array() {
+        use string::{CFString, CFStringRef};
+
+        let cf_string = CFString::from_static_string("bar");
+        let array: CFArray = CFArray::from_CFTypes(&[cf_string.clone()]).into_untyped();
+
+        let cf_strings = array.iter().map(|ptr| {
+            unsafe { CFString::wrap_under_get_rule(CFStringRef::from_void_ptr(*ptr)) }
+        }).collect::<Vec<_>>();
+        let strings = cf_strings.iter().map(|s| s.to_string()).collect::<Vec<_>>();
+        assert_eq!(cf_string.retain_count(), 3);
+        assert_eq!(&strings[..], &["bar"]);
     }
 
     #[test]

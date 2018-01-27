@@ -10,7 +10,7 @@
 #![allow(non_upper_case_globals)]
 
 use core_foundation::array::CFArrayRef;
-use core_foundation::base::{CFRelease, CFRetain, CFType, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::base::{CFType, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
@@ -187,59 +187,17 @@ pub struct __CTFontDescriptor(c_void);
 
 pub type CTFontDescriptorRef = *const __CTFontDescriptor;
 
-#[derive(Debug)]
-pub struct CTFontDescriptor {
-    obj: CTFontDescriptorRef,
+declare_TCFType! {
+    CTFontDescriptor, CTFontDescriptorRef
 }
+impl_TCFType!(CTFontDescriptor, CTFontDescriptorRef, CTFontDescriptorGetTypeID);
+impl_CFTypeDescription!(CTFontDescriptor);
 
-impl Drop for CTFontDescriptor {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
-impl TCFType for CTFontDescriptor {
-    type Ref = CTFontDescriptorRef;
-
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CTFontDescriptorRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CTFontDescriptorRef) -> CTFontDescriptor {
-        let reference: CTFontDescriptorRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    #[inline]
-    unsafe fn wrap_under_create_rule(obj: CTFontDescriptorRef) -> CTFontDescriptor {
-        CTFontDescriptor {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CTFontDescriptorGetTypeID()
-        }
-    }
-}
 
 impl CTFontDescriptor {
     fn get_string_attribute(&self, attribute: CFStringRef) -> Option<String> {
         unsafe {
-            let value = CTFontDescriptorCopyAttribute(self.obj, attribute);
+            let value = CTFontDescriptorCopyAttribute(self.0, attribute);
             if value.is_null() {
                 return None
             }
@@ -284,7 +242,7 @@ impl CTFontDescriptor {
 
     pub fn font_path(&self) -> Option<String> {
         unsafe {
-            let value = CTFontDescriptorCopyAttribute(self.obj, kCTFontURLAttribute);
+            let value = CTFontDescriptorCopyAttribute(self.0, kCTFontURLAttribute);
             if value.is_null() {
                 return None;
             }

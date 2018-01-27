@@ -12,14 +12,13 @@ use font_descriptor::{CTFontDescriptor, CTFontDescriptorCreateMatchingFontDescri
 use font_manager::CTFontManagerCopyAvailableFontFamilyNames;
 
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::base::{CFTypeID, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
 use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
 
 use libc::c_void;
-use std::mem;
 use std::ptr;
 
 #[repr(C)]
@@ -27,61 +26,19 @@ pub struct __CTFontCollection(c_void);
 
 pub type CTFontCollectionRef = *const __CTFontCollection;
 
-#[derive(Debug)]
-pub struct CTFontCollection {
-    obj: CTFontCollectionRef,
+declare_TCFType! {
+    CTFontCollection, CTFontCollectionRef
 }
+impl_TCFType!(CTFontCollection, CTFontCollectionRef, CTFontCollectionGetTypeID);
+impl_CFTypeDescription!(CTFontCollection);
 
-impl Drop for CTFontCollection {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.as_CFTypeRef())
-        }
-    }
-}
-
-impl TCFType for CTFontCollection {
-    type Ref = CTFontCollectionRef;
-
-    #[inline]
-    fn as_concrete_TypeRef(&self) -> CTFontCollectionRef {
-        self.obj
-    }
-
-    #[inline]
-    unsafe fn wrap_under_get_rule(reference: CTFontCollectionRef) -> CTFontCollection {
-        let reference: CTFontCollectionRef = mem::transmute(CFRetain(mem::transmute(reference)));
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    unsafe fn wrap_under_create_rule(obj: CTFontCollectionRef) -> CTFontCollection {
-        CTFontCollection {
-            obj: obj,
-        }
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
-    }
-
-    #[inline]
-    fn type_id() -> CFTypeID {
-        unsafe {
-            CTFontCollectionGetTypeID()
-        }
-    }
-}
 
 impl CTFontCollection {
     pub fn get_descriptors(&self) -> CFArray<CTFontDescriptor> {
         // surprise! this function follows the Get rule, despite being named *Create*.
         // So we have to addRef it to avoid CTFontCollection from double freeing it later.
         unsafe {
-            TCFType::wrap_under_get_rule(CTFontCollectionCreateMatchingFontDescriptors(self.obj))
+            TCFType::wrap_under_get_rule(CTFontCollectionCreateMatchingFontDescriptors(self.0))
         }
     }
 }

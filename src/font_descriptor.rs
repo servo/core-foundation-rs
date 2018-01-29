@@ -202,7 +202,7 @@ impl CTFontDescriptor {
                 return None
             }
 
-            let value: CFType = TCFType::wrap_under_get_rule(value);
+            let value: CFType = TCFType::wrap_under_create_rule(value);
             assert!(value.instance_of::<CFString>());
             let s: CFString = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
             Some(s.to_string())
@@ -247,7 +247,7 @@ impl CTFontDescriptor {
                 return None;
             }
 
-            let value: CFType = TCFType::wrap_under_get_rule(value);
+            let value: CFType = TCFType::wrap_under_create_rule(value);
             assert!(value.instance_of::<CFURL>());
             let url: CFURL = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
             Some(format!("{:?}", url))

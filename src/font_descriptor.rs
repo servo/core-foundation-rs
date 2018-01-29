@@ -253,6 +253,17 @@ impl CTFontDescriptor {
             Some(format!("{:?}", url))
         }
     }
+
+    pub fn traits(&self) -> CTFontTraits {
+        unsafe {
+            let value = CTFontDescriptorCopyAttribute(self.0, kCTFontTraitsAttribute);
+            assert!(!value.is_null());
+            let value: CFType = TCFType::wrap_under_create_rule(value);
+            assert!(value.instance_of::<CFDictionary>());
+            let dictionary: CFDictionary = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
+            dictionary
+        }
+    }
 }
 
 pub fn new_from_attributes(attributes: &CFDictionary) -> CTFontDescriptor {

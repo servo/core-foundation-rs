@@ -91,7 +91,7 @@ pub fn new_from_CGFont(cgfont: &CGFont, pt_size: f64) -> CTFont {
                                                     pt_size as CGFloat,
                                                     ptr::null(),
                                                     ptr::null());
-        TCFType::wrap_under_create_rule(font_ref)
+        CTFont::wrap_under_create_rule(font_ref)
     }
 }
 
@@ -100,7 +100,7 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
         let font_ref = CTFontCreateWithFontDescriptor(desc.as_concrete_TypeRef(),
                                                       pt_size as CGFloat,
                                                       ptr::null());
-        TCFType::wrap_under_create_rule(font_ref)
+        CTFont::wrap_under_create_rule(font_ref)
     }
 }
 
@@ -113,7 +113,7 @@ pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {
         if font_ref.is_null() {
             Err(())
         } else {
-            Ok(TCFType::wrap_under_create_rule(font_ref))
+            Ok(CTFont::wrap_under_create_rule(font_ref))
         }
     }
 }
@@ -142,7 +142,7 @@ impl CTFont {
                                                           size as CGFloat,
                                                           ptr::null(),
                                                           ptr::null());
-            TCFType::wrap_under_create_rule(font_ref)
+            CTFont::wrap_under_create_rule(font_ref)
         }
     }
 
@@ -177,7 +177,7 @@ impl CTFont {
 
     pub fn all_traits(&self) -> CTFontTraits {
         unsafe {
-            TCFType::wrap_under_create_rule(CTFontCopyTraits(self.0))
+            CTFontTraits::wrap_under_create_rule(CTFontCopyTraits(self.0))
         }
     }
 
@@ -262,7 +262,7 @@ impl CTFont {
             if result.is_null() {
                 None
             } else {
-                Some(TCFType::wrap_under_create_rule(result))
+                Some(CFData::wrap_under_create_rule(result))
             }
         }
     }
@@ -296,7 +296,7 @@ impl CTFont {
             if result.is_null() {
                 None
             } else {
-                Some(TCFType::wrap_under_create_rule(result as CFURLRef))
+                Some(CFURL::wrap_under_create_rule(result as CFURLRef))
             }
         }
     }
@@ -321,8 +321,7 @@ fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<String
         if result.is_null() {
             None
         } else {
-            let string: CFString = TCFType::wrap_under_create_rule(result);
-            Some(string.to_string())
+            Some(CFString::wrap_under_create_rule(result).to_string())
         }
     }
 }
@@ -362,7 +361,7 @@ pub fn cascade_list_for_languages(font: &CTFont, language_pref_list: &CFArray<CF
         let font_collection_ref =
             CTFontCopyDefaultCascadeListForLanguages(font.as_concrete_TypeRef(),
                                                      language_pref_list.as_concrete_TypeRef());
-        TCFType::wrap_under_create_rule(font_collection_ref)
+        CFArray::wrap_under_create_rule(font_collection_ref)
     }
 }
 
@@ -419,7 +418,7 @@ extern {
                                       matrix: *const CGAffineTransform) -> CTFontRef;
     //fn CTFontCreateWithFontDescriptorAndOptions
     //fn CTFontCreateUIFontForLanguage
-    fn CTFontCreateCopyWithAttributes(font: CTFontRef, size: CGFloat, matrix: *const CGAffineTransform, 
+    fn CTFontCreateCopyWithAttributes(font: CTFontRef, size: CGFloat, matrix: *const CGAffineTransform,
                                       attributes: CTFontDescriptorRef) -> CTFontRef;
     //fn CTFontCreateCopyWithSymbolicTraits
     //fn CTFontCreateCopyWithFamily
@@ -439,7 +438,7 @@ extern {
     //fn CTFontCopyFullName(font: CTFontRef) -> CFStringRef;
     //fn CTFontCopyDisplayName(font: CTFontRef) -> CFStringRef;
     fn CTFontCopyName(font: CTFontRef, nameKey: CFStringRef) -> CFStringRef;
-    //fn CTFontCopyLocalizedName(font: CTFontRef, nameKey: CFStringRef, 
+    //fn CTFontCopyLocalizedName(font: CTFontRef, nameKey: CFStringRef,
     //                           language: *CFStringRef) -> CFStringRef;
     #[cfg(feature = "mountainlion")]
     fn CTFontCopyDefaultCascadeListForLanguages(font: CTFontRef, languagePrefList: CFArrayRef) -> CFArrayRef;
@@ -496,8 +495,8 @@ extern {
     /* Converting Fonts */
     fn CTFontCopyGraphicsFont(font: CTFontRef, attributes: *mut CTFontDescriptorRef)
                               -> CGFontRef;
-    fn CTFontCreateWithGraphicsFont(graphicsFont: CGFontRef, size: CGFloat, 
-                                    matrix: *const CGAffineTransform, 
+    fn CTFontCreateWithGraphicsFont(graphicsFont: CGFontRef, size: CGFloat,
+                                    matrix: *const CGAffineTransform,
                                     attributes: CTFontDescriptorRef) -> CTFontRef;
     //fn CTFontGetPlatformFont
     //fn CTFontCreateWithPlatformFont

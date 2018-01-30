@@ -131,7 +131,7 @@ impl TraitAccessorPrivate for CTFontTraits {
     unsafe fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
         let cftype = self.get_CFType(mem::transmute(key));
         assert!(cftype.instance_of::<CFNumber>());
-        TCFType::wrap_under_get_rule(mem::transmute(cftype.as_CFTypeRef()))
+        CFNumber::wrap_under_get_rule(mem::transmute(cftype.as_CFTypeRef()))
     }
 
 }
@@ -202,9 +202,9 @@ impl CTFontDescriptor {
                 return None
             }
 
-            let value: CFType = TCFType::wrap_under_create_rule(value);
+            let value = CFType::wrap_under_create_rule(value);
             assert!(value.instance_of::<CFString>());
-            let s: CFString = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
+            let s = CFString::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
             Some(s.to_string())
         }
     }
@@ -247,9 +247,9 @@ impl CTFontDescriptor {
                 return None;
             }
 
-            let value: CFType = TCFType::wrap_under_create_rule(value);
+            let value = CFType::wrap_under_create_rule(value);
             assert!(value.instance_of::<CFURL>());
-            let url: CFURL = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
+            let url = CFURL::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
             Some(format!("{:?}", url))
         }
     }
@@ -258,10 +258,9 @@ impl CTFontDescriptor {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.0, kCTFontTraitsAttribute);
             assert!(!value.is_null());
-            let value: CFType = TCFType::wrap_under_create_rule(value);
+            let value = CFType::wrap_under_create_rule(value);
             assert!(value.instance_of::<CFDictionary>());
-            let dictionary: CFDictionary = TCFType::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
-            dictionary
+            CFDictionary::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()))
         }
     }
 }
@@ -270,7 +269,7 @@ pub fn new_from_attributes(attributes: &CFDictionary) -> CTFontDescriptor {
     unsafe {
         let result: CTFontDescriptorRef =
             CTFontDescriptorCreateWithAttributes(attributes.as_concrete_TypeRef());
-        TCFType::wrap_under_create_rule(result)
+        CTFontDescriptor::wrap_under_create_rule(result)
     }
 }
 

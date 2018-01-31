@@ -15,7 +15,7 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
 use core_foundation::string::{CFString, CFStringRef};
-use core_foundation::url::CFURL;
+use core_foundation::url::{CFURLCopyFileSystemPath, kCFURLPOSIXPathStyle, CFURL};
 use core_graphics::base::CGFloat;
 
 use libc::c_void;
@@ -250,7 +250,11 @@ impl CTFontDescriptor {
             let value = CFType::wrap_under_create_rule(value);
             assert!(value.instance_of::<CFURL>());
             let url = CFURL::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
-            Some(format!("{:?}", url))
+            let path = CFString::wrap_under_create_rule(CFURLCopyFileSystemPath(
+                url.as_concrete_TypeRef(),
+                kCFURLPOSIXPathStyle,
+            )).to_string();
+            Some(path)
         }
     }
 

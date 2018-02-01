@@ -1,2 +1,2 @@
 [workspace]
-members = ["core-foundation", "core-foundation-sys"]
+members = ["core-foundation", "core-foundation-sys", "core-graphics"]

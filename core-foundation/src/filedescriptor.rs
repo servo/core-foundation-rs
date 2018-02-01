@@ -107,9 +107,10 @@ mod test {
 
     use super::*;
     use std::ffi::CString;
-    use libc::{c_void, O_RDWR};
+    use std::os::raw::c_void;
     use core_foundation_sys::base::{CFOptionFlags};
     use core_foundation_sys::runloop::{kCFRunLoopDefaultMode};
+    use libc::O_RDWR;
     use runloop::{CFRunLoop};
 
     #[test]

@@ -12,12 +12,12 @@
 pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::CFIndex;
 use core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
-use libc::c_void;
 use std::mem;
 use std::mem::ManuallyDrop;
 use std::marker::PhantomData;
 use std;
 use std::ops::Deref;
+use std::os::raw::c_void;
 use std::fmt::{Debug, Formatter};
 
 use base::{CFIndexConvertible, TCFType, TCFTypeRef, CFRange};

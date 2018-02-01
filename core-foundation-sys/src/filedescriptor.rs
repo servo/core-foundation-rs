@@ -7,7 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use libc::{c_void, c_int};
+use std::os::raw::{c_int, c_void};
+
 use base::{Boolean, CFIndex, CFTypeID, CFOptionFlags, CFAllocatorRef};
 use string::CFStringRef;
 use runloop::CFRunLoopSourceRef;

@@ -14,6 +14,10 @@ extern crate libc;
 #[cfg(feature = "with-chrono")]
 extern crate chrono;
 
+use base::TCFType;
+
+pub unsafe trait ConcreteCFType: TCFType {}
+
 #[macro_export]
 macro_rules! declare_TCFType {
     (
@@ -86,6 +90,8 @@ macro_rules! impl_TCFType {
         }
 
         impl Eq for $ty { }
+
+        unsafe impl $crate::ConcreteCFType for $ty { }
     }
 }
 

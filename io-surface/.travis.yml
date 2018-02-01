@@ -1,0 +1,12 @@
+os: osx
+language: rust
+cache: cargo
+rust:
+  - stable
+  - beta
+  - nightly
+branches:
+  except:
+    - master
+notifications:
+  webhooks: http://build.servo.org:54856/travis

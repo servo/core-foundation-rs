@@ -6,6 +6,18 @@ script:
   - cd core-foundation
   - cargo build --verbose
   - cargo test --verbose -- --nocapture
+  - cd ../core-graphics
+  - cargo build --verbose
+  - cargo test --verbose -- --nocapture
+  - cd ../core-text
+  - cargo build --verbose
+  - cargo test --verbose -- --nocapture
+  - cd ../cocoa
+  - cargo build --verbose
+  - cargo test --verbose -- --nocapture
+  - cd ../io-surface
+  - cargo build --verbose
+  - cargo test --verbose -- --nocapture
 
 notifications:
   webhooks: http://build.servo.org:54856/travis

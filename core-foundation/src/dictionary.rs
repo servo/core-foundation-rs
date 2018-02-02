@@ -12,8 +12,8 @@
 pub use core_foundation_sys::dictionary::*;
 
 use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
-use libc::c_void;
 use std::mem;
+use std::os::raw::c_void;
 use std::ptr;
 
 use base::{CFType, CFIndexConvertible, TCFType, TCFTypeRef};

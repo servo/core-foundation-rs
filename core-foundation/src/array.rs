@@ -19,6 +19,7 @@ use std::marker::PhantomData;
 use std;
 use std::ops::Deref;
 use std::fmt::{Debug, Formatter};
+use ConcreteCFType;
 
 use base::{CFIndexConvertible, TCFType, TCFTypeRef, CFRange};
 
@@ -101,6 +102,8 @@ impl<'a, T: FromVoid> ExactSizeIterator for CFArrayIterator<'a, T> {
 
 impl_TCFTypeGeneric!(CFArray, CFArrayRef, CFArrayGetTypeID);
 impl_CFTypeDescriptionGeneric!(CFArray);
+
+unsafe impl ConcreteCFType for CFArray<*const c_void> {}
 
 impl<T> CFArray<T> {
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.

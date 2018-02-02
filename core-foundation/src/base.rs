@@ -13,6 +13,7 @@ use std::mem;
 pub use core_foundation_sys::base::*;
 
 use string::CFString;
+use ConcreteCFType;
 
 pub trait CFIndexConvertible {
     /// Always use this method to construct a `CFIndex` value. It performs bounds checking to
@@ -61,7 +62,7 @@ impl CFType {
     /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
     /// [`CFPropertyList::downcast`]: ../propertylist/struct.CFPropertyList.html#method.downcast
     #[inline]
-    pub fn downcast<T: TCFType>(&self) -> Option<T> {
+    pub fn downcast<T: ConcreteCFType>(&self) -> Option<T> {
         if self.instance_of::<T>() {
             unsafe {
                 let reference = T::Ref::from_void_ptr(self.0);

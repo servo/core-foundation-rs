@@ -114,7 +114,7 @@ impl StylisticClassAccessors for CTFontStylisticClass {
 
 pub type CTFontAttributes = CFDictionary;
 
-pub type CTFontTraits = CFDictionary;
+pub type CTFontTraits = CFDictionary<CFType, CFType>;
 
 pub trait TraitAccessors {
     fn symbolic_traits(&self) -> CTFontSymbolicTraits;
@@ -130,8 +130,7 @@ trait TraitAccessorPrivate {
 impl TraitAccessorPrivate for CTFontTraits {
     unsafe fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
         let cftype = self.get_CFType(mem::transmute(key));
-        assert!(cftype.instance_of::<CFNumber>());
-        CFNumber::wrap_under_get_rule(mem::transmute(cftype.as_CFTypeRef()))
+        cftype.downcast::<CFNumber>().unwrap()
     }
 
 }
@@ -269,7 +268,7 @@ impl CTFontDescriptor {
     }
 }
 
-pub fn new_from_attributes(attributes: &CFDictionary) -> CTFontDescriptor {
+pub fn new_from_attributes(attributes: &CFDictionary<CFType, CFType>) -> CTFontDescriptor {
     unsafe {
         let result: CTFontDescriptorRef =
             CTFontDescriptorCreateWithAttributes(attributes.as_concrete_TypeRef());

@@ -100,8 +100,8 @@ impl<'a, T: FromVoid> ExactSizeIterator for CFArrayIterator<'a, T> {
     }
 }
 
-impl_TCFTypeGeneric!(CFArray, CFArrayRef, CFArrayGetTypeID);
-impl_CFTypeDescriptionGeneric!(CFArray);
+impl_TCFType!(CFArray<T>, CFArrayRef, CFArrayGetTypeID);
+impl_CFTypeDescription!(CFArray);
 
 unsafe impl ConcreteCFType for CFArray<*const c_void> {}
 

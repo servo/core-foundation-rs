@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use std::ptr;
-use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType, CFType};
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::data::{CFData, CFDataRef};
 use core_foundation::string::{CFString, CFStringRef};
@@ -63,7 +63,7 @@ impl CGFont {
         }
     }
 
-    pub fn create_copy_from_variations(&self, vars: &CFDictionary) -> Result<CGFont, ()> {
+    pub fn create_copy_from_variations(&self, vars: &CFDictionary<CFType, CFType>) -> Result<CGFont, ()> {
         unsafe {
             let font_ref = CGFontCreateCopyWithVariations(self.as_ptr(),
                                                           vars.as_concrete_TypeRef());

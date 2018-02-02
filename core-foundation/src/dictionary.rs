@@ -11,23 +11,29 @@
 
 pub use core_foundation_sys::dictionary::*;
 
-use core_foundation_sys::base::{CFTypeRef, kCFAllocatorDefault};
+use core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
 use std::mem;
 use std::os::raw::c_void;
 use std::ptr;
+use std::marker::PhantomData;
+
 
 use base::{CFType, CFIndexConvertible, TCFType, TCFTypeRef};
 
+// consume the type parameters with PhantomDatas
+pub struct CFDictionary<K = *const c_void, V = *const c_void>(CFDictionaryRef, PhantomData<K>, PhantomData<V>);
 
-declare_TCFType!{
-    /// An immutable dictionary of key-value pairs.
-    CFDictionary, CFDictionaryRef
+impl<K, V> Drop for CFDictionary<K, V> {
+    fn drop(&mut self) {
+        unsafe { CFRelease(self.as_CFTypeRef()) }
+    }
 }
-impl_TCFType!(CFDictionary, CFDictionaryRef, CFDictionaryGetTypeID);
+
+impl_TCFType!(CFDictionary<K, V>, CFDictionaryRef, CFDictionaryGetTypeID);
 impl_CFTypeDescription!(CFDictionary);
 
-impl CFDictionary {
-    pub fn from_CFType_pairs<K: TCFType, V: TCFType>(pairs: &[(K, V)]) -> CFDictionary {
+impl<K, V> CFDictionary<K, V> {
+    pub fn from_CFType_pairs(pairs: &[(K, V)]) -> CFDictionary<K, V> where K: TCFType, V: TCFType {
         let (keys, values): (Vec<CFTypeRef>, Vec<CFTypeRef>) = pairs
             .iter()
             .map(|&(ref key, ref value)| (key.as_CFTypeRef(), value.as_CFTypeRef()))
@@ -64,7 +70,7 @@ impl CFDictionary {
     /// Similar to `contains_key` but acts on a higher level, automatically converting from any
     /// `TCFType` to the raw pointer of its concrete TypeRef.
     #[inline]
-    pub fn contains_key2<K: TCFType>(&self, key: &K) -> bool {
+    pub fn contains_key2(&self, key: &K) -> bool where K: TCFType {
         self.contains_key(key.as_concrete_TypeRef().as_void_ptr())
     }
 
@@ -83,7 +89,7 @@ impl CFDictionary {
     /// Similar to `find` but acts on a higher level, automatically converting from any `TCFType`
     /// to the raw pointer of its concrete TypeRef.
     #[inline]
-    pub fn find2<K: TCFType>(&self, key: &K) -> Option<*const c_void> {
+    pub fn find2(&self, key: &K) -> Option<*const c_void> where K: TCFType {
         self.find(key.as_concrete_TypeRef().as_void_ptr())
     }
 

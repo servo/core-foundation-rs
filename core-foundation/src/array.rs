@@ -37,6 +37,12 @@ impl<'a, T> Deref for ItemRef<'a, T> {
     }
 }
 
+impl<'a, T: PartialEq> PartialEq for ItemRef<'a, T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(&other.0)
+    }
+}
+
 impl<'a, T: Debug> Debug for ItemRef<'a, T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), std::fmt::Error> {
         self.0.fmt(f)

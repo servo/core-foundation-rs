@@ -130,7 +130,7 @@ trait TraitAccessorPrivate {
 
 impl TraitAccessorPrivate for CTFontTraits {
     unsafe fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
-        let cftype = self.get_CFType(mem::transmute(key));
+        let cftype = self.get(mem::transmute(key));
         cftype.downcast::<CFNumber>().unwrap()
     }
 

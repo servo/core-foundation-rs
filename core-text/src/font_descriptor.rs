@@ -20,6 +20,7 @@ use core_graphics::base::CGFloat;
 
 use libc::c_void;
 use std::mem;
+use std::path::PathBuf;
 
 /*
 * CTFontTraits.h
@@ -240,7 +241,7 @@ impl CTFontDescriptor {
         }
     }
 
-    pub fn font_path(&self) -> Option<String> {
+    pub fn font_path(&self) -> Option<PathBuf> {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.0, kCTFontURLAttribute);
             if value.is_null() {
@@ -250,11 +251,7 @@ impl CTFontDescriptor {
             let value = CFType::wrap_under_create_rule(value);
             assert!(value.instance_of::<CFURL>());
             let url = CFURL::wrap_under_get_rule(mem::transmute(value.as_CFTypeRef()));
-            let path = CFString::wrap_under_create_rule(CFURLCopyFileSystemPath(
-                url.as_concrete_TypeRef(),
-                kCFURLPOSIXPathStyle,
-            )).to_string();
-            Some(path)
+            url.to_path()
         }
     }
 

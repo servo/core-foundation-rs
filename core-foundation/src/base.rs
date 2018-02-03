@@ -15,7 +15,6 @@ use std::mem::ManuallyDrop;
 use std::ops::Deref;
 use std::os::raw::c_void;
 
-
 pub use core_foundation_sys::base::*;
 
 use string::CFString;
@@ -260,6 +259,12 @@ impl<'a, T: fmt::Debug> fmt::Debug for ItemRef<'a, T> {
     }
 }
 
+impl<'a, T: PartialEq> PartialEq for ItemRef<'a, T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(&other.0)
+    }
+}
+
 /// A trait describing how to convert from the stored *const c_void to the desired T
 pub unsafe trait FromVoid {
     unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> where Self: std::marker::Sized;
@@ -284,6 +289,36 @@ unsafe impl<T: TCFType> FromVoid for T {
         ItemRef(ManuallyDrop::new(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x))), PhantomData)
     }
 }
+
+/// A trait describing how to convert from the stored *const c_void to the desired T
+pub unsafe trait ToVoid<T> {
+    fn to_void(&self) -> *const c_void;
+}
+
+unsafe impl ToVoid<*const c_void> for *const c_void {
+    fn to_void(&self) -> *const c_void {
+        *self
+    }
+}
+
+unsafe impl<'a> ToVoid<CFType> for &'a CFType {
+    fn to_void(&self) -> *const ::std::os::raw::c_void {
+        self.as_concrete_TypeRef().as_void_ptr()
+    }
+}
+
+unsafe impl ToVoid<CFType> for CFType {
+    fn to_void(&self) -> *const ::std::os::raw::c_void {
+        self.as_concrete_TypeRef().as_void_ptr()
+    }
+}
+
+unsafe impl ToVoid<CFType> for CFTypeRef {
+    fn to_void(&self) -> *const ::std::os::raw::c_void {
+        self.as_void_ptr()
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

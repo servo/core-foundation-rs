@@ -98,6 +98,27 @@ macro_rules! impl_TCFType {
 
         impl Eq for $ty { }
 
+        unsafe impl<'a> $crate::base::ToVoid<$ty> for &'a $ty {
+            fn to_void(&self) -> *const ::std::os::raw::c_void {
+            use $crate::base::TCFTypeRef;
+                self.as_concrete_TypeRef().as_void_ptr()
+            }
+        }
+
+        unsafe impl $crate::base::ToVoid<$ty> for $ty {
+            fn to_void(&self) -> *const ::std::os::raw::c_void {
+            use $crate::base::TCFTypeRef;
+                self.as_concrete_TypeRef().as_void_ptr()
+            }
+        }
+
+        unsafe impl $crate::base::ToVoid<$ty> for $ty_ref {
+            fn to_void(&self) -> *const ::std::os::raw::c_void {
+            use $crate::base::TCFTypeRef;
+                self.as_void_ptr()
+            }
+        }
+
     };
 
     (@Phantom $x:ident) => { ::std::marker::PhantomData };

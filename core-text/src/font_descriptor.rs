@@ -15,7 +15,7 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
 use core_foundation::string::{CFString, CFStringRef};
-use core_foundation::url::{CFURLCopyFileSystemPath, kCFURLPOSIXPathStyle, CFURL};
+use core_foundation::url::CFURL;
 use core_graphics::base::CGFloat;
 
 use libc::c_void;

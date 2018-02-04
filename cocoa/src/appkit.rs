@@ -1061,8 +1061,7 @@ impl NSWindow for id {
     // Configuring Windows
 
     unsafe fn styleMask(self) -> NSWindowStyleMask {
-        let styleMask = NSWindowStyleMask::from_bits_truncate(msg_send![self, styleMask]);
-        styleMask
+        NSWindowStyleMask::from_bits_truncate(msg_send![self, styleMask])
     }
 
     unsafe fn setStyleMask_(self, styleMask: NSWindowStyleMask) {

@@ -19,7 +19,6 @@ use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
 
 use libc::c_void;
-use std::ptr;
 
 #[repr(C)]
 pub struct __CTFontCollection(c_void);
@@ -82,7 +81,7 @@ pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
         let matched_descs = CTFontDescriptorCreateMatchingFontDescriptors(
                 wildcard_desc.as_concrete_TypeRef(),
                 mandatory_attrs.as_concrete_TypeRef());
-        if matched_descs == ptr::null() {
+        if matched_descs.is_null() {
             return None;
         }
         let matched_descs = CFArray::wrap_under_create_rule(matched_descs);

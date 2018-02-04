@@ -270,12 +270,11 @@ impl CTFont {
     pub fn get_bounding_rects_for_glyphs(&self, orientation: CTFontOrientation, glyphs: &[CGGlyph])
                                          -> CGRect {
         unsafe {
-            let result = CTFontGetBoundingRectsForGlyphs(self.as_concrete_TypeRef(),
-                                                         orientation,
-                                                         glyphs.as_ptr(),
-                                                         ptr::null_mut(),
-                                                         glyphs.len() as CFIndex);
-            result
+            CTFontGetBoundingRectsForGlyphs(self.as_concrete_TypeRef(),
+                                            orientation,
+                                            glyphs.as_ptr(),
+                                            ptr::null_mut(),
+                                            glyphs.len() as CFIndex)
         }
     }
 

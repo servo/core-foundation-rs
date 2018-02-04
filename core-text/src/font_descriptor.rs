@@ -93,23 +93,23 @@ impl StylisticClassAccessors for CTFontStylisticClass {
             | kCTFontSlabSerifsClass
             | kCTFontFreeformSerifsClass;
 
-        return (*self & any_serif_class) != 0;
+        (*self & any_serif_class) != 0
     }
 
     fn is_sans_serif(&self) -> bool {
-        return (*self & kCTFontSansSerifClass) != 0;
+        (*self & kCTFontSansSerifClass) != 0
     }
 
     fn is_script(&self) -> bool {
-        return (*self & kCTFontScriptsClass) != 0;
+        (*self & kCTFontScriptsClass) != 0
     }
 
     fn is_fantasy(&self) -> bool {
-        return (*self & kCTFontOrnamentalsClass) != 0;
+        (*self & kCTFontOrnamentalsClass) != 0
     }
 
     fn is_symbols(&self) -> bool {
-        return (*self & kCTFontSymbolicClass) != 0;
+        (*self & kCTFontSymbolicClass) != 0
     }
 }
 

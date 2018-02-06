@@ -9,13 +9,14 @@
 
 #![allow(non_upper_case_globals)]
 
+use font_descriptor;
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
 
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFIndex, CFOptionFlags, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
-use core_foundation::dictionary::CFDictionaryRef;
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef, UniChar};
 use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::CGFloat;
@@ -91,6 +92,20 @@ pub fn new_from_CGFont(cgfont: &CGFont, pt_size: f64) -> CTFont {
                                                     pt_size as CGFloat,
                                                     ptr::null(),
                                                     ptr::null());
+        CTFont::wrap_under_create_rule(font_ref)
+    }
+}
+
+pub fn new_from_CGFont_with_variations(cgfont: &CGFont,
+                                       pt_size: f64,
+                                       variations: &CFDictionary<CFType, CFType>)
+                                       -> CTFont {
+    unsafe {
+        let font_desc = font_descriptor::new_from_variations(variations);
+        let font_ref = CTFontCreateWithGraphicsFont(cgfont.as_ptr() as *mut _,
+                                                    pt_size as CGFloat,
+                                                    ptr::null(),
+                                                    font_desc.as_concrete_TypeRef());
         CTFont::wrap_under_create_rule(font_ref)
     }
 }

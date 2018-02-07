@@ -98,7 +98,7 @@ pub fn new_from_CGFont(cgfont: &CGFont, pt_size: f64) -> CTFont {
 
 pub fn new_from_CGFont_with_variations(cgfont: &CGFont,
                                        pt_size: f64,
-                                       variations: &CFDictionary<CFType, CFType>)
+                                       variations: &CFDictionary<CFString, CFType>)
                                        -> CTFont {
     unsafe {
         let font_desc = font_descriptor::new_from_variations(variations);

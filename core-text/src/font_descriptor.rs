@@ -282,6 +282,14 @@ pub fn new_from_variations(variations: &CFDictionary<CFType, CFType>) -> CTFontD
     }
 }
 
+pub fn new_from_postscript_name(name: &CFString) -> CTFontDescriptor {
+    unsafe {
+        let result: CTFontDescriptorRef =
+            CTFontDescriptorCreateWithNameAndSize(name.as_concrete_TypeRef(), 0.0);
+        CTFontDescriptor::wrap_under_create_rule(result)
+    }
+}
+
 pub fn debug_descriptor(desc: &CTFontDescriptor) {
     println!("family: {}", desc.family_name());
     println!("name: {}", desc.font_name());

@@ -1673,6 +1673,7 @@ pub trait NSView: Sized {
 
     unsafe fn widthAnchor(self) -> id;
     unsafe fn heightAnchor(self) -> id;
+    unsafe fn convertRectToBacking(self, rect: NSRect) -> NSRect;
 }
 
 impl NSView for id {
@@ -1742,6 +1743,10 @@ impl NSView for id {
 
     unsafe fn heightAnchor(self) -> id {
         msg_send![self, heightAnchor]
+    }
+
+    unsafe fn convertRectToBacking(self, rect: NSRect) -> NSRect {
+        msg_send![self, convertRectToBacking:rect]
     }
 }
 

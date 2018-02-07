@@ -9,7 +9,7 @@
 
 use font_descriptor;
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorCreateMatchingFontDescriptors};
-use font_manager::CTFontManagerCopyAvailableFontFamilyNames;
+use font_manager::{CTFontManagerCopyAvailableFontFamilyNames, CTFontManagerCopyAvailablePostScriptNames};
 
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFTypeID, TCFType};
@@ -94,6 +94,12 @@ pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
 pub fn get_family_names() -> CFArray<CFString> {
     unsafe {
         CFArray::wrap_under_create_rule(CTFontManagerCopyAvailableFontFamilyNames())
+    }
+}
+
+pub fn get_postscript_names() -> CFArray<CFString> {
+    unsafe {
+        CFArray::wrap_under_create_rule(CTFontManagerCopyAvailablePostScriptNames())
     }
 }
 

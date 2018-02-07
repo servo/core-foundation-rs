@@ -13,60 +13,15 @@ pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::CFIndex;
 use core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
 use std::mem;
-use std::mem::ManuallyDrop;
 use std::marker::PhantomData;
-use std;
-use std::ops::Deref;
 use std::os::raw::c_void;
-use std::fmt::{Debug, Formatter};
 use ConcreteCFType;
 
-use base::{CFIndexConvertible, TCFType, TCFTypeRef, CFRange};
+use base::{CFIndexConvertible, TCFType, CFRange};
+use base::{FromVoid, ItemRef};
 
 /// A heterogeneous immutable array.
 pub struct CFArray<T = *const c_void>(CFArrayRef, PhantomData<T>);
-
-/// A reference to an element inside the array
-pub struct ItemRef<'a, T: 'a>(ManuallyDrop<T>, PhantomData<&'a T>);
-
-impl<'a, T> Deref for ItemRef<'a, T> {
-    type Target = T;
-
-    fn deref(&self) -> &T {
-        &self.0
-    }
-}
-
-impl<'a, T: Debug> Debug for ItemRef<'a, T> {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), std::fmt::Error> {
-        self.0.fmt(f)
-    }
-}
-
-/// A trait describing how to convert from the stored *const c_void to the desired T
-pub unsafe trait FromVoid {
-    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> where Self: std::marker::Sized;
-}
-
-unsafe impl FromVoid for u32 {
-    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
-        // Functions like CGFontCopyTableTags treat the void*'s as u32's
-        // so we convert by casting directly
-        ItemRef(ManuallyDrop::new(x as u32), PhantomData)
-    }
-}
-
-unsafe impl FromVoid for *const c_void {
-    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
-        ItemRef(ManuallyDrop::new(x), PhantomData)
-    }
-}
-
-unsafe impl<T: TCFType> FromVoid for T {
-    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
-        ItemRef(ManuallyDrop::new(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x))), PhantomData)
-    }
-}
 
 impl<T> Drop for CFArray<T> {
     fn drop(&mut self) {
@@ -250,6 +205,7 @@ mod tests {
     #[test]
     fn iter_untyped_array() {
         use string::{CFString, CFStringRef};
+        use base::TCFTypeRef;
 
         let cf_string = CFString::from_static_string("bar");
         let array: CFArray = CFArray::from_CFTypes(&[cf_string.clone()]).into_untyped();

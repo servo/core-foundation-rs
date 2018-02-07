@@ -265,7 +265,7 @@ impl CTFontDescriptor {
     }
 }
 
-pub fn new_from_attributes(attributes: &CFDictionary<CFType, CFType>) -> CTFontDescriptor {
+pub fn new_from_attributes(attributes: &CFDictionary<CFString, CFType>) -> CTFontDescriptor {
     unsafe {
         let result: CTFontDescriptorRef =
             CTFontDescriptorCreateWithAttributes(attributes.as_concrete_TypeRef());
@@ -273,9 +273,9 @@ pub fn new_from_attributes(attributes: &CFDictionary<CFType, CFType>) -> CTFontD
     }
 }
 
-pub fn new_from_variations(variations: &CFDictionary<CFType, CFType>) -> CTFontDescriptor {
+pub fn new_from_variations(variations: &CFDictionary<CFString, CFType>) -> CTFontDescriptor {
     unsafe {
-        let var_key = CFType::wrap_under_get_rule(mem::transmute(kCTFontVariationAttribute));
+        let var_key = CFString::wrap_under_get_rule(kCTFontVariationAttribute);
         let var_val = CFType::wrap_under_get_rule(variations.as_CFTypeRef());
         let attributes = CFDictionary::from_CFType_pairs(&[(var_key, var_val)]);
         new_from_attributes(&attributes)

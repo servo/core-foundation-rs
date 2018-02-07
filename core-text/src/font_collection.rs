@@ -72,7 +72,7 @@ pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
         let family_attr = CFString::wrap_under_get_rule(kCTFontFamilyNameAttribute);
         let family_name: CFString = family.parse().unwrap();
         let specified_attrs = CFDictionary::from_CFType_pairs(&[
-            (family_attr.as_CFType(), family_name.as_CFType())
+            (family_attr.clone(), family_name.as_CFType())
         ]);
 
         let wildcard_desc: CTFontDescriptor =

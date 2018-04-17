@@ -141,6 +141,24 @@ pub enum NSApplicationTerminateReply {
 }
 
 bitflags! {
+    pub struct NSApplicationPresentationOptions : NSUInteger {
+        const NSApplicationPresentationDefault = 0;
+        const NSApplicationPresentationAutoHideDock = 1 << 0;
+        const NSApplicationPresentationHideDock = 1 << 1;
+        const NSApplicationPresentationAutoHideMenuBar = 1 << 2;
+        const NSApplicationPresentationHideMenuBar = 1 << 3;
+        const NSApplicationPresentationDisableAppleMenu = 1 << 4;
+        const NSApplicationPresentationDisableProcessSwitching = 1 << 5;
+        const NSApplicationPresentationDisableForceQuit = 1 << 6;
+        const NSApplicationPresentationDisableSessionTermination = 1 << 7;
+        const NSApplicationPresentationDisableHideApplication = 1 << 8;
+        const NSApplicationPresentationDisableMenuBarTransparency = 1 << 9;
+        const NSApplicationPresentationFullScreen = 1 << 10;
+        const NSApplicationPresentationAutoHideToolbar = 1 << 11;
+    }
+}
+
+bitflags! {
     pub struct NSWindowStyleMask: NSUInteger {
         const NSBorderlessWindowMask      = 0;
         const NSTitledWindowMask          = 1 << 0;
@@ -330,6 +348,8 @@ pub trait NSApplication: Sized {
 
     unsafe fn mainMenu(self) -> id;
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL;
+    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> BOOL;
+    unsafe fn presentationOptions_(self) -> NSApplicationPresentationOptions;
     unsafe fn setMainMenu_(self, menu: id);
     unsafe fn setServicesMenu_(self, menu: id);
     unsafe fn setWindowsMenu_(self, menu: id);
@@ -355,6 +375,15 @@ impl NSApplication for id {
 
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL {
         msg_send![self, setActivationPolicy:policy as NSInteger]
+    }
+
+    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> BOOL {
+        msg_send![self, setPresentationOptions:options.bits]
+    }
+
+    unsafe fn presentationOptions_(self) -> NSApplicationPresentationOptions {
+        let options = msg_send![self, presentationOptions];
+        return NSApplicationPresentationOptions::from_bits(options).unwrap();
     }
 
     unsafe fn setMainMenu_(self, menu: id) {

@@ -14,9 +14,10 @@ use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
 
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::base::{CFIndex, CFOptionFlags, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
+use core_foundation::number::CFNumber;
 use core_foundation::string::{CFString, CFStringRef, UniChar};
 use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::CGFloat;
@@ -98,7 +99,7 @@ pub fn new_from_CGFont(cgfont: &CGFont, pt_size: f64) -> CTFont {
 
 pub fn new_from_CGFont_with_variations(cgfont: &CGFont,
                                        pt_size: f64,
-                                       variations: &CFDictionary<CFString, CFType>)
+                                       variations: &CFDictionary<CFString, CFNumber>)
                                        -> CTFont {
     unsafe {
         let font_desc = font_descriptor::new_from_variations(variations);

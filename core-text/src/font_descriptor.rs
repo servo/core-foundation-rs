@@ -273,7 +273,7 @@ pub fn new_from_attributes(attributes: &CFDictionary<CFString, CFType>) -> CTFon
     }
 }
 
-pub fn new_from_variations(variations: &CFDictionary<CFString, CFType>) -> CTFontDescriptor {
+pub fn new_from_variations(variations: &CFDictionary<CFString, CFNumber>) -> CTFontDescriptor {
     unsafe {
         let var_key = CFString::wrap_under_get_rule(kCTFontVariationAttribute);
         let var_val = CFType::wrap_under_get_rule(variations.as_CFTypeRef());

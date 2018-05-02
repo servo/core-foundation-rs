@@ -84,6 +84,12 @@ extern {
     // NSAppearance names. (NSString *)
     pub static NSAppearanceNameVibrantDark: id;
     pub static NSAppearanceNameVibrantLight: id;
+
+    // Fullscreen mode options - OS X v10.5 and later. (NSString *)
+    pub static NSFullScreenModeAllScreens: id;
+    pub static NSFullScreenModeSetting: id;
+    pub static NSFullScreenModeWindowLevel: id;
+    pub static NSFullScreenModeApplicationPresentationOptions: id;
 }
 
 pub const NSAppKitVersionNumber10_0: f64 = 577.0;

@@ -24,8 +24,9 @@ pub use self::NSBackingStoreType::*;
 pub use self::NSOpenGLPixelFormatAttribute::*;
 pub use self::NSOpenGLPFAOpenGLProfiles::*;
 pub use self::NSEventType::*;
+use std::os::raw::c_void;
 
-pub type CGLContextObj = *mut libc::c_void;
+pub type CGLContextObj = *mut c_void;
 
 pub type GLint = libc::int32_t;
 
@@ -2239,7 +2240,7 @@ pub trait NSEvent: Sized {
         context: id /* (NSGraphicsContext *) */,
         eventNumber: NSInteger,
         trackingNumber: NSInteger,
-        userData: *mut libc::c_void) -> id /* (NSEvent *) */;
+        userData: *mut c_void) -> id /* (NSEvent *) */;
     unsafe fn otherEventWithType_location_modifierFlags_timestamp_windowNumber_context_subtype_data1_data2_(
         _: Self,
         eventType: NSEventType,
@@ -2251,8 +2252,8 @@ pub trait NSEvent: Sized {
         subtype: NSEventSubtype,
         data1: NSInteger,
         data2: NSInteger) -> id /* (NSEvent *) */;
-    unsafe fn eventWithEventRef_(_: Self, eventRef: *const libc::c_void) -> id;
-    unsafe fn eventWithCGEvent_(_: Self, cgEvent: *mut libc::c_void /* CGEventRef */) -> id;
+    unsafe fn eventWithEventRef_(_: Self, eventRef: *const c_void) -> id;
+    unsafe fn eventWithCGEvent_(_: Self, cgEvent: *mut c_void /* CGEventRef */) -> id;
 
     // Getting General Event Information
     unsafe fn context(self) -> id /* (NSGraphicsContext *) */;
@@ -2263,8 +2264,8 @@ pub trait NSEvent: Sized {
     unsafe fn eventType(self) -> NSEventType;
     unsafe fn window(self) -> id /* (NSWindow *) */;
     unsafe fn windowNumber(self) -> NSInteger;
-    unsafe fn eventRef(self) -> *const libc::c_void;
-    unsafe fn CGEvent(self) -> *mut libc::c_void /* CGEventRef */;
+    unsafe fn eventRef(self) -> *const c_void;
+    unsafe fn CGEvent(self) -> *mut c_void /* CGEventRef */;
 
     // Getting Key Event Information
     // NOTE: renamed from `+ modifierFlags` due to conflict with `- modifierFlags`
@@ -2290,7 +2291,7 @@ pub trait NSEvent: Sized {
     unsafe fn eventNumber(self) -> NSInteger;
     unsafe fn trackingNumber(self) -> NSInteger;
     unsafe fn trackingArea(self) -> id /* (NSTrackingArea *) */;
-    unsafe fn userData(self) -> *const libc::c_void;
+    unsafe fn userData(self) -> *const c_void;
 
     // Getting Custom Event Information
     unsafe fn data1(self) -> NSInteger;
@@ -2411,7 +2412,7 @@ impl NSEvent for id {
         context: id /* (NSGraphicsContext *) */,
         eventNumber: NSInteger,
         trackingNumber: NSInteger,
-        userData: *mut libc::c_void) -> id /* (NSEvent *) */
+        userData: *mut c_void) -> id /* (NSEvent *) */
     {
         msg_send![class("NSEvent"), enterExitEventWithType:eventType
                                                   location:location
@@ -2447,11 +2448,11 @@ impl NSEvent for id {
                                                  data2:data2]
     }
 
-    unsafe fn eventWithEventRef_(_: Self, eventRef: *const libc::c_void) -> id {
+    unsafe fn eventWithEventRef_(_: Self, eventRef: *const c_void) -> id {
         msg_send![class("NSEvent"), eventWithEventRef:eventRef]
     }
 
-    unsafe fn eventWithCGEvent_(_: Self, cgEvent: *mut libc::c_void /* CGEventRef */) -> id {
+    unsafe fn eventWithCGEvent_(_: Self, cgEvent: *mut c_void /* CGEventRef */) -> id {
         msg_send![class("NSEvent"), eventWithCGEvent:cgEvent]
     }
 
@@ -2486,11 +2487,11 @@ impl NSEvent for id {
         msg_send![self, windowNumber]
     }
 
-    unsafe fn eventRef(self) -> *const libc::c_void {
+    unsafe fn eventRef(self) -> *const c_void {
         msg_send![self, eventRef]
     }
 
-    unsafe fn CGEvent(self) -> *mut libc::c_void /* CGEventRef */ {
+    unsafe fn CGEvent(self) -> *mut c_void /* CGEventRef */ {
         msg_send![self, CGEvent]
     }
 
@@ -2574,7 +2575,7 @@ impl NSEvent for id {
         msg_send![self, trackingArea]
     }
 
-    unsafe fn userData(self) -> *const libc::c_void {
+    unsafe fn userData(self) -> *const c_void {
         msg_send![self, userData]
     }
 

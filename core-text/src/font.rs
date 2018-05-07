@@ -27,7 +27,8 @@ use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 use core_graphics::path::CGPath;
 
 use foreign_types::ForeignType;
-use libc::{self, size_t, c_void};
+use libc::{self, size_t};
+use std::os::raw::c_void;
 use std::ptr;
 
 type CGContextRef = *mut <CGContext as ForeignType>::CType;

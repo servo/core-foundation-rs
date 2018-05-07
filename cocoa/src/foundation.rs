@@ -10,6 +10,7 @@
 #![allow(non_upper_case_globals)]
 
 use std::ptr;
+use std::os::raw::c_void;
 use base::{id, class, BOOL, NO, SEL, nil};
 use block::Block;
 use libc;
@@ -705,15 +706,15 @@ pub trait NSData: Sized {
         msg_send![class("NSData"), data]
     }
 
-    unsafe fn dataWithBytes_length_(_: Self, bytes: *const libc::c_void, length: NSUInteger) -> id {
+    unsafe fn dataWithBytes_length_(_: Self, bytes: *const c_void, length: NSUInteger) -> id {
         msg_send![class("NSData"), dataWithBytes:bytes length:length]
     }
 
-    unsafe fn dataWithBytesNoCopy_length_(_: Self, bytes: *const libc::c_void, length: NSUInteger) -> id {
+    unsafe fn dataWithBytesNoCopy_length_(_: Self, bytes: *const c_void, length: NSUInteger) -> id {
         msg_send![class("NSData"), dataWithBytesNoCopy:bytes length:length]
     }
 
-    unsafe fn dataWithBytesNoCopy_length_freeWhenDone_(_: Self, bytes: *const libc::c_void,
+    unsafe fn dataWithBytesNoCopy_length_freeWhenDone_(_: Self, bytes: *const c_void,
                                                       length: NSUInteger, freeWhenDone: BOOL) -> id {
         msg_send![class("NSData"), dataWithBytesNoCopy:bytes length:length freeWhenDone:freeWhenDone]
     }
@@ -744,12 +745,12 @@ pub trait NSData: Sized {
                                                  -> id;
     unsafe fn initWithBase64EncodedString_options_(self, base64String: id, options: NSDataBase64DecodingOptions)
                                                    -> id;
-    unsafe fn initWithBytes_length_(self, bytes: *const libc::c_void, length: NSUInteger) -> id;
-    unsafe fn initWithBytesNoCopy_length_(self, bytes: *const libc::c_void, length: NSUInteger) -> id;
-    unsafe fn initWithBytesNoCopy_length_deallocator_(self, bytes: *const libc::c_void, length: NSUInteger,
-                                                      deallocator: *mut Block<(*const libc::c_void, NSUInteger), ()>)
+    unsafe fn initWithBytes_length_(self, bytes: *const c_void, length: NSUInteger) -> id;
+    unsafe fn initWithBytesNoCopy_length_(self, bytes: *const c_void, length: NSUInteger) -> id;
+    unsafe fn initWithBytesNoCopy_length_deallocator_(self, bytes: *const c_void, length: NSUInteger,
+                                                      deallocator: *mut Block<(*const c_void, NSUInteger), ()>)
                                                       -> id;
-    unsafe fn initWithBytesNoCopy_length_freeWhenDone_(self, bytes: *const libc::c_void,
+    unsafe fn initWithBytesNoCopy_length_freeWhenDone_(self, bytes: *const c_void,
                                                        length: NSUInteger, freeWhenDone: BOOL) -> id;
     unsafe fn initWithContentsOfFile_(self, path: id) -> id;
     unsafe fn initWithContentsOfFile_options_error(self, path: id, mask: NSDataReadingOptions, errorPtr: *mut id)
@@ -759,11 +760,11 @@ pub trait NSData: Sized {
                                                    -> id;
     unsafe fn initWithData_(self, data: id) -> id;
 
-    unsafe fn bytes(self) -> *const libc::c_void;
+    unsafe fn bytes(self) -> *const c_void;
     unsafe fn description(self) -> id;
-    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const libc::c_void, NSRange, *mut BOOL), ()>);
-    unsafe fn getBytes_length_(self, buffer: *mut libc::c_void, length: NSUInteger);
-    unsafe fn getBytes_range_(self, buffer: *mut libc::c_void, range: NSRange);
+    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const c_void, NSRange, *mut BOOL), ()>);
+    unsafe fn getBytes_length_(self, buffer: *mut c_void, length: NSUInteger);
+    unsafe fn getBytes_range_(self, buffer: *mut c_void, range: NSRange);
     unsafe fn subdataWithRange_(self, range: NSRange) -> id;
     unsafe fn rangeOfData_options_range_(self, dataToFind: id, options: NSDataSearchOptions, searchRange: NSRange)
                                          -> NSRange;
@@ -791,21 +792,21 @@ impl NSData for id {
         msg_send![self, initWithBase64EncodedString:base64String options:options]
     }
 
-    unsafe fn initWithBytes_length_(self, bytes: *const libc::c_void, length: NSUInteger) -> id {
+    unsafe fn initWithBytes_length_(self, bytes: *const c_void, length: NSUInteger) -> id {
         msg_send![self,initWithBytes:bytes length:length]
     }
 
-    unsafe fn initWithBytesNoCopy_length_(self, bytes: *const libc::c_void, length: NSUInteger) -> id {
+    unsafe fn initWithBytesNoCopy_length_(self, bytes: *const c_void, length: NSUInteger) -> id {
         msg_send![self, initWithBytesNoCopy:bytes length:length]
     }
 
-    unsafe fn initWithBytesNoCopy_length_deallocator_(self, bytes: *const libc::c_void, length: NSUInteger,
-                                                      deallocator: *mut Block<(*const libc::c_void, NSUInteger), ()>)
+    unsafe fn initWithBytesNoCopy_length_deallocator_(self, bytes: *const c_void, length: NSUInteger,
+                                                      deallocator: *mut Block<(*const c_void, NSUInteger), ()>)
                                                       -> id {
         msg_send![self, initWithBytesNoCopy:bytes length:length deallocator:deallocator]
     }
 
-    unsafe fn initWithBytesNoCopy_length_freeWhenDone_(self, bytes: *const libc::c_void,
+    unsafe fn initWithBytesNoCopy_length_freeWhenDone_(self, bytes: *const c_void,
                                                        length: NSUInteger, freeWhenDone: BOOL) -> id {
         msg_send![self, initWithBytesNoCopy:bytes length:length freeWhenDone:freeWhenDone]
     }
@@ -832,7 +833,7 @@ impl NSData for id {
         msg_send![self, initWithData:data]
     }
 
-    unsafe fn bytes(self) -> *const libc::c_void {
+    unsafe fn bytes(self) -> *const c_void {
         msg_send![self, bytes]
     }
 
@@ -840,15 +841,15 @@ impl NSData for id {
         msg_send![self, description]
     }
 
-    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const libc::c_void, NSRange, *mut BOOL), ()>) {
+    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const c_void, NSRange, *mut BOOL), ()>) {
         msg_send![self, enumerateByteRangesUsingBlock:block]
     }
 
-    unsafe fn getBytes_length_(self, buffer: *mut libc::c_void, length: NSUInteger) {
+    unsafe fn getBytes_length_(self, buffer: *mut c_void, length: NSUInteger) {
         msg_send![self, getBytes:buffer length:length]
     }
 
-    unsafe fn getBytes_range_(self, buffer: *mut libc::c_void, range: NSRange) {
+    unsafe fn getBytes_range_(self, buffer: *mut c_void, range: NSRange) {
         msg_send![self, getBytes:buffer range:range]
     }
 

@@ -23,7 +23,8 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFStringRef;
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString};
 use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
-use libc::{c_int, c_void, size_t};
+use libc::{c_int, size_t};
+use std::os::raw::c_void;
 use leaky_cow::LeakyCow;
 use std::mem;
 use std::slice;
@@ -36,7 +37,7 @@ use std::ffi::CStr;
 type IOReturn = c_int;
 
 #[repr(C)]
-pub struct __IOSurface(libc::c_void);
+pub struct __IOSurface(c_void);
 
 pub type IOSurfaceRef = *const __IOSurface;
 

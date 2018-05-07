@@ -10,9 +10,10 @@
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
 
-use libc::{c_void, size_t, off_t};
+use libc::{size_t, off_t};
 use std::mem;
 use std::sync::Arc;
+use std::os::raw::c_void;
 
 use foreign_types::{ForeignType, ForeignTypeRef};
 

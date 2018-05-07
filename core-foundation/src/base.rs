@@ -64,6 +64,21 @@ impl CFType {
     /// assert!(cf_type.downcast::<CFBoolean>().is_none());
     /// ```
     ///
+    /// ```compile_fail
+    /// # use core_foundation::array::CFArray;
+    /// # use core_foundation::base::TCFType;
+    /// # use core_foundation::boolean::CFBoolean;
+    /// # use core_foundation::string::CFString;
+    /// #
+    /// let boolean_array = CFArray::from_CFTypes(&[CFBoolean::true_value()]).into_CFType();
+    ///
+    /// // This downcast is not allowed and causes compiler error, since it would cause undefined
+    /// // behavior to access the elements of the array as a CFString:
+    /// let invalid_string_array = boolean_array
+    ///     .downcast_into::<CFArray<CFString>>()
+    ///     .unwrap();
+    /// ```
+    ///
     /// [`Box::downcast`]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.downcast
     /// [`CFPropertyList::downcast`]: ../propertylist/struct.CFPropertyList.html#method.downcast
     #[inline]
@@ -82,7 +97,7 @@ impl CFType {
     ///
     /// [`downcast`]: #method.downcast
     #[inline]
-    pub fn downcast_into<T: TCFType>(self) -> Option<T> {
+    pub fn downcast_into<T: ConcreteCFType>(self) -> Option<T> {
         if self.instance_of::<T>() {
             unsafe {
                 let reference = T::Ref::from_void_ptr(self.0);

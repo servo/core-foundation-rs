@@ -9,9 +9,9 @@ license = "MIT / Apache-2.0"
 
 [dependencies]
 libc = "0.2"
-gleam = "0.4"
+gleam = "0.5"
 
 [target.x86_64-apple-darwin.dependencies]
 core-foundation = { path = "../core-foundation", version = "0.6" }
-cgl = "0.2.1"
+cgl = "0.2.2"
 leaky-cow = "0.1.1"

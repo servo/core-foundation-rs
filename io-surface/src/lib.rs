@@ -18,9 +18,9 @@ extern crate leaky_cow;
 
 // Rust bindings to the IOSurface framework on Mac OS X.
 
-use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, CFType, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
-use core_foundation::string::CFStringRef;
+use core_foundation::string::{CFString, CFStringRef};
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString};
 use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 use libc::{c_int, size_t};
@@ -100,7 +100,7 @@ impl TCFType for IOSurface {
     }
 }
 
-pub fn new(properties: &CFDictionary) -> IOSurface {
+pub fn new(properties: &CFDictionary<CFString, CFType>) -> IOSurface {
     unsafe {
         TCFType::wrap_under_create_rule(IOSurfaceCreate(properties.as_concrete_TypeRef()))
     }

@@ -78,8 +78,8 @@ impl<'a> From<&'a CFString> for Cow<'a, str> {
                                                      false as Boolean,
                                                      buffer.as_mut_ptr(),
                                                      buffer.len().to_CFIndex(),
-                                                     &mut bytes_used) as usize;
-                assert!(chars_written.to_CFIndex() == char_len);
+                                                     &mut bytes_used);
+                assert!(chars_written == char_len);
 
                 // This is dangerous; we over-allocate and null-terminate the string (during
                 // initialization).

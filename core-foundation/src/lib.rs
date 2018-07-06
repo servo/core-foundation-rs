@@ -162,6 +162,7 @@ macro_rules! impl_CFComparison {
 }
 
 pub mod array;
+pub mod attributed_string;
 pub mod base;
 pub mod boolean;
 pub mod data;

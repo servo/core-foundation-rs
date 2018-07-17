@@ -8,7 +8,6 @@
 // except according to those terms.
 
 use objc::runtime;
-use std::mem;
 
 pub use objc::runtime::{BOOL, NO, YES};
 
@@ -21,14 +20,6 @@ pub type SEL = runtime::Sel;
 pub const nil: id = 0 as id;
 #[allow(non_upper_case_globals)]
 pub const Nil: Class = 0 as Class;
-
-/// A convenience method to convert the name of a class to the class object itself.
-#[inline]
-pub fn class(name: &str) -> Class {
-    unsafe {
-        mem::transmute(runtime::Class::get(name))
-    }
-}
 
 /// A convenience method to convert the name of a selector to the selector object.
 #[inline]

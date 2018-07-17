@@ -9,7 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, class, BOOL, SEL};
+use base::{id, BOOL, SEL};
 use block::Block;
 use foundation::{NSInteger, NSUInteger, NSTimeInterval,
                  NSPoint, NSSize, NSRect, NSRectEdge};
@@ -120,7 +120,7 @@ pub const NSAppKitVersionNumber10_8: f64 = 1187.0;
 pub const NSAppKitVersionNumber10_9: f64 = 1265.0;
 
 pub unsafe fn NSApp() -> id {
-    msg_send![class("NSApplication"), sharedApplication]
+    msg_send![class!(NSApplication), sharedApplication]
 }
 
 #[repr(i64)]
@@ -350,7 +350,7 @@ pub static NSMainMenuWindowLevel: libc::int32_t = 24;
 
 pub trait NSApplication: Sized {
     unsafe fn sharedApplication(_: Self) -> id {
-        msg_send![class("NSApplication"), sharedApplication]
+        msg_send![class!(NSApplication), sharedApplication]
     }
 
     unsafe fn mainMenu(self) -> id;
@@ -451,7 +451,7 @@ impl NSApplication for id {
 
 pub trait NSRunningApplication: Sized {
     unsafe fn currentApplication(_: Self) -> id {
-        msg_send![class("NSRunningApplication"), currentApplication]
+        msg_send![class!(NSRunningApplication), currentApplication]
     }
     unsafe fn activateWithOptions_(self, options: NSApplicationActivationOptions) -> BOOL;
 }
@@ -464,27 +464,27 @@ impl NSRunningApplication for id {
 
 pub trait NSPasteboard: Sized {
     unsafe fn generalPasteboard(_: Self) -> id {
-        msg_send![class("NSPasteboard"), generalPasteboard]
+        msg_send![class!(NSPasteboard), generalPasteboard]
     }
 
     unsafe fn pasteboardByFilteringData_ofType(_: Self, data: id, _type: id) -> id {
-        msg_send![class("NSPasteboard"), pasteboardByFilteringData:data ofType:_type]
+        msg_send![class!(NSPasteboard), pasteboardByFilteringData:data ofType:_type]
     }
 
     unsafe fn pasteboardByFilteringFile(_: Self, file: id) -> id {
-        msg_send![class("NSPasteboard"), pasteboardByFilteringFile:file]
+        msg_send![class!(NSPasteboard), pasteboardByFilteringFile:file]
     }
 
     unsafe fn pasteboardByFilteringTypesInPasteboard(_: Self, pboard: id) -> id {
-        msg_send![class("NSPasteboard"), pasteboardByFilteringTypesInPasteboard:pboard]
+        msg_send![class!(NSPasteboard), pasteboardByFilteringTypesInPasteboard:pboard]
     }
 
     unsafe fn pasteboardWithName(_: Self, name: id) -> id {
-        msg_send![class("NSPasteboard"), pasteboardWithName:name]
+        msg_send![class!(NSPasteboard), pasteboardWithName:name]
     }
 
     unsafe fn pasteboardWithUniqueName(_: Self) -> id {
-        msg_send![class("NSPasteboard"), pasteboardWithUniqueName]
+        msg_send![class!(NSPasteboard), pasteboardWithUniqueName]
     }
 
     unsafe fn releaseGlobally(self);
@@ -507,7 +507,7 @@ pub trait NSPasteboard: Sized {
     unsafe fn canReadObjectForClasses_options(self, classArray: id, options: id) -> BOOL;
     unsafe fn types(self) -> id;
     unsafe fn typesFilterableTo(_: Self, _type: id) -> id {
-        msg_send![class("NSPasteboard"), typesFilterableTo:_type]
+        msg_send![class!(NSPasteboard), typesFilterableTo:_type]
     }
 
     unsafe fn name(self) -> id;
@@ -743,11 +743,11 @@ pub enum NSPasteboardWritingOptions {
 
 pub trait NSMenu: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSMenu"), alloc]
+        msg_send![class!(NSMenu), alloc]
     }
 
     unsafe fn new(_: Self) -> id {
-        msg_send![class("NSMenu"), new]
+        msg_send![class!(NSMenu), new]
     }
 
     unsafe fn initWithTitle_(self, title: id /* NSString */) -> id;
@@ -782,15 +782,15 @@ impl NSMenu for id {
 
 pub trait NSMenuItem: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSMenuItem"), alloc]
+        msg_send![class!(NSMenuItem), alloc]
     }
 
     unsafe fn new(_: Self) -> id {
-        msg_send![class("NSMenuItem"), new]
+        msg_send![class!(NSMenuItem), new]
     }
 
     unsafe fn separatorItem(_: Self) -> id {
-        msg_send![class("NSMenuItem"), separatorItem]
+        msg_send![class!(NSMenuItem), separatorItem]
     }
 
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id;
@@ -840,7 +840,7 @@ bitflags! {
 
 pub trait NSWindow: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSWindow"), alloc]
+        msg_send![class!(NSWindow), alloc]
     }
 
     // Creating Windows
@@ -1687,7 +1687,7 @@ impl NSWindow for id {
 
 pub trait NSView: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSView"), alloc]
+        msg_send![class!(NSView), alloc]
     }
 
     unsafe fn init(self) -> id;
@@ -1798,7 +1798,7 @@ pub const NSViewMaxYMargin: u64 = 32;
 
 pub trait NSOpenGLView: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSOpenGLView"), alloc]
+        msg_send![class!(NSOpenGLView), alloc]
     }
 
     unsafe fn initWithFrame_pixelFormat_(self, frameRect: NSRect, format: id) -> id;
@@ -1827,7 +1827,7 @@ impl NSOpenGLView for id {
 
 pub trait NSOpenGLPixelFormat: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSOpenGLPixelFormat"), alloc]
+        msg_send![class!(NSOpenGLPixelFormat), alloc]
     }
 
     // Creating an NSOpenGLPixelFormat Object
@@ -1861,7 +1861,7 @@ impl NSOpenGLPixelFormat for id {
 
 pub trait NSOpenGLContext: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSOpenGLContext"), alloc]
+        msg_send![class!(NSOpenGLContext), alloc]
     }
 
     // Context Creation
@@ -1908,11 +1908,11 @@ impl NSOpenGLContext for id {
     // Managing the Current Context
 
     unsafe fn clearCurrentContext(_: Self) {
-        msg_send![class("NSOpenGLContext"), clearCurrentContext]
+        msg_send![class!(NSOpenGLContext), clearCurrentContext]
     }
 
     unsafe fn currentContext(_: Self) -> id /* (NSOpenGLContext *) */ {
-        msg_send![class("NSOpenGLContext"), currentContext]
+        msg_send![class!(NSOpenGLContext), currentContext]
     }
 
     unsafe fn makeCurrentContext(self) {
@@ -2367,7 +2367,7 @@ impl NSEvent for id {
         repeatKey: BOOL,
         code: libc::c_ushort) -> id /* (NSEvent *) */
     {
-        msg_send![class("NSEvent"), keyEventWithType:eventType
+        msg_send![class!(NSEvent), keyEventWithType:eventType
                                             location:location
                                        modifierFlags:modifierFlags
                                            timestamp:timestamp
@@ -2391,7 +2391,7 @@ impl NSEvent for id {
         clickCount: NSInteger,
         pressure: libc::c_float) -> id /* (NSEvent *) */
     {
-        msg_send![class("NSEvent"), mouseEventWithType:eventType
+        msg_send![class!(NSEvent), mouseEventWithType:eventType
                                               location:location
                                          modifierFlags:modifierFlags
                                              timestamp:timestamp
@@ -2414,7 +2414,7 @@ impl NSEvent for id {
         trackingNumber: NSInteger,
         userData: *mut c_void) -> id /* (NSEvent *) */
     {
-        msg_send![class("NSEvent"), enterExitEventWithType:eventType
+        msg_send![class!(NSEvent), enterExitEventWithType:eventType
                                                   location:location
                                              modifierFlags:modifierFlags
                                                  timestamp:timestamp
@@ -2437,7 +2437,7 @@ impl NSEvent for id {
         data1: NSInteger,
         data2: NSInteger) -> id /* (NSEvent *) */
     {
-        msg_send![class("NSEvent"), otherEventWithType:eventType
+        msg_send![class!(NSEvent), otherEventWithType:eventType
                                               location:location
                                          modifierFlags:modifierFlags
                                              timestamp:timestamp
@@ -2449,11 +2449,11 @@ impl NSEvent for id {
     }
 
     unsafe fn eventWithEventRef_(_: Self, eventRef: *const c_void) -> id {
-        msg_send![class("NSEvent"), eventWithEventRef:eventRef]
+        msg_send![class!(NSEvent), eventWithEventRef:eventRef]
     }
 
     unsafe fn eventWithCGEvent_(_: Self, cgEvent: *mut c_void /* CGEventRef */) -> id {
-        msg_send![class("NSEvent"), eventWithCGEvent:cgEvent]
+        msg_send![class!(NSEvent), eventWithCGEvent:cgEvent]
     }
 
     // Getting General Event Information
@@ -2500,15 +2500,15 @@ impl NSEvent for id {
     // NOTE: renamed from `+ modifierFlags` due to conflict with `- modifierFlags`
 
     unsafe fn currentModifierFlags(_: Self) -> NSEventModifierFlags {
-        msg_send![class("NSEvent"), currentModifierFlags]
+        msg_send![class!(NSEvent), currentModifierFlags]
     }
 
     unsafe fn keyRepeatDelay(_: Self) -> NSTimeInterval {
-        msg_send![class("NSEvent"), keyRepeatDelay]
+        msg_send![class!(NSEvent), keyRepeatDelay]
     }
 
     unsafe fn keyRepeatInterval(_: Self) -> NSTimeInterval {
-        msg_send![class("NSEvent"), keyRepeatInterval]
+        msg_send![class!(NSEvent), keyRepeatInterval]
     }
 
     unsafe fn characters(self) -> id /* (NSString *) */ {
@@ -2526,15 +2526,15 @@ impl NSEvent for id {
     // Getting Mouse Event Information
 
     unsafe fn pressedMouseButtons(_: Self) -> NSUInteger {
-        msg_send![class("NSEvent"), pressedMouseButtons]
+        msg_send![class!(NSEvent), pressedMouseButtons]
     }
 
     unsafe fn doubleClickInterval(_: Self) -> NSTimeInterval {
-        msg_send![class("NSEvent"), doubleClickInterval]
+        msg_send![class!(NSEvent), doubleClickInterval]
     }
 
     unsafe fn mouseLocation(_: Self) -> NSPoint {
-        msg_send![class("NSEvent"), mouseLocation]
+        msg_send![class!(NSEvent), mouseLocation]
     }
 
     unsafe fn buttonNumber(self) -> NSInteger {
@@ -2554,11 +2554,11 @@ impl NSEvent for id {
     }
 
     unsafe fn setMouseCoalescingEnabled_(_: Self, flag: BOOL) {
-        msg_send![class("NSEvent"), setMouseCoalescingEnabled:flag]
+        msg_send![class!(NSEvent), setMouseCoalescingEnabled:flag]
     }
 
     unsafe fn isMouseCoalescingEnabled(_: Self) -> BOOL {
-        msg_send![class("NSEvent"), isMouseCoalescingEnabled]
+        msg_send![class!(NSEvent), isMouseCoalescingEnabled]
     }
 
     // Getting Mouse-Tracking Event Information
@@ -2686,11 +2686,11 @@ impl NSEvent for id {
     // Requesting and Stopping Periodic Events
 
     unsafe fn startPeriodicEventsAfterDelay_withPeriod_(_: Self, delaySeconds: NSTimeInterval, periodSeconds: NSTimeInterval) {
-        msg_send![class("NSEvent"), startPeriodicEventsAfterDelay:delaySeconds withPeriod:periodSeconds]
+        msg_send![class!(NSEvent), startPeriodicEventsAfterDelay:delaySeconds withPeriod:periodSeconds]
     }
 
     unsafe fn stopPeriodicEvents(_: Self) {
-        msg_send![class("NSEvent"), stopPeriodicEvents]
+        msg_send![class!(NSEvent), stopPeriodicEvents]
     }
 
     // Getting Touch and Gesture Information
@@ -2704,7 +2704,7 @@ impl NSEvent for id {
     }
 
     unsafe fn isSwipeTrackingFromScrollEventsEnabled(_: Self) -> BOOL {
-        msg_send![class("NSEvent"), isSwipeTrackingFromScrollEventsEnabled]
+        msg_send![class!(NSEvent), isSwipeTrackingFromScrollEventsEnabled]
     }
 
     // Monitoring Application Events
@@ -2713,7 +2713,7 @@ impl NSEvent for id {
     // TODO: addLocalMonitorForEventsMatchingMask_handler_ (unsure how to bind to blocks)
 
     unsafe fn removeMonitor_(_: Self, eventMonitor: id) {
-        msg_send![class("NSEvent"), removeMonitor:eventMonitor]
+        msg_send![class!(NSEvent), removeMonitor:eventMonitor]
     }
 
     // Scroll Wheel and Flick Events
@@ -2772,15 +2772,15 @@ impl NSScreen for id {
     // Getting NSScreen Objects
 
     unsafe fn mainScreen(_: Self) -> id /* (NSScreen *) */ {
-        msg_send![class("NSScreen"), mainScreen]
+        msg_send![class!(NSScreen), mainScreen]
     }
 
     unsafe fn deepestScreen(_: Self) -> id /* (NSScreen *) */ {
-        msg_send![class("NSScreen"), deepestScreen]
+        msg_send![class!(NSScreen), deepestScreen]
     }
 
     unsafe fn screens(_: Self) -> id /* (NSArray *) */ {
-        msg_send![class("NSScreen"), screens]
+        msg_send![class!(NSScreen), screens]
     }
 
     // Getting Screen Information
@@ -2810,7 +2810,7 @@ impl NSScreen for id {
     }
 
     unsafe fn screensHaveSeparateSpaces(_: Self) -> BOOL {
-        msg_send![class("NSScreen"), screensHaveSeparateSpaces]
+        msg_send![class!(NSScreen), screensHaveSeparateSpaces]
     }
 
     // Screen Backing Coordinate Conversion
@@ -2837,7 +2837,7 @@ pub trait NSButton: Sized {
      unsafe fn setBezelStyle_(self, style: NSBezelStyle);
      unsafe fn setTitle_(self, title: id /* (NSString*) */);
      unsafe fn alloc(_: Self) -> id {
-         msg_send![class("NSButton"), alloc]
+         msg_send![class!(NSButton), alloc]
      }
      unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
 }
@@ -2859,7 +2859,7 @@ impl NSButton for id {
 
 pub trait NSImage: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSImage"), alloc]
+        msg_send![class!(NSImage), alloc]
     }
 
     unsafe fn initByReferencingFile_(self, file_name: id /* (NSString *) */) -> id;
@@ -2873,7 +2873,7 @@ pub trait NSImage: Sized {
     unsafe fn initWithSize_(self, aSize: NSSize) -> id;
 
     unsafe fn imageNamed_(_: Self, name: id /* (NSString *) */) -> id {
-        msg_send![class("NSImage"), imageNamed:name]
+        msg_send![class!(NSImage), imageNamed:name]
     }
 
     unsafe fn name(self) -> id /* (NSString *) */;
@@ -3268,7 +3268,7 @@ pub enum NSImageLoadStatus {
 
 pub trait NSSound: Sized {
     unsafe fn canInitWithPasteboard_(_: Self, pasteboard: id) -> BOOL {
-        msg_send![class("NSSound"), canInitWithPasteboard:pasteboard]
+        msg_send![class!(NSSound), canInitWithPasteboard:pasteboard]
     }
 
     unsafe fn initWithContentsOfFile_withReference_(self, filepath: id, byRef: BOOL) -> id;
@@ -3284,11 +3284,11 @@ pub trait NSSound: Sized {
     unsafe fn delegate(self) -> id;
 
     unsafe fn soundUnfilteredTypes(_: Self) -> id {
-        msg_send![class("NSSound"), soundUnfilteredTypes]
+        msg_send![class!(NSSound), soundUnfilteredTypes]
     }
 
     unsafe fn soundNamed_(_: Self, soundName: id) -> id {
-        msg_send![class("NSSound"), soundNamed:soundName]
+        msg_send![class!(NSSound), soundNamed:soundName]
     }
 
     unsafe fn duration(self) -> NSTimeInterval;
@@ -3412,7 +3412,7 @@ impl NSStatusItem for id {
 
 pub trait NSStatusBar: Sized {
     unsafe fn systemStatusBar(_: Self) -> id {
-        msg_send![class("NSStatusBar"), systemStatusBar]
+        msg_send![class!(NSStatusBar), systemStatusBar]
     }
 
     unsafe fn statusItemWithLength_(self, length: CGFloat) -> id /* (NSStatusItem *) */;
@@ -3440,7 +3440,7 @@ extern {
 
 pub trait NSTextField: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSTextField"), alloc]
+        msg_send![class!(NSTextField), alloc]
     }
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
     unsafe fn setEditable_(self, editable: BOOL);
@@ -3472,7 +3472,7 @@ pub enum NSTabViewType {
 
 pub trait NSTabView: Sized {
     unsafe fn new(_: Self) -> id  {
-        msg_send![class("NSTabView"), new]
+        msg_send![class!(NSTabView), new]
     }
     
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
@@ -3647,10 +3647,10 @@ pub enum NSTabState {
 
 pub trait NSTabViewItem: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSTabViewItem"), alloc]
+        msg_send![class!(NSTabViewItem), alloc]
     }
     unsafe fn new(_: Self) -> id {
-        msg_send![class("NSTabViewItem"), new]
+        msg_send![class!(NSTabViewItem), new]
     }
 
     unsafe fn initWithIdentifier_(self, identifier:id) -> id;
@@ -3747,7 +3747,7 @@ pub trait NSLayoutConstraint: Sized {
 
 impl NSLayoutConstraint for id {
     unsafe fn activateConstraints(_: Self, constraints: id) -> id {
-        msg_send![class("NSLayoutConstraint"), activateConstraints:constraints]
+        msg_send![class!(NSLayoutConstraint), activateConstraints:constraints]
     }
 }
 
@@ -3777,7 +3777,7 @@ pub trait NSColor: Sized {
 
 impl NSColor for id {
     unsafe fn clearColor(_: Self) -> id {
-        msg_send![class("NSColor"), clearColor]
+        msg_send![class!(NSColor), clearColor]
     }
 }
 

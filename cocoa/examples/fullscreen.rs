@@ -14,7 +14,7 @@ use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, 
 
 use core_graphics::display::CGDisplay;
 
-use objc::runtime::{Class, Object, Sel};
+use objc::runtime::{Object, Sel};
 use objc::declare::ClassDecl;
 
 fn main() {
@@ -44,7 +44,7 @@ fn main() {
         app_menu_item.setSubmenu_(app_menu);
 
         // Create NSWindowDelegate
-        let superclass = Class::get("NSObject").unwrap();
+        let superclass = class!(NSObject);
         let mut decl = ClassDecl::new("MyWindowDelegate", superclass).unwrap();
 
         extern fn will_use_fillscreen_presentation_options(_: &Object, _: Sel, _: id, _: NSUInteger) -> NSUInteger {

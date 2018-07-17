@@ -11,7 +11,7 @@
 
 use std::ptr;
 use std::os::raw::c_void;
-use base::{id, class, BOOL, NO, SEL, nil};
+use base::{id, BOOL, NO, SEL, nil};
 use block::Block;
 use libc;
 
@@ -31,7 +31,7 @@ const UTF8_ENCODING: usize = 4;
 #[cfg(target_os = "macos")]
 mod macos {
     use std::mem;
-    use base::{id, class};
+    use base::id;
     use core_graphics::base::CGFloat;
     use core_graphics::geometry::CGRect;
     use objc;
@@ -144,11 +144,11 @@ mod macos {
 
     pub trait NSValue: Sized {
         unsafe fn valueWithPoint(_: Self, point: NSPoint) -> id {
-            msg_send![class("NSValue"), valueWithPoint:point]
+            msg_send![class!(NSValue), valueWithPoint:point]
         }
 
         unsafe fn valueWithSize(_: Self, size: NSSize) -> id {
-            msg_send![class("NSValue"), valueWithSize:size]
+            msg_send![class!(NSValue), valueWithSize:size]
         }
     }
 
@@ -182,7 +182,7 @@ extern {
 
 pub trait NSAutoreleasePool: Sized {
     unsafe fn new(_: Self) -> id {
-        msg_send![class("NSAutoreleasePool"), new]
+        msg_send![class!(NSAutoreleasePool), new]
     }
 
     unsafe fn autorelease(self) -> Self;
@@ -201,7 +201,7 @@ impl NSAutoreleasePool for id {
 
 pub trait NSProcessInfo: Sized {
     unsafe fn processInfo(_: Self) -> id {
-        msg_send![class("NSProcessInfo"), processInfo]
+        msg_send![class!(NSProcessInfo), processInfo]
     }
 
     unsafe fn processName(self) -> id;
@@ -217,16 +217,16 @@ pub type NSTimeInterval = libc::c_double;
 
 pub trait NSArray: Sized {
     unsafe fn array(_: Self) -> id {
-        msg_send![class("NSArray"), array]
+        msg_send![class!(NSArray), array]
     }
 
     unsafe fn arrayWithObjects(_: Self, objects: &[id]) -> id {
-        msg_send![class("NSArray"), arrayWithObjects:objects.as_ptr()
+        msg_send![class!(NSArray), arrayWithObjects:objects.as_ptr()
                                     count:objects.len()]
     }
 
     unsafe fn arrayWithObject(_: Self, object: id) -> id {
-        msg_send![class("NSArray"), arrayWithObject:object]
+        msg_send![class!(NSArray), arrayWithObject:object]
     }
 
     unsafe fn arrayByAddingObjectFromArray(self, object: id) -> id;
@@ -245,35 +245,35 @@ impl NSArray for id {
 
 pub trait NSDictionary: Sized {
     unsafe fn dictionary(_: Self) -> id {
-        msg_send![class("NSDictionary"), dictionary]
+        msg_send![class!(NSDictionary), dictionary]
     }
 
     unsafe fn dictionaryWithContentsOfFile_(_: Self, path: id) -> id {
-        msg_send![class("NSDictionary"), dictionaryWithContentsOfFile:path]
+        msg_send![class!(NSDictionary), dictionaryWithContentsOfFile:path]
     }
 
     unsafe fn dictionaryWithContentsOfURL_(_: Self, aURL: id) -> id {
-        msg_send![class("NSDictionary"), dictionaryWithContentsOfURL:aURL]
+        msg_send![class!(NSDictionary), dictionaryWithContentsOfURL:aURL]
     }
 
     unsafe fn dictionaryWithDictionary_(_: Self, otherDictionary: id) -> id {
-        msg_send![class("NSDictionary"), dictionaryWithDictionary:otherDictionary]
+        msg_send![class!(NSDictionary), dictionaryWithDictionary:otherDictionary]
     }
 
     unsafe fn dictionaryWithObject_forKey_(_: Self, anObject: id, aKey: id) -> id {
-        msg_send![class("NSDictionary"), dictionaryWithObject:anObject forKey:aKey]
+        msg_send![class!(NSDictionary), dictionaryWithObject:anObject forKey:aKey]
     }
 
     unsafe fn dictionaryWithObjects_forKeys_(_: Self, objects: id, keys: id) -> id {
-        msg_send![class("NSDictionary"), dictionaryWithObjects:objects forKeys:keys]
+        msg_send![class!(NSDictionary), dictionaryWithObjects:objects forKeys:keys]
     }
 
     unsafe fn dictionaryWithObjects_forKeys_count_(_: Self, objects: *const id, keys: *const id, count: NSUInteger) -> id {
-        msg_send![class("NSDictionary"), dictionaryWithObjects:objects forKeys:keys count:count]
+        msg_send![class!(NSDictionary), dictionaryWithObjects:objects forKeys:keys count:count]
     }
 
     unsafe fn dictionaryWithObjectsAndKeys_(_: Self, firstObject: id) -> id {
-        msg_send![class("NSDictionary"), dictionaryWithObjectsAndKeys:firstObject]
+        msg_send![class!(NSDictionary), dictionaryWithObjectsAndKeys:firstObject]
     }
 
     unsafe fn init(self) -> id;
@@ -286,7 +286,7 @@ pub trait NSDictionary: Sized {
     unsafe fn initWithObjectsAndKeys_(self, firstObject: id) -> id;
 
     unsafe fn sharedKeySetForKeys_(_: Self, keys: id) -> id {
-        msg_send![class("NSDictionary"), sharedKeySetForKeys:keys]
+        msg_send![class!(NSDictionary), sharedKeySetForKeys:keys]
     }
 
     unsafe fn count(self) -> NSUInteger;
@@ -547,7 +547,7 @@ pub enum NSComparisonResult {
 
 pub trait NSString: Sized {
     unsafe fn alloc(_: Self) -> id {
-        msg_send![class("NSString"), alloc]
+        msg_send![class!(NSString), alloc]
     }
 
     unsafe fn stringByAppendingString_(self, other: id) -> id;
@@ -586,11 +586,11 @@ impl NSString for id {
 
 pub trait NSDate: Sized {
     unsafe fn distantPast(_: Self) -> id {
-        msg_send![class("NSDate"), distantPast]
+        msg_send![class!(NSDate), distantPast]
     }
 
     unsafe fn distantFuture(_: Self) -> id {
-        msg_send![class("NSDate"), distantFuture]
+        msg_send![class!(NSDate), distantFuture]
     }
 }
 
@@ -684,7 +684,7 @@ pub trait NSRunLoop: Sized {
 
 impl NSRunLoop for id {
     unsafe fn currentRunLoop() -> id {
-        msg_send![class("NSRunLoop"), currentRunLoop]
+        msg_send![class!(NSRunLoop), currentRunLoop]
     }
 
     unsafe fn performSelector_target_argument_order_modes_(self,
@@ -703,42 +703,42 @@ impl NSRunLoop for id {
 
 pub trait NSData: Sized {
     unsafe fn data(_: Self) -> id {
-        msg_send![class("NSData"), data]
+        msg_send![class!(NSData), data]
     }
 
     unsafe fn dataWithBytes_length_(_: Self, bytes: *const c_void, length: NSUInteger) -> id {
-        msg_send![class("NSData"), dataWithBytes:bytes length:length]
+        msg_send![class!(NSData), dataWithBytes:bytes length:length]
     }
 
     unsafe fn dataWithBytesNoCopy_length_(_: Self, bytes: *const c_void, length: NSUInteger) -> id {
-        msg_send![class("NSData"), dataWithBytesNoCopy:bytes length:length]
+        msg_send![class!(NSData), dataWithBytesNoCopy:bytes length:length]
     }
 
     unsafe fn dataWithBytesNoCopy_length_freeWhenDone_(_: Self, bytes: *const c_void,
                                                       length: NSUInteger, freeWhenDone: BOOL) -> id {
-        msg_send![class("NSData"), dataWithBytesNoCopy:bytes length:length freeWhenDone:freeWhenDone]
+        msg_send![class!(NSData), dataWithBytesNoCopy:bytes length:length freeWhenDone:freeWhenDone]
     }
 
     unsafe fn dataWithContentsOfFile_(_: Self, path: id) -> id {
-        msg_send![class("NSData"), dataWithContentsOfFile:path]
+        msg_send![class!(NSData), dataWithContentsOfFile:path]
     }
 
     unsafe fn dataWithContentsOfFile_options_error_(_: Self, path: id, mask: NSDataReadingOptions,
                                                     errorPtr: *mut id) -> id {
-        msg_send![class("NSData"), dataWithContentsOfFile:path options:mask error:errorPtr]
+        msg_send![class!(NSData), dataWithContentsOfFile:path options:mask error:errorPtr]
     }
 
     unsafe fn dataWithContentsOfURL_(_: Self, aURL: id) -> id {
-        msg_send![class("NSData"), dataWithContentsOfURL:aURL]
+        msg_send![class!(NSData), dataWithContentsOfURL:aURL]
     }
 
     unsafe fn dataWithContentsOfURL_options_error_(_: Self, aURL: id, mask: NSDataReadingOptions,
                                                    errorPtr: *mut id) -> id {
-        msg_send![class("NSData"), dataWithContentsOfURL:aURL options:mask error:errorPtr]
+        msg_send![class!(NSData), dataWithContentsOfURL:aURL options:mask error:errorPtr]
     }
 
     unsafe fn dataWithData_(_: Self, aData: id) -> id {
-        msg_send![class("NSData"), dataWithData:aData]
+        msg_send![class!(NSData), dataWithData:aData]
     }
 
     unsafe fn initWithBase64EncodedData_options_(self, base64Data: id, options: NSDataBase64DecodingOptions)

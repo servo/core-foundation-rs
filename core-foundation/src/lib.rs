@@ -53,16 +53,13 @@ macro_rules! impl_TCFType {
 
             #[inline]
             unsafe fn wrap_under_get_rule(reference: $ty_ref) -> Self {
-                use std::mem;
-                let reference = mem::transmute($crate::base::CFRetain(mem::transmute(reference)));
+                let reference = $crate::base::CFRetain(reference as *const ::std::os::raw::c_void) as $ty_ref;
                 $crate::base::TCFType::wrap_under_create_rule(reference)
             }
 
             #[inline]
             fn as_CFTypeRef(&self) -> $crate::base::CFTypeRef {
-                unsafe {
-                    ::std::mem::transmute(self.as_concrete_TypeRef())
-                }
+                self.as_concrete_TypeRef() as $crate::base::CFTypeRef
             }
 
             #[inline]

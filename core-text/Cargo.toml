@@ -1,6 +1,6 @@
 [package]
 name = "core-text"
-version = "10.0.0"
+version = "10.0.1"
 authors = ["The Servo Project Developers"]
 description = "Bindings to the Core Text framework."
 license = "MIT/Apache-2.0"
@@ -16,4 +16,4 @@ mountainlion = []
 foreign-types = "0.3"
 libc = "0.2"
 core-foundation = { path = "../core-foundation", version = "0.6" }
-core-graphics = { path = "../core-graphics", version = "0.15" }
+core-graphics = { path = "../core-graphics", version = "0.16" }

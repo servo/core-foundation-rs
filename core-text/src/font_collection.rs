@@ -33,11 +33,16 @@ impl_CFTypeDescription!(CTFontCollection);
 
 
 impl CTFontCollection {
-    pub fn get_descriptors(&self) -> CFArray<CTFontDescriptor> {
-        // surprise! this function follows the Get rule, despite being named *Create*.
-        // So we have to addRef it to avoid CTFontCollection from double freeing it later.
+    pub fn get_descriptors(&self) -> Option<CFArray<CTFontDescriptor>> {
         unsafe {
-            CFArray::wrap_under_get_rule(CTFontCollectionCreateMatchingFontDescriptors(self.0))
+            let array = CTFontCollectionCreateMatchingFontDescriptors(self.0);
+            if array.is_null() {
+                None
+            } else {
+                // surprise! this function follows the Get rule, despite being named *Create*.
+                // So we have to addRef it to avoid CTFontCollection from double freeing it later.
+                Some(CFArray::wrap_under_get_rule(array))
+            }
         }
     }
 }

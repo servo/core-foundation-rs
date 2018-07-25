@@ -305,29 +305,25 @@ impl CTFont {
         CTFontGetGlyphsForCharacters(self.0, characters, glyphs, count)
     }
 
-    pub fn get_advances_for_glyphs(&self,
-                                   orientation: CTFontOrientation,
-                                   glyphs: *const CGGlyph,
-                                   advances: *mut CGSize,
-                                   count: CFIndex)
-                                   -> f64 {
-        unsafe {
-            CTFontGetAdvancesForGlyphs(self.0, orientation, glyphs, advances, count) as f64
-        }
+    pub unsafe fn get_advances_for_glyphs(&self,
+                                          orientation: CTFontOrientation,
+                                          glyphs: *const CGGlyph,
+                                          advances: *mut CGSize,
+                                          count: CFIndex)
+                                          -> f64 {
+        CTFontGetAdvancesForGlyphs(self.0, orientation, glyphs, advances, count) as f64
     }
 
-    pub fn get_vertical_translations_for_glyphs(&self,
-                                                orientation: CTFontOrientation,
-                                                glyphs: *const CGGlyph,
-                                                translations: *mut CGSize,
-                                                count: CFIndex) {
-        unsafe {
-            CTFontGetVerticalTranslationsForGlyphs(self.0,
-                                                   orientation,
-                                                   glyphs,
-                                                   translations,
-                                                   count)
-        }
+    pub unsafe fn get_vertical_translations_for_glyphs(&self,
+                                                       orientation: CTFontOrientation,
+                                                       glyphs: *const CGGlyph,
+                                                       translations: *mut CGSize,
+                                                       count: CFIndex) {
+        CTFontGetVerticalTranslationsForGlyphs(self.0,
+                                               orientation,
+                                               glyphs,
+                                               translations,
+                                               count)
     }
 
     pub fn get_font_table(&self, tag: u32) -> Option<CFData> {

@@ -25,6 +25,25 @@ impl_CFTypeDescription!(CFNumber);
 impl_CFComparison!(CFNumber, CFNumberCompare);
 
 impl CFNumber {
+
+    #[inline]
+    pub fn to_i32(&self) -> Option<i32> {
+        unsafe {
+            let mut value: i32 = 0;
+            let ok = CFNumberGetValue(self.0, kCFNumberSInt32Type, mem::transmute(&mut value));
+            if ok { Some(value) } else { None }
+        }
+    }
+
+    #[inline]
+    pub fn to_u32(&self) -> Option<u32> {
+        unsafe {
+            let mut value: u32 = 0;
+            let ok = CFNumberGetValue(self.0, kCFNumberIntType, mem::transmute(&mut value));
+            if ok { Some(value) } else { None }
+        }
+    }
+
     #[inline]
     pub fn to_i64(&self) -> Option<i64> {
         unsafe {
@@ -52,6 +71,21 @@ impl CFNumber {
         }
     }
 }
+
+impl From<u32> for CFNumber {
+    #[inline]
+    fn from(value: u32) -> Self {
+        unsafe {
+            let number_ref = CFNumberCreate(
+                kCFAllocatorDefault,
+                kCFNumberIntType,
+                mem::transmute(&value),
+            );
+            TCFType::wrap_under_create_rule(number_ref)
+        }
+    }
+}
+
 
 impl From<i32> for CFNumber {
     #[inline]

@@ -78,6 +78,12 @@ impl CGContext {
         }
     }
 
+    pub fn flush(&self) {
+        unsafe {
+            CGContextFlush(self.as_ptr())
+        }
+    }
+
     pub fn width(&self) -> size_t {
         unsafe {
             CGBitmapContextGetWidth(self.as_ptr())
@@ -99,6 +105,12 @@ impl CGContext {
     pub fn set_rgb_fill_color(&self, red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
         unsafe {
             CGContextSetRGBFillColor(self.as_ptr(), red, green, blue, alpha)
+        }
+    }
+
+    pub fn set_gray_fill_color(&self, gray: CGFloat, alpha: CGFloat) {
+        unsafe {
+            CGContextSetGrayFillColor(self.as_ptr(), gray, alpha)
         }
     }
 
@@ -252,6 +264,7 @@ extern {
     fn CGBitmapContextGetBytesPerRow(context: ::sys::CGContextRef) -> size_t;
     fn CGBitmapContextCreateImage(context: ::sys::CGContextRef) -> ::sys::CGImageRef;
     fn CGContextGetTypeID() -> CFTypeID;
+    fn CGContextFlush(c: ::sys::CGContextRef);
     fn CGContextSetAllowsFontSmoothing(c: ::sys::CGContextRef, allowsFontSmoothing: bool);
     fn CGContextSetShouldSmoothFonts(c: ::sys::CGContextRef, shouldSmoothFonts: bool);
     fn CGContextSetFontSmoothingStyle(c: ::sys::CGContextRef, style: c_int);
@@ -271,6 +284,7 @@ extern {
                                 green: CGFloat,
                                 blue: CGFloat,
                                 alpha: CGFloat);
+    fn CGContextSetGrayFillColor(context: ::sys::CGContextRef, gray: CGFloat, alpha: CGFloat);
     fn CGContextFillRect(context: ::sys::CGContextRef,
                          rect: CGRect);
     fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);

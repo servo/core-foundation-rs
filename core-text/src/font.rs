@@ -393,6 +393,13 @@ impl CTFont {
             }
         }
     }
+
+    #[inline]
+    pub fn glyph_count(&self) -> CFIndex {
+        unsafe {
+            CTFontGetGlyphCount(self.0)
+        }
+    }
 }
 
 // Helper methods
@@ -540,7 +547,7 @@ extern {
     fn CTFontGetDescent(font: CTFontRef) -> CGFloat;
     fn CTFontGetLeading(font: CTFontRef) -> CGFloat;
     fn CTFontGetUnitsPerEm(font: CTFontRef) -> libc::c_uint;
-    //fn CTFontGetGlyphCount
+    fn CTFontGetGlyphCount(font: CTFontRef) -> CFIndex;
     fn CTFontGetBoundingBox(font: CTFontRef) -> CGRect;
     fn CTFontGetUnderlinePosition(font: CTFontRef) -> CGFloat;
     fn CTFontGetUnderlineThickness(font: CTFontRef) -> CGFloat;

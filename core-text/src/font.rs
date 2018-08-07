@@ -529,7 +529,7 @@ extern {
     //fn CTFontCopyPostScriptName(font: CTFontRef) -> CFStringRef;
     //fn CTFontCopyFamilyName(font: CTFontRef) -> CFStringRef;
     //fn CTFontCopyFullName(font: CTFontRef) -> CFStringRef;
-    fn CTFontCopyDisplayName(font: CTFontRef) -> CFStringRef;
+    //fn CTFontCopyDisplayName(font: CTFontRef) -> CFStringRef;
     fn CTFontCopyName(font: CTFontRef, nameKey: CFStringRef) -> CFStringRef;
     //fn CTFontCopyLocalizedName(font: CTFontRef, nameKey: CFStringRef,
     //                           language: *CFStringRef) -> CFStringRef;

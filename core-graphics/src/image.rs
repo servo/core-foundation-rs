@@ -5,6 +5,7 @@ use core_foundation::base::{CFRetain, CFTypeID};
 use core_foundation::data::CFData;
 use color_space::CGColorSpace;
 use data_provider::{CGDataProviderRef, CGDataProvider};
+use geometry::CGRect;
 use libc::size_t;
 use foreign_types::{ForeignType, ForeignTypeRef};
 
@@ -121,6 +122,10 @@ impl CGImageRef {
         };
         data_provider.copy_data()
     }
+
+    pub fn cropped(&self, rect: CGRect) -> CGImage {
+        unsafe { CGImage::from_ptr(CGImageCreateWithImageInRect(self.as_ptr(), rect)) }
+    }
 }
 
 #[link(name = "CoreGraphics", kind = "framework")]
@@ -146,6 +151,7 @@ extern {
                      shouldInterpolate: bool,
                      intent: u32)
                      -> ::sys::CGImageRef;
+    fn CGImageCreateWithImageInRect(image: ::sys::CGImageRef, rect: CGRect) -> ::sys::CGImageRef;
 
     //fn CGImageGetAlphaInfo(image: ::sys::CGImageRef) -> CGImageAlphaInfo;
     //fn CGImageCreateCopyWithColorSpace(image: ::sys::CGImageRef, space: ::sys::CGColorSpaceRef) -> ::sys::CGImageRef

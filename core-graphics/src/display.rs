@@ -11,9 +11,12 @@
 
 use libc;
 use std::ptr;
+use std::ops::Deref;
+
 pub use base::{CGError, boolean_t};
 pub use geometry::{CGRect, CGPoint, CGSize};
 
+use core_foundation::string::{CFString, CFStringRef};
 use core_foundation::base::{CFRetain, TCFType};
 use image::CGImage;
 use foreign_types::ForeignType;
@@ -41,6 +44,42 @@ pub const kCGWindowImageShouldBeOpaque: CGWindowImageOption = 1 << 1;
 pub const kCGWindowImageOnlyShadows: CGWindowImageOption = 1 << 2;
 pub const kCGWindowImageBestResolution: CGWindowImageOption = 1 << 3;
 pub const kCGWindowImageNominalResolution: CGWindowImageOption = 1 << 4;
+
+pub const kDisplayModeSafetyFlags: u32             = 0x00000007;
+pub const kDisplayModeAlwaysShowFlag: u32          = 0x00000008;
+pub const kDisplayModeNeverShowFlag: u32           = 0x00000080;
+pub const kDisplayModeNotResizeFlag: u32           = 0x00000010;
+pub const kDisplayModeRequiresPanFlag: u32         = 0x00000020;
+pub const kDisplayModeInterlacedFlag: u32          = 0x00000040;
+pub const kDisplayModeSimulscanFlag: u32           = 0x00000100;
+pub const kDisplayModeBuiltInFlag: u32             = 0x00000400;
+pub const kDisplayModeNotPresetFlag: u32           = 0x00000200;
+pub const kDisplayModeStretchedFlag: u32           = 0x00000800;
+pub const kDisplayModeNotGraphicsQualityFlag: u32  = 0x00001000;
+pub const kDisplayModeValidateAgainstDisplay: u32  = 0x00002000;
+pub const kDisplayModeTelevisionFlag: u32          = 0x00100000;
+pub const kDisplayModeValidForMirroringFlag: u32   = 0x00200000;
+pub const kDisplayModeAcceleratorBackedFlag: u32   = 0x00400000;
+pub const kDisplayModeValidForHiResFlag: u32       = 0x00800000;
+pub const kDisplayModeValidForAirPlayFlag: u32     = 0x01000000;
+pub const kDisplayModeNativeFlag: u32              = 0x02000000;
+pub const kDisplayModeValidFlag: u32               = 0x00000001;
+pub const kDisplayModeSafeFlag: u32                = 0x00000002;
+pub const kDisplayModeDefaultFlag: u32             = 0x00000004;
+
+pub const IO1BitIndexedPixels: &str =     "P";
+pub const IO2BitIndexedPixels: &str =     "PP";
+pub const IO4BitIndexedPixels: &str =     "PPPP";
+pub const IO8BitIndexedPixels: &str =     "PPPPPPPP";
+pub const IO16BitDirectPixels: &str =     "-RRRRRGGGGGBBBBB";
+pub const IO32BitDirectPixels: &str =     "--------RRRRRRRRGGGGGGGGBBBBBBBB";
+pub const kIO30BitDirectPixels: &str =    "--RRRRRRRRRRGGGGGGGGGGBBBBBBBBBB";
+pub const kIO64BitDirectPixels: &str =    "-16R16G16B16";
+pub const kIO16BitFloatPixels: &str =     "-16FR16FG16FB16";
+pub const kIO32BitFloatPixels: &str =     "-32FR32FG32FB32";
+pub const IOYUV422Pixels: &str =          "Y4U2V2";
+pub const IO8BitOverlayPixels: &str =     "O8";
+
 
 pub use core_foundation::dictionary::{ CFDictionary, CFDictionaryRef, CFDictionaryGetValueIfPresent };
 pub use core_foundation::array::{ CFArray, CFArrayRef };
@@ -373,6 +412,27 @@ impl CGDisplay {
 }
 
 impl CGDisplayMode {
+    pub fn all_display_modes(display_id: CGDirectDisplayID) -> Option<Vec<CGDisplayMode>> {
+        let array_opt: Option<CFArray> = unsafe {
+            let array_ref = CGDisplayCopyAllDisplayModes(display_id, ptr::null());
+            if array_ref != ptr::null() {
+                Some(CFArray::wrap_under_create_rule(array_ref))
+            } else {
+                None
+            }
+        };
+        match array_opt {
+            Some(modes) => {
+                let vec: Vec<CGDisplayMode> = modes.into_iter().map(|value0| {
+                    let x = *value0.deref() as *mut ::sys::CGDisplayMode;
+                    unsafe { CGDisplayMode::from_ptr(x) }
+                }).collect();
+                Some(vec)
+            },
+            None => None
+        }
+    }
+
     #[inline]
     pub fn height(&self) -> u64 {
         unsafe { CGDisplayModeGetHeight(self.as_ptr()) as u64 }
@@ -396,6 +456,39 @@ impl CGDisplayMode {
     #[inline]
     pub fn refresh_rate(&self) -> f64 {
         unsafe { CGDisplayModeGetRefreshRate(self.as_ptr()) }
+    }
+
+    #[inline]
+    pub fn io_flags(&self) -> u32 {
+        unsafe { CGDisplayModeGetIOFlags(self.as_ptr()) as u32 }
+    }
+
+    #[inline]
+    pub fn pixel_encoding(&self) -> CFString {
+        unsafe { CFString::wrap_under_create_rule(CGDisplayModeCopyPixelEncoding(self.as_ptr())) }
+    }
+
+    pub fn bit_depth(&self) -> usize {
+        let pixel_encoding = self.pixel_encoding().to_string();
+        let mut depth = 0;
+        // my numerical representation for kIO16BitFloatPixels and kIO32bitFloatPixels
+        // are made up and possibly non-sensical
+        if pixel_encoding.eq_ignore_ascii_case(kIO32BitFloatPixels) {
+            depth = 96;
+        } else if pixel_encoding.eq_ignore_ascii_case(kIO64BitDirectPixels) {
+            depth = 64;
+        } else if pixel_encoding.eq_ignore_ascii_case(kIO16BitFloatPixels) {
+            depth = 48;
+        } else if pixel_encoding.eq_ignore_ascii_case(IO32BitDirectPixels) {
+            depth = 32;
+        } else if pixel_encoding.eq_ignore_ascii_case(kIO30BitDirectPixels) {
+            depth = 30;
+        } else if pixel_encoding.eq_ignore_ascii_case(IO16BitDirectPixels) {
+            depth = 16;
+        } else if pixel_encoding.eq_ignore_ascii_case(IO8BitIndexedPixels) {
+            depth = 8;
+        }
+        return depth as usize;
     }
 }
 
@@ -447,6 +540,14 @@ extern "C" {
     pub fn CGDisplayModeGetPixelHeight(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
     pub fn CGDisplayModeGetPixelWidth(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
     pub fn CGDisplayModeGetRefreshRate(mode: ::sys::CGDisplayModeRef) -> libc::c_double;
+    pub fn CGDisplayModeGetIOFlags(mode: ::sys::CGDisplayModeRef) -> libc::uint32_t;
+    pub fn CGDisplayModeCopyPixelEncoding(mode: ::sys::CGDisplayModeRef) -> CFStringRef;
+
+    pub fn CGDisplayCopyAllDisplayModes(
+        display: CGDirectDisplayID,
+        options: CFDictionaryRef,
+    ) -> CFArrayRef;
+
 
     // mouse stuff
     pub fn CGDisplayHideCursor(display: CGDirectDisplayID) -> CGError;

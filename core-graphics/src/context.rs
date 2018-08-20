@@ -9,9 +9,11 @@
 
 use base::CGFloat;
 use color_space::CGColorSpace;
-use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
+use core_foundation::base::{ToVoid, CFRelease, CFRetain, CFTypeID};
 use font::{CGFont, CGGlyph};
 use geometry::CGPoint;
+use color::CGColor;
+use path::CGPathRef;
 use libc::{c_int, size_t};
 use std::os::raw::c_void;
 
@@ -104,6 +106,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn set_fill_color(&self, color: &CGColor) {
+        unsafe {
+            CGContextSetFillColorWithColor(self.as_ptr(), color.to_void());
+        }
+    }
+
     pub fn set_rgb_fill_color(&self, red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
         unsafe {
             CGContextSetRGBFillColor(self.as_ptr(), red, green, blue, alpha)
@@ -176,6 +184,24 @@ impl CGContextRef {
         }
     }
 
+    pub fn add_path(&self, path: &CGPathRef) {
+        unsafe {
+            CGContextAddPath(self.as_ptr(), path.as_ptr());
+        }
+    }
+
+    pub fn close_path(&self) {
+        unsafe {
+            CGContextClosePath(self.as_ptr());
+        }
+    }
+
+    pub fn fill_path(&self) {
+        unsafe {
+            CGContextFillPath(self.as_ptr());
+        }
+    }
+
     pub fn fill_rect(&self, rect: CGRect) {
         unsafe {
             CGContextFillRect(self.as_ptr(), rect)
@@ -222,6 +248,30 @@ impl CGContextRef {
                                            glyphs.as_ptr(),
                                            positions.as_ptr(),
                                            count)
+        }
+    }
+
+    pub fn save(&self) {
+        unsafe {
+            CGContextSaveGState(self.as_ptr());
+        }
+    }
+
+    pub fn restore(&self) {
+        unsafe {
+            CGContextRestoreGState(self.as_ptr());
+        }
+    }
+
+    pub fn translate(&self, tx: CGFloat, ty: CGFloat) {
+        unsafe {
+            CGContextTranslateCTM(self.as_ptr(), tx, ty);
+        }
+    }
+
+    pub fn scale(&self, sx: CGFloat, sy: CGFloat) {
+        unsafe {
+            CGContextScaleCTM(self.as_ptr(), sx, sy);
         }
     }
 }
@@ -281,6 +331,10 @@ extern {
     fn CGContextSetShouldSubpixelPositionFonts(c: ::sys::CGContextRef,
                                                shouldSubpixelPositionFonts: bool);
     fn CGContextSetTextDrawingMode(c: ::sys::CGContextRef, mode: CGTextDrawingMode);
+    fn CGContextSetFillColorWithColor(c: ::sys::CGContextRef, color: *const c_void);
+    fn CGContextAddPath(c: ::sys::CGContextRef, path: ::sys::CGPathRef);
+    fn CGContextClosePath(c: ::sys::CGContextRef);
+    fn CGContextFillPath(c: ::sys::CGContextRef);
     fn CGContextSetRGBFillColor(context: ::sys::CGContextRef,
                                 red: CGFloat,
                                 green: CGFloat,
@@ -297,5 +351,10 @@ extern {
                                       glyphs: *const CGGlyph,
                                       positions: *const CGPoint,
                                       count: size_t);
+
+    fn CGContextSaveGState(c: ::sys::CGContextRef);
+    fn CGContextRestoreGState(c: ::sys::CGContextRef);
+    fn CGContextTranslateCTM(c: ::sys::CGContextRef, tx: CGFloat, ty: CGFloat);
+    fn CGContextScaleCTM(c: ::sys::CGContextRef, sx: CGFloat, sy: CGFloat);
 }
 

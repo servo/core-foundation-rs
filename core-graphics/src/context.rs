@@ -20,7 +20,7 @@ use std::ptr;
 use std::slice;
 use geometry::{CGAffineTransform, CGRect};
 use image::CGImage;
-use foreign_types::ForeignType;
+use foreign_types::{ForeignType, ForeignTypeRef};
 
 #[repr(C)]
 pub enum CGTextDrawingMode {
@@ -77,7 +77,9 @@ impl CGContext {
                     (self.height() * self.bytes_per_row()) as usize)
         }
     }
+}
 
+impl CGContextRef {
     pub fn flush(&self) {
         unsafe {
             CGContextFlush(self.as_ptr())

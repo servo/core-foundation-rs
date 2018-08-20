@@ -412,9 +412,9 @@ impl CGDisplay {
 }
 
 impl CGDisplayMode {
-    pub fn all_display_modes(display_id: CGDirectDisplayID) -> Option<Vec<CGDisplayMode>> {
+    pub fn all_display_modes(display_id: CGDirectDisplayID, options: CFDictionaryRef) -> Option<Vec<CGDisplayMode>> {
         let array_opt: Option<CFArray> = unsafe {
-            let array_ref = CGDisplayCopyAllDisplayModes(display_id, ptr::null());
+            let array_ref = CGDisplayCopyAllDisplayModes(display_id, options);
             if array_ref != ptr::null() {
                 Some(CFArray::wrap_under_create_rule(array_ref))
             } else {
@@ -496,6 +496,8 @@ impl CGDisplayMode {
 extern "C" {
     pub static CGRectNull: CGRect;
     pub static CGRectInfinite: CGRect;
+
+    pub static kCGDisplayShowDuplicateLowResolutionModes: CFStringRef;
 
     pub fn CGDisplayModeRelease(mode: ::sys::CGDisplayModeRef);
 

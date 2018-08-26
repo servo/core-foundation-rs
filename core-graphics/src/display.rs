@@ -86,6 +86,16 @@ pub use core_foundation::array::{ CFArray, CFArrayRef };
 pub use core_foundation::array::{ CFArrayGetCount, CFArrayGetValueAtIndex };
 pub use core_foundation::base::{  CFIndex, CFRelease, CFTypeRef };
 
+pub type CGDisplayConfigRef = *mut libc::c_void;
+
+#[repr(u32)]
+#[derive(Clone, Copy)]
+pub enum CGConfigureOption {
+    ConfigureForAppOnly = 0,
+    ConfigureForSession = 1,
+    ConfigurePermanently = 2,
+}
+
 #[derive(Copy, Clone, Debug)]
 pub struct CGDisplay {
     pub id: CGDirectDisplayID,
@@ -128,6 +138,64 @@ impl CGDisplay {
             } else {
                 None
             }
+        }
+    }
+
+    /// Begins a new set of display configuration changes.
+    pub fn begin_configuration(&self) -> Result<CGDisplayConfigRef, CGError> {
+        unsafe {
+            let mut config_ref: CGDisplayConfigRef = ptr::null_mut();
+            let result = CGBeginDisplayConfiguration(&mut config_ref);
+            if result == 0 {
+                Ok(config_ref)
+            } else {
+                Err(result)
+            }
+        }
+    }
+
+    /// Cancels a set of display configuration changes.
+    pub fn cancel_configuration(&self, config_ref: &CGDisplayConfigRef) -> Result<(), CGError> {
+        let result = unsafe { CGCancelDisplayConfiguration(*config_ref) };
+        if result == 0 {
+            Ok(())
+        } else {
+            Err(result)
+        }
+    }
+
+    /// Completes a set of display configuration changes.
+    pub fn complete_configuration(
+        &self,
+        config_ref: &CGDisplayConfigRef,
+        option: CGConfigureOption,
+    ) -> Result<(), CGError> {
+        let result = unsafe { CGCompleteDisplayConfiguration(*config_ref, option) };
+        if result == 0 {
+            Ok(())
+        } else {
+            Err(result)
+        }
+    }
+
+    /// Configures the display mode of a display.
+    pub fn configure_display_with_display_mode(
+        &self,
+        config_ref: &CGDisplayConfigRef,
+        display_mode: &CGDisplayMode,
+    ) -> Result<(), CGError> {
+        let result = unsafe {
+            CGConfigureDisplayWithDisplayMode(
+                *config_ref,
+                self.id,
+                display_mode.as_ptr(),
+                ptr::null(),
+            )
+        };
+        if result == 0 {
+            Ok(())
+        } else {
+            Err(result)
         }
     }
 
@@ -412,7 +480,11 @@ impl CGDisplay {
 }
 
 impl CGDisplayMode {
-    pub fn all_display_modes(display_id: CGDirectDisplayID, options: CFDictionaryRef) -> Option<Vec<CGDisplayMode>> {
+    /// Returns all display modes for the specified display id.
+    pub fn all_display_modes(
+        display_id: CGDirectDisplayID,
+        options: CFDictionaryRef,
+    ) -> Option<Vec<CGDisplayMode>> {
         let array_opt: Option<CFArray> = unsafe {
             let array_ref = CGDisplayCopyAllDisplayModes(display_id, options);
             if array_ref != ptr::null() {
@@ -423,13 +495,15 @@ impl CGDisplayMode {
         };
         match array_opt {
             Some(modes) => {
-                let vec: Vec<CGDisplayMode> = modes.into_iter().map(|value0| {
-                    let x = *value0.deref() as *mut ::sys::CGDisplayMode;
-                    unsafe { CGDisplayMode::from_ptr(x) }
-                }).collect();
+                let vec: Vec<CGDisplayMode> = modes
+                    .into_iter()
+                    .map(|value0| {
+                        let x = *value0.deref() as *mut ::sys::CGDisplayMode;
+                        unsafe { CGDisplayMode::from_ptr(x) }
+                    }).collect();
                 Some(vec)
-            },
-            None => None
+            }
+            None => None,
         }
     }
 
@@ -535,6 +609,19 @@ extern "C" {
     pub fn CGDisplayPixelsWide(display: CGDirectDisplayID) -> libc::size_t;
     pub fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
     pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> ::sys::CGImageRef;
+
+    pub fn CGBeginDisplayConfiguration(config: *const *mut libc::c_void) -> CGError;
+    pub fn CGCancelDisplayConfiguration(config: CGDisplayConfigRef) -> CGError;
+    pub fn CGCompleteDisplayConfiguration(
+        config: *const libc::c_void,
+        option: CGConfigureOption,
+    ) -> CGError;
+    pub fn CGConfigureDisplayWithDisplayMode(
+        config: *const libc::c_void,
+        display: CGDirectDisplayID,
+        mode: ::sys::CGDisplayModeRef,
+        options: CFDictionaryRef,
+    ) -> CGError;
 
     pub fn CGDisplayCopyDisplayMode(display: CGDirectDisplayID) -> ::sys::CGDisplayModeRef;
     pub fn CGDisplayModeGetHeight(mode: ::sys::CGDisplayModeRef) -> libc::size_t;

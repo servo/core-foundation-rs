@@ -969,7 +969,11 @@ pub trait NSWindow: Sized {
     // skipped: becomeMainWindow (should not be invoked directly, according to Apple's documentation)
     // skipped: resignMainWindow (should not be invoked directly, according to Apple's documentation)
 
-    // TODO: Managing Toolbars
+    // Managing Toolbars
+    unsafe fn toolbar(self) -> id /* NSToolbar */;
+    unsafe fn setToolbar_(self, toolbar: id /* NSToolbar */);
+    unsafe fn runToolbarCustomizationPalette(self, sender: id);
+
     // TODO: Managing Attached Windows
     // TODO: Managing Window Buffers
     // TODO: Managing Default Buttons
@@ -1459,7 +1463,20 @@ impl NSWindow for id {
         msg_send![self, makeMainWindow]
     }
 
-    // TODO: Managing Toolbars
+    // Managing Toolbars
+
+    unsafe fn toolbar(self) -> id /* NSToolbar */ {
+        msg_send![self, toolbar]
+    }
+
+    unsafe fn setToolbar_(self, toolbar: id /* NSToolbar */) {
+        msg_send![self, setToolbar:toolbar]
+    }
+
+    unsafe fn runToolbarCustomizationPalette(self, sender: id) {
+        msg_send![self, runToolbarCustomizationPalette:sender]
+    }
+
     // TODO: Managing Attached Windows
     // TODO: Managing Window Buffers
     // TODO: Managing Default Buttons
@@ -3778,6 +3795,36 @@ pub trait NSColor: Sized {
 impl NSColor for id {
     unsafe fn clearColor(_: Self) -> id {
         msg_send![class!(NSColor), clearColor]
+    }
+}
+
+pub trait NSToolbar: Sized {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class!(NSToolbar), alloc]
+    }
+
+    unsafe fn init_(self) -> id /* NSToolbar */;
+    unsafe fn initWithIdentifier_(self, identifier: id) -> id /* NSToolbar */;
+
+    unsafe fn showsBaselineSeparator(self) -> BOOL;
+    unsafe fn setShowsBaselineSeparator_(self, value: BOOL);
+}
+
+impl NSToolbar for id {
+    unsafe fn init_(self) -> id /* NSToolbar */ {
+        msg_send![self, init]
+    }
+
+    unsafe fn initWithIdentifier_(self, identifier: id) -> id /* NSToolbar */ {
+        msg_send![self, initWithIdentifier:identifier]
+    }
+
+    unsafe fn showsBaselineSeparator(self) -> BOOL {
+        msg_send![self, showsBaselineSeparator]
+    }
+
+    unsafe fn setShowsBaselineSeparator_(self, value: BOOL) {
+        msg_send![self, setShowsBaselineSeparator:value]
     }
 }
 

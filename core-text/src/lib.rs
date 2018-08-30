@@ -23,3 +23,5 @@ pub mod font;
 pub mod font_collection;
 pub mod font_descriptor;
 pub mod font_manager;
+pub mod frame;
+pub mod framesetter;

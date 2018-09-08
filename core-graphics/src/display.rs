@@ -45,7 +45,9 @@ pub const kCGWindowImageOnlyShadows: CGWindowImageOption = 1 << 2;
 pub const kCGWindowImageBestResolution: CGWindowImageOption = 1 << 3;
 pub const kCGWindowImageNominalResolution: CGWindowImageOption = 1 << 4;
 
-pub const kDisplayModeSafetyFlags: u32             = 0x00000007;
+pub const kDisplayModeValidFlag: u32               = 0x00000001;
+pub const kDisplayModeSafeFlag: u32                = 0x00000002;
+pub const kDisplayModeDefaultFlag: u32             = 0x00000004;
 pub const kDisplayModeAlwaysShowFlag: u32          = 0x00000008;
 pub const kDisplayModeNeverShowFlag: u32           = 0x00000080;
 pub const kDisplayModeNotResizeFlag: u32           = 0x00000010;
@@ -63,9 +65,8 @@ pub const kDisplayModeAcceleratorBackedFlag: u32   = 0x00400000;
 pub const kDisplayModeValidForHiResFlag: u32       = 0x00800000;
 pub const kDisplayModeValidForAirPlayFlag: u32     = 0x01000000;
 pub const kDisplayModeNativeFlag: u32              = 0x02000000;
-pub const kDisplayModeValidFlag: u32               = 0x00000001;
-pub const kDisplayModeSafeFlag: u32                = 0x00000002;
-pub const kDisplayModeDefaultFlag: u32             = 0x00000004;
+
+pub const kDisplayModeSafetyFlags: u32             = 0x00000007;
 
 pub const IO1BitIndexedPixels: &str =     "P";
 pub const IO2BitIndexedPixels: &str =     "PP";
@@ -507,21 +508,25 @@ impl CGDisplayMode {
         }
     }
 
+    /// Returns the height of the specified display mode.
     #[inline]
     pub fn height(&self) -> u64 {
         unsafe { CGDisplayModeGetHeight(self.as_ptr()) as u64 }
     }
 
+    /// Returns the width of the specified display mode.
     #[inline]
     pub fn width(&self) -> u64 {
         unsafe { CGDisplayModeGetWidth(self.as_ptr()) as u64 }
     }
 
+    /// Returns the pixel height of the specified display mode.
     #[inline]
     pub fn pixel_height(&self) -> u64 {
         unsafe { CGDisplayModeGetPixelHeight(self.as_ptr()) as u64 }
     }
 
+    /// Returns the pixel width of the specified display mode.
     #[inline]
     pub fn pixel_width(&self) -> u64 {
         unsafe { CGDisplayModeGetPixelWidth(self.as_ptr()) as u64 }
@@ -532,16 +537,19 @@ impl CGDisplayMode {
         unsafe { CGDisplayModeGetRefreshRate(self.as_ptr()) }
     }
 
+    /// Returns the I/O Kit flags of the specified display mode.
     #[inline]
     pub fn io_flags(&self) -> u32 {
         unsafe { CGDisplayModeGetIOFlags(self.as_ptr()) as u32 }
     }
 
+    /// Returns the pixel encoding of the specified display mode.
     #[inline]
     pub fn pixel_encoding(&self) -> CFString {
         unsafe { CFString::wrap_under_create_rule(CGDisplayModeCopyPixelEncoding(self.as_ptr())) }
     }
 
+    /// Returns the number of bits per pixel of the specified display mode.
     pub fn bit_depth(&self) -> usize {
         let pixel_encoding = self.pixel_encoding().to_string();
         let mut depth = 0;

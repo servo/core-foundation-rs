@@ -552,25 +552,25 @@ impl CGDisplayMode {
     /// Returns the number of bits per pixel of the specified display mode.
     pub fn bit_depth(&self) -> usize {
         let pixel_encoding = self.pixel_encoding().to_string();
-        let mut depth = 0;
         // my numerical representation for kIO16BitFloatPixels and kIO32bitFloatPixels
         // are made up and possibly non-sensical
         if pixel_encoding.eq_ignore_ascii_case(kIO32BitFloatPixels) {
-            depth = 96;
+            96
         } else if pixel_encoding.eq_ignore_ascii_case(kIO64BitDirectPixels) {
-            depth = 64;
+            64
         } else if pixel_encoding.eq_ignore_ascii_case(kIO16BitFloatPixels) {
-            depth = 48;
+            48
         } else if pixel_encoding.eq_ignore_ascii_case(IO32BitDirectPixels) {
-            depth = 32;
+            32
         } else if pixel_encoding.eq_ignore_ascii_case(kIO30BitDirectPixels) {
-            depth = 30;
+            30
         } else if pixel_encoding.eq_ignore_ascii_case(IO16BitDirectPixels) {
-            depth = 16;
+            16
         } else if pixel_encoding.eq_ignore_ascii_case(IO8BitIndexedPixels) {
-            depth = 8;
+            8
+        }else{
+            0
         }
-        return depth as usize;
     }
 }
 
@@ -618,14 +618,14 @@ extern "C" {
     pub fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
     pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> ::sys::CGImageRef;
 
-    pub fn CGBeginDisplayConfiguration(config: *const *mut libc::c_void) -> CGError;
+    pub fn CGBeginDisplayConfiguration(config: *const CGDisplayConfigRef) -> CGError;
     pub fn CGCancelDisplayConfiguration(config: CGDisplayConfigRef) -> CGError;
     pub fn CGCompleteDisplayConfiguration(
-        config: *const libc::c_void,
+        config: CGDisplayConfigRef,
         option: CGConfigureOption,
     ) -> CGError;
     pub fn CGConfigureDisplayWithDisplayMode(
-        config: *const libc::c_void,
+        config: CGDisplayConfigRef,
         display: CGDirectDisplayID,
         mode: ::sys::CGDisplayModeRef,
         options: CFDictionaryRef,
@@ -644,7 +644,6 @@ extern "C" {
         display: CGDirectDisplayID,
         options: CFDictionaryRef,
     ) -> CFArrayRef;
-
 
     // mouse stuff
     pub fn CGDisplayHideCursor(display: CGDirectDisplayID) -> CGError;

@@ -25,6 +25,40 @@ use image::CGImage;
 use foreign_types::{ForeignType, ForeignTypeRef};
 
 #[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub enum CGBlendMode {
+    Normal = 0,
+    Multiply,
+    Screen,
+    Overlay,
+    Darken,
+    Lighten,
+    ColorDodge,
+    ColorBurn,
+    SoftLight,
+    HardLight,
+    Difference,
+    Exclusion,
+    Hue,
+    Saturation,
+    Color,
+    Luminosity,
+    // 10.5 and up:
+    Clear,
+    Copy,
+    SourceIn,
+    SourceOut,
+    SourceAtop,
+    DestinationOver,
+    DestinationIn,
+    DestinationOut,
+    DestinationAtop,
+    Xor,
+    PlusDarker,
+    PlusLighter,
+}
+
+#[repr(C)]
 pub enum CGTextDrawingMode {
     CGTextFill,
     CGTextStroke,
@@ -121,6 +155,12 @@ impl CGContextRef {
     pub fn set_gray_fill_color(&self, gray: CGFloat, alpha: CGFloat) {
         unsafe {
             CGContextSetGrayFillColor(self.as_ptr(), gray, alpha)
+        }
+    }
+
+    pub fn set_blend_mode(&self, blend_mode: CGBlendMode) {
+        unsafe {
+            CGContextSetBlendMode(self.as_ptr(), blend_mode)
         }
     }
 
@@ -317,6 +357,7 @@ extern {
     fn CGBitmapContextCreateImage(context: ::sys::CGContextRef) -> ::sys::CGImageRef;
     fn CGContextGetTypeID() -> CFTypeID;
     fn CGContextFlush(c: ::sys::CGContextRef);
+    fn CGContextSetBlendMode(c: ::sys::CGContextRef, blendMode: CGBlendMode);
     fn CGContextSetAllowsFontSmoothing(c: ::sys::CGContextRef, allowsFontSmoothing: bool);
     fn CGContextSetShouldSmoothFonts(c: ::sys::CGContextRef, shouldSmoothFonts: bool);
     fn CGContextSetFontSmoothingStyle(c: ::sys::CGContextRef, style: c_int);

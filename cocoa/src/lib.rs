@@ -15,8 +15,10 @@
 extern crate block;
 #[macro_use]
 extern crate bitflags;
-extern crate libc;
+extern crate core_foundation;
 extern crate core_graphics;
+extern crate foreign_types;
+extern crate libc;
 #[macro_use]
 extern crate objc;
 
@@ -24,3 +26,5 @@ extern crate objc;
 pub mod appkit;
 pub mod base;
 pub mod foundation;
+#[cfg(target_os = "macos")]
+pub mod quartzcore;

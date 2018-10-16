@@ -300,6 +300,13 @@ impl CALayer {
     }
 
     #[inline]
+    pub fn add_sublayer(&self, sublayer: &CALayer) {
+        unsafe {
+            msg_send![self.id(), addSublayer:sublayer.id()]
+        }
+    }
+
+    #[inline]
     pub fn insert_sublayer_at_index(&self, sublayer: &CALayer, index: u32) {
         unsafe {
             msg_send![self.id(), insertSublayer:sublayer.id() atIndex:index]
@@ -1191,6 +1198,13 @@ impl CALayer {
         unsafe {
             let key = CFString::from(key);
             msg_send![self.id(), reloadValueForKeyPath:key.as_CFTypeRef()]
+        }
+    }
+
+    #[inline]
+    pub fn set_contents_opaque(&self, opaque: bool) {
+        unsafe {
+            msg_send![self.id(), setContentsOpaque:opaque as BOOL]
         }
     }
 }

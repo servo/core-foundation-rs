@@ -54,6 +54,20 @@ impl<K, V> CFDictionary<K, V> {
     }
 
     #[inline]
+    pub fn to_untyped(&self) -> CFDictionary {
+        unsafe { CFDictionary::wrap_under_get_rule(self.0) }
+    }
+
+    /// Returns the same dictionary, but with the types reset to void pointers.
+    /// Equal to `to_untyped`, but is faster since it does not increment the retain count.
+    #[inline]
+    pub fn into_untyped(self) -> CFDictionary {
+        let reference = self.0;
+        mem::forget(self);
+        unsafe { CFDictionary::wrap_under_create_rule(reference) }
+    }
+
+    #[inline]
     pub fn len(&self) -> usize {
         unsafe {
             CFDictionaryGetCount(self.0) as usize
@@ -149,6 +163,20 @@ impl<K, V> CFMutableDictionary<K, V> {
             result.add(key, value);
         }
         result
+    }
+
+    #[inline]
+    pub fn to_untyped(&self) -> CFMutableDictionary {
+        unsafe { CFMutableDictionary::wrap_under_get_rule(self.0) }
+    }
+
+    /// Returns the same dictionary, but with the types reset to void pointers.
+    /// Equal to `to_untyped`, but is faster since it does not increment the retain count.
+    #[inline]
+    pub fn into_untyped(self) -> CFMutableDictionary {
+        let reference = self.0;
+        mem::forget(self);
+        unsafe { CFMutableDictionary::wrap_under_create_rule(reference) }
     }
 
     // Immutable interface

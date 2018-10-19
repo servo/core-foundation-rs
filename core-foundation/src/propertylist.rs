@@ -86,8 +86,8 @@ pub trait CFPropertyListSubClass: TCFType {
 
 impl CFPropertyListSubClass for ::data::CFData {}
 impl CFPropertyListSubClass for ::string::CFString {}
-impl CFPropertyListSubClass for ::array::CFArray {}
-impl CFPropertyListSubClass for ::dictionary::CFDictionary {}
+impl<T> CFPropertyListSubClass for ::array::CFArray<T> {}
+impl<K, V> CFPropertyListSubClass for ::dictionary::CFDictionary<K, V> {}
 impl CFPropertyListSubClass for ::date::CFDate {}
 impl CFPropertyListSubClass for ::boolean::CFBoolean {}
 impl CFPropertyListSubClass for ::number::CFNumber {}

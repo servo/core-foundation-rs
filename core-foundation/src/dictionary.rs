@@ -235,6 +235,17 @@ impl<K, V> CFMutableDictionary<K, V> {
     }
 }
 
+impl<'a, K, V> From<&'a CFDictionary<K, V>> for CFMutableDictionary<K, V> {
+    /// Creates a new mutable dictionary with the key-value pairs from another dictionary.
+    /// The capacity of the new mutable dictionary is not limited.
+    fn from(dict: &'a CFDictionary<K, V>) -> Self {
+        unsafe {
+            let mut_dict_ref = CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, dict.0);
+            TCFType::wrap_under_create_rule(mut_dict_ref)
+        }
+    }
+}
+
 
 #[cfg(test)]
 pub mod test {
@@ -312,5 +323,22 @@ pub mod test {
         let value = dict.find(&key).unwrap().clone();
         assert_eq!(value, CFBoolean::true_value());
         assert_eq!(dict.find(&invalid_key), None);
+    }
+
+    #[test]
+    fn convert_immutable_to_mutable_dict() {
+        let dict: CFDictionary<CFString, CFBoolean> = CFDictionary::from_CFType_pairs(&[
+            (CFString::from_static_string("Foo"), CFBoolean::true_value()),
+        ]);
+        let mut mut_dict = CFMutableDictionary::from(&dict);
+        assert_eq!(dict.retain_count(), 1);
+        assert_eq!(mut_dict.retain_count(), 1);
+
+        assert_eq!(mut_dict.len(), 1);
+        assert_eq!(*mut_dict.get(&CFString::from_static_string("Foo")), CFBoolean::true_value());
+
+        mut_dict.add(&CFString::from_static_string("Bar"), &CFBoolean::false_value());
+        assert_eq!(dict.len(), 1);
+        assert_eq!(mut_dict.len(), 2);
     }
 }

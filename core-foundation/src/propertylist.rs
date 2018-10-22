@@ -88,6 +88,7 @@ impl CFPropertyListSubClass for ::data::CFData {}
 impl CFPropertyListSubClass for ::string::CFString {}
 impl<T> CFPropertyListSubClass for ::array::CFArray<T> {}
 impl<K, V> CFPropertyListSubClass for ::dictionary::CFDictionary<K, V> {}
+impl<K, V> CFPropertyListSubClass for ::dictionary::CFMutableDictionary<K, V> {}
 impl CFPropertyListSubClass for ::date::CFDate {}
 impl CFPropertyListSubClass for ::boolean::CFBoolean {}
 impl CFPropertyListSubClass for ::number::CFNumber {}

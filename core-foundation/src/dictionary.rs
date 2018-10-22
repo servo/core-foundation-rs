@@ -177,10 +177,10 @@ impl<K, V> CFMutableDictionary<K, V> {
         unsafe { CFMutableDictionary::wrap_under_create_rule(reference) }
     }
 
-    /// Borrow self as an immutable dictionary.
+    /// Returns a `CFDictionary` pointing to the same underlying dictionary as this mutable one.
     #[inline]
-    pub fn as_immutable(&self) -> ItemRef<CFDictionary<K, V>> {
-        unsafe { CFDictionary::from_void(self.0 as _) }
+    pub fn to_immutable(&self) -> CFDictionary<K, V> {
+        unsafe { CFDictionary::wrap_under_get_rule(self.0) }
     }
 
     // Immutable interface
@@ -385,9 +385,9 @@ pub mod test {
         mut_dict.add(&CFString::from_static_string("Bar"), &CFBoolean::false_value());
         assert_eq!(mut_dict.retain_count(), 1);
 
-        let dict = mut_dict.as_immutable();
-        assert_eq!(mut_dict.retain_count(), 1);
-        assert_eq!(dict.retain_count(), 1);
+        let dict = mut_dict.to_immutable();
+        assert_eq!(mut_dict.retain_count(), 2);
+        assert_eq!(dict.retain_count(), 2);
         assert_eq!(*dict.get(&CFString::from_static_string("Bar")), CFBoolean::false_value());
 
         mem::drop(dict);

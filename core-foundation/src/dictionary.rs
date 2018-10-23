@@ -133,8 +133,6 @@ impl<K, V> Drop for CFMutableDictionary<K, V> {
 impl_TCFType!(CFMutableDictionary<K, V>, CFMutableDictionaryRef, CFDictionaryGetTypeID);
 impl_CFTypeDescription!(CFMutableDictionary);
 
-unsafe impl ConcreteCFType for CFMutableDictionary<*const c_void, *const c_void> {}
-
 impl<K, V> CFMutableDictionary<K, V> {
     pub fn new() -> Self {
         Self::with_capacity(0)

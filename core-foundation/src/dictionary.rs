@@ -19,6 +19,7 @@ use std::marker::PhantomData;
 
 use base::{ItemRef, FromVoid, ToVoid};
 use base::{CFIndexConvertible, TCFType};
+use ConcreteCFType;
 
 // consume the type parameters with PhantomDatas
 pub struct CFDictionary<K = *const c_void, V = *const c_void>(CFDictionaryRef, PhantomData<K>, PhantomData<V>);
@@ -31,6 +32,8 @@ impl<K, V> Drop for CFDictionary<K, V> {
 
 impl_TCFType!(CFDictionary<K, V>, CFDictionaryRef, CFDictionaryGetTypeID);
 impl_CFTypeDescription!(CFDictionary);
+
+unsafe impl ConcreteCFType for CFDictionary<*const c_void, *const c_void> {}
 
 impl<K, V> CFDictionary<K, V> {
     pub fn from_CFType_pairs(pairs: &[(K, V)]) -> CFDictionary<K, V> where K: TCFType, V: TCFType {

@@ -1530,6 +1530,7 @@ impl CARenderer {
 // You can't actually construct any `CATransaction` objects, so that class is
 // really just a module.
 pub mod transaction {
+    use block::{Block, ConcreteBlock, IntoConcreteBlock, RcBlock};
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
 
@@ -1611,8 +1612,27 @@ pub mod transaction {
         }
     }
 
-    // Omitted: `completionBlock`; depends on blocks.
-    // Omitted: `setCompletionBlock:`; depends on blocks.
+    #[inline]
+    pub fn completion_block() -> Option<RcBlock<(), ()>> {
+        unsafe {
+            let completion_block: *mut Block<(), ()> =
+                msg_send![class!(CATransaction), completionBlock];
+            if completion_block.is_null() {
+                None
+            } else {
+                Some(RcBlock::new(completion_block))
+            }
+        }
+    }
+
+    #[inline]
+    pub fn set_completion_block<F>(block: ConcreteBlock<(), (), F>)
+                                   where F: 'static + IntoConcreteBlock<(), Ret = ()> {
+        unsafe {
+            let block = block.copy();
+            msg_send![class!(CATransaction), setCompletionBlock:&*block]
+        }
+    }
 
     #[inline]
     pub fn value_for_key(key: &str) -> id {

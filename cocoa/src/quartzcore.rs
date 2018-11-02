@@ -7,13 +7,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![allow(non_upper_case_globals)]
+
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFTypeRef, TCFType};
+use core_foundation::base::{CFType, CFTypeRef, TCFType};
 use core_foundation::date::CFTimeInterval;
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef};
 use core_graphics::base::CGFloat;
 use core_graphics::color::{CGColor, SysCGColorRef};
+use core_graphics::color_space::CGColorSpace;
 use core_graphics::context::CGContext;
 use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 use core_graphics::path::{CGPath, SysCGPathRef};
@@ -21,6 +24,7 @@ use foreign_types::ForeignType;
 use std::ops::Mul;
 use std::ptr;
 
+use appkit::CGLContextObj;
 use base::{BOOL, id, nil, YES};
 use foundation::NSUInteger;
 
@@ -1364,6 +1368,163 @@ bitflags! {
     }
 }
 
+// CARenderer.h
+
+pub struct CARenderer(id);
+
+unsafe impl Send for CARenderer {}
+unsafe impl Sync for CARenderer {}
+
+impl Clone for CARenderer {
+    #[inline]
+    fn clone(&self) -> CARenderer {
+        unsafe {
+            CARenderer(msg_send![self.id(), retain])
+        }
+    }
+}
+
+impl Drop for CARenderer {
+    #[inline]
+    fn drop(&mut self) {
+        unsafe {
+            msg_send![self.id(), release]
+        }
+    }
+}
+
+impl CARenderer {
+    #[inline]
+    pub fn id(&self) -> id {
+        self.0
+    }
+
+    #[inline]
+    pub unsafe fn from_cgl_context(context: CGLContextObj, color_space: Option<CGColorSpace>)
+                                   -> CARenderer {
+        let mut pairs: Vec<(CFString, CFType)> = vec![];
+        if let Some(color_space) = color_space {
+            pairs.push((CFString::wrap_under_get_rule(kCARendererColorSpace),
+                        CFType::wrap_under_get_rule(color_space.as_ptr() as *const _ as *const _)))
+        }
+
+        let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
+
+        let renderer: id =
+            msg_send![class!(CARenderer), rendererWithCGLContext:context
+                                                         options:options.as_CFTypeRef()];
+        debug_assert!(renderer != nil);
+        CARenderer(renderer)
+    }
+
+    #[inline]
+    pub unsafe fn from_metal_texture(metal_texture: id,
+                                     metal_command_queue: id,
+                                     color_space: Option<CGColorSpace>)
+                                     -> CARenderer {
+        let mut pairs: Vec<(CFString, CFType)> = vec![
+            (CFString::wrap_under_get_rule(kCARendererMetalCommandQueue),
+             CFType::wrap_under_get_rule(metal_command_queue as *const _ as *const _)),
+        ];
+        if let Some(color_space) = color_space {
+            pairs.push((CFString::wrap_under_get_rule(kCARendererColorSpace),
+                        CFType::wrap_under_get_rule(color_space.as_ptr() as *const _ as *const _)))
+        }
+
+        let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
+
+        let renderer: id =
+            msg_send![class!(CARenderer), rendererWithMTLTexture:metal_texture
+                                                         options:options.as_CFTypeRef()];
+        debug_assert!(renderer != nil);
+        CARenderer(renderer)
+    }
+
+    #[inline]
+    pub fn layer(&self) -> Option<CALayer> {
+        unsafe {
+            let layer: id = msg_send![self.id(), layer];
+            if layer.is_null() {
+                None
+            } else {
+                Some(CALayer(layer))
+            }
+        }
+    }
+
+    #[inline]
+    pub fn set_layer(&self, layer: Option<CALayer>) {
+        unsafe {
+            let layer = match layer {
+                Some(ref layer) => layer.id(),
+                None => nil,
+            };
+            msg_send![self.id(), setLayer:layer];
+        }
+    }
+
+    #[inline]
+    pub fn bounds(&self) -> CGRect {
+        unsafe {
+            msg_send![self.id(), bounds]
+        }
+    }
+
+    #[inline]
+    pub fn set_bounds(&self, bounds: CGRect) {
+        unsafe {
+            msg_send![self.id(), setBounds:bounds]
+        }
+    }
+
+    #[inline]
+    pub fn begin_frame_at(&self, time: CFTimeInterval, timestamp: Option<&CVTimeStamp>) {
+        unsafe {
+            msg_send![self.id(), beginFrameAtTime:time timeStamp:timestamp]
+        }
+    }
+
+    #[inline]
+    pub fn update_bounds(&self) -> CGRect {
+        unsafe {
+            msg_send![self.id(), updateBounds]
+        }
+    }
+
+    #[inline]
+    pub fn add_update_rect(&self, rect: CGRect) {
+        unsafe {
+            msg_send![self.id(), addUpdateRect:rect]
+        }
+    }
+
+    #[inline]
+    pub fn render(&self) {
+        unsafe {
+            msg_send![self.id(), render]
+        }
+    }
+
+    #[inline]
+    pub fn next_frame_time(&self) -> CFTimeInterval {
+        unsafe {
+            msg_send![self.id(), nextFrameTime]
+        }
+    }
+
+    #[inline]
+    pub fn end_frame(&self) {
+        unsafe {
+            msg_send![self.id(), endFrame]
+        }
+    }
+
+    #[inline]
+    pub unsafe fn set_destination(&self, metal_texture: id) {
+        msg_send![self.id(), setDestination:metal_texture]
+    }
+}
+
 // CATransaction.h
 
 // You can't actually construct any `CATransaction` objects, so that class is
@@ -1589,6 +1750,9 @@ impl CATransform3D {
 
 #[link(name = "QuartzCore", kind = "framework")]
 extern {
+    static kCARendererColorSpace: CFStringRef;
+    static kCARendererMetalCommandQueue: CFStringRef;
+
     fn CACurrentMediaTime() -> CFTimeInterval;
 
     fn CATransform3DIsIdentity(t: CATransform3D) -> bool;

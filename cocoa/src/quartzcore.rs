@@ -24,6 +24,14 @@ use std::ptr;
 use base::{BOOL, id, nil, YES};
 use foundation::NSUInteger;
 
+// CABase.h
+
+pub fn current_media_time() -> CFTimeInterval {
+    unsafe {
+        CACurrentMediaTime()
+    }
+}
+
 // CALayer.h
 
 pub struct CALayer(id);
@@ -1581,6 +1589,8 @@ impl CATransform3D {
 
 #[link(name = "QuartzCore", kind = "framework")]
 extern {
+    fn CACurrentMediaTime() -> CFTimeInterval;
+
     fn CATransform3DIsIdentity(t: CATransform3D) -> bool;
     fn CATransform3DEqualToTransform(a: CATransform3D, b: CATransform3D) -> bool;
     fn CATransform3DMakeTranslation(tx: CGFloat, ty: CGFloat, tz: CGFloat) -> CATransform3D;

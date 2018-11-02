@@ -7,13 +7,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![allow(non_upper_case_globals)]
+
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFTypeRef, TCFType};
+use core_foundation::base::{CFType, CFTypeRef, TCFType};
 use core_foundation::date::CFTimeInterval;
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef};
 use core_graphics::base::CGFloat;
 use core_graphics::color::{CGColor, SysCGColorRef};
+use core_graphics::color_space::CGColorSpace;
 use core_graphics::context::CGContext;
 use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 use core_graphics::path::{CGPath, SysCGPathRef};
@@ -21,8 +24,17 @@ use foreign_types::ForeignType;
 use std::ops::Mul;
 use std::ptr;
 
+use appkit::CGLContextObj;
 use base::{BOOL, id, nil, YES};
 use foundation::NSUInteger;
+
+// CABase.h
+
+pub fn current_media_time() -> CFTimeInterval {
+    unsafe {
+        CACurrentMediaTime()
+    }
+}
 
 // CALayer.h
 
@@ -1356,11 +1368,169 @@ bitflags! {
     }
 }
 
+// CARenderer.h
+
+pub struct CARenderer(id);
+
+unsafe impl Send for CARenderer {}
+unsafe impl Sync for CARenderer {}
+
+impl Clone for CARenderer {
+    #[inline]
+    fn clone(&self) -> CARenderer {
+        unsafe {
+            CARenderer(msg_send![self.id(), retain])
+        }
+    }
+}
+
+impl Drop for CARenderer {
+    #[inline]
+    fn drop(&mut self) {
+        unsafe {
+            msg_send![self.id(), release]
+        }
+    }
+}
+
+impl CARenderer {
+    #[inline]
+    pub fn id(&self) -> id {
+        self.0
+    }
+
+    #[inline]
+    pub unsafe fn from_cgl_context(context: CGLContextObj, color_space: Option<CGColorSpace>)
+                                   -> CARenderer {
+        let mut pairs: Vec<(CFString, CFType)> = vec![];
+        if let Some(color_space) = color_space {
+            pairs.push((CFString::wrap_under_get_rule(kCARendererColorSpace),
+                        CFType::wrap_under_get_rule(color_space.as_ptr() as *const _ as *const _)))
+        }
+
+        let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
+
+        let renderer: id =
+            msg_send![class!(CARenderer), rendererWithCGLContext:context
+                                                         options:options.as_CFTypeRef()];
+        debug_assert!(renderer != nil);
+        CARenderer(renderer)
+    }
+
+    #[inline]
+    pub unsafe fn from_metal_texture(metal_texture: id,
+                                     metal_command_queue: id,
+                                     color_space: Option<CGColorSpace>)
+                                     -> CARenderer {
+        let mut pairs: Vec<(CFString, CFType)> = vec![
+            (CFString::wrap_under_get_rule(kCARendererMetalCommandQueue),
+             CFType::wrap_under_get_rule(metal_command_queue as *const _ as *const _)),
+        ];
+        if let Some(color_space) = color_space {
+            pairs.push((CFString::wrap_under_get_rule(kCARendererColorSpace),
+                        CFType::wrap_under_get_rule(color_space.as_ptr() as *const _ as *const _)))
+        }
+
+        let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
+
+        let renderer: id =
+            msg_send![class!(CARenderer), rendererWithMTLTexture:metal_texture
+                                                         options:options.as_CFTypeRef()];
+        debug_assert!(renderer != nil);
+        CARenderer(renderer)
+    }
+
+    #[inline]
+    pub fn layer(&self) -> Option<CALayer> {
+        unsafe {
+            let layer: id = msg_send![self.id(), layer];
+            if layer.is_null() {
+                None
+            } else {
+                Some(CALayer(layer))
+            }
+        }
+    }
+
+    #[inline]
+    pub fn set_layer(&self, layer: Option<CALayer>) {
+        unsafe {
+            let layer = match layer {
+                Some(ref layer) => layer.id(),
+                None => nil,
+            };
+            msg_send![self.id(), setLayer:layer];
+        }
+    }
+
+    #[inline]
+    pub fn bounds(&self) -> CGRect {
+        unsafe {
+            msg_send![self.id(), bounds]
+        }
+    }
+
+    #[inline]
+    pub fn set_bounds(&self, bounds: CGRect) {
+        unsafe {
+            msg_send![self.id(), setBounds:bounds]
+        }
+    }
+
+    #[inline]
+    pub fn begin_frame_at(&self, time: CFTimeInterval, timestamp: Option<&CVTimeStamp>) {
+        unsafe {
+            msg_send![self.id(), beginFrameAtTime:time timeStamp:timestamp]
+        }
+    }
+
+    #[inline]
+    pub fn update_bounds(&self) -> CGRect {
+        unsafe {
+            msg_send![self.id(), updateBounds]
+        }
+    }
+
+    #[inline]
+    pub fn add_update_rect(&self, rect: CGRect) {
+        unsafe {
+            msg_send![self.id(), addUpdateRect:rect]
+        }
+    }
+
+    #[inline]
+    pub fn render(&self) {
+        unsafe {
+            msg_send![self.id(), render]
+        }
+    }
+
+    #[inline]
+    pub fn next_frame_time(&self) -> CFTimeInterval {
+        unsafe {
+            msg_send![self.id(), nextFrameTime]
+        }
+    }
+
+    #[inline]
+    pub fn end_frame(&self) {
+        unsafe {
+            msg_send![self.id(), endFrame]
+        }
+    }
+
+    #[inline]
+    pub unsafe fn set_destination(&self, metal_texture: id) {
+        msg_send![self.id(), setDestination:metal_texture]
+    }
+}
+
 // CATransaction.h
 
 // You can't actually construct any `CATransaction` objects, so that class is
 // really just a module.
 pub mod transaction {
+    use block::{Block, ConcreteBlock, IntoConcreteBlock, RcBlock};
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
 
@@ -1442,8 +1612,27 @@ pub mod transaction {
         }
     }
 
-    // Omitted: `completionBlock`; depends on blocks.
-    // Omitted: `setCompletionBlock:`; depends on blocks.
+    #[inline]
+    pub fn completion_block() -> Option<RcBlock<(), ()>> {
+        unsafe {
+            let completion_block: *mut Block<(), ()> =
+                msg_send![class!(CATransaction), completionBlock];
+            if completion_block.is_null() {
+                None
+            } else {
+                Some(RcBlock::new(completion_block))
+            }
+        }
+    }
+
+    #[inline]
+    pub fn set_completion_block<F>(block: ConcreteBlock<(), (), F>)
+                                   where F: 'static + IntoConcreteBlock<(), Ret = ()> {
+        unsafe {
+            let block = block.copy();
+            msg_send![class!(CATransaction), setCompletionBlock:&*block]
+        }
+    }
 
     #[inline]
     pub fn value_for_key(key: &str) -> id {
@@ -1581,6 +1770,11 @@ impl CATransform3D {
 
 #[link(name = "QuartzCore", kind = "framework")]
 extern {
+    static kCARendererColorSpace: CFStringRef;
+    static kCARendererMetalCommandQueue: CFStringRef;
+
+    fn CACurrentMediaTime() -> CFTimeInterval;
+
     fn CATransform3DIsIdentity(t: CATransform3D) -> bool;
     fn CATransform3DEqualToTransform(a: CATransform3D, b: CATransform3D) -> bool;
     fn CATransform3DMakeTranslation(tx: CGFloat, ty: CGFloat, tz: CGFloat) -> CATransform3D;
@@ -1599,3 +1793,67 @@ extern {
     fn CATransform3DIsAffine(t: CATransform3D) -> bool;
     fn CATransform3DGetAffineTransform(t: CATransform3D) -> CGAffineTransform;
 }
+
+// Miscellaneous structures in other frameworks.
+//
+// These should be moved elsewhere eventually.
+
+// CoreVideo/CVBase.h
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CVTimeStamp {
+    pub version: u32,
+    pub videoTimeScale: i32,
+    pub videoTime: i64,
+    pub hostTime: u64,
+    pub rateScalar: f64,
+    pub videoRefreshPeriod: i64,
+    pub smpteTime: CVSMPTETime,
+    pub flags: u64,
+    pub reserved: u64,
+}
+
+pub type CVTimeStampFlags = u64;
+
+pub const kCVTimeStampVideoTimeValid: CVTimeStampFlags = 1 << 0;
+pub const kCVTimeStampHostTimeValid: CVTimeStampFlags = 1 << 1;
+pub const kCVTimeStampSMPTETimeValid: CVTimeStampFlags = 1 << 2;
+pub const kCVTimeStampVideoRefreshPeriodValid: CVTimeStampFlags = 1 << 3;
+pub const kCVTimeStampRateScalarValid: CVTimeStampFlags = 1 << 4;
+pub const kCVTimeStampTopField: CVTimeStampFlags = 1 << 16;
+pub const kCVTimeStampBottomField: CVTimeStampFlags = 1 << 17;
+pub const kCVTimeStampVideoHostTimeValid: CVTimeStampFlags =
+    kCVTimeStampVideoTimeValid | kCVTimeStampHostTimeValid;
+pub const kCVTimeStampIsInterlaced: CVTimeStampFlags =
+    kCVTimeStampTopField | kCVTimeStampBottomField;
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CVSMPTETime {
+    pub subframes: i16,
+    pub subframeDivisor: i16,
+    pub counter: u32,
+    pub time_type: u32,
+    pub flags: u32,
+    pub hours: i16,
+    pub minutes: i16,
+    pub seconds: i16,
+    pub frames: i16,
+}
+
+pub type CVSMPTETimeType = u32;
+
+pub const kCVSMPTETimeType24:       CVSMPTETimeType = 0;
+pub const kCVSMPTETimeType25:       CVSMPTETimeType = 1;
+pub const kCVSMPTETimeType30Drop:   CVSMPTETimeType = 2;
+pub const kCVSMPTETimeType30:       CVSMPTETimeType = 3;
+pub const kCVSMPTETimeType2997:     CVSMPTETimeType = 4;
+pub const kCVSMPTETimeType2997Drop: CVSMPTETimeType = 5;
+pub const kCVSMPTETimeType60:       CVSMPTETimeType = 6;
+pub const kCVSMPTETimeType5994:     CVSMPTETimeType = 7;
+
+pub type CVSMPTETimeFlags = u32;
+
+pub const kCVSMPTETimeValid:    CVSMPTETimeFlags = 1 << 0;
+pub const kCVSMPTETimeRunning:  CVSMPTETimeFlags = 1 << 1;

@@ -1609,3 +1609,67 @@ extern {
     fn CATransform3DIsAffine(t: CATransform3D) -> bool;
     fn CATransform3DGetAffineTransform(t: CATransform3D) -> CGAffineTransform;
 }
+
+// Miscellaneous structures in other frameworks.
+//
+// These should be moved elsewhere eventually.
+
+// CoreVideo/CVBase.h
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CVTimeStamp {
+    pub version: u32,
+    pub videoTimeScale: i32,
+    pub videoTime: i64,
+    pub hostTime: u64,
+    pub rateScalar: f64,
+    pub videoRefreshPeriod: i64,
+    pub smpteTime: CVSMPTETime,
+    pub flags: u64,
+    pub reserved: u64,
+}
+
+pub type CVTimeStampFlags = u64;
+
+pub const kCVTimeStampVideoTimeValid: CVTimeStampFlags = 1 << 0;
+pub const kCVTimeStampHostTimeValid: CVTimeStampFlags = 1 << 1;
+pub const kCVTimeStampSMPTETimeValid: CVTimeStampFlags = 1 << 2;
+pub const kCVTimeStampVideoRefreshPeriodValid: CVTimeStampFlags = 1 << 3;
+pub const kCVTimeStampRateScalarValid: CVTimeStampFlags = 1 << 4;
+pub const kCVTimeStampTopField: CVTimeStampFlags = 1 << 16;
+pub const kCVTimeStampBottomField: CVTimeStampFlags = 1 << 17;
+pub const kCVTimeStampVideoHostTimeValid: CVTimeStampFlags =
+    kCVTimeStampVideoTimeValid | kCVTimeStampHostTimeValid;
+pub const kCVTimeStampIsInterlaced: CVTimeStampFlags =
+    kCVTimeStampTopField | kCVTimeStampBottomField;
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CVSMPTETime {
+    pub subframes: i16,
+    pub subframeDivisor: i16,
+    pub counter: u32,
+    pub time_type: u32,
+    pub flags: u32,
+    pub hours: i16,
+    pub minutes: i16,
+    pub seconds: i16,
+    pub frames: i16,
+}
+
+pub type CVSMPTETimeType = u32;
+
+pub const kCVSMPTETimeType24:       CVSMPTETimeType = 0;
+pub const kCVSMPTETimeType25:       CVSMPTETimeType = 1;
+pub const kCVSMPTETimeType30Drop:   CVSMPTETimeType = 2;
+pub const kCVSMPTETimeType30:       CVSMPTETimeType = 3;
+pub const kCVSMPTETimeType2997:     CVSMPTETimeType = 4;
+pub const kCVSMPTETimeType2997Drop: CVSMPTETimeType = 5;
+pub const kCVSMPTETimeType60:       CVSMPTETimeType = 6;
+pub const kCVSMPTETimeType5994:     CVSMPTETimeType = 7;
+
+pub type CVSMPTETimeFlags = u32;
+
+pub const kCVSMPTETimeValid:    CVSMPTETimeFlags = 1 << 0;
+pub const kCVSMPTETimeRunning:  CVSMPTETimeFlags = 1 << 1;

@@ -27,6 +27,3 @@ script:
   - cd ../io-surface
   - cargo build --verbose
   - cargo test --verbose -- --nocapture
-
-notifications:
-  webhooks: http://build.servo.org:54856/travis

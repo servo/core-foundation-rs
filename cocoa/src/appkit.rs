@@ -3825,15 +3825,165 @@ impl NSLayoutDimension for id {
     unsafe fn constraintGreaterThanOrEqualToConstant(self, c: CGFloat) -> id {
         msg_send![self, constraintGreaterThanOrEqualToConstant:c]
     }
- }
+}
+
+pub trait NSColorSpace: Sized {
+    unsafe fn deviceRGBColorSpace(_:Self) -> id;
+    unsafe fn genericRGBColorSpace(_:Self) -> id;
+    unsafe fn deviceCMYKColorSpace(_:Self) -> id;
+    unsafe fn genericCMYKColorSpace(_:Self) -> id;
+    unsafe fn deviceGrayColorSpace(_:Self) -> id;
+    unsafe fn genericGrayColorSpace(_:Self) -> id;
+    unsafe fn sRGBColorSpace(_:Self) -> id;
+    unsafe fn extendedSRGBColorSpace(_:Self) -> id;
+    unsafe fn displayP3ColorSpace(_:Self) -> id;
+    unsafe fn genericGamma22GrayColorSpace(_:Self) -> id;
+    unsafe fn extendedGenericGamma22GrayColorSpace(_:Self) -> id;
+    unsafe fn adobeRGB1998ColorSpace(_:Self) -> id;
+
+    unsafe fn alloc(_: Self) -> id;
+
+    unsafe fn initWithCGColorSpace_(self, cg_color_space: *const c_void /* (CGColorSpaceRef) */) -> id;
+    unsafe fn CGColorSpace(self) -> *const c_void /* (CGColorSpaceRef) */;
+    unsafe fn localizedName(self) -> id;
+}
+
+impl NSColorSpace for id {
+    unsafe fn deviceRGBColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), deviceRGBColorSpace]
+    }
+    unsafe fn genericRGBColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), genericRGBColorSpace]
+    }
+    unsafe fn deviceCMYKColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), deviceCMYKColorSpace]
+    }
+    unsafe fn genericCMYKColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), genericCMYKColorSpace]
+    }
+    unsafe fn deviceGrayColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), deviceGrayColorSpace]
+    }
+    unsafe fn genericGrayColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), genericGrayColorSpace]
+    }
+    unsafe fn sRGBColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), sRGBColorSpace]
+    }
+    unsafe fn extendedSRGBColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), extendedSRGBColorSpace]
+    }
+    unsafe fn displayP3ColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), displayP3ColorSpace]
+    }
+    unsafe fn genericGamma22GrayColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), genericGamma22GrayColorSpace]
+    }
+    unsafe fn extendedGenericGamma22GrayColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), extendedGenericGamma22GrayColorSpace]
+    }
+    unsafe fn adobeRGB1998ColorSpace(_:Self) -> id {
+        msg_send![class!(NSColorSpace), adobeRGB1998ColorSpace]
+    }
+
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class!(NSColorSpace), alloc]
+    }
+
+    unsafe fn initWithCGColorSpace_(self, cg_color_space: *const c_void /* (CGColorSpaceRef) */) -> id {
+        msg_send![self, initWithCGColorSpace:cg_color_space]
+    }
+    unsafe fn CGColorSpace(self) -> *const c_void /* (CGColorSpaceRef) */ {
+        msg_send![self, CGColorSpace]
+    }
+    unsafe fn localizedName(self) -> id {
+        msg_send![self, localizedName]
+    }
+}
 
 pub trait NSColor: Sized {
     unsafe fn clearColor(_: Self) -> id;
+    unsafe fn colorWithRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithSRGBRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithDeviceRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithDisplayP3Red_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithCalibratedRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
+
+    unsafe fn colorUsingColorSpace_(self, color_space: id) -> id;
+
+    unsafe fn alphaComponent(self) -> CGFloat;
+    unsafe fn whiteComponent(self) -> CGFloat;
+    unsafe fn redComponent(self) -> CGFloat;
+    unsafe fn greenComponent(self) -> CGFloat;
+    unsafe fn blueComponent(self) -> CGFloat;
+    unsafe fn cyanComponent(self) -> CGFloat;
+    unsafe fn magentaComponent(self) -> CGFloat;
+    unsafe fn yellowComponent(self) -> CGFloat;
+    unsafe fn blackComponent(self) -> CGFloat;
+    unsafe fn hueComponent(self) -> CGFloat;
+    unsafe fn saturationComponent(self) -> CGFloat;
+    unsafe fn brightnessComponent(self) -> CGFloat;
 }
 
 impl NSColor for id {
     unsafe fn clearColor(_: Self) -> id {
         msg_send![class!(NSColor), clearColor]
+    }
+    unsafe fn colorWithRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+        msg_send![class!(NSColor), colorWithRed:r green:g blue:b alpha:a]
+    }
+    unsafe fn colorWithSRGBRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+        msg_send![class!(NSColor), colorWithSRGBRed:r green:g blue:b alpha:a]
+    }
+    unsafe fn colorWithDeviceRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+        msg_send![class!(NSColor), colorWithDeviceRed:r green:g blue:b alpha:a]
+    }
+    unsafe fn colorWithDisplayP3Red_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+        msg_send![class!(NSColor), colorWithDisplayP3Red:r green:g blue:b alpha:a]
+    }
+    unsafe fn colorWithCalibratedRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+        msg_send![class!(NSColor), colorWithCalibratedRed:r green:g blue:b alpha:a]
+    }
+
+    unsafe fn colorUsingColorSpace_(self, color_space: id) -> id {
+        msg_send![self, colorUsingColorSpace:color_space]
+    }
+
+    unsafe fn alphaComponent(self) -> CGFloat {
+        msg_send![self, alphaComponent]
+    }
+    unsafe fn whiteComponent(self) -> CGFloat {
+        msg_send![self, whiteComponent]
+    }
+    unsafe fn redComponent(self) -> CGFloat {
+        msg_send![self, redComponent]
+    }
+    unsafe fn greenComponent(self) -> CGFloat {
+        msg_send![self, greenComponent]
+    }
+    unsafe fn blueComponent(self) -> CGFloat {
+        msg_send![self, blueComponent]
+    }
+    unsafe fn cyanComponent(self) -> CGFloat {
+        msg_send![self, cyanComponent]
+    }
+    unsafe fn magentaComponent(self) -> CGFloat {
+        msg_send![self, magentaComponent]
+    }
+    unsafe fn yellowComponent(self) -> CGFloat {
+        msg_send![self, yellowComponent]
+    }
+    unsafe fn blackComponent(self) -> CGFloat {
+        msg_send![self, blackComponent]
+    }
+    unsafe fn hueComponent(self) -> CGFloat {
+        msg_send![self, hueComponent]
+    }
+    unsafe fn saturationComponent(self) -> CGFloat {
+        msg_send![self, saturationComponent]
+    }
+    unsafe fn brightnessComponent(self) -> CGFloat {
+        msg_send![self, brightnessComponent]
     }
 }
 

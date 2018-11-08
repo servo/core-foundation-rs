@@ -2866,6 +2866,28 @@ impl NSScreen for id {
     }
 }
 
+// https://developer.apple.com/documentation/appkit/nscontrol?language=objc
+pub trait NSControl: Sized {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class!(NSControl), alloc]
+    }
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
+    unsafe fn isEnabled_(self) -> BOOL;
+    unsafe fn setEnabled_(self, enabled: BOOL) -> BOOL;
+}
+
+impl NSControl for id {
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
+        msg_send![self, initWithFrame:frameRect]
+    }
+    unsafe fn isEnabled_(self) -> BOOL {
+        msg_send![self, isEnabled]
+    }
+    unsafe fn setEnabled_(self, enabled: BOOL) -> BOOL {
+        msg_send![self, setEnabled:enabled]
+    }
+}
+
 pub trait NSButton: Sized {
      unsafe fn setImage_(self, img: id /* (NSImage *) */);
      unsafe fn setBezelStyle_(self, style: NSBezelStyle);

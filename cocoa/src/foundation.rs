@@ -26,6 +26,9 @@ pub type NSInteger = libc::c_long;
 #[cfg(target_pointer_width = "64")]
 pub type NSUInteger = libc::c_ulong;
 
+pub const NSIntegerMax: NSInteger = NSInteger::max_value();
+pub const NSNotFound: NSInteger = NSIntegerMax;
+
 const UTF8_ENCODING: usize = 4;
 
 #[cfg(target_os = "macos")]

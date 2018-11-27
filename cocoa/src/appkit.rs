@@ -12,7 +12,7 @@
 use base::{id, BOOL, SEL};
 use block::Block;
 use foundation::{NSInteger, NSUInteger, NSTimeInterval,
-                 NSPoint, NSSize, NSRect, NSRectEdge};
+                 NSPoint, NSSize, NSRect, NSRange, NSRectEdge};
 use libc;
 
 pub use core_graphics::base::CGFloat;
@@ -25,6 +25,7 @@ pub use self::NSOpenGLPixelFormatAttribute::*;
 pub use self::NSOpenGLPFAOpenGLProfiles::*;
 pub use self::NSEventType::*;
 use std::os::raw::c_void;
+use std::ptr;
 
 pub type CGLContextObj = *mut c_void;
 
@@ -4014,6 +4015,66 @@ impl NSToolbar for id {
 
     unsafe fn setShowsBaselineSeparator_(self, value: BOOL) {
         msg_send![self, setShowsBaselineSeparator:value]
+    }
+}
+
+pub trait NSSpellChecker : Sized {
+    unsafe fn sharedSpellChecker(_: Self) -> id;
+    unsafe fn checkSpellingOfString_startingAt(self,
+                                               stringToCheck: id,
+                                               startingOffset: NSInteger) -> NSRange;
+    unsafe fn checkSpellingOfString_startingAt_language_wrap_inSpellDocumentWithTag_wordCount(
+        self,
+        stringToCheck: id,
+        startingOffset: NSInteger,
+        language: id,
+        wrapFlag: BOOL,
+        tag: NSInteger) -> (NSRange, NSInteger);
+    unsafe fn uniqueSpellDocumentTag(_: Self) -> NSInteger;
+    unsafe fn closeSpellDocumentWithTag(self, tag: NSInteger);
+    unsafe fn ignoreWord_inSpellDocumentWithTag(self, wordToIgnore: id, tag: NSInteger);
+}
+
+impl NSSpellChecker for id {
+    unsafe fn sharedSpellChecker(_: Self) -> id {
+        msg_send![class!(NSSpellChecker), sharedSpellChecker]
+    }
+
+    unsafe fn checkSpellingOfString_startingAt(self,
+                                               stringToCheck: id,
+                                               startingOffset: NSInteger) -> NSRange {
+        msg_send![self, checkSpellingOfString:stringToCheck startingAt:startingOffset]
+    }
+
+    unsafe fn checkSpellingOfString_startingAt_language_wrap_inSpellDocumentWithTag_wordCount(
+        self,
+        stringToCheck: id,
+        startingOffset: NSInteger,
+        language: id,
+        wrapFlag: BOOL,
+        tag: NSInteger) -> (NSRange, NSInteger) {
+        let wordCount = ptr::null_mut();
+        let range = msg_send![self,
+            checkSpellingOfString:stringToCheck
+            startingAt:startingOffset
+            language:language
+            wrap:wrapFlag
+            inSpellDocumentWithTag:tag
+            wordCount:wordCount
+        ];
+        (range, *wordCount)
+    }
+
+    unsafe fn uniqueSpellDocumentTag(_: Self) -> NSInteger {
+        msg_send![class!(NSSpellChecker), uniqueSpellDocumentTag]
+    }
+
+    unsafe fn closeSpellDocumentWithTag(self, tag: NSInteger) {
+        msg_send![self, closeSpellDocumentWithTag:tag]
+    }
+
+    unsafe fn ignoreWord_inSpellDocumentWithTag(self, wordToIgnore: id, tag: NSInteger) {
+        msg_send![self, ignoreWord:wordToIgnore inSpellDocumentWithTag:tag]
     }
 }
 

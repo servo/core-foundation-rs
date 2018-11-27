@@ -163,6 +163,7 @@ mod macos {
 pub use self::macos::*;
 
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct NSRange {
     pub location: NSUInteger,
     pub length: NSUInteger,
@@ -558,6 +559,7 @@ pub trait NSString: Sized {
     unsafe fn UTF8String(self) -> *const libc::c_char;
     unsafe fn len(self) -> usize;
     unsafe fn isEqualToString(self, &str) -> bool;
+    unsafe fn substringWithRange(self, range: NSRange) -> id;
 }
 
 impl NSString for id {
@@ -584,6 +586,10 @@ impl NSString for id {
 
     unsafe fn UTF8String(self) -> *const libc::c_char {
         msg_send![self, UTF8String]
+    }
+
+    unsafe fn substringWithRange(self, range: NSRange) -> id {
+        msg_send![self, substringWithRange:range]
     }
 }
 

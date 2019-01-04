@@ -154,6 +154,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn clip_bounding_box(&self) -> CGRect {
+        unsafe {
+            CGContextGetClipBoundingBox(self.as_ptr())
+        }
+    }
+
     pub fn set_fill_color(&self, color: &CGColor) {
         unsafe {
             CGContextSetFillColorWithColor(self.as_ptr(), color.to_void());
@@ -412,6 +418,7 @@ extern {
     fn CGBitmapContextGetBytesPerRow(context: ::sys::CGContextRef) -> size_t;
     fn CGBitmapContextCreateImage(context: ::sys::CGContextRef) -> ::sys::CGImageRef;
     fn CGContextGetTypeID() -> CFTypeID;
+    fn CGContextGetClipBoundingBox(c: ::sys::CGContextRef) -> CGRect;
     fn CGContextFlush(c: ::sys::CGContextRef);
     fn CGContextSetBlendMode(c: ::sys::CGContextRef, blendMode: CGBlendMode);
     fn CGContextSetAllowsFontSmoothing(c: ::sys::CGContextRef, allowsFontSmoothing: bool);

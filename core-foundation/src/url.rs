@@ -20,7 +20,7 @@ use std::ptr;
 use std::path::{Path, PathBuf};
 use std::mem;
 
-use libc::{strlen, PATH_MAX};
+use libc::{c_char, strlen, PATH_MAX};
 
 #[cfg(unix)]
 use std::os::unix::ffi::OsStrExt;
@@ -83,7 +83,7 @@ impl CFURL {
             if result == false as Boolean {
                 return None;
             }
-            let len = strlen(buf.as_ptr() as *const i8);
+            let len = strlen(buf.as_ptr() as *const c_char);
             let path = OsStr::from_bytes(&buf[0..len]);
             Some(PathBuf::from(path))
         }

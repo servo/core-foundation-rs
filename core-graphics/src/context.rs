@@ -286,9 +286,42 @@ impl CGContextRef {
         }
     }
 
+    pub fn add_curve_to_point(&self,
+                              cp1x: CGFloat,
+                              cp1y: CGFloat,
+                              cp2x: CGFloat,
+                              cp2y: CGFloat,
+                              x: CGFloat,
+                              y: CGFloat) {
+        unsafe {
+            CGContextAddCurveToPoint(self.as_ptr(),
+                                     cp1x, cp1y,
+                                     cp2x, cp2y,
+                                     x, y);
+        }
+    }
+
+    pub fn add_line_to_point(&self, x: CGFloat, y: CGFloat) {
+        unsafe {
+            CGContextAddLineToPoint(self.as_ptr(), x, y);
+        }
+    }
+
+    pub fn begin_path(&self) {
+         unsafe {
+            CGContextBeginPath(self.as_ptr());
+        }
+    }
+
     pub fn close_path(&self) {
         unsafe {
             CGContextClosePath(self.as_ptr());
+        }
+    }
+
+    pub fn move_to_point(&self, x: CGFloat, y: CGFloat) {
+        unsafe {
+            CGContextMoveToPoint(self.as_ptr(), x, y);
         }
     }
 
@@ -450,7 +483,21 @@ extern {
     fn CGContextSetMiterLimit(c: ::sys::CGContextRef, limit: CGFloat);
 
     fn CGContextAddPath(c: ::sys::CGContextRef, path: ::sys::CGPathRef);
+    fn CGContextAddCurveToPoint(c: ::sys::CGContextRef,
+                                cp1x: CGFloat,
+                                cp1y: CGFloat,
+                                cp2x: CGFloat,
+                                cp2y: CGFloat,
+                                x: CGFloat,
+                                y: CGFloat);
+    fn CGContextAddLineToPoint(c: ::sys::CGContextRef,
+                               x: CGFloat,
+                               y: CGFloat);
+    fn CGContextBeginPath(c: ::sys::CGContextRef);
     fn CGContextClosePath(c: ::sys::CGContextRef);
+    fn CGContextMoveToPoint(c: ::sys::CGContextRef,
+                            x: CGFloat,
+                            y: CGFloat);
     fn CGContextFillPath(c: ::sys::CGContextRef);
     fn CGContextStrokePath(c: ::sys::CGContextRef);
     fn CGContextSetRGBFillColor(context: ::sys::CGContextRef,

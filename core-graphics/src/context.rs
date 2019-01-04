@@ -248,6 +248,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn clear_rect(&self, rect: CGRect) {
+        unsafe {
+            CGContextClearRect(self.as_ptr(), rect)
+        }
+    }
+
     pub fn draw_image(&self, rect: CGRect, image: &CGImage) {
         unsafe {
             CGContextDrawImage(self.as_ptr(), rect, image.as_ptr());
@@ -382,6 +388,8 @@ extern {
                                 blue: CGFloat,
                                 alpha: CGFloat);
     fn CGContextSetGrayFillColor(context: ::sys::CGContextRef, gray: CGFloat, alpha: CGFloat);
+    fn CGContextClearRect(context: ::sys::CGContextRef,
+                          rect: CGRect);
     fn CGContextFillRect(context: ::sys::CGContextRef,
                          rect: CGRect);
     fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);

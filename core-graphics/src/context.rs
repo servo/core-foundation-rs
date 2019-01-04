@@ -78,7 +78,7 @@ pub enum CGLineCap {
 
 #[repr(C)]
 pub enum CGLineJoin {
-    CGLineJoinMitre,
+    CGLineJoinMiter,
     CGLineJoinRound,
     CGLineJoinBevel,
 }
@@ -268,9 +268,9 @@ impl CGContextRef {
         }
     }
 
-    pub fn set_mitre_limit(&self, limit: CGFloat) {
+    pub fn set_miter_limit(&self, limit: CGFloat) {
         unsafe {
-            CGContextSetMitreLimit(self.as_ptr(), limit)
+            CGContextSetMiterLimit(self.as_ptr(), limit)
         }
     }
 
@@ -389,6 +389,7 @@ fn create_bitmap_context_test() {
                                 &cs,
                                 ::base::kCGImageAlphaPremultipliedLast);
     ctx.set_rgb_fill_color(1.,0.,1.,1.);
+    ctx.set_miter_limit(4.);
     ctx.fill_rect(CGRect::new(&CGPoint::new(0.,0.), &CGSize::new(8.,8.)));
     let img = ctx.create_image().unwrap();
     assert_eq!(16, img.width());
@@ -440,7 +441,7 @@ extern {
     fn CGContextSetLineDash(c: ::sys::CGContextRef, phase: CGFloat, lengths: *const CGFloat, count: size_t);
     fn CGContextSetLineJoin(c: ::sys::CGContextRef, join: CGLineJoin);
     fn CGContextSetLineWidth(c: ::sys::CGContextRef, width: CGFloat);
-    fn CGContextSetMitreLimit(c: ::sys::CGContextRef, limit: CGFloat);
+    fn CGContextSetMiterLimit(c: ::sys::CGContextRef, limit: CGFloat);
 
     fn CGContextAddPath(c: ::sys::CGContextRef, path: ::sys::CGPathRef);
     fn CGContextClosePath(c: ::sys::CGContextRef);

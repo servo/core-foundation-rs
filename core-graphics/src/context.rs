@@ -69,6 +69,20 @@ pub enum CGTextDrawingMode {
     CGTextClip
 }
 
+#[repr(C)]
+pub enum CGLineCap {
+    CGLineCapButt,
+    CGLineCapRound,
+    CGLineCapSquare,
+}
+
+#[repr(C)]
+pub enum CGLineJoin {
+    CGLineJoinMitre,
+    CGLineJoinRound,
+    CGLineJoinBevel,
+}
+
 foreign_type! {
     #[doc(hidden)]
     type CType = ::sys::CGContext;
@@ -224,6 +238,36 @@ impl CGContextRef {
         }
     }
 
+    pub fn set_line_cap(&self, cap: CGLineCap) {
+        unsafe {
+            CGContextSetLineCap(self.as_ptr(), cap)
+        }
+    }
+
+    pub fn set_line_dash(&self, phase: CGFloat, lengths: &[CGFloat]) {
+        unsafe {
+            CGContextSetLineDash(self.as_ptr(), phase, lengths.as_ptr(), lengths.len())
+        }
+    }
+
+    pub fn set_line_join(&self, join: CGLineJoin) {
+        unsafe {
+            CGContextSetLineJoin(self.as_ptr(), join)
+        }
+    }
+
+    pub fn set_line_width(&self, width: CGFloat) {
+        unsafe {
+            CGContextSetLineWidth(self.as_ptr(), width)
+        }
+    }
+
+    pub fn set_mitre_limit(&self, limit: CGFloat) {
+        unsafe {
+            CGContextSetMitreLimit(self.as_ptr(), limit)
+        }
+    }
+
     pub fn add_path(&self, path: &CGPathRef) {
         unsafe {
             CGContextAddPath(self.as_ptr(), path.as_ptr());
@@ -239,6 +283,12 @@ impl CGContextRef {
     pub fn fill_path(&self) {
         unsafe {
             CGContextFillPath(self.as_ptr());
+        }
+    }
+
+    pub fn stroke_path(&self) {
+        unsafe {
+            CGContextStrokePath(self.as_ptr());
         }
     }
 
@@ -379,9 +429,16 @@ extern {
                                                shouldSubpixelPositionFonts: bool);
     fn CGContextSetTextDrawingMode(c: ::sys::CGContextRef, mode: CGTextDrawingMode);
     fn CGContextSetFillColorWithColor(c: ::sys::CGContextRef, color: *const c_void);
+    fn CGContextSetLineCap(c: ::sys::CGContextRef, cap: CGLineCap);
+    fn CGContextSetLineDash(c: ::sys::CGContextRef, phase: CGFloat, lengths: *const CGFloat, count: size_t);
+    fn CGContextSetLineJoin(c: ::sys::CGContextRef, join: CGLineJoin);
+    fn CGContextSetLineWidth(c: ::sys::CGContextRef, width: CGFloat);
+    fn CGContextSetMitreLimit(c: ::sys::CGContextRef, limit: CGFloat);
+
     fn CGContextAddPath(c: ::sys::CGContextRef, path: ::sys::CGPathRef);
     fn CGContextClosePath(c: ::sys::CGContextRef);
     fn CGContextFillPath(c: ::sys::CGContextRef);
+    fn CGContextStrokePath(c: ::sys::CGContextRef);
     fn CGContextSetRGBFillColor(context: ::sys::CGContextRef,
                                 red: CGFloat,
                                 green: CGFloat,

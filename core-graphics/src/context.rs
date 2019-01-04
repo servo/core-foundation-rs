@@ -172,6 +172,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn set_rgb_stroke_color(&self, red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        unsafe {
+            CGContextSetRGBStrokeColor(self.as_ptr(), red, green, blue, alpha)
+        }
+    }
+
     pub fn set_gray_fill_color(&self, gray: CGFloat, alpha: CGFloat) {
         unsafe {
             CGContextSetGrayFillColor(self.as_ptr(), gray, alpha)
@@ -452,6 +458,11 @@ extern {
                                 green: CGFloat,
                                 blue: CGFloat,
                                 alpha: CGFloat);
+    fn CGContextSetRGBStrokeColor(context: ::sys::CGContextRef,
+                                  red: CGFloat,
+                                  green: CGFloat,
+                                  blue: CGFloat,
+                                  alpha: CGFloat);
     fn CGContextSetGrayFillColor(context: ::sys::CGContextRef, gray: CGFloat, alpha: CGFloat);
     fn CGContextClearRect(context: ::sys::CGContextRef,
                           rect: CGRect);

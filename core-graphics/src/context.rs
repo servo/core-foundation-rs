@@ -70,6 +70,7 @@ pub enum CGTextDrawingMode {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy, Debug)]
 pub enum CGLineCap {
     CGLineCapButt,
     CGLineCapRound,
@@ -77,6 +78,7 @@ pub enum CGLineCap {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy, Debug)]
 pub enum CGLineJoin {
     CGLineJoinMiter,
     CGLineJoinRound,

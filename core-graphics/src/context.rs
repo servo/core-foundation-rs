@@ -333,6 +333,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn eo_fill_path(&self) {
+        unsafe {
+            CGContextEOFillPath(self.as_ptr());
+        }
+    }
+
     pub fn stroke_path(&self) {
         unsafe {
             CGContextStrokePath(self.as_ptr());
@@ -501,6 +507,7 @@ extern {
                             x: CGFloat,
                             y: CGFloat);
     fn CGContextFillPath(c: ::sys::CGContextRef);
+    fn CGContextEOFillPath(c: ::sys::CGContextRef);
     fn CGContextStrokePath(c: ::sys::CGContextRef);
     fn CGContextSetRGBFillColor(context: ::sys::CGContextRef,
                                 red: CGFloat,

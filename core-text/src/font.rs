@@ -297,6 +297,13 @@ impl CTFont {
         }
     }
 
+    pub fn get_glyph_with_name(&self, glyph_name: &str) -> CGGlyph {
+        let glyph_name = CFString::new(glyph_name);
+        unsafe {
+            CTFontGetGlyphWithName(self.0, glyph_name.as_concrete_TypeRef())
+        }
+    }
+
     pub unsafe fn get_glyphs_for_characters(&self,
                                             characters: *const UniChar,
                                             glyphs: *mut CGGlyph,
@@ -558,7 +565,7 @@ extern {
     /* Getting Glyph Data */
     fn CTFontCreatePathForGlyph(font: CTFontRef, glyph: CGGlyph, matrix: *const CGAffineTransform)
                                 -> CGPathRef;
-    //fn CTFontGetGlyphWithName
+    fn CTFontGetGlyphWithName(font: CTFontRef, glyphName: CFStringRef) -> CGGlyph;
     fn CTFontGetBoundingRectsForGlyphs(font: CTFontRef,
                                        orientation: CTFontOrientation,
                                        glyphs: *const CGGlyph,

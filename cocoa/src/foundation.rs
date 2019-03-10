@@ -701,21 +701,26 @@ impl NSRunLoop for id {
     }
 }
 
-pub enum NSURLBookmarkCreationOptions {
-    NSURLBookmarkCreationPreferFileIDResolution = (1 << 8),
-    NSURLBookmarkCreationMinimalBookmark = (1 << 9),
-    NSURLBookmarkCreationSuitableForBookmarkFile = (1 << 10),
-    NSURLBookmarkCreationWithSecurityScope = (1 << 11),
-    NSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess = (1 << 12),
-}
-
-pub enum NSURLBookmarkResolutionOptions {
-    NSURLBookmarkResolutionWithoutUI = (1 << 8),
-    NSURLBookmarkResolutionWithoutMounting = (1 << 9),
-    NSURLBookmarkResolutionWithSecurityScope = (1 << 10),
+bitflags! {
+    pub struct NSURLBookmarkCreationOptions: NSUInteger {
+        const NSURLBookmarkCreationPreferFileIDResolution = 1 << 8;
+        const NSURLBookmarkCreationMinimalBookmark = 1 << 9;
+        const NSURLBookmarkCreationSuitableForBookmarkFile = 1 << 10;
+        const NSURLBookmarkCreationWithSecurityScope = 1 << 11;
+        const NSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess = 1 << 12;
+    }
 }
 
 pub type NSURLBookmarkFileCreationOptions = NSURLBookmarkCreationOptions;
+
+bitflags! {
+    pub struct NSURLBookmarkResolutionOptions: NSUInteger {
+        const NSURLBookmarkResolutionWithoutUI = 1 << 8;
+        const NSURLBookmarkResolutionWithoutMounting = 1 << 9;
+        const NSURLBookmarkResolutionWithSecurityScope = 1 << 10;
+    }
+}
+
 
 pub trait NSURL: Sized {
     unsafe fn alloc(_: Self) -> id;

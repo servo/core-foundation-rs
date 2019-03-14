@@ -1,6 +1,6 @@
 [package]
 name = "core-foundation"
-description = "Bindings to Core Foundation for OS X"
+description = "Bindings to Core Foundation for macOS"
 homepage = "https://github.com/servo/core-foundation-rs"
 repository = "https://github.com/servo/core-foundation-rs"
 version = "0.6.3"

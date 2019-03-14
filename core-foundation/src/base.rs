@@ -111,6 +111,9 @@ impl CFType {
 }
 
 impl fmt::Debug for CFType {
+   /// Formats the value using [`CFCopyDescription`].
+   ///
+   /// [`CFCopyDescription`]: https://developer.apple.com/documentation/corefoundation/1521252-cfcopydescription?language=objc
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let desc = unsafe {
             CFString::wrap_under_create_rule(CFCopyDescription(self.0))
@@ -154,6 +157,10 @@ impl CFAllocator {
 /// All Core Foundation types implement this trait. The associated type `Ref` specifies the
 /// associated Core Foundation type: e.g. for `CFType` this is `CFTypeRef`; for `CFArray` this is
 /// `CFArrayRef`.
+///
+/// Most structs that implement this trait will do so via the [`impl_TCFType`] macro.
+///
+/// [`impl_TCFType`]: ../macro.impl_TCFType.html
 pub trait TCFType {
     /// The reference type wrapped inside this type.
     type Ref: TCFTypeRef;

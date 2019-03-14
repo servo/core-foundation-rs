@@ -10,7 +10,6 @@
 use std::borrow::Cow;
 use std::os::raw::c_void;
 use std::slice;
-use std::ptr;
 use core_foundation::base::{CFIndex, CFTypeID, TCFType, CFType, CFRange};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFString;
@@ -51,7 +50,7 @@ impl CTRun {
             // CTRunGetGlyphs
             let count = CTRunGetGlyphCount(self.0);
             let glyphs_ptr = CTRunGetGlyphsPtr(self.0);
-            if glyphs_ptr != ptr::null() {
+            if !glyphs_ptr.is_null() {
                 Cow::from(slice::from_raw_parts(glyphs_ptr, count as usize))
             } else {
                 let mut vec = Vec::with_capacity(count as usize);
@@ -71,7 +70,7 @@ impl CTRun {
             // CTRunGetPositions
             let count = CTRunGetGlyphCount(self.0);
             let positions_ptr = CTRunGetPositionsPtr(self.0);
-            if positions_ptr != ptr::null() {
+            if !positions_ptr.is_null() {
                 Cow::from(slice::from_raw_parts(positions_ptr, count as usize))
             } else {
                 let mut vec = Vec::with_capacity(count as usize);

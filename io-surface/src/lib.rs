@@ -16,7 +16,7 @@ extern crate cgl;
 extern crate gleam;
 extern crate leaky_cow;
 
-// Rust bindings to the IOSurface framework on Mac OS X.
+// Rust bindings to the IOSurface framework on macOS.
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, CFType, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};

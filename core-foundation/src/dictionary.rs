@@ -103,7 +103,7 @@ impl<K, V> CFDictionary<K, V> {
     #[inline]
     pub fn get<'a, T: ToVoid<K>>(&'a self, key: T) -> ItemRef<'a, V> where V: FromVoid, K: ToVoid<K> {
         let ptr = key.to_void();
-        self.find(key).expect(&format!("No entry found for key {:p}", ptr))
+        self.find(key).unwrap_or_else(|| panic!("No entry found for key {:p}", ptr))
     }
 
     pub fn get_keys_and_values(&self) -> (Vec<*const c_void>, Vec<*const c_void>) {
@@ -223,7 +223,7 @@ impl<K, V> CFMutableDictionary<K, V> {
     #[inline]
     pub fn get<'a>(&'a self, key: &K) -> ItemRef<'a, V> where V: FromVoid, K: ToVoid<K> {
         let ptr = key.to_void();
-        self.find(&key).expect(&format!("No entry found for key {:p}", ptr))
+        self.find(&key).unwrap_or_else(|| panic!("No entry found for key {:p}", ptr))
     }
 
     pub fn get_keys_and_values(&self) -> (Vec<*const c_void>, Vec<*const c_void>) {

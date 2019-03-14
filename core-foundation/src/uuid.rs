@@ -38,6 +38,12 @@ impl CFUUID {
     }
 }
 
+impl Default for CFUUID {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(feature = "with-uuid")]
 impl Into<Uuid> for CFUUID {
     fn into(self) -> Uuid {

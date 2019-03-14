@@ -272,6 +272,12 @@ impl<K, V> CFMutableDictionary<K, V> {
     }
 }
 
+impl<K, V> Default for CFMutableDictionary<K, V> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<'a, K, V> From<&'a CFDictionary<K, V>> for CFMutableDictionary<K, V> {
     /// Creates a new mutable dictionary with the key-value pairs from another dictionary.
     /// The capacity of the new mutable dictionary is not limited.

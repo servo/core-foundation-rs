@@ -261,7 +261,7 @@ impl CGDisplay {
     ) -> Option<CFArray> {
         let relative_to_window = relative_to_window.unwrap_or(kCGNullWindowID);
         let array_ref = unsafe { CGWindowListCopyWindowInfo(option, relative_to_window) };
-        if array_ref != ptr::null() {
+        if !array_ref.is_null() {
             Some(unsafe { TCFType::wrap_under_create_rule(array_ref) })
         } else {
             None
@@ -488,7 +488,7 @@ impl CGDisplayMode {
     ) -> Option<Vec<CGDisplayMode>> {
         let array_opt: Option<CFArray> = unsafe {
             let array_ref = CGDisplayCopyAllDisplayModes(display_id, options);
-            if array_ref != ptr::null() {
+            if !array_ref.is_null() {
                 Some(CFArray::wrap_under_create_rule(array_ref))
             } else {
                 None

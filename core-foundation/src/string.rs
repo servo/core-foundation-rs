@@ -50,7 +50,7 @@ impl<'a> From<&'a CFString> for Cow<'a, str> {
         unsafe {
             // Do this without allocating if we can get away with it
             let c_string = CFStringGetCStringPtr(cf_str.0, kCFStringEncodingUTF8);
-            if c_string != ptr::null() {
+            if !c_string.is_null() {
                 let c_str = CStr::from_ptr(c_string);
                 Cow::Borrowed(str::from_utf8_unchecked(c_str.to_bytes()))
             } else {

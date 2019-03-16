@@ -78,7 +78,7 @@ impl<T> CFArray<T> {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                          mem::transmute(elems.as_ptr()),
+                                          elems.as_ptr(),
                                           elems.len().to_CFIndex(),
                                           &kCFTypeArrayCallBacks);
             TCFType::wrap_under_create_rule(array_ref)

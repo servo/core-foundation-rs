@@ -121,7 +121,7 @@ impl CFPropertyList {
 
     #[inline]
     pub unsafe fn wrap_under_get_rule(reference: CFPropertyListRef) -> CFPropertyList {
-        let reference = mem::transmute(CFRetain(mem::transmute(reference)));
+        let reference = CFRetain(reference);
         CFPropertyList(reference)
     }
 
@@ -142,7 +142,7 @@ impl CFPropertyList {
 
     #[inline]
     pub fn as_CFTypeRef(&self) -> ::core_foundation_sys::base::CFTypeRef {
-        unsafe { mem::transmute(self.as_concrete_TypeRef()) }
+        self.as_concrete_TypeRef()
     }
 
     #[inline]

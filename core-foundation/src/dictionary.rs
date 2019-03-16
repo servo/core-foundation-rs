@@ -44,8 +44,8 @@ impl<K, V> CFDictionary<K, V> {
 
         unsafe {
             let dictionary_ref = CFDictionaryCreate(kCFAllocatorDefault,
-                                                    mem::transmute(keys.as_ptr()),
-                                                    mem::transmute(values.as_ptr()),
+                                                    keys.as_ptr(),
+                                                    values.as_ptr(),
                                                     keys.len().to_CFIndex(),
                                                     &kCFTypeDictionaryKeyCallBacks,
                                                     &kCFTypeDictionaryValueCallBacks);

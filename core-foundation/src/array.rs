@@ -66,7 +66,7 @@ impl<T> CFArray<T> {
     pub fn from_copyable(elems: &[T]) -> CFArray<T> where T: Copy {
         unsafe {
             let array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                          mem::transmute(elems.as_ptr()),
+                                          elems.as_ptr() as *const *const c_void,
                                           elems.len().to_CFIndex(),
                                           ptr::null());
             TCFType::wrap_under_create_rule(array_ref)

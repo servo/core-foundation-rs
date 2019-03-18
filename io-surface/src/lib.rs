@@ -26,7 +26,6 @@ use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_
 use libc::{c_int, size_t};
 use std::os::raw::c_void;
 use leaky_cow::LeakyCow;
-use std::mem;
 use std::slice;
 use std::ffi::CStr;
 
@@ -74,15 +73,13 @@ impl TCFType for IOSurface {
 
     #[inline]
     unsafe fn wrap_under_get_rule(reference: IOSurfaceRef) -> IOSurface {
-        let reference: IOSurfaceRef = mem::transmute(CFRetain(mem::transmute(reference)));
+        let reference = CFRetain(reference as *const c_void) as IOSurfaceRef;
         TCFType::wrap_under_create_rule(reference)
     }
 
     #[inline]
     fn as_CFTypeRef(&self) -> CFTypeRef {
-        unsafe {
-            mem::transmute(self.as_concrete_TypeRef())
-        }
+        self.as_concrete_TypeRef() as CFTypeRef
     }
 
     #[inline]
@@ -133,7 +130,7 @@ impl IOSurface {
                                                   height,
                                                   BGRA as GLenum,
                                                   UNSIGNED_INT_8_8_8_8_REV,
-                                                  mem::transmute(self.as_concrete_TypeRef()),
+                                                  self.as_concrete_TypeRef() as *mut c_void,
                                                   0);
 
             if gl_error != kCGLNoError {

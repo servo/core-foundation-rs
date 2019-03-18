@@ -618,7 +618,7 @@ extern "C" {
     pub fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
     pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> ::sys::CGImageRef;
 
-    pub fn CGBeginDisplayConfiguration(config: *const CGDisplayConfigRef) -> CGError;
+    pub fn CGBeginDisplayConfiguration(config: *mut CGDisplayConfigRef) -> CGError;
     pub fn CGCancelDisplayConfiguration(config: CGDisplayConfigRef) -> CGError;
     pub fn CGCompleteDisplayConfiguration(
         config: CGDisplayConfigRef,

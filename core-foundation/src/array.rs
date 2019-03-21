@@ -250,12 +250,17 @@ mod tests {
             n5.as_CFType(),
         ]);
 
-        assert!(arr.get_all_values() == &[n0.as_CFTypeRef(),
-                                        n1.as_CFTypeRef(),
-                                        n2.as_CFTypeRef(),
-                                        n3.as_CFTypeRef(),
-                                        n4.as_CFTypeRef(),
-                                        n5.as_CFTypeRef()]);
+        assert_eq!(
+            arr.get_all_values(),
+            &[
+                n0.as_CFTypeRef(),
+                n1.as_CFTypeRef(),
+                n2.as_CFTypeRef(),
+                n3.as_CFTypeRef(),
+                n4.as_CFTypeRef(),
+                n5.as_CFTypeRef()
+            ]
+        );
 
         let mut sum = 0;
 
@@ -269,13 +274,13 @@ mod tests {
             sum += number.to_i64().unwrap()
         }
 
-        assert!(sum == 15);
+        assert_eq!(sum, 15);
 
         for elem in arr.iter() {
             let number: CFNumber = elem.downcast::<CFNumber>().unwrap();
             sum += number.to_i64().unwrap()
         }
 
-        assert!(sum == 30);
+        assert_eq!(sum, 30);
     }
 }

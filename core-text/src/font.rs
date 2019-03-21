@@ -358,7 +358,7 @@ impl CTFont {
     }
 
     pub fn draw_glyphs(&self, glyphs: &[CGGlyph], positions: &[CGPoint], context: CGContext) {
-        assert!(glyphs.len() == positions.len());
+        assert_eq!(glyphs.len(), positions.len());
         unsafe {
             CTFontDrawGlyphs(self.as_concrete_TypeRef(),
                              glyphs.as_ptr(),

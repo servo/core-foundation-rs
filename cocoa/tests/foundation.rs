@@ -19,8 +19,8 @@ mod foundation {
                 let bytes = built.UTF8String() as *const u8;
                 let objc_string = str::from_utf8(slice::from_raw_parts(bytes, built.len()))
                     .unwrap();
-                assert!(objc_string.len() == expected.len());
-                assert!(objc_string == expected);
+                assert_eq!(objc_string.len(), expected.len());
+                assert_eq!(objc_string, expected);
             }
         }
 
@@ -32,8 +32,8 @@ mod foundation {
                 let bytes = built.UTF8String() as *const u8;
                 let objc_string = str::from_utf8(slice::from_raw_parts(bytes, built.len()))
                     .unwrap();
-                assert!(objc_string.len() == expected.len());
-                assert!(objc_string == expected);
+                assert_eq!(objc_string.len(), expected.len());
+                assert_eq!(objc_string, expected);
             }
         }
 
@@ -42,7 +42,7 @@ mod foundation {
             let expected = "Hello!";
             unsafe {
                 let built = NSString::alloc(nil).init_str(expected);
-                assert!(built.len() == expected.len());
+                assert_eq!(built.len(), expected.len());
             }
         }
 
@@ -58,7 +58,7 @@ mod foundation {
                 let bytes = append_string.UTF8String() as *const u8;
                 let objc_string = str::from_utf8(slice::from_raw_parts(bytes, append_string.len()))
                     .unwrap();
-                assert!(objc_string == expected);
+                assert_eq!(objc_string, expected);
             }
         }
     }

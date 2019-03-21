@@ -113,6 +113,6 @@ mod test {
         let cf_uuid = CFUUID::new();
         let uuid: Uuid = cf_uuid.clone().into();
         let converted = CFUUID::from(uuid);
-        assert!(cf_uuid == converted);
+        assert_eq!(cf_uuid, converted);
     }
 }

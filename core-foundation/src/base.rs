@@ -59,7 +59,7 @@ impl CFType {
     /// // Cast it up to a CFType.
     /// let cf_type: CFType = string.as_CFType();
     /// // Cast it down again.
-    /// assert!(cf_type.downcast::<CFString>().unwrap().to_string() == "FooBar");
+    /// assert_eq!(cf_type.downcast::<CFString>().unwrap().to_string(), "FooBar");
     /// // Casting it to some other type will yield `None`
     /// assert!(cf_type.downcast::<CFBoolean>().is_none());
     /// ```

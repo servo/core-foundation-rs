@@ -315,8 +315,8 @@ pub mod test {
         ]);
 
         let (v1, v2) = d.get_keys_and_values();
-        assert!(v1 == &[bar.as_CFTypeRef(), baz.as_CFTypeRef(), foo.as_CFTypeRef()]);
-        assert!(v2 == &[boo.as_CFTypeRef(), tru.as_CFTypeRef(), n42.as_CFTypeRef()]);
+        assert_eq!(v1, &[bar.as_CFTypeRef(), baz.as_CFTypeRef(), foo.as_CFTypeRef()]);
+        assert_eq!(v2, &[boo.as_CFTypeRef(), tru.as_CFTypeRef(), n42.as_CFTypeRef()]);
     }
 
     #[test]
@@ -335,15 +335,15 @@ pub mod test {
         assert_eq!(d.len(), 3);
 
         let (v1, v2) = d.get_keys_and_values();
-        assert!(v1 == &[bar.as_CFTypeRef(), baz.as_CFTypeRef(), foo.as_CFTypeRef()]);
-        assert!(v2 == &[boo.as_CFTypeRef(), tru.as_CFTypeRef(), n42.as_CFTypeRef()]);
+        assert_eq!(v1, &[bar.as_CFTypeRef(), baz.as_CFTypeRef(), foo.as_CFTypeRef()]);
+        assert_eq!(v2, &[boo.as_CFTypeRef(), tru.as_CFTypeRef(), n42.as_CFTypeRef()]);
 
         d.remove(baz);
         assert_eq!(d.len(), 2);
 
         let (v1, v2) = d.get_keys_and_values();
-        assert!(v1 == &[bar.as_CFTypeRef(), foo.as_CFTypeRef()]);
-        assert!(v2 == &[boo.as_CFTypeRef(), n42.as_CFTypeRef()]);
+        assert_eq!(v1, &[bar.as_CFTypeRef(), foo.as_CFTypeRef()]);
+        assert_eq!(v2, &[boo.as_CFTypeRef(), n42.as_CFTypeRef()]);
 
         d.remove_all();
         assert_eq!(d.len(), 0)

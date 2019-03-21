@@ -79,11 +79,11 @@ impl<'a> From<&'a CFString> for Cow<'a, str> {
                                                      buffer.as_mut_ptr(),
                                                      buffer.len().to_CFIndex(),
                                                      &mut bytes_used);
-                assert!(chars_written == char_len);
+                assert_eq!(chars_written, char_len);
 
                 // This is dangerous; we over-allocate and null-terminate the string (during
                 // initialization).
-                assert!(bytes_used == buffer.len().to_CFIndex());
+                assert_eq!(bytes_used, buffer.len().to_CFIndex());
                 Cow::Owned(String::from_utf8_unchecked(buffer))
             }
         }
@@ -146,5 +146,5 @@ fn string_and_back() {
     let original = "The quick brown fox jumped over the slow lazy dog.";
     let cfstr = CFString::from_static_string(original);
     let converted = cfstr.to_string();
-    assert!(converted == original);
+    assert_eq!(converted, original);
 }

@@ -58,6 +58,13 @@ impl<K, V> CFDictionary<K, V> {
         unsafe { CFDictionary::wrap_under_get_rule(self.0) }
     }
 
+    /// Returns a `CFMutableDictionary` pointing to the same underlying dictionary as this immutable one.
+    /// This should only be used when the underlying dictionary is mutable.
+    #[inline]
+    pub unsafe fn to_mutable(&self) -> CFMutableDictionary<K, V> {
+        CFMutableDictionary::wrap_under_get_rule(self.0 as CFMutableDictionaryRef)
+    }
+
     /// Returns the same dictionary, but with the types reset to void pointers.
     /// Equal to `to_untyped`, but is faster since it does not increment the retain count.
     #[inline]

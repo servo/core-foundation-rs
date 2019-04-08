@@ -508,7 +508,7 @@ pub trait NSPasteboard: Sized {
 
     unsafe fn clearContents(self) -> NSInteger;
     unsafe fn writeObjects(self, objects: id) -> BOOL;
-    unsafe fn sendData_forType(self, data: id, dataType: id) -> BOOL;
+    unsafe fn setData_forType(self, data: id, dataType: id) -> BOOL;
     unsafe fn setPropertyList_forType(self, plist: id, dataType: id) -> BOOL;
     unsafe fn setString_forType(self, string: id, dataType: id) -> BOOL;
 
@@ -552,8 +552,8 @@ impl NSPasteboard for id {
         msg_send![self, writeObjects:objects]
     }
 
-    unsafe fn sendData_forType(self, data: id, dataType: id) -> BOOL {
-        msg_send![self, sendData:data forType:dataType]
+    unsafe fn setData_forType(self, data: id, dataType: id) -> BOOL {
+        msg_send![self, setData:data forType:dataType]
     }
 
     unsafe fn setPropertyList_forType(self, plist: id, dataType: id) -> BOOL {

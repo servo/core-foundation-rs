@@ -327,6 +327,18 @@ impl CGContextRef {
         }
     }
 
+    pub fn clip(&self) {
+        unsafe {
+            CGContextClip(self.as_ptr());
+        }
+    }
+
+    pub fn eo_clip(&self) {
+        unsafe {
+            CGContextEOClip(self.as_ptr());
+        }
+    }
+
     pub fn fill_path(&self) {
         unsafe {
             CGContextFillPath(self.as_ptr());
@@ -508,6 +520,8 @@ extern {
                             y: CGFloat);
     fn CGContextFillPath(c: ::sys::CGContextRef);
     fn CGContextEOFillPath(c: ::sys::CGContextRef);
+    fn CGContextClip(c: ::sys::CGContextRef);
+    fn CGContextEOClip(c: ::sys::CGContextRef);
     fn CGContextStrokePath(c: ::sys::CGContextRef);
     fn CGContextSetRGBFillColor(context: ::sys::CGContextRef,
                                 red: CGFloat,

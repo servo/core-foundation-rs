@@ -85,6 +85,16 @@ pub enum CGLineJoin {
     CGLineJoinBevel,
 }
 
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub enum CGPathDrawingMode {
+    CGPathFill,
+    CGPathEOFill,
+    CGPathStroke,
+    CGPathFillStroke,
+    CGPathEOFillStroke,
+}
+
 foreign_type! {
     #[doc(hidden)]
     type CType = ::sys::CGContext;
@@ -351,6 +361,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn draw_path(&self, mode: CGPathDrawingMode) {
+        unsafe {
+            CGContextDrawPath(self.as_ptr(), mode);
+        }
+    }
+
     pub fn fill_path(&self) {
         unsafe {
             CGContextFillPath(self.as_ptr());
@@ -375,9 +391,51 @@ impl CGContextRef {
         }
     }
 
+    pub fn fill_rects(&self, rects: &[CGRect]) {
+        unsafe {
+            CGContextFillRects(self.as_ptr(), rects.as_ptr(), rects.len())
+        }
+    }
+
     pub fn clear_rect(&self, rect: CGRect) {
         unsafe {
             CGContextClearRect(self.as_ptr(), rect)
+        }
+    }
+
+    pub fn stroke_rect(&self, rect: CGRect) {
+        unsafe {
+            CGContextStrokeRect(self.as_ptr(), rect)
+        }
+    }
+
+    pub fn stroke_rect_with_width(&self, rect: CGRect, width: CGFloat) {
+        unsafe {
+            CGContextStrokeRectWithWidth(self.as_ptr(), rect, width)
+        }
+    }
+
+    pub fn replace_path_with_stroked_path(&self) {
+        unsafe {
+            CGContextReplacePathWithStrokedPath(self.as_ptr())
+        }
+    }
+
+    pub fn fill_ellipse_in_rect(&self, rect: CGRect) {
+        unsafe {
+            CGContextFillEllipseInRect(self.as_ptr(), rect)
+        }
+    }
+
+    pub fn stroke_ellipse_in_rect(&self, rect: CGRect) {
+        unsafe {
+            CGContextStrokeEllipseInRect(self.as_ptr(), rect)
+        }
+    }
+
+    pub fn stroke_line_segments(&self, points: &[CGPoint]) {
+        unsafe {
+            CGContextStrokeLineSegments(self.as_ptr(), points.as_ptr(), points.len())
         }
     }
 
@@ -535,6 +593,7 @@ extern {
     fn CGContextMoveToPoint(c: ::sys::CGContextRef,
                             x: CGFloat,
                             y: CGFloat);
+    fn CGContextDrawPath(c: ::sys::CGContextRef, mode: CGPathDrawingMode);
     fn CGContextFillPath(c: ::sys::CGContextRef);
     fn CGContextEOFillPath(c: ::sys::CGContextRef);
     fn CGContextClip(c: ::sys::CGContextRef);
@@ -555,6 +614,22 @@ extern {
                           rect: CGRect);
     fn CGContextFillRect(context: ::sys::CGContextRef,
                          rect: CGRect);
+    fn CGContextFillRects(context: ::sys::CGContextRef,
+                          rects: *const CGRect,
+                          count: size_t);
+    fn CGContextStrokeRect(context: ::sys::CGContextRef,
+                           rect: CGRect);
+    fn CGContextStrokeRectWithWidth(context: ::sys::CGContextRef,
+                                    rect: CGRect,
+                                    width: CGFloat);
+    fn CGContextReplacePathWithStrokedPath(context: ::sys::CGContextRef);
+    fn CGContextFillEllipseInRect(context: ::sys::CGContextRef,
+                                  rect: CGRect);
+    fn CGContextStrokeEllipseInRect(context: ::sys::CGContextRef,
+                                    rect: CGRect);
+    fn CGContextStrokeLineSegments(context: ::sys::CGContextRef,
+                                    points: *const CGPoint,
+                                    count: size_t);
     fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
     fn CGContextSetFont(c: ::sys::CGContextRef, font: ::sys::CGFontRef);
     fn CGContextSetFontSize(c: ::sys::CGContextRef, size: CGFloat);

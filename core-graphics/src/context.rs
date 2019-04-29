@@ -505,6 +505,24 @@ impl CGContextRef {
             CGContextScaleCTM(self.as_ptr(), sx, sy);
         }
     }
+
+    pub fn rotate(&self, angle: CGFloat) {
+        unsafe {
+            CGContextRotateCTM(self.as_ptr(), angle);
+        }
+    }
+
+    pub fn get_ctm(&self) -> CGAffineTransform {
+        unsafe {
+            CGContextGetCTM(self.as_ptr())
+        }
+    }
+
+    pub fn concat_ctm(&self, transform: CGAffineTransform) {
+        unsafe {
+            CGContextConcatCTM(self.as_ptr(), transform)
+        }
+    }
 }
 
 #[test]
@@ -643,5 +661,8 @@ extern {
     fn CGContextRestoreGState(c: ::sys::CGContextRef);
     fn CGContextTranslateCTM(c: ::sys::CGContextRef, tx: CGFloat, ty: CGFloat);
     fn CGContextScaleCTM(c: ::sys::CGContextRef, sx: CGFloat, sy: CGFloat);
+    fn CGContextRotateCTM(c: ::sys::CGContextRef, angle: CGFloat);
+    fn CGContextGetCTM(c: ::sys::CGContextRef) -> CGAffineTransform;
+    fn CGContextConcatCTM(c: ::sys::CGContextRef, transform: CGAffineTransform);
 }
 

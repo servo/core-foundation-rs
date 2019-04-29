@@ -303,6 +303,18 @@ impl CGContextRef {
         }
     }
 
+    pub fn add_quad_curve_to_point(&self,
+                                   cpx: CGFloat,
+                                   cpy: CGFloat,
+                                   x: CGFloat,
+                                   y: CGFloat) {
+        unsafe {
+            CGContextAddQuadCurveToPoint(self.as_ptr(),
+                                         cpx, cpy,
+                                         x, y);
+        }
+    }
+
     pub fn add_line_to_point(&self, x: CGFloat, y: CGFloat) {
         unsafe {
             CGContextAddLineToPoint(self.as_ptr(), x, y);
@@ -510,6 +522,11 @@ extern {
                                 cp2y: CGFloat,
                                 x: CGFloat,
                                 y: CGFloat);
+    fn CGContextAddQuadCurveToPoint(c: ::sys::CGContextRef,
+                                    cpx: CGFloat,
+                                    cpy: CGFloat,
+                                    x: CGFloat,
+                                    y: CGFloat);
     fn CGContextAddLineToPoint(c: ::sys::CGContextRef,
                                x: CGFloat,
                                y: CGFloat);

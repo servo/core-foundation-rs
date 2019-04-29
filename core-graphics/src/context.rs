@@ -415,6 +415,18 @@ impl CGContextRef {
         }
     }
 
+    pub fn clip_to_rect(&self, rect: CGRect) {
+        unsafe {
+            CGContextClipToRect(self.as_ptr(), rect)
+        }
+    }
+
+    pub fn clip_to_rects(&self, rects: &[CGRect]) {
+        unsafe {
+            CGContextClipToRects(self.as_ptr(), rects.as_ptr(), rects.len())
+        }
+    }
+
     pub fn replace_path_with_stroked_path(&self) {
         unsafe {
             CGContextReplacePathWithStrokedPath(self.as_ptr())
@@ -640,6 +652,11 @@ extern {
     fn CGContextStrokeRectWithWidth(context: ::sys::CGContextRef,
                                     rect: CGRect,
                                     width: CGFloat);
+    fn CGContextClipToRect(context: ::sys::CGContextRef,
+                           rect: CGRect);
+    fn CGContextClipToRects(context: ::sys::CGContextRef,
+                            rects: *const CGRect,
+                            count: size_t);
     fn CGContextReplacePathWithStrokedPath(context: ::sys::CGContextRef);
     fn CGContextFillEllipseInRect(context: ::sys::CGContextRef,
                                   rect: CGRect);

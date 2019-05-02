@@ -28,3 +28,5 @@ pub mod base;
 pub mod foundation;
 #[cfg(target_os = "macos")]
 pub mod quartzcore;
+#[macro_use]
+mod macros;

@@ -16,22 +16,26 @@
 /// #[macro_use] extern crate objc;
 ///
 /// use cocoa::appkit::NSWindow;
-/// use cocoa::base::nil;
+/// use cocoa::base::{id, nil};
 ///
-/// # unsafe fn main() {
-/// let my_window: id = NSWindow::alloc(nil);
+/// use objc::runtime::{Object, Sel};
 ///
-/// extern fn on_enter_fullscreen(this: &Object, _cmd: Sel, _notification: id) {
-///     unsafe {
-///         let window: id = *this.get_ivar("window");
-///         window.setToolbar_(nil);
+/// # fn main() {
+/// unsafe {
+///     let my_window: id = NSWindow::alloc(nil);
+///
+///     extern fn on_enter_fullscreen(this: &Object, _cmd: Sel, _notification: id) {
+///         unsafe {
+///             let window: id = *this.get_ivar("window");
+///             window.setToolbar_(nil);
+///         }
 ///     }
-/// }
 ///
-/// my_window.setDelegate_(delegate!("MyWindowDelegate", {
-///     window: id = my_window, // Declare instance variable(s)
-///     (onWindowWillEnterFullscreen:) => on_enter_fullscreen as extern fn(&Object, Sel, id) // Declare function(s)
-/// }));
+///     my_window.setDelegate_(delegate!("MyWindowDelegate", {
+///         window: id = my_window, // Declare instance variable(s)
+///         (onWindowWillEnterFullscreen:) => on_enter_fullscreen as extern fn(&Object, Sel, id) // Declare function(s)
+///     }));
+/// }
 /// # }
 /// ```
 #[macro_export]

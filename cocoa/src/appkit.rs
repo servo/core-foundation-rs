@@ -207,6 +207,14 @@ pub enum NSWindowTitleVisibility {
     NSWindowTitleHidden = 1
 }
 
+#[repr(i64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSWindowTabbingMode {
+    NSWindowTabbingModeAutomatic = 0,
+    NSWindowTabbingModeDisallowed = 1,
+    NSWindowTabbingModePreferred = 2
+}
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSBackingStoreType {
@@ -1001,6 +1009,15 @@ pub trait NSWindow: Sized {
     // Managing Title Bars
     unsafe fn standardWindowButton_(self, windowButtonKind: NSWindowButton) -> id;
 
+    // Managing Window Tabs
+    unsafe fn allowsAutomaticWindowTabbing(_: Self) -> BOOL;
+    unsafe fn setAllowsAutomaticWindowTabbing_(_: Self, allowsAutomaticWindowTabbing: BOOL);
+    unsafe fn tabbingIdentifier(self) -> id;
+    unsafe fn tabbingMode(self) -> NSWindowTabbingMode;
+    unsafe fn setTabbingMode_(self, tabbingMode: NSWindowTabbingMode);
+    unsafe fn addTabbedWindow_ordered_(self, window: id, ordering_mode: NSWindowOrderingMode);
+    unsafe fn toggleTabBar_(self, sender: id);
+
     // TODO: Managing Tooltips
     // TODO: Handling Events
 
@@ -1507,6 +1524,34 @@ impl NSWindow for id {
         msg_send![self, standardWindowButton:windowButtonKind]
     }
 
+    // Managing Window Tabs
+    unsafe fn allowsAutomaticWindowTabbing(_: Self) -> BOOL {
+        msg_send![class!(NSWindow), allowsAutomaticWindowTabbing]
+    }
+
+    unsafe fn setAllowsAutomaticWindowTabbing_(_: Self, allowsAutomaticWindowTabbing: BOOL) {
+        msg_send![class!(NSWindow), setAllowsAutomaticWindowTabbing:allowsAutomaticWindowTabbing]
+    }
+
+    unsafe fn tabbingIdentifier(self) -> id {
+        msg_send![self, tabbingIdentifier]
+    }
+
+    unsafe fn tabbingMode(self) -> NSWindowTabbingMode {
+        msg_send!(self, tabbingMode)
+    }
+
+    unsafe fn setTabbingMode_(self, tabbingMode: NSWindowTabbingMode) {
+        msg_send![self, setTabbingMode: tabbingMode];
+    }
+
+    unsafe fn addTabbedWindow_ordered_(self, window: id, ordering_mode: NSWindowOrderingMode) {
+        msg_send![self, addTabbedWindow:window ordered: ordering_mode];
+    }
+
+    unsafe fn toggleTabBar_(self, sender: id) {
+        msg_send![self, toggleTabBar:sender]
+    }
     // TODO: Managing Tooltips
     // TODO: Handling Events
 
@@ -3530,7 +3575,7 @@ pub trait NSTabView: Sized {
     unsafe fn new(_: Self) -> id  {
         msg_send![class!(NSTabView), new]
     }
-    
+
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
     unsafe fn addTabViewItem_(self, tabViewItem: id);
     unsafe fn insertTabViewItem_atIndex_(self,tabViewItem:id, index:NSInteger);
@@ -4076,6 +4121,21 @@ impl NSSpellChecker for id {
         msg_send![self, ignoreWord:wordToIgnore inSpellDocumentWithTag:tag]
     }
 }
+
+pub trait NSNib: Sized {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class!(NSNib), alloc]
+    }
+
+    unsafe fn initWithNibNamed_bundle_(self, name: id, bundle: id) -> id;
+}
+
+impl NSNib for id {
+    unsafe fn initWithNibNamed_bundle_(self, name: id, bundle: id) -> id {
+        msg_send![self, initWithNibNamed:name bundle:bundle]
+    }
+}
+
 
 #[cfg(test)]
 mod test {

@@ -233,17 +233,34 @@ pub trait NSArray: Sized {
         msg_send![class!(NSArray), arrayWithObject:object]
     }
 
+    unsafe fn init(self) -> id;
+
+    unsafe fn count(self) -> NSUInteger;
+
     unsafe fn arrayByAddingObjectFromArray(self, object: id) -> id;
     unsafe fn arrayByAddingObjectsFromArray(self, objects: id) -> id;
+    unsafe fn objectAtIndex(self, index: NSUInteger) -> id;
 }
 
 impl NSArray for id {
+    unsafe fn init(self) -> id {
+        msg_send![self, init]
+    }
+
+    unsafe fn count(self) -> NSUInteger {
+        msg_send![self, count]
+    }
+
     unsafe fn arrayByAddingObjectFromArray(self, object: id) -> id {
         msg_send![self, arrayByAddingObjectFromArray:object]
     }
 
     unsafe fn arrayByAddingObjectsFromArray(self, objects: id) -> id {
         msg_send![self, arrayByAddingObjectsFromArray:objects]
+    }
+
+    unsafe fn objectAtIndex(self, index: NSUInteger) -> id {
+        msg_send![self, objectAtIndex:index]
     }
 }
 
@@ -1043,6 +1060,30 @@ impl NSURL for id {
 
     // unsafe fn URLFromPasteboard_
     // unsafe fn writeToPasteboard_
+}
+
+pub trait NSBundle: Sized {
+    unsafe fn mainBundle() -> Self;
+
+    unsafe fn loadNibNamed_owner_topLevelObjects_(self,
+                                          name: id /* NSString */,
+                                          owner: id,
+                                          topLevelObjects: *mut id /* NSArray */) -> BOOL;
+}
+
+impl NSBundle for id {
+    unsafe fn mainBundle() -> id {
+        msg_send![class!(NSBundle), mainBundle]
+    }
+
+    unsafe fn loadNibNamed_owner_topLevelObjects_(self,
+                                          name: id /* NSString */,
+                                          owner: id,
+                                          topLevelObjects: *mut id /* NSArray* */) -> BOOL {
+        msg_send![self, loadNibNamed:name
+                               owner:owner
+                     topLevelObjects:topLevelObjects]
+    }
 }
 
 pub trait NSData: Sized {

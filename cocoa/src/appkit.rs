@@ -2354,6 +2354,7 @@ pub trait NSEvent: Sized {
     unsafe fn characters(self) -> id /* (NSString *) */;
     unsafe fn charactersIgnoringModifiers(self) -> id /* (NSString *) */;
     unsafe fn keyCode(self) -> libc::c_ushort;
+    unsafe fn isARepeat(self) -> bool;
 
     // Getting Mouse Event Information
     unsafe fn pressedMouseButtons(_: Self) -> NSUInteger;
@@ -2600,6 +2601,10 @@ impl NSEvent for id {
 
     unsafe fn keyCode(self) -> libc::c_ushort {
         msg_send![self, keyCode]
+    }
+
+    unsafe fn isARepeat(self) -> bool {
+        msg_send![self, isARepeat]
     }
 
     // Getting Mouse Event Information

@@ -71,7 +71,7 @@ pub fn create_for_all_families() -> CTFontCollection {
     }
 }
 
-pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
+pub fn create_for_family(family: &str) -> CTFontCollection {
     use font_descriptor::kCTFontFamilyNameAttribute;
 
     unsafe {
@@ -81,19 +81,12 @@ pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
             (family_attr.clone(), family_name.as_CFType())
         ]);
 
-        let wildcard_desc: CTFontDescriptor =
+        let descriptor: CTFontDescriptor =
             font_descriptor::new_from_attributes(&specified_attrs);
-        let mandatory_attrs = CFSet::from_slice(&[ family_attr.as_CFType() ]);
-        let matched_descs = CTFontDescriptorCreateMatchingFontDescriptors(
-                wildcard_desc.as_concrete_TypeRef(),
-                mandatory_attrs.as_concrete_TypeRef());
-        if matched_descs.is_null() {
-            return None;
-        }
-        let matched_descs = CFArray::wrap_under_create_rule(matched_descs);
+        let descriptors = CFArray::from_CFTypes(&[descriptor]);
         // I suppose one doesn't even need the CTFontCollection object at this point.
         // But we stick descriptors into and out of it just to provide a nice wrapper API.
-        Some(new_from_descriptors(&matched_descs))
+        new_from_descriptors(&descriptors)
     }
 }
 

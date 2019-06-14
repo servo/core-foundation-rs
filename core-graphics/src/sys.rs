@@ -30,9 +30,6 @@ mod macos {
 
 	pub enum CGEventSource {}
 	pub type CGEventSourceRef = *mut CGEventSource;
-
-	pub enum CGDisplayMode {}
-	pub type CGDisplayModeRef = *mut CGDisplayMode;
 }
 
 #[cfg(target_os = "macos")]

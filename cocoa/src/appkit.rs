@@ -28,7 +28,7 @@ use std::os::raw::c_void;
 
 pub type CGLContextObj = *mut c_void;
 
-pub type GLint = libc::int32_t;
+pub type GLint = i32;
 
 #[link(name = "AppKit", kind = "framework")]
 extern {
@@ -371,7 +371,7 @@ pub enum NSRequestUserAttentionType {
     NSInformationalRequest = 10,
 }
 
-pub static NSMainMenuWindowLevel: libc::int32_t = 24;
+pub static NSMainMenuWindowLevel: i32 = 24;
 
 pub trait NSApplication: Sized {
     unsafe fn sharedApplication(_: Self) -> id {

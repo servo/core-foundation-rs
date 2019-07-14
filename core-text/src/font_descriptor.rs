@@ -241,6 +241,20 @@ impl CTFontDescriptor {
         }
     }
 
+    pub fn font_format(&self) -> Option<CTFontFormat> {
+        unsafe {
+            let value = CTFontDescriptorCopyAttribute(self.0, kCTFontFormatAttribute);
+            if value.is_null() {
+                return None;
+            }
+
+            let value = CFType::wrap_under_create_rule(value);
+            assert!(value.instance_of::<CFNumber>());
+            let format = CFNumber::wrap_under_get_rule(value.as_CFTypeRef() as CFNumberRef);
+            format.to_i32().map(|x| x as CTFontFormat)
+        }
+    }
+
     pub fn font_path(&self) -> Option<PathBuf> {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.0, kCTFontURLAttribute);

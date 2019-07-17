@@ -22,7 +22,7 @@ use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, CFType, TC
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef};
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString};
-use gleam::gl::{BGRA, GLenum, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
+use gleam::gl::{BGRA, GLenum, RGB, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
 use libc::{c_int, size_t};
 use std::os::raw::c_void;
 use leaky_cow::LeakyCow;
@@ -120,12 +120,12 @@ impl IOSurface {
     }
 
     /// Binds to the current GL texture.
-    pub fn bind_to_gl_texture(&self, width: i32, height: i32) {
+    pub fn bind_to_gl_texture(&self, width: i32, height: i32, has_alpha: bool) {
         unsafe {
             let context = CGLGetCurrentContext();
             let gl_error = CGLTexImageIOSurface2D(context,
                                                   TEXTURE_RECTANGLE_ARB,
-                                                  RGBA as GLenum,
+                                                  if has_alpha { RGBA as GLenum } else { RGB as GLenum },
                                                   width,
                                                   height,
                                                   BGRA as GLenum,

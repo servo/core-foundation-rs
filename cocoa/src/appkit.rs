@@ -3953,11 +3953,11 @@ impl NSColorSpace for id {
 
 pub trait NSColor: Sized {
     unsafe fn clearColor(_: Self) -> id;
-    unsafe fn colorWithRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
-    unsafe fn colorWithSRGBRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
-    unsafe fn colorWithDeviceRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
-    unsafe fn colorWithDisplayP3Red_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
-    unsafe fn colorWithCalibratedRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithSRGBRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithDeviceRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithDisplayP3Red_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id;
+    unsafe fn colorWithCalibratedRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id;
 
     unsafe fn colorUsingColorSpace_(self, color_space: id) -> id;
 
@@ -3979,19 +3979,19 @@ impl NSColor for id {
     unsafe fn clearColor(_: Self) -> id {
         msg_send![class!(NSColor), clearColor]
     }
-    unsafe fn colorWithRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+    unsafe fn colorWithRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
         msg_send![class!(NSColor), colorWithRed:r green:g blue:b alpha:a]
     }
-    unsafe fn colorWithSRGBRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+    unsafe fn colorWithSRGBRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
         msg_send![class!(NSColor), colorWithSRGBRed:r green:g blue:b alpha:a]
     }
-    unsafe fn colorWithDeviceRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+    unsafe fn colorWithDeviceRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
         msg_send![class!(NSColor), colorWithDeviceRed:r green:g blue:b alpha:a]
     }
-    unsafe fn colorWithDisplayP3Red_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+    unsafe fn colorWithDisplayP3Red_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
         msg_send![class!(NSColor), colorWithDisplayP3Red:r green:g blue:b alpha:a]
     }
-    unsafe fn colorWithCalibratedRed_blue_green_alpha_(_:Self, r: CGFloat, b: CGFloat, g: CGFloat, a: CGFloat) -> id {
+    unsafe fn colorWithCalibratedRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
         msg_send![class!(NSColor), colorWithCalibratedRed:r green:g blue:b alpha:a]
     }
 

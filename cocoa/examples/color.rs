@@ -16,11 +16,11 @@ fn main() {
         
         // Create some colors
         let clear = NSColor::clearColor(nil);
-        let black = NSColor::colorWithRed_blue_green_alpha_(nil, 0.0, 0.0, 0.0, 1.0);
-        let srgb_red = NSColor::colorWithSRGBRed_blue_green_alpha_(nil, 1.0, 0.0, 0.0, 1.0);
-        let device_green = NSColor::colorWithDeviceRed_blue_green_alpha_(nil, 0.0, 1.0, 0.0, 1.0);
-        let display_p3_blue = NSColor::colorWithDisplayP3Red_blue_green_alpha_(nil, 0.0, 0.0, 1.0, 1.0);
-        let calibrated_cyan = NSColor::colorWithCalibratedRed_blue_green_alpha_(nil, 0.0, 1.0, 1.0, 1.0);
+        let black = NSColor::colorWithRed_green_blue_alpha_(nil, 0.0, 0.0, 0.0, 1.0);
+        let srgb_red = NSColor::colorWithSRGBRed_green_blue_alpha_(nil, 1.0, 0.0, 0.0, 1.0);
+        let device_green = NSColor::colorWithDeviceRed_green_blue_alpha_(nil, 0.0, 1.0, 0.0, 1.0);
+        let display_p3_blue = NSColor::colorWithDisplayP3Red_green_blue_alpha_(nil, 0.0, 0.0, 1.0, 1.0);
+        let calibrated_cyan = NSColor::colorWithCalibratedRed_green_blue_alpha_(nil, 0.0, 1.0, 1.0, 1.0);
 
         // Create windows with different color types.
         let _win_clear = create_window(NSString::alloc(nil).init_str("clear"), clear);
@@ -34,7 +34,7 @@ fn main() {
         // NOTE: some components will raise an exception if the color is not
         // in the correct NSColorSpace. Refer to Apple's documentation for details.
         // https://developer.apple.com/documentation/appkit/nscolor?language=objc
-        let my_color = NSColor::colorWithRed_blue_green_alpha_(nil, 0.25, 0.75, 0.5, 0.25);
+        let my_color = NSColor::colorWithRed_green_blue_alpha_(nil, 0.25, 0.75, 0.5, 0.25);
         println!("alphaComponent: {:?}", my_color.alphaComponent());
         println!("redComponent: {:?}", my_color.redComponent());
         println!("greenComponent: {:?}", my_color.greenComponent());

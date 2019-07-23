@@ -2938,6 +2938,23 @@ impl NSControl for id {
     }
 }
 
+pub trait NSImageView: Sized {
+     unsafe fn alloc(_: Self) -> id {
+         msg_send![class!(NSImageView), alloc]
+     }
+     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
+     unsafe fn setImage_(self, img: id /* (NSImage *) */);
+}
+
+impl NSImageView for id {
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
+        msg_send![self, initWithFrame:frameRect]
+    }
+    unsafe fn setImage_(self, img: id /* (NSImage *) */) {
+        msg_send![self, setImage:img]
+    }
+}
+
 pub trait NSButton: Sized {
      unsafe fn setImage_(self, img: id /* (NSImage *) */);
      unsafe fn setBezelStyle_(self, style: NSBezelStyle);

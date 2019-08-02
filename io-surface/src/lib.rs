@@ -72,17 +72,6 @@ impl TCFType for IOSurface {
     }
 
     #[inline]
-    unsafe fn wrap_under_get_rule(reference: IOSurfaceRef) -> IOSurface {
-        let reference = CFRetain(reference as *const c_void) as IOSurfaceRef;
-        TCFType::wrap_under_create_rule(reference)
-    }
-
-    #[inline]
-    fn as_CFTypeRef(&self) -> CFTypeRef {
-        self.as_concrete_TypeRef() as CFTypeRef
-    }
-
-    #[inline]
     unsafe fn wrap_under_create_rule(obj: IOSurfaceRef) -> IOSurface {
         IOSurface {
             obj: obj,
@@ -94,6 +83,17 @@ impl TCFType for IOSurface {
         unsafe {
             IOSurfaceGetTypeID()
         }
+    }
+
+    #[inline]
+    fn as_CFTypeRef(&self) -> CFTypeRef {
+        self.as_concrete_TypeRef() as CFTypeRef
+    }
+
+    #[inline]
+    unsafe fn wrap_under_get_rule(reference: IOSurfaceRef) -> IOSurface {
+        let reference = CFRetain(reference as *const c_void) as IOSurfaceRef;
+        TCFType::wrap_under_create_rule(reference)
     }
 }
 

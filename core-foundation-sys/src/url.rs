@@ -33,15 +33,15 @@ pub const kCFURLHFSPathStyle: CFURLPathStyle     = 1;
 pub const kCFURLWindowsPathStyle: CFURLPathStyle = 2;
 
 pub static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
-    (1 << 8) as u32;
+    (1u32 << 8) as usize;
 pub static kCFURLBookmarkCreationMinimalBookmarkMask: CFURLBookmarkCreationOptions =
-    (1 << 9) as u32;
+    (1u32 << 9) as usize;
 pub static kCFURLBookmarkCreationSuitableForBookmarkFile: CFURLBookmarkCreationOptions =
-    (1 << 10) as u32;
+    (1u32 << 10) as usize;
 pub static kCFURLBookmarkCreationWithSecurityScope: CFURLBookmarkCreationOptions =
-    (1 << 11) as u32;
+    (1u32 << 11) as usize;
 pub static kCFURLBookmarkCreationSecurityScopeAllowOnlyReadAccess: CFURLBookmarkCreationOptions =
-    (1 << 12) as u32;
+    (1u32 << 12) as usize;
 
 // TODO: there are a lot of missing keys and constants. Add if you are bored or need them.
 

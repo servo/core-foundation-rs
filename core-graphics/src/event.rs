@@ -105,7 +105,7 @@ impl ScrollEventUnit {
 /// Constants that specify the different types of input events.
 ///
 /// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
-#[repr(C)]
+#[repr(u32)]
 #[derive(Clone, Copy, Debug)]
 pub enum CGEventType {
     Null = 0,

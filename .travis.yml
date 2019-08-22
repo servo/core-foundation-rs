@@ -1,29 +1,24 @@
+os: osx
 language: rust
 rust: stable
 matrix:
   include:
-    - os: osx # 10.12
-      env: CGFEATURES="--features elcapitan"
-    - os: osx # 10.10
-      osx_image: xcode7.2
-      env: CGFEATURES=""
-    - os: osx # 10.13
-      osx_image: xcode9.4
-      env: CGFEATURES="--features highsierra,elcapitan"
+    # macOS 10.12
+    - env: TARGET=x86_64-apple-darwin CGFEATURES="--features elcapitan"
+    - env: TARGET=i686-apple-darwin CGFEATURES="--features elcapitan"
+    # macOS 10.10
+    - osx_image: xcode7.2
+      env: TARGET=x86_64-apple-darwin CGFEATURES=""
+    - osx_image: xcode7.2
+      env: TARGET=i686-apple-darwin CGFEATURES=""
+    # macOS 10.13
+    - osx_image: xcode9.4
+      env: TARGET=x86_64-apple-darwin CGFEATURES="--features highsierra,elcapitan"
+    - osx_image: xcode9.4
+      env: TARGET=i686-apple-darwin CGFEATURES="--features highsierra,elcapitan"
 
+install:
+  - rustup target add $TARGET
 script:
-  - cd core-foundation
-  - cargo build --verbose
-  - cargo test --verbose -- --nocapture
-  - cd ../core-graphics
-  - cargo build --verbose $CGFEATURES
-  - cargo test --verbose $CGFEATURES -- --nocapture
-  - cd ../core-text
-  - cargo build --verbose
-  - cargo test --verbose -- --nocapture
-  - cd ../cocoa
-  - cargo build --verbose
-  - cargo test --verbose -- --nocapture
-  - cd ../io-surface
-  - cargo build --verbose
-  - cargo test --verbose -- --nocapture
+  - cargo build --all-targets --verbose --target $TARGET
+  - cargo test --verbose --target $TARGET -- --nocapture

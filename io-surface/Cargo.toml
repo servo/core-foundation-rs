@@ -3,13 +3,13 @@ name = "io-surface"
 description = "Bindings to IO Surface for macOS"
 homepage = "https://github.com/servo/core-foundation-rs"
 repository = "https://github.com/servo/core-foundation-rs"
-version = "0.12.0"
+version = "0.12.1"
 authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 
 [dependencies]
 libc = "0.2"
-gleam = "0.6"
+gleam = "0.7"
 core-foundation = { path = "../core-foundation", version = "0.6" }
-cgl = "0.2.3"
+cgl = "0.3"
 leaky-cow = "0.1.1"

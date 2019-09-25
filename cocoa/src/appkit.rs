@@ -821,6 +821,7 @@ pub trait NSMenuItem: Sized {
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id;
     unsafe fn setKeyEquivalentModifierMask_(self, mask: NSEventModifierFlags);
     unsafe fn setSubmenu_(self, submenu: id);
+    unsafe fn setTarget_(self, target: id);
 }
 
 impl NSMenuItem for id {
@@ -834,6 +835,10 @@ impl NSMenuItem for id {
 
     unsafe fn setSubmenu_(self, submenu: id) {
         msg_send![self, setSubmenu:submenu]
+    }
+
+    unsafe fn setTarget_(self, target: id) {
+        msg_send![self, setTarget:target]
     }
 }
 
@@ -2963,6 +2968,8 @@ pub trait NSButton: Sized {
          msg_send![class!(NSButton), alloc]
      }
      unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
+     unsafe fn setTarget_(self, target: id /* Instance */); 
+     unsafe fn setAction_(self, selector: objc::runtime::Sel /* (Instance *) */);
 }
 
 impl NSButton for id {
@@ -2977,6 +2984,13 @@ impl NSButton for id {
     }
     unsafe fn setImage_(self, img: id /* (NSImage *) */) {
         msg_send![self, setImage:img]
+    }
+    unsafe fn setTarget_(self, target: id /* (Instance *) */) {
+        msg_send![self, setTarget:target]
+    }
+
+    unsafe fn setAction_(self, selector: objc::runtime::Sel /* (Instance method *) */) {
+        msg_send![self, setAction:selector];
     }
 }
 

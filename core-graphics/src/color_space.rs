@@ -51,7 +51,7 @@ impl CGColorSpace {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreGraphics", kind = "framework"))]
 extern {
     pub static kCGColorSpaceSRGB: CFStringRef;
     pub static kCGColorSpaceAdobeRGB1998: CFStringRef;

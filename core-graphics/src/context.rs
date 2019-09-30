@@ -562,7 +562,7 @@ fn create_bitmap_context_test() {
     assert_eq!(255, data.bytes()[3]);
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreGraphics", kind = "framework"))]
 extern {
     fn CGBitmapContextCreate(data: *mut c_void,
                              width: size_t,

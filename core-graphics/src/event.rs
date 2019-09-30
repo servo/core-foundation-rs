@@ -541,7 +541,7 @@ impl CGEvent {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreGraphics", kind = "framework"))]
 extern {
     /// Return the type identifier for the opaque type `CGEventRef'.
     fn CGEventGetTypeID() -> CFTypeID;

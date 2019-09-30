@@ -31,7 +31,7 @@ impl CTFrame {
     }
 }
 
-#[link(name = "CoreText", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreText", kind = "framework"))]
 extern {
     fn CTFrameGetTypeID() -> CFTypeID;
     fn CTFrameDraw(frame: CTFrameRef, context: *mut <CGContext as ForeignType>::CType);

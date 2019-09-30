@@ -1768,7 +1768,7 @@ impl CATransform3D {
     }
 }
 
-#[link(name = "QuartzCore", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "QuartzCore", kind = "framework"))]
 extern {
     static kCARendererColorSpace: CFStringRef;
     static kCARendererMetalCommandQueue: CFStringRef;

@@ -163,7 +163,7 @@ impl IOSurface {
     }
 }
 
-#[link(name = "IOSurface", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "IOSurface", kind = "framework"))]
 extern {
     pub static kIOSurfaceAllocSize: CFStringRef;
     pub static kIOSurfaceWidth: CFStringRef;

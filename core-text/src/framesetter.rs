@@ -44,7 +44,7 @@ impl CTFramesetter {
     }
 }
 
-#[link(name = "CoreText", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreText", kind = "framework"))]
 extern {
     fn CTFramesetterGetTypeID() -> CFTypeID;
     fn CTFramesetterCreateWithAttributedString(string: CFAttributedStringRef) -> CTFramesetterRef;

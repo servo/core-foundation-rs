@@ -106,7 +106,7 @@ pub trait CustomData {
     unsafe fn len(&self) -> usize;
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreGraphics", kind = "framework"))]
 extern {
     fn CGDataProviderCopyData(provider: ::sys::CGDataProviderRef) -> CFDataRef;
     //fn CGDataProviderCreateDirect

@@ -28,7 +28,7 @@ impl CGColor {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreGraphics", kind = "framework"))]
 extern {
     fn CGColorCreateGenericRGB(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) -> ::sys::CGColorRef;
     fn CGColorGetTypeID() -> CFTypeID;

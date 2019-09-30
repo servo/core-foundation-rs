@@ -116,7 +116,7 @@ fn create_runs() {
     }
 }
 
-#[link(name = "CoreText", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreText", kind = "framework"))]
 extern {
     fn CTRunGetTypeID() -> CFTypeID;
     fn CTRunGetAttributes(run: CTRunRef) -> CFDictionaryRef;

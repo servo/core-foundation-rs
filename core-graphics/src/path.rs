@@ -121,7 +121,7 @@ impl CGPathElement {
 type CGPathApplierFunction = unsafe extern "C" fn(info: *mut c_void,
                                                   element: *const CGPathElement);
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreGraphics", kind = "framework"))]
 extern {
     fn CGPathCreateWithRect(rect: CGRect, transform: *const CGAffineTransform) -> ::sys::CGPathRef;
     fn CGPathApply(path: ::sys::CGPathRef, info: *mut c_void, function: CGPathApplierFunction);

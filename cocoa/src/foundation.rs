@@ -140,7 +140,7 @@ mod macos {
         NSRectMaxYEdge,
     }
 
-    #[link(name = "Foundation", kind = "framework")]
+    #[cfg_attr(not(doc), link(name = "Foundation", kind = "framework"))]
     extern {
         fn NSInsetRect(rect: NSRect, x: CGFloat, y: CGFloat) -> NSRect;
     }
@@ -179,7 +179,7 @@ impl NSRange {
     }
 }
 
-#[link(name = "Foundation", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "Foundation", kind = "framework"))]
 extern {
     pub static NSDefaultRunLoopMode: id;
 }

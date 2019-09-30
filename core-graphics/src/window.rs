@@ -116,7 +116,7 @@ pub fn create_image_from_array(screen_bounds: CGRect,
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(not(doc), link(name = "CoreGraphics", kind = "framework"))]
 extern {
     pub static kCGWindowNumber: CFStringRef;
     pub static kCGWindowStoreType: CFStringRef;

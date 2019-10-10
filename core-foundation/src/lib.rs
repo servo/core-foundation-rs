@@ -216,6 +216,7 @@ pub mod array;
 pub mod attributed_string;
 pub mod base;
 pub mod boolean;
+pub mod characterset;
 pub mod data;
 pub mod date;
 pub mod dictionary;

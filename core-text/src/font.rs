@@ -346,6 +346,17 @@ impl CTFont {
         }
     }
 
+    pub fn get_available_font_tables(&self) -> Option<CFArray<CTFontTableTag>> {
+        unsafe {
+            let result = CTFontCopyAvailableTables(self.0, kCTFontTableOptionsExcludeSynthetic);
+            if result.is_null() {
+                None
+            } else {
+                Some(TCFType::wrap_under_create_rule(result))
+            }
+        }
+    }
+
     pub fn get_bounding_rects_for_glyphs(&self, orientation: CTFontOrientation, glyphs: &[CGGlyph])
                                          -> CGRect {
         unsafe {
@@ -612,7 +623,7 @@ extern {
     //fn CTFontCreateWithQuickdrawInstance
 
     /* Getting Font Table Data */
-    //fn CTFontCopyAvailableTables(font: CTFontRef, options: CTFontTableOptions) -> CFArrayRef;
+    fn CTFontCopyAvailableTables(font: CTFontRef, options: CTFontTableOptions) -> CFArrayRef;
     fn CTFontCopyTable(font: CTFontRef, table: CTFontTableTag, options: CTFontTableOptions) -> CFDataRef;
 
     fn CTFontGetTypeID() -> CFTypeID;

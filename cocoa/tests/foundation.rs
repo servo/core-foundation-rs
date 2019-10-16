@@ -100,7 +100,7 @@ mod foundation {
                 let mut_components: id = msg_send![components, mutableCopy];
                 let mut iter = mut_components.iter();
                 iter.next();
-                msg_send![mut_components, removeObjectAtIndex:1];
+                let () = msg_send![mut_components, removeObjectAtIndex:1];
                 iter.next();
             }
         }

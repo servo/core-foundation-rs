@@ -549,7 +549,7 @@ pub trait NSPasteboard: Sized {
 
 impl NSPasteboard for id {
     unsafe fn releaseGlobally(self) {
-        msg_send![self, releaseGlobally];
+        msg_send![self, releaseGlobally]
     }
 
     unsafe fn clearContents(self) -> NSInteger {
@@ -1547,11 +1547,11 @@ impl NSWindow for id {
     }
 
     unsafe fn setTabbingMode_(self, tabbingMode: NSWindowTabbingMode) {
-        msg_send![self, setTabbingMode: tabbingMode];
+        msg_send![self, setTabbingMode: tabbingMode]
     }
 
     unsafe fn addTabbedWindow_ordered_(self, window: id, ordering_mode: NSWindowOrderingMode) {
-        msg_send![self, addTabbedWindow:window ordered: ordering_mode];
+        msg_send![self, addTabbedWindow:window ordered: ordering_mode]
     }
 
     unsafe fn toggleTabBar_(self, sender: id) {
@@ -2977,7 +2977,7 @@ impl NSButton for id {
         msg_send![self, initWithFrame:frameRect]
     }
     unsafe fn setBezelStyle_(self, style: NSBezelStyle) {
-        msg_send![self, setBezelStyle:style];
+        msg_send![self, setBezelStyle:style]
     }
     unsafe fn setTitle_(self, title: id /* (NSString*) */) {
         msg_send![self, setTitle:title]
@@ -2990,7 +2990,7 @@ impl NSButton for id {
     }
 
     unsafe fn setAction_(self, selector: objc::runtime::Sel /* (Instance method *) */) {
-        msg_send![self, setAction:selector];
+        msg_send![self, setAction:selector]
     }
 }
 
@@ -3589,10 +3589,10 @@ impl NSTextField for id {
         msg_send![self, initWithFrame:frameRect]
     }
     unsafe fn setEditable_(self, editable: BOOL) {
-        msg_send![self, setEditable:editable];
+        msg_send![self, setEditable:editable]
     }
     unsafe fn setStringValue_(self, label: id) {
-        msg_send![self, setStringValue:label];
+        msg_send![self, setStringValue:label]
     }
 }
 

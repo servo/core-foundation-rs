@@ -4,7 +4,7 @@ name = "cocoa"
 description = "Bindings to Cocoa for macOS"
 homepage = "https://github.com/servo/core-foundation-rs"
 repository = "https://github.com/servo/core-foundation-rs"
-version = "0.19.0"
+version = "0.19.1"
 authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 

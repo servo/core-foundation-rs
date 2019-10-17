@@ -541,7 +541,7 @@ pub trait NSPasteboard: Sized {
 
 impl NSPasteboard for id {
     unsafe fn releaseGlobally(self) {
-        msg_send![self, releaseGlobally];
+        msg_send![self, releaseGlobally]
     }
 
     unsafe fn clearContents(self) -> NSInteger {
@@ -2881,7 +2881,7 @@ impl NSButton for id {
         msg_send![self, initWithFrame:frameRect]
     }
     unsafe fn setBezelStyle_(self, style: NSBezelStyle) {
-        msg_send![self, setBezelStyle:style];
+        msg_send![self, setBezelStyle:style]
     }
     unsafe fn setTitle_(self, title: id /* (NSString*) */) {
         msg_send![self, setTitle:title]
@@ -3486,10 +3486,10 @@ impl NSTextField for id {
         msg_send![self, initWithFrame:frameRect]
     }
     unsafe fn setEditable_(self, editable: BOOL) {
-        msg_send![self, setEditable:editable];
+        msg_send![self, setEditable:editable]
     }
     unsafe fn setStringValue_(self, label: id) {
-        msg_send![self, setStringValue:label];
+        msg_send![self, setStringValue:label]
     }
 }
 

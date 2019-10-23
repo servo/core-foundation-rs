@@ -200,6 +200,22 @@ impl CGDisplay {
         }
     }
 
+    // Configures the origin of a display in the global display coordinate space.
+    pub fn configure_display_origin(
+        &self,
+        config_ref: &CGDisplayConfigRef,
+        x: i32,
+        y: i32,
+    ) -> Result<(), CGError> {
+        let result = unsafe { CGConfigureDisplayOrigin(*config_ref, self.id, x, y) };
+
+        if result == 0 {
+            Ok(())
+        } else {
+            Err(result)
+        }
+    }
+
     /// Returns an image containing the contents of the specified display.
     #[inline]
     pub fn image(&self) -> Option<CGImage> {
@@ -629,6 +645,12 @@ extern "C" {
         display: CGDirectDisplayID,
         mode: ::sys::CGDisplayModeRef,
         options: CFDictionaryRef,
+    ) -> CGError;
+    pub fn CGConfigureDisplayOrigin(
+        config: CGDisplayConfigRef,
+        display: CGDirectDisplayID,
+        x: i32,
+        y: i32,
     ) -> CGError;
 
     pub fn CGDisplayCopyDisplayMode(display: CGDirectDisplayID) -> ::sys::CGDisplayModeRef;

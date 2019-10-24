@@ -25,7 +25,7 @@ pub type CGDirectDisplayID = u32;
 pub type CGWindowID        = u32;
 
 pub const kCGNullWindowID: CGWindowID = 0 as CGWindowID;
-
+pub const kCGNullDirectDisplayID: CGDirectDisplayID = 0 as CGDirectDisplayID;
 
 pub type CGWindowListOption = u32;
 
@@ -121,6 +121,11 @@ impl CGDisplay {
     #[inline]
     pub fn main() -> CGDisplay {
         CGDisplay::new(unsafe { CGMainDisplayID() })
+    }
+
+    /// A value that will never correspond to actual hardware.
+    pub fn null_display() -> CGDisplay {
+        CGDisplay::new(kCGNullDirectDisplayID)
     }
 
     /// Returns the bounds of a display in the global display coordinate space.

@@ -200,7 +200,7 @@ impl CGDisplay {
         }
     }
 
-    // Configures the origin of a display in the global display coordinate space.
+    /// Configures the origin of a display in the global display coordinate space.
     pub fn configure_display_origin(
         &self,
         config_ref: &CGDisplayConfigRef,

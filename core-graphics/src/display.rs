@@ -25,7 +25,7 @@ pub type CGDirectDisplayID = u32;
 pub type CGWindowID        = u32;
 
 pub const kCGNullWindowID: CGWindowID = 0 as CGWindowID;
-
+pub const kCGNullDirectDisplayID: CGDirectDisplayID = 0 as CGDirectDisplayID;
 
 pub type CGWindowListOption = u32;
 
@@ -123,6 +123,11 @@ impl CGDisplay {
         CGDisplay::new(unsafe { CGMainDisplayID() })
     }
 
+    /// A value that will never correspond to actual hardware.
+    pub fn null_display() -> CGDisplay {
+        CGDisplay::new(kCGNullDirectDisplayID)
+    }
+
     /// Returns the bounds of a display in the global display coordinate space.
     #[inline]
     pub fn bounds(&self) -> CGRect {
@@ -200,7 +205,7 @@ impl CGDisplay {
         }
     }
 
-    // Configures the origin of a display in the global display coordinate space.
+    /// Configures the origin of a display in the global display coordinate space.
     pub fn configure_display_origin(
         &self,
         config_ref: &CGDisplayConfigRef,
@@ -208,6 +213,21 @@ impl CGDisplay {
         y: i32,
     ) -> Result<(), CGError> {
         let result = unsafe { CGConfigureDisplayOrigin(*config_ref, self.id, x, y) };
+
+        if result == 0 {
+            Ok(())
+        } else {
+            Err(result)
+        }
+    }
+
+    /// Changes the configuration of a mirroring set.
+    pub fn configure_display_mirror_of_display(
+        &self,
+        config_ref: &CGDisplayConfigRef,
+        master: &CGDisplay,
+    ) -> Result<(), CGError> {
+        let result = unsafe { CGConfigureDisplayMirrorOfDisplay(*config_ref, self.id, master.id) };
 
         if result == 0 {
             Ok(())
@@ -645,6 +665,11 @@ extern "C" {
         display: CGDirectDisplayID,
         mode: ::sys::CGDisplayModeRef,
         options: CFDictionaryRef,
+    ) -> CGError;
+    pub fn CGConfigureDisplayMirrorOfDisplay(
+        config: CGDisplayConfigRef,
+        display: CGDirectDisplayID,
+        master: CGDirectDisplayID,
     ) -> CGError;
     pub fn CGConfigureDisplayOrigin(
         config: CGDisplayConfigRef,

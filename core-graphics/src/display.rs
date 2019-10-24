@@ -221,6 +221,21 @@ impl CGDisplay {
         }
     }
 
+    /// Changes the configuration of a mirroring set.
+    pub fn configure_display_mirror_of_display(
+        &self,
+        config_ref: &CGDisplayConfigRef,
+        master: &CGDisplay,
+    ) -> Result<(), CGError> {
+        let result = unsafe { CGConfigureDisplayMirrorOfDisplay(*config_ref, self.id, master.id) };
+
+        if result == 0 {
+            Ok(())
+        } else {
+            Err(result)
+        }
+    }
+
     /// Returns an image containing the contents of the specified display.
     #[inline]
     pub fn image(&self) -> Option<CGImage> {
@@ -650,6 +665,11 @@ extern "C" {
         display: CGDirectDisplayID,
         mode: ::sys::CGDisplayModeRef,
         options: CFDictionaryRef,
+    ) -> CGError;
+    pub fn CGConfigureDisplayMirrorOfDisplay(
+        config: CGDisplayConfigRef,
+        display: CGDirectDisplayID,
+        master: CGDirectDisplayID,
     ) -> CGError;
     pub fn CGConfigureDisplayOrigin(
         config: CGDisplayConfigRef,

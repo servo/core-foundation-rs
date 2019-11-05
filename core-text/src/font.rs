@@ -88,6 +88,9 @@ declare_TCFType! {
 impl_TCFType!(CTFont, CTFontRef, CTFontGetTypeID);
 impl_CFTypeDescription!(CTFont);
 
+unsafe impl Send for CTFont {}
+unsafe impl Sync for CTFont {}
+
 pub fn new_from_CGFont(cgfont: &CGFont, pt_size: f64) -> CTFont {
     unsafe {
         let font_ref = CTFontCreateWithGraphicsFont(cgfont.as_ptr() as *mut _,

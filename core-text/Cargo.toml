@@ -1,6 +1,6 @@
 [package]
 name = "core-text"
-version = "14.0.0"
+version = "15.0.0"
 authors = ["The Servo Project Developers"]
 description = "Bindings to the Core Text framework."
 license = "MIT/Apache-2.0"

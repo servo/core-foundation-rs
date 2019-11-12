@@ -16,9 +16,9 @@ use string::{CFString};
 
 use core_foundation_sys::base::{kCFAllocatorDefault, Boolean};
 use std::fmt;
+use std::mem::MaybeUninit;
 use std::ptr;
 use std::path::{Path, PathBuf};
-use std::mem;
 
 use libc::{c_char, strlen, PATH_MAX};
 
@@ -78,7 +78,7 @@ impl CFURL {
     pub fn to_path(&self) -> Option<PathBuf> {
         // implementing this on Windows is more complicated because of the different OsStr representation
         unsafe {
-            let mut buf: [u8; PATH_MAX as usize] = mem::uninitialized();
+            let mut buf = [0u8; PATH_MAX as usize];
             let result = CFURLGetFileSystemRepresentation(self.0, true as Boolean, buf.as_mut_ptr(), buf.len() as CFIndex);
             if result == false as Boolean {
                 return None;

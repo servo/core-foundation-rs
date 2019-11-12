@@ -434,7 +434,7 @@ impl CGDisplay {
     /// Provides a list of displays that are active (or drawable).
     #[inline]
     pub fn active_displays() -> Result<Vec<CGDirectDisplayID>, CGError> {
-        let count = try!(CGDisplay::active_display_count());
+        let count = CGDisplay::active_display_count()?;
         let mut buf: Vec<CGDirectDisplayID> = vec![0; count as usize];
         let result =
             unsafe { CGGetActiveDisplayList(count as u32, buf.as_mut_ptr(), ptr::null_mut()) };

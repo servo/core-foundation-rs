@@ -78,15 +78,13 @@ impl CFURL {
     pub fn to_path(&self) -> Option<PathBuf> {
         // implementing this on Windows is more complicated because of the different OsStr representation
         unsafe {
-            let mut buf = MaybeUninit::<[u8; PATH_MAX as usize]>::uninit();
-            let result = CFURLGetFileSystemRepresentation(self.0, true as Boolean, buf.as_mut_ptr() as *mut u8, PATH_MAX as CFIndex);
+            let mut buf = [0u8; PATH_MAX as usize];
+            let result = CFURLGetFileSystemRepresentation(self.0, true as Boolean, buf.as_mut_ptr(), buf.len() as CFIndex);
             if result == false as Boolean {
                 return None;
             }
-
-            let buf_init = buf.assume_init();
-            let len = strlen(buf_init.as_ptr() as *const c_char);
-            let path = OsStr::from_bytes(&buf_init[0..len]);
+            let len = strlen(buf.as_ptr() as *const c_char);
+            let path = OsStr::from_bytes(&buf[0..len]);
             Some(PathBuf::from(path))
         }
     }

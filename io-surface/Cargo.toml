@@ -10,6 +10,6 @@ license = "MIT / Apache-2.0"
 [dependencies]
 libc = "0.2"
 gleam = "0.7"
-core-foundation = { path = "../core-foundation", version = "0.6" }
+core-foundation = { path = "../core-foundation", version = "0.7" }
 cgl = "0.3"
 leaky-cow = "0.1.1"

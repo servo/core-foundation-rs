@@ -16,4 +16,4 @@ mountainlion = []
 foreign-types = "0.3"
 libc = "0.2"
 core-foundation = { path = "../core-foundation", version = "0.7" }
-core-graphics = { path = "../core-graphics", version = "0.18" }
+core-graphics = { path = "../core-graphics", version = "0.19" }

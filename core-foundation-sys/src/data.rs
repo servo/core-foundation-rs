@@ -15,6 +15,7 @@ use base::{CFAllocatorRef, CFTypeID, CFIndex, CFRange};
 pub struct __CFData(c_void);
 
 pub type CFDataRef = *const __CFData;
+pub type CFMutableDataRef = *mut __CFData;
 
 extern {
     /*
@@ -23,10 +24,27 @@ extern {
 
     pub fn CFDataCreate(allocator: CFAllocatorRef,
                         bytes: *const u8, length: CFIndex) -> CFDataRef;
-    //fn CFDataFind
+    // fn CFDataCreateWithBytesNoCopy
     pub fn CFDataGetBytePtr(theData: CFDataRef) -> *const u8;
+    
     pub fn CFDataGetBytes(theData: CFDataRef, range: CFRange, buffer: *mut u8);
     pub fn CFDataGetLength(theData: CFDataRef) -> CFIndex;
+    // fn CFDataFind
 
     pub fn CFDataGetTypeID() -> CFTypeID;
+
+    pub fn CFDataCreateMutable(allocator: CFAllocatorRef,
+                               capacity: CFIndex) -> CFMutableDataRef;
+    // fn CFDataCreateMutableCopy
+    pub fn CFDataGetMutableBytePtr(theData: CFMutableDataRef) -> *mut u8;
+
+    pub fn CFDataSetLength(theData: CFMutableDataRef, length: CFIndex);
+    pub fn CFDataIncreaseLength(theData: CFMutableDataRef, extraLength: CFIndex);
+    pub fn CFDataAppendBytes(theData: CFMutableDataRef,
+                             bytes: *const u8, length: CFIndex);
+    pub fn CFDataReplaceBytes(theData: CFMutableDataRef,
+                              range: CFRange,
+                              newBytes: *const u8,
+                              newLength: CFIndex);
+    pub fn CFDataDeleteBytes(theData: CFMutableDataRef, range: CFRange);
 }

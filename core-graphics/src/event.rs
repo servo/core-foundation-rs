@@ -12,9 +12,9 @@ pub type CGEventField = u32;
 pub type CGKeyCode = u16;
 pub type CGScrollEventUnit = u32;
 
-/// Flags for events
-///
-/// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
+// Flags for events
+//
+// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
 bitflags! {
     #[repr(C)]
     pub struct CGEventFlags: u64 {

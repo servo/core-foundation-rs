@@ -1778,6 +1778,8 @@ pub trait NSView: Sized {
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
     unsafe fn bounds(self) -> NSRect;
     unsafe fn frame(self) -> NSRect;
+    unsafe fn setFrameSize(self, frameSize: NSSize);
+    unsafe fn setFrameOrigin(self, frameOrigin: NSPoint);
     unsafe fn display_(self);
     unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: BOOL);
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint;
@@ -1811,6 +1813,14 @@ impl NSView for id {
 
     unsafe fn frame(self) -> NSRect {
         msg_send![self, frame]
+    }
+  
+    unsafe fn setFrameSize(self, frameSize: NSSize) {
+        msg_send![self, setFrameSize:frameSize]  
+    }
+  
+    unsafe fn setFrameOrigin(self, frameOrigin: NSPoint) {
+        msg_send![self, setFrameOrigin:frameOrigin]  
     }
 
     unsafe fn display_(self) {

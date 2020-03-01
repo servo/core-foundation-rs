@@ -987,6 +987,7 @@ pub trait NSWindow: Sized {
     unsafe fn setLevel_(self, level: NSInteger);
 
     // Managing Key Status
+    unsafe fn isKeyWindow(self) -> BOOL;
     unsafe fn canBecomeKeyWindow(self) -> BOOL;
     unsafe fn makeKeyWindow(self);
     unsafe fn makeKeyAndOrderFront_(self, sender: id);
@@ -1479,6 +1480,10 @@ impl NSWindow for id {
     }
 
     // Managing Key Status
+
+    unsafe fn isKeyWindow(self) -> BOOL {
+        msg_send![self, isKeyWindow]
+    }
 
     unsafe fn canBecomeKeyWindow(self) -> BOOL {
         msg_send![self, canBecomeKeyWindow]

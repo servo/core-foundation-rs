@@ -121,6 +121,7 @@ impl CFPropertyList {
 
     #[inline]
     pub unsafe fn wrap_under_get_rule(reference: CFPropertyListRef) -> CFPropertyList {
+        assert!(!reference.is_null(), "Attempted to create a NULL object.");
         let reference = CFRetain(reference);
         CFPropertyList(reference)
     }
@@ -147,6 +148,7 @@ impl CFPropertyList {
 
     #[inline]
     pub unsafe fn wrap_under_create_rule(obj: CFPropertyListRef) -> CFPropertyList {
+        assert!(!obj.is_null(), "Attempted to create a NULL object.");
         CFPropertyList(obj)
     }
 

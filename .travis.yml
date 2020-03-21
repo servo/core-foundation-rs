@@ -5,17 +5,12 @@ matrix:
   include:
     # macOS 10.12
     - env: TARGET=x86_64-apple-darwin CGFEATURES="--features elcapitan"
-    - env: TARGET=i686-apple-darwin CGFEATURES="--features elcapitan"
     # macOS 10.10
     - osx_image: xcode7.2
       env: TARGET=x86_64-apple-darwin CGFEATURES=""
-    - osx_image: xcode7.2
-      env: TARGET=i686-apple-darwin CGFEATURES=""
     # macOS 10.13
     - osx_image: xcode9.4
       env: TARGET=x86_64-apple-darwin CGFEATURES="--features highsierra,elcapitan"
-    - osx_image: xcode9.4
-      env: TARGET=i686-apple-darwin CGFEATURES="--features highsierra,elcapitan"
 
 install:
   - rustup target add $TARGET

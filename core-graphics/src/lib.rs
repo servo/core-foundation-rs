@@ -38,4 +38,4 @@ pub mod window;
 pub mod private;
 pub mod image;
 pub mod path;
-mod sys;
+pub mod sys;

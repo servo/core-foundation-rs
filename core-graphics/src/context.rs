@@ -66,6 +66,7 @@ pub enum CGTextDrawingMode {
     CGTextInvisible,
     CGTextFillClip,
     CGTextStrokeClip,
+    CGTextFillStrokeClip,
     CGTextClip
 }
 
@@ -484,6 +485,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn set_text_position(&self, x: CGFloat, y: CGFloat) {
+        unsafe {
+            CGContextSetTextPosition(self.as_ptr(), x, y)
+        }
+    }
+
     pub fn show_glyphs_at_positions(&self, glyphs: &[CGGlyph], positions: &[CGPoint]) {
         unsafe {
             let count = cmp::min(glyphs.len(), positions.len());
@@ -669,6 +676,7 @@ extern {
     fn CGContextSetFont(c: ::sys::CGContextRef, font: ::sys::CGFontRef);
     fn CGContextSetFontSize(c: ::sys::CGContextRef, size: CGFloat);
     fn CGContextSetTextMatrix(c: ::sys::CGContextRef, t: CGAffineTransform);
+    fn CGContextSetTextPosition(c: ::sys::CGContextRef, x: CGFloat, y: CGFloat);
     fn CGContextShowGlyphsAtPositions(c: ::sys::CGContextRef,
                                       glyphs: *const CGGlyph,
                                       positions: *const CGPoint,

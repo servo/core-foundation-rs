@@ -32,6 +32,7 @@ pub mod event;
 pub mod event_source;
 pub mod font;
 pub mod geometry;
+pub mod gradient;
 #[cfg(target_os = "macos")]
 pub mod window;
 #[cfg(target_os = "macos")]

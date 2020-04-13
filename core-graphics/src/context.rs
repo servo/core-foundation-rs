@@ -12,6 +12,7 @@ use color_space::CGColorSpace;
 use core_foundation::base::{ToVoid, CFRelease, CFRetain, CFTypeID};
 use font::{CGFont, CGGlyph};
 use geometry::CGPoint;
+use gradient::{CGGradient, CGGradientDrawingOptions};
 use color::CGColor;
 use path::CGPathRef;
 use libc::{c_int, size_t};
@@ -542,6 +543,18 @@ impl CGContextRef {
             CGContextConcatCTM(self.as_ptr(), transform)
         }
     }
+
+    pub fn draw_linear_gradient(&self, gradient: &CGGradient, start_point: CGPoint, end_point: CGPoint, options: CGGradientDrawingOptions) {
+        unsafe {
+            CGContextDrawLinearGradient(self.as_ptr(), gradient.as_ptr(), start_point, end_point, options);
+        }
+    }
+
+    pub fn draw_radial_gradient(&self, gradient: &CGGradient, start_center: CGPoint, start_radius: CGFloat, end_center: CGPoint, end_radius: CGFloat, options: CGGradientDrawingOptions) {
+        unsafe {
+            CGContextDrawRadialGradient(self.as_ptr(), gradient.as_ptr(), start_center, start_radius, end_center, end_radius, options);
+        }
+    }
 }
 
 #[test]
@@ -689,5 +702,8 @@ extern {
     fn CGContextRotateCTM(c: ::sys::CGContextRef, angle: CGFloat);
     fn CGContextGetCTM(c: ::sys::CGContextRef) -> CGAffineTransform;
     fn CGContextConcatCTM(c: ::sys::CGContextRef, transform: CGAffineTransform);
+
+    fn CGContextDrawLinearGradient(c: ::sys::CGContextRef, gradient: ::sys::CGGradientRef, startPoint: CGPoint, endPoint: CGPoint, options: CGGradientDrawingOptions);
+    fn CGContextDrawRadialGradient(c: ::sys::CGContextRef, gradient: ::sys::CGGradientRef,  startCenter: CGPoint, startRadius: CGFloat, endCenter:CGPoint, endRadius:CGFloat, options: CGGradientDrawingOptions);
 }
 

@@ -174,9 +174,58 @@ impl CGAffineTransform {
     }
 
     #[inline]
+    pub fn make_translation(tx: CGFloat, ty: CGFloat) -> CGAffineTransform {
+        unsafe {
+            ffi::CGAffineTransformMakeTranslation(tx, ty)
+        }
+    }
+
+    #[inline]
+    pub fn make_rotation(angle: CGFloat) -> CGAffineTransform {
+        unsafe {
+            ffi::CGAffineTransformMakeRotation(angle)
+        }
+    }
+
+    #[inline]
+    pub fn make_scale(sx: CGFloat, sy: CGFloat) -> CGAffineTransform {
+        unsafe {
+            ffi::CGAffineTransformMakeScale(sx, sy)
+        }
+    }
+
+    #[inline]
+    pub fn translate(&self, tx: CGFloat, ty: CGFloat) -> CGAffineTransform {
+        unsafe {
+            ffi::CGAffineTransformTranslate(*self, tx, ty)
+        }
+    }
+
+    #[inline]
+    pub fn rotate(&self, angle: CGFloat) -> CGAffineTransform {
+        unsafe {
+            ffi::CGAffineTransformRotate(*self, angle)
+        }
+    }
+
+    #[inline]
+    pub fn scale(&self, sx: CGFloat, sy: CGFloat) -> CGAffineTransform {
+        unsafe {
+            ffi::CGAffineTransformScale(*self, sx, sy)
+        }
+    }
+
+    #[inline]
     pub fn invert(&self) -> CGAffineTransform {
         unsafe {
             ffi::CGAffineTransformInvert(*self)
+        }
+    }
+
+    #[inline]
+    pub fn concat(&self, t: CGAffineTransform) -> CGAffineTransform {
+        unsafe {
+            ffi::CGAffineTransformConcat(*self, t)
         }
     }
 }
@@ -204,7 +253,17 @@ mod ffi {
         pub fn CGRectIntersectsRect(rect1: CGRect, rect2: CGRect) -> boolean_t;
         pub fn CGRectEqualToRect(rect1: CGRect, rect2: CGRect) -> boolean_t;
 
+        // Creating an Affine Transformation Matrix
+        pub fn CGAffineTransformMakeTranslation(tx: CGFloat, ty: CGFloat) -> CGAffineTransform;
+        pub fn CGAffineTransformMakeRotation(angle: CGFloat) -> CGAffineTransform;
+        pub fn CGAffineTransformMakeScale(sx: CGFloat, sy: CGFloat) -> CGAffineTransform;
+
+        // Modifying Affine Transformations
+        pub fn CGAffineTransformTranslate(t: CGAffineTransform, tx: CGFloat, ty: CGFloat) -> CGAffineTransform;
+        pub fn CGAffineTransformRotate(t: CGAffineTransform, angle: CGFloat) -> CGAffineTransform;
+        pub fn CGAffineTransformScale(t: CGAffineTransform, sx: CGFloat, sy: CGFloat) -> CGAffineTransform;
         pub fn CGAffineTransformInvert(t: CGAffineTransform) -> CGAffineTransform;
+        pub fn CGAffineTransformConcat(t1: CGAffineTransform, t2: CGAffineTransform) -> CGAffineTransform;
         pub fn CGAffineTransformEqualToTransform(t1: CGAffineTransform,
                                                  t2: CGAffineTransform) -> boolean_t;
 

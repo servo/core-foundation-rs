@@ -9,9 +9,9 @@
 
 use base::CGFloat;
 use color_space::CGColorSpace;
-use core_foundation::base::{ToVoid, CFRelease, CFRetain, CFTypeID};
+use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use font::{CGFont, CGGlyph};
-use geometry::CGPoint;
+use geometry::{CGPoint, CGSize};
 use gradient::{CGGradient, CGGradientDrawingOptions};
 use color::CGColor;
 use path::CGPathRef;
@@ -176,7 +176,7 @@ impl CGContextRef {
 
     pub fn set_fill_color(&self, color: &CGColor) {
         unsafe {
-            CGContextSetFillColorWithColor(self.as_ptr(), color.to_void());
+            CGContextSetFillColorWithColor(self.as_ptr(), color.as_concrete_TypeRef());
         }
     }
 
@@ -555,6 +555,18 @@ impl CGContextRef {
             CGContextDrawRadialGradient(self.as_ptr(), gradient.as_ptr(), start_center, start_radius, end_center, end_radius, options);
         }
     }
+
+    pub fn set_shadow(&self, offset: CGSize, blur: CGFloat) {
+        unsafe {
+            CGContextSetShadow(self.as_ptr(), offset, blur);
+        }
+    }
+
+    pub fn set_shadow_with_color(&self, offset: CGSize, blur: CGFloat, color: &CGColor) {
+        unsafe {
+            CGContextSetShadowWithColor(self.as_ptr(), offset, blur, color.as_concrete_TypeRef());
+        }
+    }
 }
 
 #[test]
@@ -615,7 +627,7 @@ extern {
     fn CGContextSetShouldSubpixelPositionFonts(c: ::sys::CGContextRef,
                                                shouldSubpixelPositionFonts: bool);
     fn CGContextSetTextDrawingMode(c: ::sys::CGContextRef, mode: CGTextDrawingMode);
-    fn CGContextSetFillColorWithColor(c: ::sys::CGContextRef, color: *const c_void);
+    fn CGContextSetFillColorWithColor(c: ::sys::CGContextRef, color: ::sys::CGColorRef);
     fn CGContextSetLineCap(c: ::sys::CGContextRef, cap: CGLineCap);
     fn CGContextSetLineDash(c: ::sys::CGContextRef, phase: CGFloat, lengths: *const CGFloat, count: size_t);
     fn CGContextSetLineJoin(c: ::sys::CGContextRef, join: CGLineJoin);
@@ -705,5 +717,8 @@ extern {
 
     fn CGContextDrawLinearGradient(c: ::sys::CGContextRef, gradient: ::sys::CGGradientRef, startPoint: CGPoint, endPoint: CGPoint, options: CGGradientDrawingOptions);
     fn CGContextDrawRadialGradient(c: ::sys::CGContextRef, gradient: ::sys::CGGradientRef,  startCenter: CGPoint, startRadius: CGFloat, endCenter:CGPoint, endRadius:CGFloat, options: CGGradientDrawingOptions);
+
+    fn CGContextSetShadow(c: ::sys::CGContextRef, offset: CGSize, blur: CGFloat);
+    fn CGContextSetShadowWithColor(c: ::sys::CGContextRef, offset: CGSize, blur: CGFloat, color: ::sys::CGColorRef);
 }
 

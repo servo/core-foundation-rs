@@ -9,7 +9,7 @@
 
 use base::CGFloat;
 use color_space::CGColorSpace;
-use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
+use core_foundation::base::{CFTypeID, TCFType};
 use font::{CGFont, CGGlyph};
 use geometry::{CGPoint, CGSize};
 use gradient::{CGGradient, CGGradientDrawingOptions};
@@ -100,8 +100,8 @@ pub enum CGPathDrawingMode {
 foreign_type! {
     #[doc(hidden)]
     type CType = ::sys::CGContext;
-    fn drop = |cs| CFRelease(cs as *mut _);
-    fn clone = |p| CFRetain(p as *const _) as *mut _;
+    fn drop = |cs| CGContextRelease(cs);
+    fn clone = |p| CGContextRetain(p);
     pub struct CGContext;
     pub struct CGContextRef;
 }
@@ -111,6 +111,22 @@ impl CGContext {
         unsafe {
             CGContextGetTypeID()
         }
+    }
+
+    /// Creates a `CGContext` instance from an existing [`CGContextRef`] pointer. 
+    /// 
+    /// This funtion will internally call [`CGRetain`] and hence there is no need to call it explicitly.
+    /// 
+    /// This function is particularly useful for cases when the context is not instantiated/managed
+    /// by the caller, but it's retrieve via other means (e.g., by calling the method [`NSGraphicsContext::CGContext`]
+    /// in a cocoa application).
+    /// 
+    /// [`CGContextRef`]: https://developer.apple.com/documentation/coregraphics/cgcontextref
+    /// [`CGRetain`]: https://developer.apple.com/documentation/coregraphics/1586506-cgcontextretain
+    /// [`NSGraphicsContext::CGContext`]: https://developer.apple.com/documentation/appkit/nsgraphicscontext/1535352-currentcontext
+    pub unsafe fn from_existing_context_ptr(ctx: *mut ::sys::CGContext) -> CGContext {
+        CGContextRetain(ctx);
+        Self::from_ptr(ctx)
     }
 
     pub fn create_bitmap_context(data: Option<*mut c_void>,
@@ -596,6 +612,9 @@ fn create_bitmap_context_test() {
 
 #[link(name = "CoreGraphics", kind = "framework")]
 extern {
+    fn CGContextRetain(c: ::sys::CGContextRef) -> ::sys::CGContextRef;
+    fn CGContextRelease(c: ::sys::CGContextRef);
+
     fn CGBitmapContextCreate(data: *mut c_void,
                              width: size_t,
                              height: size_t,

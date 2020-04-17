@@ -70,7 +70,7 @@ impl CFMutableAttributedString {
     }
 
     #[inline]
-    pub fn set_attribute<T: TCFType>(&mut self, range: CFRange, name: CFStringRef, value: T) {
+    pub fn set_attribute<T: TCFType>(&mut self, range: CFRange, name: CFStringRef, value: &T) {
         unsafe {
             CFAttributedStringSetAttribute(
                 self.0, range, name, value.as_CFTypeRef());

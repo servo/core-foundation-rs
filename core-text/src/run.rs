@@ -114,7 +114,7 @@ fn create_runs() {
     string.replace_str(&CFString::new("Food"), CFRange::init(0, 0));
     let len = string.char_len();
     unsafe {
-        string.set_attribute(CFRange::init(0, len), kCTFontAttributeName, font::new_from_name("Helvetica", 16.).unwrap());
+        string.set_attribute(CFRange::init(0, len), kCTFontAttributeName, &font::new_from_name("Helvetica", 16.).unwrap());
     }
     let line = CTLine::new_with_attributed_string(string.as_concrete_TypeRef());
     let runs = line.glyph_runs();

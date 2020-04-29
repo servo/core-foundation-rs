@@ -1316,3 +1316,30 @@ bitflags! {
         const NSDataSearchAnchored = 1 << 1;
     }
 }
+
+pub trait NSUserDefaults {
+    unsafe fn standardUserDefaults() -> Self;
+
+    unsafe fn setBool_forKey_(self, value: BOOL, key: id);
+    unsafe fn bool_forKey_(self, key: id) -> BOOL;
+
+    unsafe fn removeObject_forKey_(self, key: id);
+}
+
+impl NSUserDefaults for id {
+    unsafe fn standardUserDefaults() -> id {
+        msg_send![class!(NSUserDefaults), standardUserDefaults]
+    }
+
+    unsafe fn setBool_forKey_(self, value: BOOL, key: id) {
+        msg_send![self, setBool:value forKey:key]
+    }
+
+    unsafe fn bool_forKey_(self, key: id) -> BOOL {
+        msg_send![self, boolForKey: key]
+    }
+
+    unsafe fn removeObject_forKey_(self, key: id) {
+        msg_send![self, removeObjectForKey:key]
+    }
+}

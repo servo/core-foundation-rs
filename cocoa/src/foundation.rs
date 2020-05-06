@@ -203,17 +203,48 @@ impl NSAutoreleasePool for id {
     }
 }
 
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct NSOperatingSystemVersion {
+    pub majorVersion: NSUInteger,
+    pub minorVersion: NSUInteger,
+    pub patchVersion: NSUInteger,
+}
+
+impl NSOperatingSystemVersion {
+    #[inline]
+    pub fn new(majorVersion: NSUInteger, minorVersion: NSUInteger, patchVersion: NSUInteger) -> NSOperatingSystemVersion {
+        NSOperatingSystemVersion {
+            majorVersion: majorVersion,
+            minorVersion: minorVersion,
+            patchVersion: patchVersion
+        }
+    }
+}
+
+
 pub trait NSProcessInfo: Sized {
     unsafe fn processInfo(_: Self) -> id {
         msg_send![class!(NSProcessInfo), processInfo]
     }
 
     unsafe fn processName(self) -> id;
+    unsafe fn operatingSystemVersion(self) -> NSOperatingSystemVersion;
+    unsafe fn isOperatingSystemAtLeastVersion(self, version: NSOperatingSystemVersion) -> bool;
 }
 
 impl NSProcessInfo for id {
     unsafe fn processName(self) -> id {
         msg_send![self, processName]
+    }
+
+    unsafe fn operatingSystemVersion(self) -> NSOperatingSystemVersion {
+        msg_send![self, operatingSystemVersion]
+    }
+
+    unsafe fn isOperatingSystemAtLeastVersion(self, version: NSOperatingSystemVersion) -> bool {
+        msg_send![self, isOperatingSystemAtLeastVersion: version]
     }
 }
 

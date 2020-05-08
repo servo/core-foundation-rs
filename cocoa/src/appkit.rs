@@ -1819,13 +1819,13 @@ impl NSView for id {
     unsafe fn frame(self) -> NSRect {
         msg_send![self, frame]
     }
-  
+
     unsafe fn setFrameSize(self, frameSize: NSSize) {
-        msg_send![self, setFrameSize:frameSize]  
+        msg_send![self, setFrameSize:frameSize]
     }
-  
+
     unsafe fn setFrameOrigin(self, frameOrigin: NSPoint) {
-        msg_send![self, setFrameOrigin:frameOrigin]  
+        msg_send![self, setFrameOrigin:frameOrigin]
     }
 
     unsafe fn display_(self) {
@@ -2983,7 +2983,7 @@ pub trait NSButton: Sized {
          msg_send![class!(NSButton), alloc]
      }
      unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
-     unsafe fn setTarget_(self, target: id /* Instance */); 
+     unsafe fn setTarget_(self, target: id /* Instance */);
      unsafe fn setAction_(self, selector: objc::runtime::Sel /* (Instance *) */);
 }
 
@@ -3660,7 +3660,7 @@ pub trait NSTabView: Sized {
     unsafe fn allowsTruncatedLabels(self) -> BOOL;
     unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels:BOOL);
     unsafe fn setDelegate_(self, delegate:id);
-    unsafe fn delegate(self) -> id ;
+    unsafe fn delegate(self) -> id;
     unsafe fn tabViewAtPoint_(self, point:id) -> id;
 }
 

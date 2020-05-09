@@ -28,6 +28,14 @@ declare_TCFType! {
 impl_TCFType!(CTLine, CTLineRef, CTLineGetTypeID);
 impl_CFTypeDescription!(CTLine);
 
+/// Metrics for a given line.
+pub struct TypographicBounds {
+    pub width: CGFloat,
+    pub ascent: CGFloat,
+    pub descent: CGFloat,
+    pub leading: CGFloat,
+}
+
 impl CTLine {
     pub fn new_with_attributed_string(string: CFAttributedStringRef) -> Self {
         unsafe {
@@ -60,6 +68,16 @@ impl CTLine {
         }
     }
 
+    pub fn get_typographic_bounds(&self) -> TypographicBounds {
+        let mut ascent = 0.0;
+        let mut descent = 0.0;
+        let mut leading = 0.0;
+        unsafe {
+            let width = CTLineGetTypographicBounds(self.as_concrete_TypeRef(), &mut ascent, &mut descent, &mut leading);
+            TypographicBounds { width, ascent, descent, leading }
+        }
+    }
+
     pub fn get_string_index_for_position(&self, position: CGPoint) -> CFIndex {
         unsafe {
             CTLineGetStringIndexForPosition(self.as_concrete_TypeRef(), position)
@@ -87,6 +105,7 @@ extern {
 
     // Measuring Lines
     fn CTLineGetImageBounds(line: CTLineRef, context: * const core_graphics::sys::CGContext) -> CGRect;
+    fn CTLineGetTypographicBounds(line: CTLineRef, ascent: *mut CGFloat, descent: *mut CGFloat, leading: *mut CGFloat) -> CGFloat;
 
     // Getting Line Positioning
     fn CTLineGetStringIndexForPosition(line: CTLineRef, position: CGPoint) -> CFIndex;

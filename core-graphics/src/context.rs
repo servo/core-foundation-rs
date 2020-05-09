@@ -445,6 +445,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn clip_to_mask(&self, rect: CGRect, image: &CGImage) {
+        unsafe {
+            CGContextClipToMask(self.as_ptr(), rect, image.as_ptr())
+        }
+    }
+
     pub fn replace_path_with_stroked_path(&self) {
         unsafe {
             CGContextReplacePathWithStrokedPath(self.as_ptr())
@@ -708,6 +714,7 @@ extern {
     fn CGContextClipToRects(context: ::sys::CGContextRef,
                             rects: *const CGRect,
                             count: size_t);
+    fn CGContextClipToMask(ctx: ::sys::CGContextRef, rect: CGRect, mask: ::sys::CGImageRef);
     fn CGContextReplacePathWithStrokedPath(context: ::sys::CGContextRef);
     fn CGContextFillEllipseInRect(context: ::sys::CGContextRef,
                                   rect: CGRect);

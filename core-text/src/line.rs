@@ -10,7 +10,7 @@
 use std::os::raw::c_void;
 use core_foundation::attributed_string::CFAttributedStringRef;
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFIndex, CFTypeID, TCFType};
+use core_foundation::base::{CFIndex, CFRange, CFTypeID, TCFType};
 use core_graphics::base::{CGFloat};
 use core_graphics::context::{CGContext};
 use core_graphics::geometry::{CGPoint,CGRect};
@@ -39,6 +39,12 @@ impl CTLine {
     pub fn glyph_runs(&self) -> CFArray<CTRun> {
         unsafe {
             TCFType::wrap_under_get_rule(CTLineGetGlyphRuns(self.0))
+        }
+    }
+
+    pub fn get_string_range(&self) -> CFRange {
+        unsafe {
+            CTLineGetStringRange(self.as_concrete_TypeRef())
         }
     }
 
@@ -71,6 +77,7 @@ impl CTLine {
 extern {
     fn CTLineGetTypeID() -> CFTypeID;
     fn CTLineGetGlyphRuns(line: CTLineRef) -> CFArrayRef;
+    fn CTLineGetStringRange(line: CTLineRef) -> CFRange;
 
     // Creating Lines
     fn CTLineCreateWithAttributedString(string: CFAttributedStringRef) -> CTLineRef;

@@ -97,6 +97,16 @@ pub enum CGPathDrawingMode {
     CGPathEOFillStroke,
 }
 
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub enum CGInterpolationQuality {
+    CGInterpolationQualityDefault,
+    CGInterpolationQualityNone,
+    CGInterpolationQualityLow,
+    CGInterpolationQualityMedium,
+    CGInterpolationQualityHigh,
+}
+
 foreign_type! {
     #[doc(hidden)]
     type CType = ::sys::CGContext;
@@ -475,6 +485,19 @@ impl CGContextRef {
         }
     }
 
+    pub fn set_interpolation_quality(&self, quality: CGInterpolationQuality) {
+        unsafe {
+            CGContextSetInterpolationQuality(self.as_ptr(), quality);
+        }
+    }
+
+    pub fn get_interpolation_quality(&self) -> CGInterpolationQuality {
+        unsafe {
+            CGContextGetInterpolationQuality(self.as_ptr())
+
+        }
+    }
+
     pub fn draw_image(&self, rect: CGRect, image: &CGImage) {
         unsafe {
             CGContextDrawImage(self.as_ptr(), rect, image.as_ptr());
@@ -724,6 +747,8 @@ extern {
                                     points: *const CGPoint,
                                     count: size_t);
     fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
+    fn CGContextSetInterpolationQuality(c: ::sys::CGContextRef, quality: CGInterpolationQuality);
+    fn CGContextGetInterpolationQuality(c: ::sys::CGContextRef) -> CGInterpolationQuality;
     fn CGContextSetFont(c: ::sys::CGContextRef, font: ::sys::CGFontRef);
     fn CGContextSetFontSize(c: ::sys::CGContextRef, size: CGFloat);
     fn CGContextSetTextMatrix(c: ::sys::CGContextRef, t: CGAffineTransform);

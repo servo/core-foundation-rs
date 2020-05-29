@@ -457,6 +457,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn clip_to_mask(&self, rect: CGRect, mask: CGImage) {
+        unsafe {
+            CGContextClipToMask(self.as_ptr(), rect, mask.as_ptr());
+        }
+    }
+
     pub fn create_image(&self) -> Option<CGImage> {
         let image = unsafe { CGBitmapContextCreateImage(self.as_ptr()) };
         if !image.is_null() {
@@ -666,6 +672,7 @@ extern {
                                     points: *const CGPoint,
                                     count: size_t);
     fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
+    fn CGContextClipToMask(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
     fn CGContextSetFont(c: ::sys::CGContextRef, font: ::sys::CGFontRef);
     fn CGContextSetFontSize(c: ::sys::CGContextRef, size: CGFloat);
     fn CGContextSetTextMatrix(c: ::sys::CGContextRef, t: CGAffineTransform);

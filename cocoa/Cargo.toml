@@ -8,6 +8,9 @@ version = "0.20.1"
 authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"
+
 [dependencies]
 block = "0.1"
 bitflags = "1.0"

@@ -3,7 +3,7 @@ name = "core-graphics"
 description = "Bindings to Core Graphics for macOS"
 homepage = "https://github.com/servo/core-graphics-rs"
 repository = "https://github.com/servo/core-foundation-rs"
-version = "0.19.0"
+version = "0.19.1"
 authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 

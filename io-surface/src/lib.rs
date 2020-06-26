@@ -13,7 +13,6 @@
 extern crate libc;
 extern crate core_foundation;
 extern crate cgl;
-extern crate gleam;
 extern crate leaky_cow;
 
 // Rust bindings to the IOSurface framework on macOS.
@@ -21,14 +20,18 @@ extern crate leaky_cow;
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, CFType, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef};
-use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString};
-use gleam::gl::{BGRA, GLenum, RGB, RGBA, TEXTURE_RECTANGLE_ARB, UNSIGNED_INT_8_8_8_8_REV};
+use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString, GLenum};
 use libc::{c_int, size_t};
 use std::os::raw::c_void;
 use leaky_cow::LeakyCow;
 use std::slice;
 use std::ffi::CStr;
 
+const BGRA: GLenum = 0x80E1;
+const RGBA: GLenum = 0x1908;
+const RGB: GLenum = 0x1907;
+const TEXTURE_RECTANGLE_ARB: GLenum = 0x84F5;
+const UNSIGNED_INT_8_8_8_8_REV: GLenum = 0x8367;
 
 //static kIOSurfaceLockReadOnly: u32 = 0x1;
 //static kIOSurfaceLockAvoidSync: u32 = 0x2;

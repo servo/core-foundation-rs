@@ -13,7 +13,6 @@ extern crate libc;
 extern crate core_foundation;
 
 #[macro_use]
-#[cfg(target_os = "macos")]
 extern crate bitflags;
 
 #[macro_use]

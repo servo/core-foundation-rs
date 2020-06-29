@@ -41,8 +41,7 @@ impl CTFrame {
     pub fn get_lines(&self) -> Vec<CTLine> {
         unsafe {
             let array_ref = CTFrameGetLines(self.as_concrete_TypeRef());
-            // not strictly correct but saves an unnecessary retain call
-            let array: CFArray<CTLine> = CFArray::wrap_under_create_rule(array_ref);
+            let array: CFArray<CTLine> = CFArray::wrap_under_get_rule(array_ref);
             array.iter().map(|l| CTLine::wrap_under_get_rule(l.as_concrete_TypeRef())).collect()
         }
     }
@@ -64,7 +63,7 @@ impl CTFrame {
             // range length of 0 means 'all remaining lines'
             0 => unsafe {
                 let array_ref = CTFrameGetLines(self.as_concrete_TypeRef());
-                let array: CFArray<CTLine> = CFArray::wrap_under_create_rule(array_ref);
+                let array: CFArray<CTLine> = CFArray::wrap_under_get_rule(array_ref);
                 array.len() - range.location
             }
             n => n,

@@ -132,7 +132,7 @@ impl IOSurface {
                                                   height,
                                                   BGRA as GLenum,
                                                   UNSIGNED_INT_8_8_8_8_REV,
-                                                  self.as_concrete_TypeRef() as *mut c_void,
+                                                  self.as_concrete_TypeRef() as *mut libc::c_void,
                                                   0);
 
             if gl_error != kCGLNoError {

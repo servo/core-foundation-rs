@@ -11,7 +11,7 @@ keywords = ["macos", "framework", "objc"]
 
 [dependencies.core-foundation-sys]
 path = "../core-foundation-sys"
-version = "0.7.1"
+version = "0.7.2"
 
 [dependencies]
 libc = "0.2"

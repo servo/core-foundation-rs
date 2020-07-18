@@ -7,4 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-pub use cocoa_foundation::foundation::*;
+extern crate libc;
+extern crate core_foundation;
+
+pub mod base;
+pub mod geometry;

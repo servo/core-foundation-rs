@@ -7,22 +7,5 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use objc::runtime;
 
-pub use objc::runtime::{BOOL, NO, YES};
-
-pub type Class = *mut runtime::Class;
-#[allow(non_camel_case_types)]
-pub type id = *mut runtime::Object;
-pub type SEL = runtime::Sel;
-
-#[allow(non_upper_case_globals)]
-pub const nil: id = 0 as id;
-#[allow(non_upper_case_globals)]
-pub const Nil: Class = 0 as Class;
-
-/// A convenience method to convert the name of a selector to the selector object.
-#[inline]
-pub fn selector(name: &str) -> SEL {
-    runtime::Sel::register(name)
-}
+pub use cocoa_foundation::base::*;

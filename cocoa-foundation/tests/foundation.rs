@@ -1,13 +1,13 @@
 #[macro_use]
 extern crate objc;
 extern crate block;
-extern crate cocoa;
+extern crate cocoa_foundation;
 
 #[cfg(test)]
 mod foundation {
     mod nsstring {
-        use cocoa::foundation::NSString;
-        use cocoa::base::nil;
+        use cocoa_foundation::foundation::NSString;
+        use cocoa_foundation::base::nil;
         use std::slice;
         use std::str;
 
@@ -66,8 +66,8 @@ mod foundation {
     mod nsfastenumeration {
         use std::str;
         use std::slice;
-        use cocoa::foundation::{NSString, NSFastEnumeration};
-        use cocoa::base::{id, nil};
+        use cocoa_foundation::foundation::{NSString, NSFastEnumeration};
+        use cocoa_foundation::base::{id, nil};
 
         #[test]
         fn test_iter() {
@@ -108,9 +108,9 @@ mod foundation {
 
     mod nsdictionary {
         use block::ConcreteBlock;
-        use cocoa::foundation::{NSArray, NSComparisonResult, NSDictionary, NSFastEnumeration,
+        use cocoa_foundation::foundation::{NSArray, NSComparisonResult, NSDictionary, NSFastEnumeration,
                                 NSString};
-        use cocoa::base::{id, nil};
+        use cocoa_foundation::base::{id, nil};
 
         #[test]
         fn test_get() {

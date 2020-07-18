@@ -7,4 +7,17 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-pub use cocoa_foundation::foundation::*;
+#![allow(non_snake_case)]
+
+extern crate block;
+#[macro_use]
+extern crate bitflags;
+extern crate core_foundation;
+extern crate core_graphics_types;
+extern crate foreign_types;
+extern crate libc;
+#[macro_use]
+extern crate objc;
+
+pub mod base;
+pub mod foundation;

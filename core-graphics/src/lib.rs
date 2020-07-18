@@ -18,6 +18,8 @@ extern crate bitflags;
 #[macro_use]
 extern crate foreign_types;
 
+extern crate core_graphics_types;
+
 pub mod base;
 pub mod color;
 pub mod color_space;

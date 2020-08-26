@@ -23,3 +23,6 @@ mac_os_10_7_support = ["core-foundation-sys/mac_os_10_7_support"] # backwards co
 mac_os_10_8_features = ["core-foundation-sys/mac_os_10_8_features"] # enables new features
 with-chrono = ["chrono"]
 with-uuid = ["uuid"]
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"

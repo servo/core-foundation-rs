@@ -1774,6 +1774,23 @@ impl NSWindow for id {
     // TODO: Constraint-Based Layouts
 }
 
+#[repr(usize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NSViewLayerContentsPlacement {
+    NSViewLayerContentsPlacementScaleAxesIndependently = 0,
+    NSViewLayerContentsPlacementScaleProportionallyToFit = 1,
+    NSViewLayerContentsPlacementScaleProportionallyToFill = 2,
+    NSViewLayerContentsPlacementCenter = 3,
+    NSViewLayerContentsPlacementTop = 4,
+    NSViewLayerContentsPlacementTopRight = 5,
+    NSViewLayerContentsPlacementRight = 6,
+    NSViewLayerContentsPlacementBottomRight = 7,
+    NSViewLayerContentsPlacementBottom = 8,
+    NSViewLayerContentsPlacementBottomLeft = 9,
+    NSViewLayerContentsPlacementLeft = 10,
+    NSViewLayerContentsPlacementTopLeft = 11,
+}
+
 pub trait NSView: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class!(NSView), alloc]
@@ -1801,6 +1818,9 @@ pub trait NSView: Sized {
     unsafe fn widthAnchor(self) -> id;
     unsafe fn heightAnchor(self) -> id;
     unsafe fn convertRectToBacking(self, rect: NSRect) -> NSRect;
+
+    unsafe fn layerContentsPlacement(self) -> NSViewLayerContentsPlacement;
+    unsafe fn setLayerContentsPlacement(self, placement: NSViewLayerContentsPlacement);
 }
 
 impl NSView for id {
@@ -1882,6 +1902,14 @@ impl NSView for id {
 
     unsafe fn convertRectToBacking(self, rect: NSRect) -> NSRect {
         msg_send![self, convertRectToBacking:rect]
+    }
+
+    unsafe fn layerContentsPlacement(self) -> NSViewLayerContentsPlacement {
+        msg_send![self, layerContentsPlacement]
+    }
+
+    unsafe fn setLayerContentsPlacement(self, placement: NSViewLayerContentsPlacement) {
+        msg_send![self, setLayerContentsPlacement: placement]
     }
 }
 

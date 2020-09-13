@@ -12,6 +12,7 @@
 use font_descriptor;
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
+use font_manager::{create_font_descriptor, CTFontManagerIsSupportedFont};
 
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType};
@@ -30,6 +31,7 @@ use foreign_types::ForeignType;
 use libc::{self, size_t};
 use std::os::raw::c_void;
 use std::ptr;
+use std::path::Path;
 
 type CGContextRef = *mut <CGContext as ForeignType>::CType;
 type CGFontRef = *mut <CGFont as ForeignType>::CType;
@@ -122,6 +124,11 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
                                                       ptr::null());
         CTFont::wrap_under_create_rule(font_ref)
     }
+}
+
+pub fn new_from_buffer(buffer: &[u8]) -> Result<CTFont, ()> {
+    let ct_font_descriptor = create_font_descriptor(buffer)?;
+    Ok(new_from_descriptor(&ct_font_descriptor, 16.0))
 }
 
 pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {

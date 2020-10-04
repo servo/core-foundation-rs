@@ -57,4 +57,5 @@ extern {
     pub fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *mut c_void) -> bool;
     pub fn CFNumberCompare(date: CFNumberRef, other: CFNumberRef, context: *mut c_void) -> CFComparisonResult;
     pub fn CFNumberGetTypeID() -> CFTypeID;
+    pub fn CFNumberGetType(number: CFNumberRef) -> CFNumberType;
 }

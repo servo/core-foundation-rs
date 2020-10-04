@@ -51,6 +51,8 @@ extern {
     pub static kCFBooleanFalse: CFBooleanRef;
 
     pub fn CFBooleanGetTypeID() -> CFTypeID;
+    pub fn CFBooleanGetValue(boolean: CFBooleanRef) -> bool;
+
     pub fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *const c_void)
                           -> CFNumberRef;
     //fn CFNumberGetByteSize

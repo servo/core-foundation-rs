@@ -278,6 +278,17 @@ impl CTFontDescriptor {
             CFDictionary::wrap_under_get_rule(value.as_CFTypeRef() as CFDictionaryRef)
         }
     }
+
+    pub fn create_copy_with_attributes(&self, attr: CFDictionary) -> Result<CTFontDescriptor, ()> {
+        unsafe {
+            let desc = CTFontDescriptorCreateCopyWithAttributes(self.as_concrete_TypeRef(),
+                                                                attr.as_concrete_TypeRef());
+            if desc.is_null() {
+                return Err(());
+            }
+            Ok(CTFontDescriptor::wrap_under_create_rule(desc))
+        }
+    }
 }
 
 pub fn new_from_attributes(attributes: &CFDictionary<CFString, CFType>) -> CTFontDescriptor {

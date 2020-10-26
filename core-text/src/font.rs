@@ -162,6 +162,13 @@ impl CTFont {
         }
     }
 
+    pub fn copy_descriptor(&self) -> CTFontDescriptor {
+        unsafe {
+            let desc = CTFontCopyFontDescriptor(self.0);
+            CTFontDescriptor::wrap_under_create_rule(desc)
+        }
+    }
+
     pub fn clone_with_font_size(&self, size: f64) -> CTFont {
         unsafe {
             let font_ref = CTFontCreateCopyWithAttributes(self.0,
@@ -545,7 +552,7 @@ extern {
     //fn CTFontCreateForString
 
     /* Getting Font Data */
-    //fn CTFontCopyFontDescriptor(font: CTFontRef) -> CTFontDescriptorRef;
+    fn CTFontCopyFontDescriptor(font: CTFontRef) -> CTFontDescriptorRef;
     fn CTFontCopyAttribute(font: CTFontRef, attribute: CFStringRef) -> CFTypeRef;
     fn CTFontGetSize(font: CTFontRef) -> CGFloat;
     //fn CTFontGetMatrix
@@ -636,5 +643,20 @@ extern {
     fn CTFontCopyTable(font: CTFontRef, table: CTFontTableTag, options: CTFontTableOptions) -> CFDataRef;
 
     fn CTFontGetTypeID() -> CFTypeID;
+}
+
+#[test]
+fn copy_font() {
+    use std::io::Read;
+    let mut f = std::fs::File::open("/System/Library/Fonts/ZapfDingbats.ttf").unwrap();
+    let mut font_data = Vec::new();
+    f.read_to_end(&mut font_data).unwrap();
+    let desc = crate::font_manager::create_font_descriptor(&font_data).unwrap();
+    let font = new_from_descriptor(&desc, 12.);
+    drop(desc);
+    let desc = font.copy_descriptor();
+    drop(font);
+    let font = new_from_descriptor(&desc, 14.);
+    assert_eq!(font.family_name(), "Zapf Dingbats");
 }
 

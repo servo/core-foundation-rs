@@ -14,7 +14,7 @@ use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
 use font_manager::create_font_descriptor;
 
-use core_foundation::array::{CFArray, CFArrayRef};
+use core_foundation::{base::CFGetRetainCount, array::{CFArray, CFArrayRef}};
 use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
@@ -658,5 +658,23 @@ fn copy_font() {
     drop(font);
     let font = new_from_descriptor(&desc, 14.);
     assert_eq!(font.family_name(), "Zapf Dingbats");
+}
+
+#[test]
+fn desc_cache() {
+    use std::io::Read;
+    use core_foundation::base::{TCFType};
+    use core_graphics::font::CGFont;
+
+    let mut f = std::fs::File::open("/System/Library/Fonts/ZapfDingbats.ttf").unwrap();
+    let mut font_data = Vec::new();
+    f.read_to_end(&mut font_data).unwrap();
+    let desc = crate::font_manager::create_font_descriptor(&font_data).unwrap();
+    let font = new_from_descriptor(&desc, 12.);
+    let cg_font = font.copy_to_CGFont();
+    drop(desc);
+    let desc = font.copy_descriptor();
+    drop(font);
+    assert_eq!(unsafe { CFGetRetainCount(cg_font.as_ptr() as CFTypeRef) } , 1)
 }
 

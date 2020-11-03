@@ -31,6 +31,16 @@ pub fn create_font_descriptor(buffer: &[u8]) -> Result<CTFontDescriptor, ()> {
     }
 }
 
+pub fn create_font_descriptor_with_data(data: CFData) -> Result<CTFontDescriptor, ()> {
+    unsafe {
+        let ct_font_descriptor_ref = CTFontManagerCreateFontDescriptorFromData(data.as_concrete_TypeRef());
+        if ct_font_descriptor_ref.is_null() {
+            return Err(());
+        }
+        Ok(CTFontDescriptor::wrap_under_create_rule(ct_font_descriptor_ref))
+    }
+}
+
 extern {
     /*
      * CTFontManager.h

@@ -441,6 +441,33 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 }
 
 
+/// ```no_run
+///extern crate core_foundation;
+///use core_foundation::runloop::{kCFRunLoopCommonModes, CFRunLoop};
+///use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType};
+///let current = CFRunLoop::get_current();
+///match CGEventTap::new(
+///     CGEventTapLocation::HID,
+///     CGEventTapPlacement::HeadInsertEventTap,
+///     CGEventTapOptions::Default,
+///     vec![CGEventType::MouseMoved],
+///     |_a, _b, d| {
+///         println!("{:?}", d.location());
+///         None
+///     },
+/// ) {
+///     Ok(tap) => unsafe {
+///         let loop_source = tap
+///             .mach_port
+///             .create_runloop_source(0)
+///             .expect("Somethings is bad ");
+///         current.add_source(&loop_source, kCFRunLoopCommonModes);
+///         tap.enable();
+///         CFRunLoop::run_current();
+///     },
+///     Err(_) => (assert!(false)),
+/// }
+/// ```
 pub struct CGEventTap<'tap_life> {
     pub mach_port: CFMachPort,
     pub callback_ref:

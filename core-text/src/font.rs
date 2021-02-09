@@ -879,23 +879,24 @@ fn font_data() {
 #[test]
 fn variations() {
     let mut vals_str: Vec<(CFString, CFNumber)> = Vec::new();
-    let small = unsafe {
+    let system_font = unsafe {
         CTFont::wrap_under_create_rule(
             CTFontCreateUIFontForLanguage(kCTFontEmphasizedSystemDetailFontType, 19., std::ptr::null())
         )
     };
-    dbg!(&small);
-    //let font = CGFont::from_name(&CFString::new(".SFNSText-Bold")).unwrap();
-    let font= small.copy_to_CGFont();
+    let font = system_font.copy_to_CGFont();
     vals_str.push((CFString::new("Weight"), (700.).into()) );
     let vars = CFDictionary::from_CFType_pairs(&vals_str);
     let var_font = CGFont::create_copy_from_variations(&font, &vars).unwrap();
-    extern {
-        pub fn CFCopyDescription(obj: usize) -> usize;
-    }
-    let s: CFString = unsafe { std::mem::transmute(CFCopyDescription(std::mem::transmute(var_font.clone()))) };
-    println!("{:}", s);
+    // Check if new_from_CGFont will work on our CGFont with variations applied
     let ct_font = new_from_CGFont(&var_font.clone(), 19.);
-    dbg!(ct_font.family_name());
-    assert!(false);
+    match macos_version() {
+        (10, 15, 0) => assert_ne!(ct_font.family_name(), ".LastResort"),
+        (10, 14, 0) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 13, 0) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 12, 0) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 11, 0) => assert_ne!(ct_font.family_name(), ".LastResort"),
+        _ => assert_ne!(ct_font.family_name(), ".LastResort"),
+
+    }
 }

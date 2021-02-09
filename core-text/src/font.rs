@@ -741,4 +741,160 @@ fn copy_system_font() {
     assert!(matching.attributes().find(CFString::from_static_string("NSFontSizeAttribute")).is_none());
 
     assert_eq!(small.postscript_name(), cgfont.postscript_name());
+    //assert!(false);
+}
+
+
+fn calc_table_checksum(table: &[u8], skipChecksumAdjust: bool) -> u32 {
+    let mut sum = std::num::Wrapping(0);
+    let mut i = 0;
+    let mut chunks = table.chunks_exact(4);
+    for chunk in &mut chunks {
+        if skipChecksumAdjust && i == 2 {
+
+        } else {
+            let val = (chunk[0] as u32) << 24 |
+                (chunk[1] as u32) << 16 |
+                (chunk[2] as u32) << 8 |
+                (chunk[3] as u32) << 0;
+            sum += std::num::Wrapping(val) 
+        }
+        i += 1;
+    }
+    let mut val: u32 = 0;
+    let mut shift = 24;
+    for byte in chunks.remainder() {
+        val |= (*byte as u32) << shift;
+        shift -= 8;
+    }
+    sum += std::num::Wrapping(val);
+    sum.0
+}
+
+fn maxPow2LessThanEqual(a: i32) -> i32 {
+    let x = 1;
+    let mut shift = 0;
+    while ((x << (shift + 1)) <= a) {
+      shift+=1;
+    }
+    return shift;
+  }
+
+
+fn construct_font_data(font: CGFont) -> Vec<u8> {
+    struct TableRecord {
+        tag: u32, 
+        checkSum: u32, 
+        offset: u32,
+        length: u32,
+        data: CFData,
+    }
+
+    let tags = font.copy_table_tags();
+    let count = tags.len();
+    let mut records = Vec::with_capacity(tags.len() as usize);
+    let mut offset: u32 = 0;
+    offset += std::mem::size_of::<u32>() as u32 * 3;
+    offset += std::mem::size_of::<u32>() as u32 * 4 * count as u32;
+    let mut CFF = false;
+    for tag in tags.iter() {
+        let data = font.copy_table_for_tag(*tag).unwrap();
+        let skipChecksumAdjust = *tag == 0x68656164;  // 'head'
+
+        if *tag == 0x43464620 {  // 'CFF '
+            CFF = true;
+        }
+        let checkSum = calc_table_checksum(data.bytes(), skipChecksumAdjust);
+        records.push(TableRecord { tag: *tag, offset, length: data.len() as u32, data: data.clone(), checkSum});
+        offset += data.len() as u32;
+        // 32 bit align the tables
+        offset = (offset + 3) & !3;
+    }
+
+    let mut buf: Vec<u8> = Vec::new();
+    if CFF {
+        buf.extend_from_slice(&0x4f54544fu32.to_be_bytes());
+    } else {
+        buf.extend_from_slice(&0x00010000u32.to_be_bytes());
+    }
+
+    buf.extend_from_slice(&(count as u16).to_be_bytes());
+    let maxPow2Count = maxPow2LessThanEqual(count as i32);
+    buf.extend_from_slice(&((1u16 << maxPow2Count) * 16).to_be_bytes());
+    buf.extend_from_slice(&(maxPow2Count as u16).to_be_bytes());
+    buf.extend_from_slice(&((count as u16 - (1 << maxPow2Count)) * 16).to_be_bytes());
+
+  // write table record entries
+  for rec in &records {
+    buf.extend_from_slice(&rec.tag.to_be_bytes());
+    buf.extend_from_slice(&rec.checkSum.to_be_bytes());
+    buf.extend_from_slice(&rec.offset.to_be_bytes());
+    buf.extend_from_slice(&rec.length.to_be_bytes());
+  }
+
+  // write tables
+  let mut checksum_adjustment_offset = 0;
+  for rec in &records {
+    if rec.tag == 0x68656164 { // 'head'
+        checksum_adjustment_offset = buf.len() + 2 * 4;
+    }
+    assert!(buf.len() == rec.offset as usize);
+    buf.extend_from_slice(rec.data.bytes());
+    // align
+    let extra = ((buf.len() + 3) & !3) - buf.len();
+    buf.extend_from_slice(&[0;4][0..extra]);
+  }
+
+  // clear the checksumAdjust field before checksumming the whole font
+  for b in &mut buf[checksum_adjustment_offset..checksum_adjustment_offset+4] {
+    *b = 0;
+  }
+  let font_check_sum = (0xb1b0afbau32.wrapping_sub(
+    calc_table_checksum(&buf, false))).to_be_bytes();
+  (&mut buf[checksum_adjustment_offset..checksum_adjustment_offset+4]).copy_from_slice(&font_check_sum);
+
+  buf
+}
+
+#[test]
+fn font_data() {
+    let small = new_from_name("Zapf Dingbats", 19.).unwrap();
+    let small = unsafe {
+        CTFont::wrap_under_create_rule(
+            CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 19., std::ptr::null())
+        )
+    };
+    println!("{:?}", (small.postscript_name(), small.url()));
+    let data = construct_font_data(    small.copy_to_CGFont());
+    let mut file = std::fs::File::create("test.ttf").unwrap();
+    // Write a slice of bytes to the file
+    use std::io::Write;
+    file.write_all(&data);
+    drop(file);
+    let font = new_from_buffer(&data).unwrap();
+    println!("{:?}", (font.postscript_name(), font.url()));
+    //assert!(false);
+}
+
+#[test]
+fn variations() {
+    let mut vals_str: Vec<(CFString, CFNumber)> = Vec::new();
+    let small = unsafe {
+        CTFont::wrap_under_create_rule(
+            CTFontCreateUIFontForLanguage(kCTFontEmphasizedSystemDetailFontType, 19., std::ptr::null())
+        )
+    };
+    dbg!(&small);
+    //let font = CGFont::from_name(&CFString::new(".SFNSText-Bold")).unwrap();
+    let font= small.copy_to_CGFont();
+    vals_str.push((CFString::new("Weight"), (700.).into()) );
+    let vars = CFDictionary::from_CFType_pairs(&vals_str);
+    let var_font = CGFont::create_copy_from_variations(&font, &vars).unwrap();
+    extern {
+        pub fn CFCopyDescription(obj: usize) -> usize;
+    }
+    let s: CFString = unsafe { std::mem::transmute(CFCopyDescription(std::mem::transmute(var_font.clone()))) };
+    println!("{:}", s);
+    dbg!(new_from_CGFont(&var_font.clone(), 19.));
+    assert!(false);
 }

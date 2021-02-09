@@ -781,7 +781,7 @@ fn maxPow2LessThanEqual(a: i32) -> i32 {
   }
 
 
-fn construct_font_data(font: CGFont) -> Vec<u8> {
+fn construct_font_data(font: &CGFont) -> Vec<u8> {
     struct TableRecord {
         tag: u32, 
         checkSum: u32, 
@@ -865,7 +865,7 @@ fn font_data() {
         )
     };
     println!("{:?}", (small.postscript_name(), small.url()));
-    let data = construct_font_data(    small.copy_to_CGFont());
+    let data = construct_font_data(    &small.copy_to_CGFont());
     let mut file = std::fs::File::create("test.ttf").unwrap();
     // Write a slice of bytes to the file
     use std::io::Write;
@@ -891,12 +891,21 @@ fn variations() {
     // Check if new_from_CGFont will work on our CGFont with variations applied
     let ct_font = new_from_CGFont(&var_font.clone(), 19.);
     match macos_version() {
-        (10, 15, 0) => assert_ne!(ct_font.family_name(), ".LastResort"),
-        (10, 14, 0) => assert_eq!(ct_font.family_name(), ".LastResort"),
-        (10, 13, 0) => assert_eq!(ct_font.family_name(), ".LastResort"),
-        (10, 12, 0) => assert_eq!(ct_font.family_name(), ".LastResort"),
-        (10, 11, 0) => assert_ne!(ct_font.family_name(), ".LastResort"),
+        (10, 15, _) => assert_ne!(ct_font.family_name(), ".LastResort"),
+        (10, 14, _) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 13, _) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 12, _) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 11, _) => assert_ne!(ct_font.family_name(), ".LastResort"),
         _ => assert_ne!(ct_font.family_name(), ".LastResort"),
-
     }
+
+    let data = construct_font_data(&font);
+    let font = new_from_buffer(&data).unwrap();
+    let font = font.copy_to_CGFont();
+    vals_str.push((CFString::new("Weight"), (700.).into()) );
+    let vars = CFDictionary::from_CFType_pairs(&vals_str);
+    let var_font = CGFont::create_copy_from_variations(&font, &vars).unwrap();
+    // Check if new_from_CGFont will work on our CGFont with variations applied
+    let ct_font = new_from_CGFont(&var_font.clone(), 19.);
+    assert_ne!(ct_font.family_name(), ".LastResort");
 }

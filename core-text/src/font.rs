@@ -895,6 +895,7 @@ fn variations() {
     }
     let s: CFString = unsafe { std::mem::transmute(CFCopyDescription(std::mem::transmute(var_font.clone()))) };
     println!("{:}", s);
-    dbg!(new_from_CGFont(&var_font.clone(), 19.));
+    let ct_font = new_from_CGFont(&var_font.clone(), 19.);
+    dbg!(ct_font.family_name());
     assert!(false);
 }

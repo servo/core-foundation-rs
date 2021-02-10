@@ -757,7 +757,7 @@ fn variations_dict() {
     let var_font = CGFont::create_copy_from_variations(&font, &vars).unwrap();
     match macos_version() {
         (10, 11, _) => {
-            assert!(font.copy_variation_axis().is_none());
+            assert!(font.copy_variation_axes().is_none());
             return;
         }
         _ => {}
@@ -777,4 +777,28 @@ fn variations_dict() {
         // (10, 12, _) => assert!(var.find(CFNumber::from(0x77676874)).is_none()), // XXX: I'm not sure why this is
         _ => assert!(var.find(CFNumber::from(0x77676874)).is_some()),
     }
+}
+
+#[test]
+fn variations_copy() {
+    use std::io::Read;
+    let mut f = std::fs::File::open("variabletest_box.ttf").unwrap();
+    let mut buffer = Vec::new();
+    // read the whole file
+    f.read_to_end(&mut buffer).unwrap();
+
+    let font = new_from_buffer(&buffer).unwrap();
+    dbg!(&font);
+    let cg_font = font.copy_to_CGFont();
+    dbg!(cg_font.copy_variation_axes());
+    let mut vals_str: Vec<(CFString, CFNumber)> = Vec::new();
+    vals_str.push((CFString::new("Optical Sizing"), (100.).into()));
+    vals_str.push((CFString::new("Upward"), (350).into()));
+    let vars = CFDictionary::from_CFType_pairs(&vals_str);
+    let var_font = CGFont::create_copy_from_variations(&cg_font, &vars).unwrap();
+    let var_ct_font = new_from_CGFont(&var_font, 19.);
+    dbg!(&var_ct_font);
+    dbg!(var_ct_font.copy_descriptor().attributes().find(CFString::from_static_string("NSCTFontVariationAttribute")));
+    dbg!(var_ct_font.copy_to_CGFont().copy_variations());
+    assert!(false);
 }

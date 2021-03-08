@@ -76,7 +76,7 @@ main (int argc, char **argv)
                                        styleMask:NSTitledWindowMask
                                          backing:NSBackingStoreBuffered
                                            defer:NO];
-
+  window.contentView.wantsLayer = YES;
   NSView* view = [[TestView alloc] initWithFrame:NSMakeRect(0, 0, contentRect.size.width, contentRect.size.height)];
     
   [window setContentView:view];

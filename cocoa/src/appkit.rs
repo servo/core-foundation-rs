@@ -4215,6 +4215,115 @@ impl NSNib for id {
     }
 }
 
+pub trait NSCursor: Sized {
+    unsafe fn alloc(_: Self) -> id;
+    unsafe fn current_cursor(_: Self) -> id;
+    unsafe fn current_system_cursor(_: Self) -> id;
+    unsafe fn arrow_cursor(_: Self) -> id;
+    unsafe fn contextual_menu_cursor(_: Self) -> id;
+    unsafe fn closed_hand_cursor(_: Self) -> id;
+    unsafe fn crosshair_cursor(_: Self) -> id;
+    unsafe fn disappearing_item_cursor(_: Self) -> id;
+    unsafe fn drag_copy_cursor(_: Self) -> id;
+    unsafe fn drag_link_cursor(_: Self) -> id;
+    unsafe fn i_beam_cursor(_: Self) -> id;
+    unsafe fn open_hand_cursor(_: Self) -> id;
+    unsafe fn operation_not_allowed_cursor(_: Self) -> id;
+    unsafe fn pointing_hand_cursor(_: Self) -> id;
+    unsafe fn resize_down_cursor(_: Self) -> id;
+    unsafe fn resize_left_cursor(_: Self) -> id;
+    unsafe fn resize_left_right_cursor(_: Self) -> id;
+    unsafe fn resize_right_cursor(_: Self) -> id;
+    unsafe fn resize_up_cursor(_: Self) -> id;
+    unsafe fn resize_up_down_cursor(_: Self) -> id;
+    unsafe fn i_beam_cursor_for_vertical_layout(_: Self) -> id;
+}
+
+impl NSCursor for id {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class!(NSCursor), alloc]
+    }
+
+    unsafe fn current_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), currentCursor]
+    }
+
+    unsafe fn current_system_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), currentSystemCursor]
+    }
+
+    unsafe fn arrow_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), arrowCursor]
+    }
+
+    unsafe fn contextual_menu_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), contextualMenuCursor]
+    }
+
+    unsafe fn closed_hand_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), closedHandCursor]
+    }
+
+    unsafe fn crosshair_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), crosshairCursor]
+    }
+
+    unsafe fn disappearing_item_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), disappearingItemCursor]
+    }
+
+    unsafe fn drag_copy_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), dragCopyCursor]
+    }
+
+    unsafe fn drag_link_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), dragLinkCursor]
+    }
+
+    unsafe fn i_beam_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), IBeamCursor]
+    }
+
+    unsafe fn open_hand_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), openHandCursor]
+    }
+
+    unsafe fn operation_not_allowed_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), operationNotAllowedCursor]
+    }
+
+    unsafe fn pointing_hand_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), pointingHandCursor]
+    }
+
+    unsafe fn resize_down_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), resizeDownCursor]
+    }
+
+    unsafe fn resize_left_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), resizeLeftCursor]
+    }
+
+    unsafe fn resize_left_right_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), resizeLeftRightCursor]
+    }
+
+    unsafe fn resize_right_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), resizeRightCursor]
+    }
+
+    unsafe fn resize_up_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), resizeUpCursor]
+    }
+
+    unsafe fn resize_up_down_cursor(_: Self) -> id {
+        msg_send![class!(NSCursor), resizeUpDownCursor]
+    }
+
+    unsafe fn i_beam_cursor_for_vertical_layout(_: Self) -> id {
+        msg_send![class!(NSCursor), IBeamCursorForVerticalLayout]
+    }
+}
 
 #[cfg(test)]
 mod test {

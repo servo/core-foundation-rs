@@ -1774,6 +1774,52 @@ impl NSWindow for id {
     // TODO: Constraint-Based Layouts
 }
 
+#[repr(i64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSModalResponse {
+    NSModalResponseOk = 1,
+    NSModalResponseCancel = 0,
+}
+
+pub trait NSOpenPanel: Sized {
+    unsafe fn openPanel(_: Self) -> id {
+        msg_send![class!(NSOpenPanel), openPanel]
+    }
+
+    unsafe fn setCanChooseFiles_(self, canChooseFiles: BOOL);
+    unsafe fn setCanChooseDirectories_(self, canChooseDirectories: BOOL);
+    unsafe fn setResolvesAliases_(self, resolvesAliases: BOOL);
+    unsafe fn setAllowsMultipleSelection_(self, allowsMultipleSelection: BOOL);
+    unsafe fn URLs(self) -> id;
+    unsafe fn runModal(self) -> NSModalResponse;
+}
+
+impl NSOpenPanel for id {
+    unsafe fn setCanChooseFiles_(self, canChooseFiles: BOOL) {
+        msg_send![self, setCanChooseFiles: canChooseFiles]
+    }
+
+    unsafe fn setCanChooseDirectories_(self, canChooseDirectories: BOOL) {
+        msg_send![self, setCanChooseDirectories: canChooseDirectories]
+    }
+
+    unsafe fn setResolvesAliases_(self, resolvesAliases: BOOL) {
+        msg_send![self, setResolvesAliases: resolvesAliases]
+    }
+
+    unsafe fn setAllowsMultipleSelection_(self, allowsMultipleSelection: BOOL) {
+        msg_send![self, setAllowsMultipleSelection: allowsMultipleSelection]
+    }
+
+    unsafe fn URLs(self) -> id {
+        msg_send![self, URLs]
+    }
+
+    unsafe fn runModal(self) -> NSModalResponse {
+        msg_send![self, runModal]
+    }
+}
+
 #[repr(usize)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum NSViewLayerContentsPlacement {

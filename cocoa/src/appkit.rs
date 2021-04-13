@@ -1044,7 +1044,7 @@ pub trait NSWindow: Sized {
     unsafe fn setIgnoresMouseEvents_(self, ignoreMouseEvents: BOOL);
     unsafe fn mouseLocationOutsideOfEventStream(self) -> NSPoint;
     unsafe fn setAcceptsMouseMovedEvents_(self, acceptMouseMovedEvents: BOOL);
-    unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(self,
+    unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(_: Self,
                                                                point: NSPoint,
                                                                windowNumber: NSInteger) -> NSInteger;
 
@@ -1613,10 +1613,10 @@ impl NSWindow for id {
         msg_send![self, setAcceptsMouseMovedEvents:acceptMouseMovedEvents]
     }
 
-    unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(self,
+    unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(_: Self,
                                                                point: NSPoint,
                                                                windowNumber: NSInteger) -> NSInteger {
-        msg_send![self, windowNumberAtPoint:point belowWindowWithWindowNumber:windowNumber]
+        msg_send![class!(NSWindow), windowNumberAtPoint:point belowWindowWithWindowNumber:windowNumber]
     }
 
     // Converting Coordinates

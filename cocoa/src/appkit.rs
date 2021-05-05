@@ -1786,7 +1786,36 @@ pub enum NSModalResponse {
     NSModalResponseCancel = 0,
 }
 
-pub trait NSOpenPanel: Sized {
+pub trait NSSavePanel: Sized {
+    unsafe fn savePanel(_: Self) -> id {
+        msg_send![class!(NSSavePanel), savePanel]
+    }
+
+    unsafe fn setDirectoryURL(self, url: id);
+    unsafe fn setCanCreateDirectories(self, canCreateDirectories: BOOL);
+    unsafe fn URL(self) -> id;
+    unsafe fn runModal(self) -> NSModalResponse;
+}
+
+impl NSSavePanel for id {
+    unsafe fn setDirectoryURL(self, url: id) {
+        msg_send![self, setDirectoryURL: url]
+    }
+
+    unsafe fn setCanCreateDirectories(self, canCreateDirectories: BOOL) {
+        msg_send![self, setCanCreateDirectories: canCreateDirectories]
+    }
+
+    unsafe fn URL(self) -> id {
+        msg_send![self, URL]
+    }
+
+    unsafe fn runModal(self) -> NSModalResponse {
+        msg_send![self, runModal]
+    }
+}
+
+pub trait NSOpenPanel: NSSavePanel {
     unsafe fn openPanel(_: Self) -> id {
         msg_send![class!(NSOpenPanel), openPanel]
     }
@@ -1796,7 +1825,6 @@ pub trait NSOpenPanel: Sized {
     unsafe fn setResolvesAliases_(self, resolvesAliases: BOOL);
     unsafe fn setAllowsMultipleSelection_(self, allowsMultipleSelection: BOOL);
     unsafe fn URLs(self) -> id;
-    unsafe fn runModal(self) -> NSModalResponse;
 }
 
 impl NSOpenPanel for id {
@@ -1818,10 +1846,6 @@ impl NSOpenPanel for id {
 
     unsafe fn URLs(self) -> id {
         msg_send![self, URLs]
-    }
-
-    unsafe fn runModal(self) -> NSModalResponse {
-        msg_send![self, runModal]
     }
 }
 

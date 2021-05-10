@@ -1100,6 +1100,10 @@ pub trait NSBundle: Sized {
                                           name: id /* NSString */,
                                           owner: id,
                                           topLevelObjects: *mut id /* NSArray */) -> BOOL;
+
+    unsafe fn bundleIdentifier(self) -> id /* NSString */;
+
+    unsafe fn resourcePath(self) -> id /* NSString */;
 }
 
 impl NSBundle for id {
@@ -1114,6 +1118,14 @@ impl NSBundle for id {
         msg_send![self, loadNibNamed:name
                                owner:owner
                      topLevelObjects:topLevelObjects]
+    }
+
+    unsafe fn bundleIdentifier(self) -> id /* NSString */ {
+        msg_send![self, bundleIdentifier]
+    }
+
+    unsafe fn resourcePath(self) -> id /* NSString */ {
+        msg_send![self, resourcePath]
     }
 }
 

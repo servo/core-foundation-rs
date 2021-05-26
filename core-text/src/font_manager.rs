@@ -12,7 +12,7 @@ use core_foundation::base::TCFType;
 use core_foundation::string::CFString;
 use core_foundation::url::CFURLRef;
 use core_foundation::data::{CFDataRef, CFData};
-use crate::font_descriptor::{CTFontDescriptorRef, CTFontDescriptor};
+use crate::font_descriptor::{CTFontDescriptor, CTFontDescriptorRef};
 
 pub fn copy_available_font_family_names() -> CFArray<CFString> {
     unsafe {
@@ -41,6 +41,17 @@ pub fn create_font_descriptor_with_data(data: CFData) -> Result<CTFontDescriptor
     }
 }
 
+pub fn create_font_descriptors(buffer: &[u8]) -> Result<CFArray<CTFontDescriptor>, ()> {
+    let cf_data = CFData::from_buffer(buffer);
+    unsafe {
+        let ct_font_descriptors_ref = CTFontManagerCreateFontDescriptorsFromData(cf_data.as_concrete_TypeRef());
+        if ct_font_descriptors_ref.is_null() {
+            return Err(());
+        }
+        Ok(CFArray::wrap_under_create_rule(ct_font_descriptors_ref))
+    }
+}
+
 extern {
     /*
      * CTFontManager.h
@@ -55,6 +66,7 @@ extern {
     pub fn CTFontManagerCopyAvailablePostScriptNames() -> CFArrayRef;
     pub fn CTFontManagerCreateFontDescriptorsFromURL(fileURL: CFURLRef) -> CFArrayRef;
     pub fn CTFontManagerCreateFontDescriptorFromData(data: CFDataRef) -> CTFontDescriptorRef;
+    pub fn CTFontManagerCreateFontDescriptorsFromData(data: CFDataRef) -> CFArrayRef;
     //pub fn CTFontManagerCreateFontRequestRunLoopSource
     //pub fn CTFontManagerEnableFontDescriptors
     //pub fn CTFontManagerGetAutoActivationSetting

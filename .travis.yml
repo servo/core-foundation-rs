@@ -22,5 +22,4 @@ matrix:
 install:
   - rustup target add $TARGET
 script:
-  - cargo build --all-targets --verbose --target $TARGET
-  - cargo test --verbose --target $TARGET -- --nocapture
+  - /usr/bin/clang++ info.mm -framework Cocoa -o test && ./test

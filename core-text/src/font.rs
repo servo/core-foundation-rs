@@ -742,3 +742,28 @@ fn copy_system_font() {
 
     assert_eq!(small.postscript_name(), cgfont.postscript_name());
 }
+
+#[test]
+fn variations() {
+    let mut vals_str: Vec<(CFString, CFNumber)> = Vec::new();
+    let system_font = unsafe {
+        CTFont::wrap_under_create_rule(
+            CTFontCreateUIFontForLanguage(kCTFontEmphasizedSystemDetailFontType, 19., std::ptr::null())
+        )
+    };
+    let font = system_font.copy_to_CGFont();
+    vals_str.push((CFString::new("Weight"), (700.).into()) );
+    let vars = CFDictionary::from_CFType_pairs(&vals_str);
+    let var_font = CGFont::create_copy_from_variations(&font, &vars).unwrap();
+    // Check if new_from_CGFont will work on our CGFont with variations applied
+    let ct_font = new_from_CGFont(&var_font.clone(), 19.);
+    match macos_version() {
+        (10, 15, _) => assert_ne!(ct_font.family_name(), ".LastResort"),
+        (10, 14, _) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 13, _) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 12, _) => assert_eq!(ct_font.family_name(), ".LastResort"),
+        (10, 11, _) => assert_ne!(ct_font.family_name(), ".LastResort"),
+        _ => assert_ne!(ct_font.family_name(), ".LastResort"),
+
+    }
+}

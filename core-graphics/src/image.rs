@@ -1,8 +1,11 @@
 use std::ptr;
 
 use base::CGFloat;
-use core_foundation::base::{CFRetain, CFTypeID};
+use core_foundation::base::{CFRetain, CFTypeID, CFRelease, TCFType};
 use core_foundation::data::CFData;
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
+use core_foundation::url::{CFURL, CFURLRef};
+use core_foundation::string::{CFString, CFStringRef};
 use color_space::CGColorSpace;
 use data_provider::{CGDataProviderRef, CGDataProvider};
 use geometry::CGRect;
@@ -135,6 +138,59 @@ impl CGImageRef {
     }
 }
 
+foreign_type! {
+    #[doc(hidden)]
+    type CType = ::sys::CGImageDestination;
+    fn drop = |p| CFRelease(p as *mut _);
+    fn clone = |p| CFRetain(p as *const _) as *mut _;
+    pub struct CGImageDestination;
+    pub struct CGImageDestinationRef;
+}
+
+impl CGImageDestination {
+    pub fn with_url(
+        url: CFURL,
+        // TODO: this can be things like kUTTypeJPEG=public.jpeg, kUTTypeBMP=com.microsoft.bmp
+        // but can also be kUTTypeXML=public.xml which leads to panic. So, should this be an ENUM
+        // of CFStrings?
+        type_: CFString,
+        count: size_t,
+        options: Option<CFDictionary>,
+    ) -> Self {
+        // Documentation says that options if for the future and pass NULL
+        // Should I prepare and send options in case user sent or always send NULL?
+        let options = options.map_or(ptr::null(), |options| options.as_concrete_TypeRef());
+        unsafe {
+            let result = CGImageDestinationCreateWithURL(
+                url.as_concrete_TypeRef(),
+                type_.as_concrete_TypeRef(),
+                count,
+                options,
+            );
+            assert!(!result.is_null());
+            Self::from_ptr(result)
+        }
+    }
+}
+
+impl CGImageDestinationRef {
+    /// This operation makes the current instance unusable
+    // Make it self?
+    pub fn finalize(&self) -> bool {
+        unsafe { CGImageDestinationFinalize(self.as_ptr()) }
+    }
+
+    pub fn add_image(&self, image: CGImage, properties: Option<CFDictionary>) {
+        unsafe {
+            CGImageDestinationAddImage(
+                self.as_ptr(),
+                image.as_ptr(),
+                properties.map_or(ptr::null(), |properties| properties.as_concrete_TypeRef()),
+            )
+        }
+    }
+}
+
 #[link(name = "CoreGraphics", kind = "framework")]
 extern {
     fn CGImageGetTypeID() -> CFTypeID;
@@ -162,4 +218,20 @@ extern {
 
     //fn CGImageGetAlphaInfo(image: ::sys::CGImageRef) -> CGImageAlphaInfo;
     //fn CGImageCreateCopyWithColorSpace(image: ::sys::CGImageRef, space: ::sys::CGColorSpaceRef) -> ::sys::CGImageRef
+}
+
+#[link(name = "ImageIO", kind = "framework")]
+extern "C" {
+    fn CGImageDestinationCreateWithURL(
+        url: CFURLRef,
+        type_: CFStringRef,
+        count: size_t,
+        options: CFDictionaryRef,
+    ) -> ::sys::CGImageDestinationRef;
+    fn CGImageDestinationFinalize(idst: ::sys::CGImageDestinationRef) -> bool;
+    fn CGImageDestinationAddImage(
+        idst: ::sys::CGImageDestinationRef,
+        image: ::sys::CGImageRef,
+        properties: CFDictionaryRef,
+    );
 }

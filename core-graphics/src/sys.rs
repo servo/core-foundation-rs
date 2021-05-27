@@ -3,6 +3,9 @@ use std::os::raw::c_void;
 pub enum CGImage {}
 pub type CGImageRef = *mut CGImage;
 
+pub enum CGImageDestination {}
+pub type CGImageDestinationRef = *mut CGImageDestination;
+
 #[repr(C)]
 pub struct __CGColor(c_void);
 

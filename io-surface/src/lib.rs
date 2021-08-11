@@ -12,6 +12,7 @@
 
 extern crate libc;
 extern crate core_foundation;
+extern crate core_foundation_sys;
 extern crate cgl;
 extern crate leaky_cow;
 
@@ -20,6 +21,7 @@ extern crate leaky_cow;
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, CFType, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef};
+use core_foundation_sys::base::mach_port_t;
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString, GLenum};
 use libc::{c_int, size_t};
 use std::os::raw::c_void;
@@ -33,8 +35,12 @@ const RGB: GLenum = 0x1907;
 const TEXTURE_RECTANGLE_ARB: GLenum = 0x84F5;
 const UNSIGNED_INT_8_8_8_8_REV: GLenum = 0x8367;
 
-//static kIOSurfaceLockReadOnly: u32 = 0x1;
-//static kIOSurfaceLockAvoidSync: u32 = 0x2;
+#[allow(non_snake_case)]
+pub mod IOSurfaceLockOptions {
+    #![allow(non_upper_case_globals)]
+    pub const kIOSurfaceLockReadOnly: u32 = 0x00000001;
+    pub const kIOSurfaceLockAvoidSync: u32 = 0x00000002;
+}
 
 type IOReturn = c_int;
 
@@ -143,7 +149,7 @@ impl IOSurface {
                 let error_msg = error_msg.to_string_lossy();
                 // This will only actually leak memory if error_msg is a `Cow::Owned`, which
                 // will only happen if the platform gives us invalid unicode.
-                panic!(error_msg.leak());
+                panic!("{}", error_msg.leak());
             }
         }
     }
@@ -195,16 +201,47 @@ extern {
     pub static kIOSurfaceIsGlobal: CFStringRef;
     pub static kIOSurfacePixelFormat: CFStringRef;
 
-    fn IOSurfaceCreate(properties: CFDictionaryRef) -> IOSurfaceRef;
-    fn IOSurfaceLookup(csid: IOSurfaceID) -> IOSurfaceRef;
-    fn IOSurfaceGetID(buffer: IOSurfaceRef) -> IOSurfaceID;
+    pub fn IOSurfaceCreate(properties: CFDictionaryRef) -> IOSurfaceRef;
+    pub fn IOSurfaceLookup(csid: IOSurfaceID) -> IOSurfaceRef;
+    pub fn IOSurfaceGetID(buffer: IOSurfaceRef) -> IOSurfaceID;
 
-    fn IOSurfaceGetTypeID() -> CFTypeID;
+    pub fn IOSurfaceGetTypeID() -> CFTypeID;
 
-    fn IOSurfaceLock(buffer: IOSurfaceRef, options: u32, seed: *mut u32) -> IOReturn;
-    fn IOSurfaceUnlock(buffer: IOSurfaceRef, options: u32, seed: *mut u32) -> IOReturn;
+    pub fn IOSurfaceLock(buffer: IOSurfaceRef, options: u32, seed: *mut u32) -> IOReturn;
+    pub fn IOSurfaceUnlock(buffer: IOSurfaceRef, options: u32, seed: *mut u32) -> IOReturn;
+    pub fn IOSurfaceGetSeed(buffer: IOSurfaceRef) -> u32;
 
-    fn IOSurfaceGetHeight(buffer: IOSurfaceRef) -> size_t;
-    fn IOSurfaceGetBytesPerRow(buffer: IOSurfaceRef) -> size_t;
-    fn IOSurfaceGetBaseAddress(buffer: IOSurfaceRef) -> *mut c_void;
+    pub fn IOSurfaceGetHeight(buffer: IOSurfaceRef) -> size_t;
+    pub fn IOSurfaceGetWidth(buffer: IOSurfaceRef) -> usize;
+    pub fn IOSurfaceGetBytesPerRow(buffer: IOSurfaceRef) -> size_t;
+    pub fn IOSurfaceGetBaseAddress(buffer: IOSurfaceRef) -> *mut c_void;
+    pub fn IOSurfaceGetElementHeight(buffer: IOSurfaceRef) -> usize;
+    pub fn IOSurfaceGetElementWidth(buffer: IOSurfaceRef) -> usize;
+    pub fn IOSurfaceGetBytesPerElement(buffer: IOSurfaceRef) -> usize;
+    pub fn IOSurfaceGetAllocSize(buffer: IOSurfaceRef) -> usize;
+
+    pub fn IOSurfaceGetPixelFormat(buffer: IOSurfaceRef) -> i32;
+
+    pub fn IOSurfaceGetUseCount(buffer: IOSurfaceRef) -> i32;
+    pub fn IOSurfaceIncrementUseCount(buffer: IOSurfaceRef);
+    pub fn IOSurfaceDecrementUseCount(buffer: IOSurfaceRef);
+    pub fn IOSurfaceIsInUse(buffer: IOSurfaceRef) -> bool;
+
+    pub fn IOSurfaceCreateMachPort(buffer: IOSurfaceRef) -> mach_port_t;
+    pub fn IOSurfaceLookupFromMachPort(port: mach_port_t) -> IOSurfaceRef;
+
+    pub fn IOSurfaceGetPropertyAlignment(property: CFStringRef) -> usize;
+    pub fn IOSurfaceGetPropertyMaximum(property: CFStringRef) -> usize;
+
+    pub fn IOSurfaceCopyValue(buffer: IOSurfaceRef, key: CFStringRef) -> CFTypeRef;
+    pub fn IOSurfaceRemoveValue(buffer: IOSurfaceRef, key: CFStringRef);
+    pub fn IOSurfaceSetValue(buffer: IOSurfaceRef, key: CFStringRef, value: CFTypeRef);
+
+    pub fn IOSurfaceGetBaseAddressOfPlane(buffer: IOSurfaceRef, plane_index: usize) -> *mut c_void;
+    pub fn IOSurfaceGetBytesPerElementOfPlane(buffer: IOSurfaceRef, plane_index: usize) -> usize;
+    pub fn IOSurfaceGetBytesPerRowOfPlane(buffer: IOSurfaceRef, plane_index: usize) -> usize;
+    pub fn IOSurfaceGetElementHeightOfPlane(buffer: IOSurfaceRef, plane_index: usize) -> usize;
+    pub fn IOSurfaceGetElementWidthOfPlane(buffer: IOSurfaceRef, plane_index: usize) -> usize;
+    pub fn IOSurfaceGetHeightOfPlane(buffer: IOSurfaceRef, plane_index: usize) -> usize;
+    pub fn IOSurfaceGetWidthOfPlane(buffer: IOSurfaceRef, plane_index: usize) -> usize;
 }

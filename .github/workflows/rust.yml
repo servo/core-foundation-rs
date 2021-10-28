@@ -17,6 +17,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      run: /usr/bin/clang++ info.mm -framework Cocoa -o test && ./test

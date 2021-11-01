@@ -1,6 +1,7 @@
 os: osx
 language: rust
 rust: stable
+if: branch != master OR type != push
 matrix:
   include:
     # macOS 10.11
@@ -14,9 +15,6 @@ matrix:
       env: TARGET=x86_64-apple-darwin CGFEATURES="--features highsierra,elcapitan"
     # macOS 10.14
     - osx_image: xcode11.3
-      env: TARGET=x86_64-apple-darwin CGFEATURES="--features highsierra,elcapitan"
-    # macOS 10.15
-    - osx_image: xcode12.2
       env: TARGET=x86_64-apple-darwin CGFEATURES="--features highsierra,elcapitan"
 
 install:

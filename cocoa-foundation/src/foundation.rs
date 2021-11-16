@@ -229,7 +229,12 @@ pub trait NSProcessInfo: Sized {
         msg_send![class!(NSProcessInfo), processInfo]
     }
 
+    unsafe fn systemUptime(_: Self) -> NSTimeInterval {
+        msg_send![class!(NSProcessInfo), systemUptime]
+    }
+
     unsafe fn processName(self) -> id;
+    unsafe fn uptime(self) -> NSTimeInterval;
     unsafe fn operatingSystemVersion(self) -> NSOperatingSystemVersion;
     unsafe fn isOperatingSystemAtLeastVersion(self, version: NSOperatingSystemVersion) -> bool;
 }
@@ -237,6 +242,10 @@ pub trait NSProcessInfo: Sized {
 impl NSProcessInfo for id {
     unsafe fn processName(self) -> id {
         msg_send![self, processName]
+    }
+
+    unsafe fn uptime(self) -> NSTimeInterval {
+        msg_send![self, systemUptime]
     }
 
     unsafe fn operatingSystemVersion(self) -> NSOperatingSystemVersion {

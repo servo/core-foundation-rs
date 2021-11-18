@@ -242,7 +242,7 @@ impl NSProcessInfo for id {
         msg_send![self, processName]
     }
 
-    unsafe fn uptime(self) -> NSTimeInterval {
+    unsafe fn systemUptime(self) -> NSTimeInterval {
         msg_send![self, systemUptime]
     }
 

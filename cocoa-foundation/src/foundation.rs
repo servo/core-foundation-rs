@@ -229,9 +229,7 @@ pub trait NSProcessInfo: Sized {
         msg_send![class!(NSProcessInfo), processInfo]
     }
 
-    unsafe fn systemUptime(_: Self) -> NSTimeInterval {
-        msg_send![class!(NSProcessInfo), systemUptime]
-    }
+    unsafe fn systemUptime(_: Self) -> NSTimeInterval;
 
     unsafe fn processName(self) -> id;
     unsafe fn uptime(self) -> NSTimeInterval;

@@ -12,10 +12,10 @@
 use font_descriptor;
 use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
 use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
-use font_manager::create_font_descriptor;
+use font_manager::{create_font_descriptor, create_font_descriptors, create_font_descriptor_with_data};
 
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType};
+use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType, TCFTypeRef};
 use core_foundation::data::{CFData, CFDataRef};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
@@ -31,6 +31,7 @@ use foreign_types::ForeignType;
 use libc::{self, size_t};
 use std::os::raw::c_void;
 use std::ptr;
+use std::sync::Arc;
 
 type CGContextRef = *mut <CGContext as ForeignType>::CType;
 type CGFontRef = *mut <CGFont as ForeignType>::CType;
@@ -127,7 +128,26 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
 
 pub fn new_from_buffer(buffer: &[u8]) -> Result<CTFont, ()> {
     let ct_font_descriptor = create_font_descriptor(buffer)?;
-    Ok(new_from_descriptor(&ct_font_descriptor, 16.0))
+    Ok(new_from_name(&ct_font_descriptor.font_name(), 16.0)?)
+}
+
+pub fn new_from_arc_buffer<T: AsRef<[u8]> + Sync + Send>(buffer: Arc<T>) -> Result<CTFont, ()> {
+    let ct_font_descriptor = create_font_descriptor_with_data(CFData::from_arc(buffer))?;
+    Ok(new_from_name(&ct_font_descriptor.font_name(), 16.0)?)
+}
+
+pub fn new_fonts_from_buffer(buffer: &[u8]) -> Result<Vec<CTFont>, ()> {
+    let ct_font_descriptors = create_font_descriptors(buffer)?;
+
+    let mut ct_fonts = Vec::new();
+    unsafe {
+        for descriptor_ptr in ct_font_descriptors.get_all_values().into_iter() {
+            let descriptor = CTFontDescriptor::wrap_under_get_rule(CTFontDescriptorRef::from_void_ptr(descriptor_ptr));
+            ct_fonts.push(new_from_name(&descriptor.font_name(), 16.0)?);
+        }
+    }
+
+    Ok(ct_fonts)
 }
 
 pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {
@@ -644,6 +664,40 @@ extern {
     fn CTFontCopyTable(font: CTFontRef, table: CTFontTableTag, options: CTFontTableOptions) -> CFDataRef;
 
     fn CTFontGetTypeID() -> CFTypeID;
+}
+
+#[test]
+fn test_font_descriptor_and_variation () {
+    use std::io::Read;
+    let mut f = std::fs::File::open("/System/Library/Fonts/Helvetica.ttc").unwrap();
+    let mut font_data = Vec::new();
+    f.read_to_end(&mut font_data).unwrap();
+    let descriptors = create_font_descriptors(&font_data).unwrap();
+    
+    unsafe {
+        for descriptor_ptr in descriptors.get_all_values().into_iter() {
+            let descriptor = CTFontDescriptor::wrap_under_get_rule(CTFontDescriptorRef::from_void_ptr(descriptor_ptr));
+
+            // when create ttc/otc fonts from descriptor, all font variations are the same            
+            let font = new_from_descriptor(&descriptor, 12.);
+            println!("font name= {:?}, desc.name= {:?}", font.face_name(), descriptor.font_name());
+
+            let sym = font.symbolic_traits();
+            assert_eq!(false, sym.is_italic());
+            assert_eq!(false, sym.is_bold());
+            assert_eq!(false, sym.is_expanded());
+            assert_eq!(false, sym.is_condensed());
+            assert_eq!(false, sym.is_monospace());
+
+            let all_traits = font.all_traits();
+            assert_eq!(0., all_traits.normalized_weight());
+            assert_eq!(0., all_traits.normalized_width());
+
+            // we have to create them from font name
+            let font = new_from_name(&descriptor.font_name(), 12.).unwrap();
+            debug_font_traits(&font);
+        }        
+    }
 }
 
 #[test]

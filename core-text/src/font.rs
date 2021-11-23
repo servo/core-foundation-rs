@@ -750,3 +750,63 @@ fn copy_system_font() {
 
     assert_eq!(small.postscript_name(), cgfont.postscript_name());
 }
+
+#[test]
+fn variations_dict() {
+    let mut vals_str: Vec<(CFString, CFNumber)> = Vec::new();
+    let system_font = unsafe {
+        CTFont::wrap_under_create_rule(
+            CTFontCreateUIFontForLanguage(kCTFontEmphasizedSystemDetailFontType, 19., std::ptr::null())
+        )
+    };
+    let font = system_font.copy_to_CGFont();
+    vals_str.push((CFString::new("Weight"), (700.).into()) );
+    let vars = CFDictionary::from_CFType_pairs(&vals_str);
+    let var_font = CGFont::create_copy_from_variations(&font, &vars).unwrap();
+    match macos_version() {
+        (10, 11, _) => {
+            assert!(font.copy_variation_axes().is_none());
+            return;
+        }
+        _ => {}
+    }
+
+    // create a ct_font
+    let vars = var_font.copy_variations().unwrap();
+    let ct_font = new_from_CGFont_with_variations(&var_font.clone(), 19., &vars);
+
+    // check if our variations worked
+    let var = ct_font.copy_descriptor().attributes().find(CFString::from_static_string("NSCTFontVariationAttribute"))
+        .unwrap()
+        .downcast::<CFDictionary>()
+        .unwrap();
+    let var: CFDictionary<CFNumber, CFNumber> = unsafe { std::mem::transmute(var) };
+    match macos_version() {
+        // (10, 12, _) => assert!(var.find(CFNumber::from(0x77676874)).is_none()), // XXX: I'm not sure why this is
+        _ => assert!(var.find(CFNumber::from(0x77676874)).is_some()),
+    }
+}
+
+#[test]
+fn variations_copy() {
+    use std::io::Read;
+    let mut f = std::fs::File::open("variabletest_box.ttf").unwrap();
+    let mut buffer = Vec::new();
+    // read the whole file
+    f.read_to_end(&mut buffer).unwrap();
+
+    let font = new_from_buffer(&buffer).unwrap();
+    dbg!(&font);
+    let cg_font = font.copy_to_CGFont();
+    dbg!(cg_font.copy_variation_axes());
+    let mut vals_str: Vec<(CFString, CFNumber)> = Vec::new();
+    vals_str.push((CFString::new("Optical Sizing"), (100.).into()));
+    vals_str.push((CFString::new("Upward"), (350).into()));
+    let vars = CFDictionary::from_CFType_pairs(&vals_str);
+    let var_font = CGFont::create_copy_from_variations(&cg_font, &vars).unwrap();
+    let var_ct_font = new_from_CGFont(&var_font, 19.);
+    dbg!(&var_ct_font);
+    dbg!(var_ct_font.copy_descriptor().attributes().find(CFString::from_static_string("NSCTFontVariationAttribute")));
+    dbg!(var_ct_font.copy_to_CGFont().copy_variations());
+    assert!(false);
+}

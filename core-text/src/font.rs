@@ -691,6 +691,8 @@ fn macos_version() -> (i32, i32, i32) {
 
 #[test]
 fn copy_system_font() {
+    use crate::*;
+
     let small = unsafe {
         CTFont::wrap_under_create_rule(
             CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 19., std::ptr::null())
@@ -711,6 +713,12 @@ fn copy_system_font() {
     // check that we can construct a new vesion by descriptor
     let ctfont = new_from_descriptor(&desc, 20.);
     assert_eq!(big.postscript_name(), ctfont.postscript_name());
+
+    // check that we can construct a new version by attributes
+    let attr = desc.attributes();
+    let desc_from_attr = font_descriptor::new_from_attributes(&attr);
+    let font_from_attr = new_from_descriptor(&desc_from_attr, 19.);
+    assert_eq!(font_from_attr.postscript_name(), small.postscript_name());
 
     // on newer versions of macos we can't construct by name anymore
     if macos_version() < (10, 13, 0) {

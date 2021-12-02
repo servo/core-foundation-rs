@@ -13,7 +13,9 @@
 extern crate libc;
 extern crate core_foundation;
 extern crate core_foundation_sys;
+#[cfg(feature = "gl")]
 extern crate cgl;
+#[cfg(feature = "gl")]
 extern crate leaky_cow;
 
 // Rust bindings to the IOSurface framework on macOS.
@@ -22,17 +24,25 @@ use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, CFType, TC
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef};
 use core_foundation_sys::base::mach_port_t;
+#[cfg(feature = "gl")]
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString, GLenum};
 use libc::{c_int, size_t};
 use std::os::raw::c_void;
+#[cfg(feature = "gl")]
 use leaky_cow::LeakyCow;
 use std::slice;
+#[cfg(feature = "gl")]
 use std::ffi::CStr;
 
+#[cfg(feature = "gl")]
 const BGRA: GLenum = 0x80E1;
+#[cfg(feature = "gl")]
 const RGBA: GLenum = 0x1908;
+#[cfg(feature = "gl")]
 const RGB: GLenum = 0x1907;
+#[cfg(feature = "gl")]
 const TEXTURE_RECTANGLE_ARB: GLenum = 0x84F5;
+#[cfg(feature = "gl")]
 const UNSIGNED_INT_8_8_8_8_REV: GLenum = 0x8367;
 
 #[allow(non_snake_case)]
@@ -131,6 +141,7 @@ impl IOSurface {
     }
 
     /// Binds to the current GL texture.
+    #[cfg(feature = "gl")]
     pub fn bind_to_gl_texture(&self, width: i32, height: i32, has_alpha: bool) {
         unsafe {
             let context = CGLGetCurrentContext();

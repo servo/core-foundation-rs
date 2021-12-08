@@ -513,9 +513,11 @@ extern {
     //static kCTFontSampleTextNameKey: CFStringRef;
     //static kCTFontPostScriptCIDNameKey: CFStringRef;
 
-    //static kCTFontVariationAxisIdentifierKey: CFStringRef;
+    #[cfg(test)]
+    static kCTFontVariationAxisIdentifierKey: CFStringRef;
     //static kCTFontVariationAxisMinimumValueKey: CFStringRef;
-    //static kCTFontVariationAxisMaximumValueKey: CFStringRef;
+    #[cfg(test)]
+    static kCTFontVariationAxisMaximumValueKey: CFStringRef;
     //static kCTFontVariationAxisDefaultValueKey: CFStringRef;
     //static kCTFontVariationAxisNameKey: CFStringRef;
 
@@ -749,4 +751,49 @@ fn copy_system_font() {
     assert!(matching.attributes().find(CFString::from_static_string("NSFontSizeAttribute")).is_none());
 
     assert_eq!(small.postscript_name(), cgfont.postscript_name());
+}
+
+// Tests what happens when variations have values not inbetween min and max
+#[test]
+fn out_of_range_variations() {
+    use crate::*;
+
+    let small = unsafe {
+        CTFont::wrap_under_create_rule(
+            CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 19., std::ptr::null())
+        )
+    };
+
+    let axes = small.get_variation_axes();
+    if macos_version() < (10, 12, 0) {
+        assert!(axes.is_none());
+        return;
+    }
+    let axes = axes.unwrap();
+    let mut vals = Vec::new();
+    dbg!(&axes);
+    for axis in axes.iter() {
+        let tag = axis.find(unsafe { kCTFontVariationAxisIdentifierKey } )
+        .unwrap().downcast::<CFNumber>().unwrap().to_i64().unwrap();
+        let max = axis.find(unsafe { kCTFontVariationAxisMaximumValueKey } )
+            .unwrap().downcast::<CFNumber>().unwrap().to_f64().unwrap();
+        vals.push((CFNumber::from(tag), CFNumber::from(max + 1.)));
+
+    }
+    let vals_dict = CFDictionary::from_CFType_pairs(&vals);
+    let variation_attribute = unsafe { CFString::wrap_under_get_rule(font_descriptor::kCTFontVariationAttribute) };
+    let attrs_dict = CFDictionary::from_CFType_pairs(&[(variation_attribute.clone(), vals_dict)]);
+    let ct_var_font_desc = small.copy_descriptor().create_copy_with_attributes(attrs_dict.to_untyped()).unwrap();
+    let variation_font = crate::font::new_from_descriptor(&ct_var_font_desc, 19.);
+    let var_desc = variation_font.copy_descriptor();
+    let var_attrs = var_desc.attributes();
+    dbg!(&var_attrs);
+    // attributes greater than max are dropped
+    let var_attrs = var_attrs.find(variation_attribute);
+    if macos_version() >= (10, 15, 0) {
+        assert!(var_attrs.is_none());
+    } else {
+        let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
+        assert!(var_attrs.is_empty());
+    }
 }

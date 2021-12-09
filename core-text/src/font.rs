@@ -811,3 +811,111 @@ fn out_of_range_variations() {
         assert!(var_attrs.is_empty());
     }
 }
+
+#[test]
+fn equal_descriptor_different_font() {
+    use crate::*;
+
+    let variation_attribute = unsafe { CFString::wrap_under_get_rule(font_descriptor::kCTFontVariationAttribute) };
+    let size_attribute = unsafe { CFString::wrap_under_get_rule(font_descriptor::kCTFontSizeAttribute) };
+
+    let sys_font = unsafe {
+        CTFont::wrap_under_create_rule(
+            CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 120., std::ptr::null())
+        )
+    };
+
+
+    // but we can still construct the CGFont by name
+    let create_vars = |desc| {
+        let mut vals: Vec<(CFNumber, CFNumber)> = Vec::new();
+        vals.push((CFNumber::from(0x6f70737a), CFNumber::from(17.)));
+        let vals_dict = CFDictionary::from_CFType_pairs(&vals);
+        let attrs_dict = CFDictionary::from_CFType_pairs(&[(variation_attribute.clone(), vals_dict)]);
+        let size_attrs_dict = CFDictionary::from_CFType_pairs(&[(size_attribute.clone(), CFNumber::from(120.))]);
+        dbg!(&desc);
+        let from_font_desc = new_from_descriptor(&desc, 120.).copy_descriptor();
+        let resized_font_desc = desc.create_copy_with_attributes(size_attrs_dict.to_untyped()).unwrap();
+        if macos_version() >= (11, 0, 0) {
+            assert_eq!(from_font_desc, resized_font_desc);
+        } else {
+            // we won't have a name if we're using system font desc
+            if from_font_desc.attributes().find(unsafe { font_descriptor::kCTFontNameAttribute }).is_none() {
+                // it's surprising that desc's are the not equal but the attributes are
+                assert_ne!(from_font_desc, resized_font_desc);
+                assert_eq!(from_font_desc.attributes().to_untyped(), resized_font_desc.attributes().to_untyped());
+            } else {
+                if macos_version() >= (10, 13, 0) {
+                    // this is unsurprising
+                    assert_ne!(from_font_desc, resized_font_desc);
+                    assert_ne!(from_font_desc.attributes().to_untyped(), resized_font_desc.attributes().to_untyped());
+                } else {
+                    assert_ne!(from_font_desc, resized_font_desc);
+                    assert_eq!(from_font_desc.attributes().to_untyped(), resized_font_desc.attributes().to_untyped());
+                }
+            }
+        }
+
+        let from_font_desc = from_font_desc.create_copy_with_attributes(attrs_dict.to_untyped()).unwrap();
+        let resized_font_desc = resized_font_desc.create_copy_with_attributes(attrs_dict.to_untyped()).unwrap();
+        (from_font_desc, resized_font_desc)
+    };
+
+    // setting the variation works properly if we use system font desc
+    let (from_font_desc, resized_font_desc) = create_vars(sys_font.copy_descriptor());
+    assert_eq!(from_font_desc, resized_font_desc);
+    assert!(resized_font_desc.attributes().find(variation_attribute.clone()).is_some());
+
+    // but doesn't if we refer to it by name
+    let ps = sys_font.postscript_name();
+    let cgfont = CGFont::from_name(&CFString::new(&ps)).unwrap();
+    let ctfont = new_from_CGFont(&cgfont, 0.);
+
+    let (from_font_desc, resized_font_desc) = create_vars(ctfont.copy_descriptor());
+    if macos_version() >= (10, 15, 0) {
+        assert_ne!(from_font_desc, resized_font_desc);
+    }
+
+    if macos_version() >= (10, 13, 0) {
+        assert!(from_font_desc.attributes().find(variation_attribute.clone()).is_some());
+        if macos_version() >= (11, 0, 0) {
+            assert!(resized_font_desc.attributes().find(variation_attribute).is_none());
+        } else {
+            assert!(resized_font_desc.attributes().find(variation_attribute).is_some());
+        };
+    }
+}
+
+#[test]
+fn system_font_variation() {
+    use crate::*;
+
+    let small = unsafe {
+        CTFont::wrap_under_create_rule(
+            CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 17., std::ptr::null())
+        )
+    };
+
+    // but we can still construct the CGFont by name
+    let ps = small.postscript_name();
+    let cgfont = CGFont::from_name(&CFString::new(&ps)).unwrap();
+    let cgfont = new_from_CGFont(&cgfont, 0.);
+    let desc = cgfont.copy_descriptor();
+
+    let mut vals: Vec<(CFNumber, CFNumber)> = Vec::new();
+    vals.push((CFNumber::from(0x6f70737a /* opsz */), CFNumber::from(17.)));
+    let vals_dict = CFDictionary::from_CFType_pairs(&vals);
+    let variation_attribute = unsafe { CFString::wrap_under_get_rule(font_descriptor::kCTFontVariationAttribute) };
+    let attrs_dict = CFDictionary::from_CFType_pairs(&[(variation_attribute, vals_dict)]);
+    let ct_var_font_desc = desc.create_copy_with_attributes(attrs_dict.to_untyped()).unwrap();
+    let attrs = ct_var_font_desc.attributes();
+    let var_attr = attrs.find(CFString::from_static_string("NSCTFontVariationAttribute"));
+    if macos_version() >= (11, 0, 0) {
+        // the variation goes away
+        assert!(var_attr.is_none());
+    } else {
+        assert!(var_attr.is_some());
+    }
+
+    dbg!(ct_var_font_desc);
+}

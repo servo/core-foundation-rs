@@ -788,9 +788,23 @@ fn out_of_range_variations() {
     let var_desc = variation_font.copy_descriptor();
     let var_attrs = var_desc.attributes();
     dbg!(&var_attrs);
-    // attributes greater than max are dropped
+    // attributes greater than max are dropped on macOS <= 11
+    // on macOS 12 they seem to be preserved as is.
     let var_attrs = var_attrs.find(variation_attribute);
-    if macos_version() >= (10, 15, 0) {
+    if macos_version() >= (12, 0, 0) {
+        let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
+        assert!(!var_attrs.is_empty());
+        let var_attrs: CFDictionary<CFType, CFType> = unsafe { std::mem::transmute(var_attrs) };
+        // attributes greater than max remain
+        for axis in axes.iter() {
+            let tag = axis.find(unsafe { kCTFontVariationAxisIdentifierKey } )
+            .unwrap();
+            let max = axis.find(unsafe { kCTFontVariationAxisMaximumValueKey } )
+                .unwrap().downcast::<CFNumber>().unwrap().to_f64().unwrap();
+            let val = var_attrs.find(tag.clone()).unwrap().downcast::<CFNumber>().unwrap().to_f64().unwrap();
+            assert_eq!(val, max + 1.);
+        }
+    } else if macos_version() >= (10, 15, 0) {
         assert!(var_attrs.is_none());
     } else {
         let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();

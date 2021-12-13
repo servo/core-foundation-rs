@@ -144,6 +144,29 @@ pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {
     }
 }
 
+pub fn new_ui_font_for_language(ui_type: CTFontUIFontType,
+                                size: f64,
+                                language: Option<CFString>)
+                                -> CTFont {
+    unsafe {
+        let font_ref = CTFontCreateUIFontForLanguage(
+            ui_type,
+            size,
+            language.as_ref()
+                .map(|x| x.as_concrete_TypeRef())
+                .unwrap_or(std::ptr::null()),
+        );
+        if font_ref.is_null() {
+            // CTFontCreateUIFontForLanguage can fail, but is unlikely to do so during
+            // normal usage (if you pass a bad ui_type it will). To make things more
+            // convenient, just panic if it fails.
+            panic!();
+        } else {
+            CTFont::wrap_under_create_rule(font_ref)
+        }
+    }
+}
+
 impl CTFont {
     // Properties
     pub fn symbolic_traits(&self) -> CTFontSymbolicTraits {
@@ -541,7 +564,6 @@ extern {
     fn CTFontCreateWithFontDescriptor(descriptor: CTFontDescriptorRef, size: CGFloat,
                                       matrix: *const CGAffineTransform) -> CTFontRef;
     //fn CTFontCreateWithFontDescriptorAndOptions
-    #[cfg(test)]
     fn CTFontCreateUIFontForLanguage(uiType: CTFontUIFontType, size: CGFloat, language: CFStringRef) -> CTFontRef;
     fn CTFontCreateCopyWithAttributes(font: CTFontRef, size: CGFloat, matrix: *const CGAffineTransform,
                                       attributes: CTFontDescriptorRef) -> CTFontRef;
@@ -695,11 +717,7 @@ fn macos_version() -> (i32, i32, i32) {
 fn copy_system_font() {
     use crate::*;
 
-    let small = unsafe {
-        CTFont::wrap_under_create_rule(
-            CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 19., std::ptr::null())
-        )
-    };
+    let small = new_ui_font_for_language(kCTFontSystemDetailFontType, 19., None);
     let big = small.clone_with_font_size(20.);
 
     // ensure that we end up with different fonts for the different sizes before 10.15
@@ -758,11 +776,7 @@ fn copy_system_font() {
 fn out_of_range_variations() {
     use crate::*;
 
-    let small = unsafe {
-        CTFont::wrap_under_create_rule(
-            CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 19., std::ptr::null())
-        )
-    };
+    let small = new_ui_font_for_language(kCTFontSystemDetailFontType, 19., None);
 
     let axes = small.get_variation_axes();
     if macos_version() < (10, 12, 0) {
@@ -819,11 +833,7 @@ fn equal_descriptor_different_font() {
     let variation_attribute = unsafe { CFString::wrap_under_get_rule(font_descriptor::kCTFontVariationAttribute) };
     let size_attribute = unsafe { CFString::wrap_under_get_rule(font_descriptor::kCTFontSizeAttribute) };
 
-    let sys_font = unsafe {
-        CTFont::wrap_under_create_rule(
-            CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 120., std::ptr::null())
-        )
-    };
+    let sys_font = new_ui_font_for_language(kCTFontSystemDetailFontType, 19., None);
 
 
     // but we can still construct the CGFont by name
@@ -890,11 +900,7 @@ fn equal_descriptor_different_font() {
 fn system_font_variation() {
     use crate::*;
 
-    let small = unsafe {
-        CTFont::wrap_under_create_rule(
-            CTFontCreateUIFontForLanguage(kCTFontSystemDetailFontType, 17., std::ptr::null())
-        )
-    };
+    let small = new_ui_font_for_language(kCTFontSystemDetailFontType, 19., None);
 
     // but we can still construct the CGFont by name
     let ps = small.postscript_name();
@@ -918,4 +924,10 @@ fn system_font_variation() {
     }
 
     dbg!(ct_var_font_desc);
+}
+
+#[test]
+fn ui_font() {
+    // pass some garbagey inputs
+    new_ui_font_for_language(kCTFontSystemDetailFontType, 10000009., Some(CFString::from("Gofld")));
 }

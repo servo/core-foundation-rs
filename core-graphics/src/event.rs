@@ -8,6 +8,7 @@ use foreign_types::ForeignType;
 use geometry::CGPoint;
 use libc::c_void;
 use std::mem::ManuallyDrop;
+use std::ptr;
 
 pub type CGEventField = u32;
 pub type CGKeyCode = u16;
@@ -414,8 +415,13 @@ macro_rules! CGEventMaskBit {
 }
 
 pub type CGEventTapProxy = *const c_void;
+pub enum CGEventTapCallbackResult {
+    Replace(CGEvent),
+    Keep,
+    Drop,
+}
 pub type CGEventTapCallBackFn<'tap_life> =
-    Box<dyn Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life>;
+    Box<dyn Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CGEventTapCallbackResult + 'tap_life>;
 type CGEventTapCallBackInternal = unsafe extern "C" fn(
     proxy: CGEventTapProxy,
     etype: CGEventType,
@@ -431,20 +437,21 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
     _user_info: *const c_void,
 ) -> ::sys::CGEventRef {
     let callback = _user_info as *mut CGEventTapCallBackFn;
-    let event = CGEvent::from_ptr(_event);
+    let event = ManuallyDrop::new(CGEvent::from_ptr(_event));
     let new_event = (*callback)(_proxy, _etype, &event);
-    let event = match new_event {
-        Some(new_event) => new_event,
-        None => event,
-    };
-    ManuallyDrop::new(event).as_ptr()
+    use self::CGEventTapCallbackResult::*;
+    match new_event {
+        Replace(new_event) => ManuallyDrop::new(new_event).as_ptr(),
+        Keep => _event,
+        Drop => ptr::null_mut(),
+    }
 }
 
 
 /// ```no_run
 ///extern crate core_foundation;
 ///use core_foundation::runloop::{kCFRunLoopCommonModes, CFRunLoop};
-///use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType};
+///use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType, CGEventTapCallbackResult};
 ///let current = CFRunLoop::get_current();
 ///match CGEventTap::new(
 ///     CGEventTapLocation::HID,
@@ -453,7 +460,7 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 ///     vec![CGEventType::MouseMoved],
 ///     |_a, _b, d| {
 ///         println!("{:?}", d.location());
-///         None
+///         CGEventTapCallbackResult::Keep
 ///     },
 /// ) {
 ///     Ok(tap) => unsafe {
@@ -470,12 +477,11 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 /// ```
 pub struct CGEventTap<'tap_life> {
     pub mach_port: CFMachPort,
-    pub callback_ref:
-        Box<dyn Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life>,
+    pub callback_ref: CGEventTapCallBackFn<'tap_life>,
 }
 
 impl<'tap_life> CGEventTap<'tap_life> {
-    pub fn new<F: Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life>(
+    pub fn new<F: Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CGEventTapCallbackResult + 'tap_life>(
         tap: CGEventTapLocation,
         place: CGEventTapPlacement,
         options: CGEventTapOptions,

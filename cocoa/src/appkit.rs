@@ -1087,6 +1087,7 @@ pub trait NSWindow: Sized {
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect;
 
     // Accessing Edited Status
+    unsafe fn isDocumentEdited(self) -> BOOL;
     unsafe fn setDocumentEdited_(self, documentEdited: BOOL);
 
     // Managing Titles
@@ -1669,6 +1670,10 @@ impl NSWindow for id {
     }
 
     // Accessing Edited Status
+
+    unsafe fn isDocumentEdited(self) -> BOOL {
+        msg_send![self, isDocumentEdited]
+    }
 
     unsafe fn setDocumentEdited_(self, documentEdited: BOOL) {
         msg_send![self, setDocumentEdited:documentEdited]

@@ -15,6 +15,9 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFString;
 use core_graphics::font::CGGlyph;
 use core_graphics::geometry::CGPoint;
+use core_graphics::base::{CGFloat};
+
+use crate::line::TypographicBounds;
 
 #[repr(C)]
 pub struct __CTRun(c_void);
@@ -80,6 +83,16 @@ impl CTRun {
                 vec.set_len(count as usize);
                 Cow::from(vec)
             }
+        }
+    }
+
+    pub fn get_typographic_bounds(&self) -> TypographicBounds {
+        let mut ascent = 0.0;
+        let mut descent = 0.0;
+        let mut leading = 0.0;
+        unsafe {
+            let width = CTRunGetTypographicBounds(self.as_concrete_TypeRef(), &mut ascent, &mut descent, &mut leading);
+            TypographicBounds { width, ascent, descent, leading }
         }
     }
 
@@ -149,4 +162,6 @@ extern {
     fn CTRunGetStringIndices(run: CTRunRef, range: CFRange, buffer: *const CFIndex);
     fn CTRunGetGlyphsPtr(run: CTRunRef) -> *const CGGlyph;
     fn CTRunGetGlyphs(run: CTRunRef, range: CFRange, buffer: *const CGGlyph);
+
+    fn CTRunGetTypographicBounds(line: CTRunRef, ascent: *mut CGFloat, descent: *mut CGFloat, leading: *mut CGFloat) -> CGFloat;
 }

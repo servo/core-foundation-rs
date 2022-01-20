@@ -91,7 +91,11 @@ impl CTRun {
         let mut descent = 0.0;
         let mut leading = 0.0;
         unsafe {
-            let width = CTRunGetTypographicBounds(self.as_concrete_TypeRef(), &mut ascent, &mut descent, &mut leading);
+            let range =  CFRange {
+        location: 0,
+        length: 0,
+    };
+            let width = CTRunGetTypographicBounds(self.as_concrete_TypeRef(), range, &mut ascent, &mut descent, &mut leading);
             TypographicBounds { width, ascent, descent, leading }
         }
     }
@@ -163,5 +167,5 @@ extern {
     fn CTRunGetGlyphsPtr(run: CTRunRef) -> *const CGGlyph;
     fn CTRunGetGlyphs(run: CTRunRef, range: CFRange, buffer: *const CGGlyph);
 
-    fn CTRunGetTypographicBounds(line: CTRunRef, ascent: *mut CGFloat, descent: *mut CGFloat, leading: *mut CGFloat) -> CGFloat;
+    fn CTRunGetTypographicBounds(line: CTRunRef, range: CFRange, ascent: *mut CGFloat, descent: *mut CGFloat, leading: *mut CGFloat) -> CGFloat;
 }

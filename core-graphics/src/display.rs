@@ -10,31 +10,31 @@
 #![allow(non_upper_case_globals)]
 
 use libc;
-use std::ptr;
 use std::ops::Deref;
+use std::ptr;
 
-pub use base::{CGError, boolean_t};
-pub use geometry::{CGRect, CGPoint, CGSize};
+pub use base::{boolean_t, CGError};
+pub use geometry::{CGPoint, CGRect, CGSize};
 
-use core_foundation::string::{CFString, CFStringRef};
 use core_foundation::base::{CFRetain, TCFType};
-use image::CGImage;
+use core_foundation::string::{CFString, CFStringRef};
 use foreign_types::ForeignType;
+use image::CGImage;
 
 pub type CGDirectDisplayID = u32;
-pub type CGWindowID        = u32;
+pub type CGWindowID = u32;
 
 pub const kCGNullWindowID: CGWindowID = 0 as CGWindowID;
 pub const kCGNullDirectDisplayID: CGDirectDisplayID = 0 as CGDirectDisplayID;
 
 pub type CGWindowListOption = u32;
 
-pub const kCGWindowListOptionAll:              CGWindowListOption    = 0;
-pub const kCGWindowListOptionOnScreenOnly:     CGWindowListOption    = 1 << 0;
+pub const kCGWindowListOptionAll: CGWindowListOption = 0;
+pub const kCGWindowListOptionOnScreenOnly: CGWindowListOption = 1 << 0;
 pub const kCGWindowListOptionOnScreenAboveWindow: CGWindowListOption = 1 << 1;
 pub const kCGWindowListOptionOnScreenBelowWindow: CGWindowListOption = 1 << 2;
-pub const kCGWindowListOptionIncludingWindow:  CGWindowListOption    = 1 << 3;
-pub const kCGWindowListExcludeDesktopElements: CGWindowListOption    = 1 << 4;
+pub const kCGWindowListOptionIncludingWindow: CGWindowListOption = 1 << 3;
+pub const kCGWindowListExcludeDesktopElements: CGWindowListOption = 1 << 4;
 
 pub type CGWindowImageOption = u32;
 
@@ -45,47 +45,48 @@ pub const kCGWindowImageOnlyShadows: CGWindowImageOption = 1 << 2;
 pub const kCGWindowImageBestResolution: CGWindowImageOption = 1 << 3;
 pub const kCGWindowImageNominalResolution: CGWindowImageOption = 1 << 4;
 
-pub const kDisplayModeValidFlag: u32               = 0x00000001;
-pub const kDisplayModeSafeFlag: u32                = 0x00000002;
-pub const kDisplayModeDefaultFlag: u32             = 0x00000004;
-pub const kDisplayModeAlwaysShowFlag: u32          = 0x00000008;
-pub const kDisplayModeNeverShowFlag: u32           = 0x00000080;
-pub const kDisplayModeNotResizeFlag: u32           = 0x00000010;
-pub const kDisplayModeRequiresPanFlag: u32         = 0x00000020;
-pub const kDisplayModeInterlacedFlag: u32          = 0x00000040;
-pub const kDisplayModeSimulscanFlag: u32           = 0x00000100;
-pub const kDisplayModeBuiltInFlag: u32             = 0x00000400;
-pub const kDisplayModeNotPresetFlag: u32           = 0x00000200;
-pub const kDisplayModeStretchedFlag: u32           = 0x00000800;
-pub const kDisplayModeNotGraphicsQualityFlag: u32  = 0x00001000;
-pub const kDisplayModeValidateAgainstDisplay: u32  = 0x00002000;
-pub const kDisplayModeTelevisionFlag: u32          = 0x00100000;
-pub const kDisplayModeValidForMirroringFlag: u32   = 0x00200000;
-pub const kDisplayModeAcceleratorBackedFlag: u32   = 0x00400000;
-pub const kDisplayModeValidForHiResFlag: u32       = 0x00800000;
-pub const kDisplayModeValidForAirPlayFlag: u32     = 0x01000000;
-pub const kDisplayModeNativeFlag: u32              = 0x02000000;
+pub const kDisplayModeValidFlag: u32 = 0x00000001;
+pub const kDisplayModeSafeFlag: u32 = 0x00000002;
+pub const kDisplayModeDefaultFlag: u32 = 0x00000004;
+pub const kDisplayModeAlwaysShowFlag: u32 = 0x00000008;
+pub const kDisplayModeNeverShowFlag: u32 = 0x00000080;
+pub const kDisplayModeNotResizeFlag: u32 = 0x00000010;
+pub const kDisplayModeRequiresPanFlag: u32 = 0x00000020;
+pub const kDisplayModeInterlacedFlag: u32 = 0x00000040;
+pub const kDisplayModeSimulscanFlag: u32 = 0x00000100;
+pub const kDisplayModeBuiltInFlag: u32 = 0x00000400;
+pub const kDisplayModeNotPresetFlag: u32 = 0x00000200;
+pub const kDisplayModeStretchedFlag: u32 = 0x00000800;
+pub const kDisplayModeNotGraphicsQualityFlag: u32 = 0x00001000;
+pub const kDisplayModeValidateAgainstDisplay: u32 = 0x00002000;
+pub const kDisplayModeTelevisionFlag: u32 = 0x00100000;
+pub const kDisplayModeValidForMirroringFlag: u32 = 0x00200000;
+pub const kDisplayModeAcceleratorBackedFlag: u32 = 0x00400000;
+pub const kDisplayModeValidForHiResFlag: u32 = 0x00800000;
+pub const kDisplayModeValidForAirPlayFlag: u32 = 0x01000000;
+pub const kDisplayModeNativeFlag: u32 = 0x02000000;
 
-pub const kDisplayModeSafetyFlags: u32             = 0x00000007;
+pub const kDisplayModeSafetyFlags: u32 = 0x00000007;
 
-pub const IO1BitIndexedPixels: &str =     "P";
-pub const IO2BitIndexedPixels: &str =     "PP";
-pub const IO4BitIndexedPixels: &str =     "PPPP";
-pub const IO8BitIndexedPixels: &str =     "PPPPPPPP";
-pub const IO16BitDirectPixels: &str =     "-RRRRRGGGGGBBBBB";
-pub const IO32BitDirectPixels: &str =     "--------RRRRRRRRGGGGGGGGBBBBBBBB";
-pub const kIO30BitDirectPixels: &str =    "--RRRRRRRRRRGGGGGGGGGGBBBBBBBBBB";
-pub const kIO64BitDirectPixels: &str =    "-16R16G16B16";
-pub const kIO16BitFloatPixels: &str =     "-16FR16FG16FB16";
-pub const kIO32BitFloatPixels: &str =     "-32FR32FG32FB32";
-pub const IOYUV422Pixels: &str =          "Y4U2V2";
-pub const IO8BitOverlayPixels: &str =     "O8";
+pub const IO1BitIndexedPixels: &str = "P";
+pub const IO2BitIndexedPixels: &str = "PP";
+pub const IO4BitIndexedPixels: &str = "PPPP";
+pub const IO8BitIndexedPixels: &str = "PPPPPPPP";
+pub const IO16BitDirectPixels: &str = "-RRRRRGGGGGBBBBB";
+pub const IO32BitDirectPixels: &str = "--------RRRRRRRRGGGGGGGGBBBBBBBB";
+pub const kIO30BitDirectPixels: &str = "--RRRRRRRRRRGGGGGGGGGGBBBBBBBBBB";
+pub const kIO64BitDirectPixels: &str = "-16R16G16B16";
+pub const kIO16BitFloatPixels: &str = "-16FR16FG16FB16";
+pub const kIO32BitFloatPixels: &str = "-32FR32FG32FB32";
+pub const IOYUV422Pixels: &str = "Y4U2V2";
+pub const IO8BitOverlayPixels: &str = "O8";
 
-
-pub use core_foundation::dictionary::{ CFDictionary, CFDictionaryRef, CFDictionaryGetValueIfPresent };
-pub use core_foundation::array::{ CFArray, CFArrayRef };
-pub use core_foundation::array::{ CFArrayGetCount, CFArrayGetValueAtIndex };
-pub use core_foundation::base::{  CFIndex, CFRelease, CFTypeRef };
+pub use core_foundation::array::{CFArray, CFArrayRef};
+pub use core_foundation::array::{CFArrayGetCount, CFArrayGetValueAtIndex};
+pub use core_foundation::base::{CFIndex, CFRelease, CFTypeRef};
+pub use core_foundation::dictionary::{
+    CFDictionary, CFDictionaryGetValueIfPresent, CFDictionaryRef,
+};
 
 pub type CGDisplayConfigRef = *mut libc::c_void;
 
@@ -537,7 +538,8 @@ impl CGDisplayMode {
                     .map(|value0| {
                         let x = *value0.deref() as *mut ::sys::CGDisplayMode;
                         unsafe { CGDisplayMode::from_ptr(x) }
-                    }).collect();
+                    })
+                    .collect();
                 Some(vec)
             }
             None => None,
@@ -604,7 +606,7 @@ impl CGDisplayMode {
             16
         } else if pixel_encoding.eq_ignore_ascii_case(IO8BitIndexedPixels) {
             8
-        }else{
+        } else {
             0
         }
     }

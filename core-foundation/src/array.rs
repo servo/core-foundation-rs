@@ -11,14 +11,14 @@
 
 pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::CFIndex;
-use core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
-use std::mem;
+use core_foundation_sys::base::{kCFAllocatorDefault, CFRelease, CFTypeRef};
 use std::marker::PhantomData;
+use std::mem;
 use std::os::raw::c_void;
 use std::ptr;
 use ConcreteCFType;
 
-use base::{CFIndexConvertible, TCFType, CFRange};
+use base::{CFIndexConvertible, CFRange, TCFType};
 use base::{FromVoid, ItemRef};
 
 /// A heterogeneous immutable array.
@@ -63,24 +63,34 @@ unsafe impl ConcreteCFType for CFArray<*const c_void> {}
 
 impl<T> CFArray<T> {
     /// Creates a new `CFArray` with the given elements, which must implement `Copy`.
-    pub fn from_copyable(elems: &[T]) -> CFArray<T> where T: Copy {
+    pub fn from_copyable(elems: &[T]) -> CFArray<T>
+    where
+        T: Copy,
+    {
         unsafe {
-            let array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                          elems.as_ptr() as *const *const c_void,
-                                          elems.len().to_CFIndex(),
-                                          ptr::null());
+            let array_ref = CFArrayCreate(
+                kCFAllocatorDefault,
+                elems.as_ptr() as *const *const c_void,
+                elems.len().to_CFIndex(),
+                ptr::null(),
+            );
             TCFType::wrap_under_create_rule(array_ref)
         }
     }
 
     /// Creates a new `CFArray` with the given elements, which must be `CFType` objects.
-    pub fn from_CFTypes(elems: &[T]) -> CFArray<T> where T: TCFType {
+    pub fn from_CFTypes(elems: &[T]) -> CFArray<T>
+    where
+        T: TCFType,
+    {
         unsafe {
             let elems: Vec<CFTypeRef> = elems.iter().map(|elem| elem.as_CFTypeRef()).collect();
-            let array_ref = CFArrayCreate(kCFAllocatorDefault,
-                                          elems.as_ptr(),
-                                          elems.len().to_CFIndex(),
-                                          &kCFTypeArrayCallBacks);
+            let array_ref = CFArrayCreate(
+                kCFAllocatorDefault,
+                elems.as_ptr(),
+                elems.len().to_CFIndex(),
+                &kCFTypeArrayCallBacks,
+            );
             TCFType::wrap_under_create_rule(array_ref)
         }
     }
@@ -115,20 +125,24 @@ impl<T> CFArray<T> {
 
     #[inline]
     pub fn len(&self) -> CFIndex {
-        unsafe {
-            CFArrayGetCount(self.0)
-        }
+        unsafe { CFArrayGetCount(self.0) }
     }
 
     #[inline]
-    pub unsafe fn get_unchecked<'a>(&'a self, index: CFIndex) -> ItemRef<'a, T> where T: FromVoid {
+    pub unsafe fn get_unchecked<'a>(&'a self, index: CFIndex) -> ItemRef<'a, T>
+    where
+        T: FromVoid,
+    {
         T::from_void(CFArrayGetValueAtIndex(self.0, index))
     }
 
     #[inline]
-    pub fn get<'a>(&'a self, index: CFIndex) -> Option<ItemRef<'a, T>> where T: FromVoid {
+    pub fn get<'a>(&'a self, index: CFIndex) -> Option<ItemRef<'a, T>>
+    where
+        T: FromVoid,
+    {
         if index < self.len() {
-            Some(unsafe { T::from_void(CFArrayGetValueAtIndex(self.0, index)) } )
+            Some(unsafe { T::from_void(CFArrayGetValueAtIndex(self.0, index)) })
         } else {
             None
         }
@@ -146,7 +160,7 @@ impl<T> CFArray<T> {
     pub fn get_all_values(&self) -> Vec<*const c_void> {
         self.get_values(CFRange {
             location: 0,
-            length: self.len()
+            length: self.len(),
         })
     }
 }
@@ -163,8 +177,8 @@ impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::mem;
     use base::CFType;
+    use std::mem;
 
     #[test]
     fn to_untyped_correct_retain_count() {
@@ -216,15 +230,16 @@ mod tests {
 
     #[test]
     fn iter_untyped_array() {
-        use string::{CFString, CFStringRef};
         use base::TCFTypeRef;
+        use string::{CFString, CFStringRef};
 
         let cf_string = CFString::from_static_string("bar");
         let array: CFArray = CFArray::from_CFTypes(&[cf_string.clone()]).into_untyped();
 
-        let cf_strings = array.iter().map(|ptr| {
-            unsafe { CFString::wrap_under_get_rule(CFStringRef::from_void_ptr(*ptr)) }
-        }).collect::<Vec<_>>();
+        let cf_strings = array
+            .iter()
+            .map(|ptr| unsafe { CFString::wrap_under_get_rule(CFStringRef::from_void_ptr(*ptr)) })
+            .collect::<Vec<_>>();
         let strings = cf_strings.iter().map(|s| s.to_string()).collect::<Vec<_>>();
         assert_eq!(cf_string.retain_count(), 3);
         assert_eq!(&strings[..], &["bar"]);

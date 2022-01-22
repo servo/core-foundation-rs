@@ -29,18 +29,20 @@ extern "C" {
 
     // fn CFPropertyListCreateDeepCopy
     // fn CFPropertyListIsValid
-    pub fn CFPropertyListCreateWithData(allocator: CFAllocatorRef,
-                                        data: CFDataRef,
-                                        options: CFPropertyListMutabilityOptions,
-                                        format: *mut CFPropertyListFormat,
-                                        error: *mut CFErrorRef)
-                                        -> CFPropertyListRef;
+    pub fn CFPropertyListCreateWithData(
+        allocator: CFAllocatorRef,
+        data: CFDataRef,
+        options: CFPropertyListMutabilityOptions,
+        format: *mut CFPropertyListFormat,
+        error: *mut CFErrorRef,
+    ) -> CFPropertyListRef;
     // fn CFPropertyListCreateWithStream
     // fn CFPropertyListWrite
-    pub fn CFPropertyListCreateData(allocator: CFAllocatorRef,
-                                    propertyList: CFPropertyListRef,
-                                    format: CFPropertyListFormat,
-                                    options: CFOptionFlags,
-                                    error: *mut CFErrorRef)
-                                    -> CFDataRef;
+    pub fn CFPropertyListCreateData(
+        allocator: CFAllocatorRef,
+        propertyList: CFPropertyListRef,
+        format: CFPropertyListFormat,
+        options: CFOptionFlags,
+        error: *mut CFErrorRef,
+    ) -> CFDataRef;
 }

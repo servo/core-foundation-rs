@@ -1,32 +1,30 @@
 extern crate cocoa;
 
-use cocoa::base::{selector, id, nil, NO};
+use cocoa::base::{id, nil, selector, NO};
 
-
-use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
-                        NSString};
-use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSWindow,
-                    NSMenu, NSMenuItem, NSTabView, NSWindowStyleMask, NSBackingStoreType,
-                    NSTabViewItem, NSRunningApplication, NSApplicationActivateIgnoringOtherApps};
-
+use cocoa::appkit::{
+    NSApp, NSApplication, NSApplicationActivateIgnoringOtherApps,
+    NSApplicationActivationPolicyRegular, NSBackingStoreType, NSMenu, NSMenuItem,
+    NSRunningApplication, NSTabView, NSTabViewItem, NSWindow, NSWindowStyleMask,
+};
+use cocoa::foundation::{NSAutoreleasePool, NSPoint, NSProcessInfo, NSRect, NSSize, NSString};
 
 fn main() {
     unsafe {
-
         // create a tab View
         let tab_view = NSTabView::new(nil)
             .initWithFrame_(NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)));
 
         // create a tab view item
-        let tab_view_item = NSTabViewItem::new(nil)
-            .initWithIdentifier_(NSString::alloc(nil).init_str("TabView1"));
+        let tab_view_item =
+            NSTabViewItem::new(nil).initWithIdentifier_(NSString::alloc(nil).init_str("TabView1"));
 
         tab_view_item.setLabel_(NSString::alloc(nil).init_str("Tab view item 1"));
         tab_view.addTabViewItem_(tab_view_item);
 
         // create a second tab view item
-        let tab_view_item2 = NSTabViewItem::new(nil)
-            .initWithIdentifier_(NSString::alloc(nil).init_str("TabView2"));
+        let tab_view_item2 =
+            NSTabViewItem::new(nil).initWithIdentifier_(NSString::alloc(nil).init_str("TabView2"));
 
         tab_view_item2.setLabel_(NSString::alloc(nil).init_str("Tab view item 2"));
         tab_view.addTabViewItem_(tab_view_item2);
@@ -63,16 +61,18 @@ unsafe fn create_app(title: id, content: id) -> id {
     app_menu_item.setSubmenu_(app_menu);
 
     // create Window
-    let window = NSWindow::alloc(nil).initWithContentRect_styleMask_backing_defer_(
-		NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
-		NSWindowStyleMask::NSTitledWindowMask |
-            NSWindowStyleMask::NSClosableWindowMask |
-            NSWindowStyleMask::NSResizableWindowMask |
-            NSWindowStyleMask::NSMiniaturizableWindowMask |
-            NSWindowStyleMask::NSUnifiedTitleAndToolbarWindowMask,
-		NSBackingStoreType::NSBackingStoreBuffered,
-		NO
-	).autorelease();
+    let window = NSWindow::alloc(nil)
+        .initWithContentRect_styleMask_backing_defer_(
+            NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
+            NSWindowStyleMask::NSTitledWindowMask
+                | NSWindowStyleMask::NSClosableWindowMask
+                | NSWindowStyleMask::NSResizableWindowMask
+                | NSWindowStyleMask::NSMiniaturizableWindowMask
+                | NSWindowStyleMask::NSUnifiedTitleAndToolbarWindowMask,
+            NSBackingStoreType::NSBackingStoreBuffered,
+            NO,
+        )
+        .autorelease();
     window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
     window.center();
 

@@ -9,24 +9,27 @@
 
 use std::os::raw::c_void;
 
-use base::{CFTypeID, CFAllocatorRef};
-use url::CFURLRef;
+use base::{CFAllocatorRef, CFTypeID};
 use dictionary::CFDictionaryRef;
 use string::CFStringRef;
+use url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFBundle(c_void);
 
 pub type CFBundleRef = *mut __CFBundle;
 
-extern {
+extern "C" {
     /*
      * CFBundle.h
      */
     pub fn CFBundleCreate(allocator: CFAllocatorRef, bundleURL: CFURLRef) -> CFBundleRef;
 
     pub fn CFBundleGetBundleWithIdentifier(bundleID: CFStringRef) -> CFBundleRef;
-    pub fn CFBundleGetFunctionPointerForName(bundle: CFBundleRef, function_name: CFStringRef) -> *const c_void;
+    pub fn CFBundleGetFunctionPointerForName(
+        bundle: CFBundleRef,
+        function_name: CFStringRef,
+    ) -> *const c_void;
     pub fn CFBundleGetMainBundle() -> CFBundleRef;
     pub fn CFBundleGetInfoDictionary(bundle: CFBundleRef) -> CFDictionaryRef;
 

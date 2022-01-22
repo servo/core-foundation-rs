@@ -15,6 +15,6 @@ extern "C" {
         port: CFMachPortRef,
         order: CFIndex,
     ) -> CFRunLoopSourceRef;
-    
+
     pub fn CFMachPortGetTypeID() -> CFTypeID;
 }

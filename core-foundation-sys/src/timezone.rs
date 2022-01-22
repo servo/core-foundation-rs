@@ -10,7 +10,7 @@
 use std::os::raw::c_void;
 
 use base::{CFAllocatorRef, CFTypeID};
-use date::{CFTimeInterval, CFAbsoluteTime};
+use date::{CFAbsoluteTime, CFTimeInterval};
 use string::CFStringRef;
 
 #[repr(C)]
@@ -18,10 +18,13 @@ pub struct __CFTimeZone(c_void);
 
 pub type CFTimeZoneRef = *const __CFTimeZone;
 
-extern {
+extern "C" {
     pub fn CFTimeZoneCopySystem() -> CFTimeZoneRef;
     pub fn CFTimeZoneCopyDefault() -> CFTimeZoneRef;
-    pub fn CFTimeZoneCreateWithTimeIntervalFromGMT(allocator: CFAllocatorRef, interval: CFTimeInterval) -> CFTimeZoneRef;
+    pub fn CFTimeZoneCreateWithTimeIntervalFromGMT(
+        allocator: CFAllocatorRef,
+        interval: CFTimeInterval,
+    ) -> CFTimeZoneRef;
     pub fn CFTimeZoneGetSecondsFromGMT(tz: CFTimeZoneRef, time: CFAbsoluteTime) -> CFTimeInterval;
 
     pub fn CFTimeZoneGetTypeID() -> CFTypeID;

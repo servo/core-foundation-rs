@@ -1,11 +1,12 @@
 extern crate cocoa;
 
-use cocoa::base::{selector, nil, NO};
-use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
-                        NSString};
-use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSWindow,
-                    NSBackingStoreBuffered, NSMenu, NSMenuItem, NSWindowStyleMask,
-                    NSRunningApplication, NSApplicationActivateIgnoringOtherApps};
+use cocoa::appkit::{
+    NSApp, NSApplication, NSApplicationActivateIgnoringOtherApps,
+    NSApplicationActivationPolicyRegular, NSBackingStoreBuffered, NSMenu, NSMenuItem,
+    NSRunningApplication, NSWindow, NSWindowStyleMask,
+};
+use cocoa::base::{nil, selector, NO};
+use cocoa::foundation::{NSAutoreleasePool, NSPoint, NSProcessInfo, NSRect, NSSize, NSString};
 
 fn main() {
     unsafe {
@@ -35,11 +36,12 @@ fn main() {
 
         // create Window
         let window = NSWindow::alloc(nil)
-            .initWithContentRect_styleMask_backing_defer_(NSRect::new(NSPoint::new(0., 0.),
-                                                                      NSSize::new(200., 200.)),
-                                                          NSWindowStyleMask::NSTitledWindowMask,
-                                                          NSBackingStoreBuffered,
-                                                          NO)
+            .initWithContentRect_styleMask_backing_defer_(
+                NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
+                NSWindowStyleMask::NSTitledWindowMask,
+                NSBackingStoreBuffered,
+                NO,
+            )
             .autorelease();
         window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
         window.center();

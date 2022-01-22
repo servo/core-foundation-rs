@@ -21,9 +21,7 @@ foreign_type! {
 
 impl CGEventSource {
     pub fn type_id() -> CFTypeID {
-        unsafe {
-            CGEventSourceGetTypeID()
-        }
+        unsafe { CGEventSourceGetTypeID() }
     }
 
     pub fn new(state_id: CGEventSourceStateID) -> Result<Self, ()> {
@@ -39,7 +37,7 @@ impl CGEventSource {
 }
 
 #[link(name = "CoreGraphics", kind = "framework")]
-extern {
+extern "C" {
     /// Return the type identifier for the opaque type `CGEventSourceRef'.
     fn CGEventSourceGetTypeID() -> CFTypeID;
 

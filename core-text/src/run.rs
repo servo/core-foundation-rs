@@ -7,15 +7,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use core_foundation::base::{CFIndex, CFRange, CFType, CFTypeID, TCFType};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
+use core_foundation::string::CFString;
+use core_graphics::base::CGFloat;
+use core_graphics::font::CGGlyph;
+use core_graphics::geometry::CGPoint;
 use std::borrow::Cow;
 use std::os::raw::c_void;
 use std::slice;
-use core_foundation::base::{CFIndex, CFTypeID, TCFType, CFType, CFRange};
-use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
-use core_foundation::string::CFString;
-use core_graphics::font::CGGlyph;
-use core_graphics::geometry::CGPoint;
-use core_graphics::base::{CGFloat};
 
 use crate::line::TypographicBounds;
 
@@ -41,9 +41,7 @@ impl CTRun {
         }
     }
     pub fn glyph_count(&self) -> CFIndex {
-        unsafe {
-            CTRunGetGlyphCount(self.0)
-        }
+        unsafe { CTRunGetGlyphCount(self.0) }
     }
 
     pub fn glyphs(&self) -> Cow<[CGGlyph]> {
@@ -91,12 +89,26 @@ impl CTRun {
         let mut descent = 0.0;
         let mut leading = 0.0;
         unsafe {
-            let range =  CFRange {
-        location: 0,
-        length: 0,
-    };
-            let width = CTRunGetTypographicBounds(self.as_concrete_TypeRef(), range, &mut ascent, &mut descent, &mut leading);
-            TypographicBounds { width, ascent, descent, leading }
+            // The portion of the run to calculate the typographic bounds for. By setting this to 0,
+            // CoreText will measure the bounds from start to end, see https://developer.apple.com/documentation/coretext/1510569-ctrungettypographicbounds?language=objc.
+            let range = CFRange {
+                location: 0,
+                length: 0,
+            };
+
+            let width = CTRunGetTypographicBounds(
+                self.as_concrete_TypeRef(),
+                range,
+                &mut ascent,
+                &mut descent,
+                &mut leading,
+            );
+            TypographicBounds {
+                width,
+                ascent,
+                descent,
+                leading,
+            }
         }
     }
 
@@ -124,21 +136,30 @@ impl CTRun {
 #[test]
 fn create_runs() {
     use core_foundation::attributed_string::CFMutableAttributedString;
-    use string_attributes::*;
-    use line::*;
     use font;
+    use line::*;
+    use string_attributes::*;
     let mut string = CFMutableAttributedString::new();
     string.replace_str(&CFString::new("Food"), CFRange::init(0, 0));
     let len = string.char_len();
     unsafe {
-        string.set_attribute(CFRange::init(0, len), kCTFontAttributeName, &font::new_from_name("Helvetica", 16.).unwrap());
+        string.set_attribute(
+            CFRange::init(0, len),
+            kCTFontAttributeName,
+            &font::new_from_name("Helvetica", 16.).unwrap(),
+        );
     }
     let line = CTLine::new_with_attributed_string(string.as_concrete_TypeRef());
     let runs = line.glyph_runs();
     assert_eq!(runs.len(), 1);
     for run in runs.iter() {
         assert_eq!(run.glyph_count(), 4);
-        let font = run.attributes().unwrap().get(CFString::new("NSFont")).downcast::<font::CTFont>().unwrap();
+        let font = run
+            .attributes()
+            .unwrap()
+            .get(CFString::new("NSFont"))
+            .downcast::<font::CTFont>()
+            .unwrap();
         assert_eq!(font.pt_size(), 16.);
 
         let positions = run.positions();
@@ -156,7 +177,7 @@ fn create_runs() {
 }
 
 #[link(name = "CoreText", kind = "framework")]
-extern {
+extern "C" {
     fn CTRunGetTypeID() -> CFTypeID;
     fn CTRunGetAttributes(run: CTRunRef) -> CFDictionaryRef;
     fn CTRunGetGlyphCount(run: CTRunRef) -> CFIndex;
@@ -167,5 +188,11 @@ extern {
     fn CTRunGetGlyphsPtr(run: CTRunRef) -> *const CGGlyph;
     fn CTRunGetGlyphs(run: CTRunRef, range: CFRange, buffer: *const CGGlyph);
 
-    fn CTRunGetTypographicBounds(line: CTRunRef, range: CFRange, ascent: *mut CGFloat, descent: *mut CGFloat, leading: *mut CGFloat) -> CGFloat;
+    fn CTRunGetTypographicBounds(
+        line: CTRunRef,
+        range: CFRange,
+        ascent: *mut CGFloat,
+        descent: *mut CGFloat,
+        leading: *mut CGFloat,
+    ) -> CGFloat;
 }

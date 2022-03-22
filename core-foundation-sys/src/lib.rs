@@ -10,6 +10,16 @@
 
 #![cfg_attr(all(feature="mac_os_10_7_support", feature="mac_os_10_8_features"), feature(linkage))] // back-compat requires weak linkage
 
+// Link to CoreFoundation on any Apple device.
+//
+// We don't use `target_vendor` since that is going to be deprecated:
+// https://github.com/rust-lang/lang-team/issues/102
+#[cfg_attr(
+    any(target_os = "macos", target_os = "ios", target_os = "tvos"),
+    link(name = "CoreFoundation", kind = "framework")
+)]
+extern "C" {}
+
 pub mod array;
 pub mod attributed_string;
 pub mod base;

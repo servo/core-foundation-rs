@@ -78,6 +78,54 @@ pub const kCTFontOptionsDefault: CTFontOptions = 0;
 pub const kCTFontOptionsPreventAutoActivation: CTFontOptions = 1 << 0;
 pub const kCTFontOptionsPreferSystemFont: CTFontOptions = 1 << 2;
 
+pub enum CTFontNameSpecifier {
+    Copyright,
+    Family,
+    SubFamily,
+    Style,
+    Unique,
+    Full,
+    Version,
+    PostScript,
+    Trademark,
+    Manufacturer,
+    Designer,
+    Description,
+    VendorURL,
+    DesignerURL,
+    License,
+    LicenseURL,
+    SampleText,
+    PostScriptCID,
+}
+
+impl Into<CFStringRef> for CTFontNameSpecifier {
+    fn into(self) -> CFStringRef {
+        unsafe {
+            match self {
+                CTFontNameSpecifier::Copyright => kCTFontCopyrightNameKey,
+                CTFontNameSpecifier::Family => kCTFontFamilyNameKey,
+                CTFontNameSpecifier::SubFamily => kCTFontSubFamilyNameKey,
+                CTFontNameSpecifier::Style => kCTFontStyleNameKey,
+                CTFontNameSpecifier::Unique => kCTFontUniqueNameKey,
+                CTFontNameSpecifier::Full => kCTFontFullNameKey,
+                CTFontNameSpecifier::Version => kCTFontVersionNameKey,
+                CTFontNameSpecifier::PostScript => kCTFontPostScriptNameKey,
+                CTFontNameSpecifier::Trademark => kCTFontTrademarkNameKey,
+                CTFontNameSpecifier::Manufacturer => kCTFontManufacturerNameKey,
+                CTFontNameSpecifier::Designer => kCTFontDesignerNameKey,
+                CTFontNameSpecifier::Description => kCTFontDescriptionNameKey,
+                CTFontNameSpecifier::VendorURL => kCTFontVendorURLNameKey,
+                CTFontNameSpecifier::DesignerURL => kCTFontDesignerURLNameKey,
+                CTFontNameSpecifier::License => kCTFontLicenseNameKey,
+                CTFontNameSpecifier::LicenseURL => kCTFontLicenseURLNameKey,
+                CTFontNameSpecifier::SampleText => kCTFontSampleTextNameKey,
+                CTFontNameSpecifier::PostScriptCID => kCTFontPostScriptCIDNameKey,
+            }
+        }
+    }
+}
+
 #[repr(C)]
 pub struct __CTFont(c_void);
 
@@ -221,46 +269,45 @@ impl CTFont {
     }
 
     // Names
-    pub fn family_name(&self) -> String {
+    pub fn get_string_by_name_key(&self, name_key: CTFontNameSpecifier) -> Option<String> {
         unsafe {
-            let value = get_string_by_name_key(self, kCTFontFamilyNameKey);
-            value.expect("Fonts should always have a family name.")
+            let result = CTFontCopyName(self.as_concrete_TypeRef(), name_key.into());
+            if result.is_null() {
+                None
+            } else {
+                Some(CFString::wrap_under_create_rule(result).to_string())
+            }
         }
+    }
+
+    pub fn family_name(&self) -> String {
+        let value = self.get_string_by_name_key(CTFontNameSpecifier::Family);
+        value.expect("Fonts should always have a family name.")
     }
 
     pub fn face_name(&self) -> String {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontSubFamilyNameKey);
-            value.expect("Fonts should always have a face name.")
-        }
+        let value = self.get_string_by_name_key(CTFontNameSpecifier::SubFamily);
+        value.expect("Fonts should always have a face name.")
     }
 
     pub fn unique_name(&self) -> String {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontUniqueNameKey);
-            value.expect("Fonts should always have a unique name.")
-        }
+        let value = self.get_string_by_name_key(CTFontNameSpecifier::Unique);
+        value.expect("Fonts should always have a unique name.")
     }
 
     pub fn postscript_name(&self) -> String {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontPostScriptNameKey);
-            value.expect("Fonts should always have a PostScript name.")
-        }
+        let value = self.get_string_by_name_key(CTFontNameSpecifier::PostScript);
+        value.expect("Fonts should always have a PostScript name.")
     }
 
     pub fn display_name(&self) -> String {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontFullNameKey);
-            value.expect("Fonts should always have a PostScript name.")
-        }
+        let value = self.get_string_by_name_key(CTFontNameSpecifier::Full);
+        value.expect("Fonts should always have a PostScript name.")
     }
 
     pub fn style_name(&self) -> String {
-        unsafe {
-            let value = get_string_by_name_key(self, kCTFontStyleNameKey);
-            value.expect("Fonts should always have a style name.")
-        }
+        let value = self.get_string_by_name_key(CTFontNameSpecifier::Style);
+        value.expect("Fonts should always have a style name.")
     }
 
     pub fn all_traits(&self) -> CTFontTraits {
@@ -460,30 +507,17 @@ impl CTFont {
 }
 
 // Helper methods
-fn get_string_by_name_key(font: &CTFont, name_key: CFStringRef) -> Option<String> {
-    unsafe {
-        let result = CTFontCopyName(font.as_concrete_TypeRef(), name_key);
-        if result.is_null() {
-            None
-        } else {
-            Some(CFString::wrap_under_create_rule(result).to_string())
-        }
-    }
-}
-
 pub fn debug_font_names(font: &CTFont) {
-    fn get_key(font: &CTFont, key: CFStringRef) -> String {
-        get_string_by_name_key(font, key).unwrap()
+    fn get_key(font: &CTFont, key: CTFontNameSpecifier) -> String {
+        font.get_string_by_name_key(key).unwrap()
     }
 
-    unsafe {
-        println!("kCTFontFamilyNameKey: {}", get_key(font, kCTFontFamilyNameKey));
-        println!("kCTFontSubFamilyNameKey: {}", get_key(font, kCTFontSubFamilyNameKey));
-        println!("kCTFontStyleNameKey: {}", get_key(font, kCTFontStyleNameKey));
-        println!("kCTFontUniqueNameKey: {}", get_key(font, kCTFontUniqueNameKey));
-        println!("kCTFontFullNameKey: {}", get_key(font, kCTFontFullNameKey));
-        println!("kCTFontPostScriptNameKey: {}", get_key(font, kCTFontPostScriptNameKey));
-    }
+    println!("kCTFontFamilyNameKey: {}", get_key(font, CTFontNameSpecifier::Family));
+    println!("kCTFontSubFamilyNameKey: {}", get_key(font, CTFontNameSpecifier::SubFamily));
+    println!("kCTFontStyleNameKey: {}", get_key(font, CTFontNameSpecifier::Style));
+    println!("kCTFontUniqueNameKey: {}", get_key(font, CTFontNameSpecifier::Unique));
+    println!("kCTFontFullNameKey: {}", get_key(font, CTFontNameSpecifier::Full));
+    println!("kCTFontPostScriptNameKey: {}", get_key(font, CTFontNameSpecifier::PostScript));
 }
 
 pub fn debug_font_traits(font: &CTFont) {
@@ -517,24 +551,24 @@ extern {
      */
 
     /* Name Specifier Constants */
-    //static kCTFontCopyrightNameKey: CFStringRef;
+    static kCTFontCopyrightNameKey: CFStringRef;
     static kCTFontFamilyNameKey: CFStringRef;
     static kCTFontSubFamilyNameKey: CFStringRef;
     static kCTFontStyleNameKey: CFStringRef;
     static kCTFontUniqueNameKey: CFStringRef;
     static kCTFontFullNameKey: CFStringRef;
-    //static kCTFontVersionNameKey: CFStringRef;
+    static kCTFontVersionNameKey: CFStringRef;
     static kCTFontPostScriptNameKey: CFStringRef;
-    //static kCTFontTrademarkNameKey: CFStringRef;
-    //static kCTFontManufacturerNameKey: CFStringRef;
-    //static kCTFontDesignerNameKey: CFStringRef;
-    //static kCTFontDescriptionNameKey: CFStringRef;
-    //static kCTFontVendorURLNameKey: CFStringRef;
-    //static kCTFontDesignerURLNameKey: CFStringRef;
-    //static kCTFontLicenseNameKey: CFStringRef;
-    //static kCTFontLicenseURLNameKey: CFStringRef;
-    //static kCTFontSampleTextNameKey: CFStringRef;
-    //static kCTFontPostScriptCIDNameKey: CFStringRef;
+    static kCTFontTrademarkNameKey: CFStringRef;
+    static kCTFontManufacturerNameKey: CFStringRef;
+    static kCTFontDesignerNameKey: CFStringRef;
+    static kCTFontDescriptionNameKey: CFStringRef;
+    static kCTFontVendorURLNameKey: CFStringRef;
+    static kCTFontDesignerURLNameKey: CFStringRef;
+    static kCTFontLicenseNameKey: CFStringRef;
+    static kCTFontLicenseURLNameKey: CFStringRef;
+    static kCTFontSampleTextNameKey: CFStringRef;
+    static kCTFontPostScriptCIDNameKey: CFStringRef;
 
     #[cfg(test)]
     static kCTFontVariationAxisIdentifierKey: CFStringRef;

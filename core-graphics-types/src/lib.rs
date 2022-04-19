@@ -10,5 +10,7 @@
 extern crate libc;
 extern crate core_foundation;
 
+#[cfg(target_os = "macos")]
 pub mod base;
+#[cfg(target_os = "macos")]
 pub mod geometry;

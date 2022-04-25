@@ -218,6 +218,24 @@ bitflags! {
     }
 }
 
+bitflags! {
+    pub struct NSMenuProperties: NSUInteger {
+        const NSMenuPropertyItemTitle                    = 1 << 0;
+        const NSMenuPropertyItemAttributedTitle          = 1 << 1;
+        const NSMenuPropertyItemKeyEquivalent            = 1 << 2;
+        const NSMenuPropertyItemImage                    = 1 << 3;
+        const NSMenuPropertyItemEnabled                  = 1 << 4;
+        const NSMenuPropertyItemAccessibilityDescription = 1 << 5;
+    }
+}
+
+#[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSUserInterfaceLayoutDirection {
+    NSUserInterfaceLayoutDirectionLeftToRight = 0,
+    NSUserInterfaceLayoutDirectionRightToLeft = 1,
+}
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSWindowTitleVisibility {
@@ -798,33 +816,303 @@ pub trait NSMenu: Sized {
         msg_send![class!(NSMenu), new]
     }
 
-    unsafe fn initWithTitle_(self, title: id /* NSString */) -> id;
-    unsafe fn setAutoenablesItems(self, state: BOOL);
 
+    unsafe fn menuBarVisible(_: Self) -> BOOL {
+        msg_send![class!(NSMenu), menuBarVisible]
+    }
+
+    unsafe fn setMenuBarVisible_(_: Self, visible: BOOL) {
+        msg_send![class!(NSMenu), setMenuBarVisible: visible]
+    }
+
+    unsafe fn popUpContextMenu_withEvent_forView_(_: Self, menu: id, event: id, view: id) {
+        msg_send![class!(NSMenu), popUpContextMenu:menu withEvent:event forView:view]
+    }
+
+    unsafe fn popUpContextMenu_withEvent_forView_withFont(_: Self, menu: id, event: id, view: id, font: id) {
+        msg_send![class!(NSMenu), popUpContextMenu:menu withEvent:event forView:view withFont:font]
+    }
+
+    unsafe fn initWithTitle_(self, title: id /* NSString */) -> id;
+
+    unsafe fn insertItem_AtIndex_(self, menu_item: id, index: NSInteger) -> id;
+    unsafe fn insertItemWithTitle_action_keyEquivalent_atIndex(
+        self,
+        title: id, /* NSString */
+        action: SEL,
+        key: id,
+        index: NSInteger,
+    ) -> id;
     unsafe fn addItem_(self, menu_item: id);
     unsafe fn addItemWithTitle_action_keyEquivalent(self, title: id, action: SEL, key: id) -> id;
+    unsafe fn removeItem_(self, menu_item: id);
+    unsafe fn removeItemAtIndex_(self, index: NSInteger);
+    unsafe fn itemChanged_(self, menu_item: id);
+    unsafe fn removeAllItems(self);
+
+    unsafe fn itemWithTag_(self, tag: NSInteger) -> id;
+    unsafe fn itemWithTitle_(self, title: id /* NSString */) -> id;
     unsafe fn itemAtIndex_(self, index: NSInteger) -> id;
+    unsafe fn numberOfItems(self) -> NSInteger;
+    unsafe fn itemArray(self) -> id /* NSArray */;
+
+    unsafe fn indexOfItem_(self, menu_item: id) -> NSInteger;
+    unsafe fn indexOfItemWithTitle_(self, title: id /* NSString */) -> NSInteger;
+    unsafe fn indexOfItemWithTag_(self, tag: NSInteger) -> NSInteger;
+    unsafe fn indexOfItemWithTarget_andAction_(self, target: id, action: SEL) -> NSInteger;
+    unsafe fn indexOfItemWithRepresentedObject_(self, object: id) -> NSInteger;
+    unsafe fn indexOfItemWithSubmenu_(self, submenu: id) -> NSInteger;
+
+    unsafe fn setSubmenu_forItem_(self, submenu: id, menu_item: id);
+    unsafe fn supermenu(self) -> id;
+
+    unsafe fn autoenablesItems(self) -> BOOL;
+    unsafe fn setAutoenablesItems(self, state: BOOL);
+    unsafe fn update(self);
+
+    unsafe fn font(self) -> id;
+    unsafe fn setFont_(self, font: id);
+
+    unsafe fn performKeyEquivalent_(self, key: id /* NSString */) -> BOOL;
+    unsafe fn performActionForItemAtIndex_(self, index: NSInteger);
+
+    unsafe fn title(self) -> id; /* NSString */
+    unsafe fn setTitle_(self, title: id /* NSString */);
+
+    unsafe fn minimumWidth(self) -> NSInteger;
+    unsafe fn setMinimumWidth_(self, value: NSInteger);
+
+    unsafe fn size(self) -> NSInteger;
+    unsafe fn setSize_(self, value: NSInteger);
+
+    unsafe fn propertiesToUpdate(self) -> NSMenuProperties;
+
+    unsafe fn allowsContextMenuPlugins(self) -> BOOL;
+    unsafe fn setAllowsContextMenuPlugins_(self, value: BOOL);
+
+    unsafe fn popUpMenuPositioningItem_atLocation_inView_(
+        self,
+        menu_item: id,
+        location: NSPoint,
+        view: id,
+    ) -> BOOL;
+
+    unsafe fn showsStateColumn(self) -> BOOL;
+    unsafe fn setShowsStateColumn_(self, value: BOOL);
+
+    unsafe fn highlightedItem(self) -> id;
+
+    unsafe fn userInterfaceLayoutDirection(self) -> NSUserInterfaceLayoutDirection;
+    unsafe fn setUserInterfaceLayoutDirection_(self, value: NSUserInterfaceLayoutDirection);
+
+    unsafe fn delegate(self) -> id;
+    unsafe fn setDelegate_(self, delegate: id);
+
+    unsafe fn cancelTracking(self);
+    unsafe fn cancelTrackingWithoutAnimation(self);
 }
 
 impl NSMenu for id {
     unsafe fn initWithTitle_(self, title: id /* NSString */) -> id {
-        msg_send![self, initWithTitle:title]
+        msg_send![self, initWithTitle: title]
     }
 
-    unsafe fn setAutoenablesItems(self, state: BOOL) {
-        msg_send![self, setAutoenablesItems: state]
+    unsafe fn insertItem_AtIndex_(self, menu_item: id, index: NSInteger) -> id {
+        msg_send![self, insertItem:menu_item atIndex:index]
+    }
+    unsafe fn insertItemWithTitle_action_keyEquivalent_atIndex(
+        self,
+        title: id, /* NSString */
+        action: SEL,
+        key: id,
+        index: NSInteger,
+    ) -> id {
+        msg_send![self, insertItemWithTitle:title action:action keyEquivalent:key index:index]
     }
 
     unsafe fn addItem_(self, menu_item: id) {
-        msg_send![self, addItem:menu_item]
+        msg_send![self, addItem: menu_item]
     }
 
     unsafe fn addItemWithTitle_action_keyEquivalent(self, title: id, action: SEL, key: id) -> id {
         msg_send![self, addItemWithTitle:title action:action keyEquivalent:key]
     }
 
+    unsafe fn removeItem_(self, menu_item: id) {
+        msg_send![self, removeItem: menu_item]
+    }
+
+    unsafe fn removeItemAtIndex_(self, index: NSInteger) {
+        msg_send![self, removeItemAtIndex: index]
+    }
+
+    unsafe fn itemChanged_(self, menu_item: id) {
+        msg_send![self, itemChanged: menu_item]
+    }
+
+    unsafe fn removeAllItems(self) {
+        msg_send![self, removeAllItems]
+    }
+
+    unsafe fn itemWithTag_(self, tag: NSInteger) -> id {
+        msg_send![self, itemWithTag: tag]
+    }
+
+    unsafe fn itemWithTitle_(self, title: id /* NSString */) -> id {
+        msg_send![self, itemWithTitle: title]
+    }
+
     unsafe fn itemAtIndex_(self, index: NSInteger) -> id {
-        msg_send![self, itemAtIndex:index]
+        msg_send![self, itemAtIndex: index]
+    }
+
+    unsafe fn numberOfItems(self) -> NSInteger {
+        msg_send![self, numberOfItems]
+    }
+
+    unsafe fn itemArray(self) -> id /* NSArray */ {
+        msg_send![self, itemArray]
+    }
+
+    unsafe fn indexOfItem_(self, menu_item: id) -> NSInteger {
+        msg_send![self, indexOfItem: menu_item]
+    }
+
+    unsafe fn indexOfItemWithTitle_(self, title: id /* NSString */) -> NSInteger {
+        msg_send![self, indexOfItemWithTitle: title]
+    }
+
+    unsafe fn indexOfItemWithTag_(self, tag: NSInteger) -> NSInteger {
+        msg_send![self, indexOfItemWithTag: tag]
+    }
+
+    unsafe fn indexOfItemWithTarget_andAction_(self, target: id, action: SEL) -> NSInteger {
+        msg_send![self, indexOfItemWithTarget:target andAction:action]
+    }
+
+    unsafe fn indexOfItemWithRepresentedObject_(self, object: id) -> NSInteger {
+        msg_send![self, indexOfItemWithRepresentedObject: object]
+    }
+
+    unsafe fn indexOfItemWithSubmenu_(self, submenu: id) -> NSInteger {
+        msg_send![self, indexOfItemWithSubmenu: submenu]
+    }
+
+    unsafe fn setSubmenu_forItem_(self, submenu: id, menu_item: id) {
+        msg_send![self, setSubmenu:submenu forItem:menu_item]
+    }
+
+    unsafe fn supermenu(self) -> id {
+        msg_send![self, supermenu]
+    }
+
+    unsafe fn autoenablesItems(self) -> BOOL {
+        msg_send![self, autoenablesItems]
+    }
+
+    unsafe fn setAutoenablesItems(self, state: BOOL) {
+        msg_send![self, setAutoenablesItems: state]
+    }
+
+    unsafe fn update(self) {
+        msg_send![self, update]
+    }
+
+    unsafe fn font(self) -> id {
+        msg_send![self, font]
+    }
+
+    unsafe fn setFont_(self, font: id) {
+        msg_send![self, setFont: font]
+    }
+
+    unsafe fn performKeyEquivalent_(self, key: id /* NSString */) -> BOOL {
+        msg_send![self, performKeyEquivalent: key]
+    }
+
+    unsafe fn performActionForItemAtIndex_(self, index: NSInteger) {
+        msg_send![self, performActionForItemAtIndex: index]
+    }
+
+    unsafe fn title(self) -> id /* NSString */ {
+        msg_send![self, title]
+    }
+
+    unsafe fn setTitle_(self, title: id /* NSString */) {
+        msg_send![self, setTitle: title]
+    }
+
+    unsafe fn minimumWidth(self) -> NSInteger {
+        msg_send![self, minimumWidth]
+    }
+
+    unsafe fn setMinimumWidth_(self, value: NSInteger) {
+        msg_send![self, setMinimumWidth: value]
+    }
+
+    unsafe fn size(self) -> NSInteger {
+        msg_send![self, size]
+    }
+
+    unsafe fn setSize_(self, value: NSInteger) {
+        msg_send![self, setSize: value]
+    }
+
+    unsafe fn propertiesToUpdate(self) -> NSMenuProperties {
+        msg_send![self, propertiesToUpdate]
+    }
+
+    unsafe fn allowsContextMenuPlugins(self) -> BOOL {
+        msg_send![self, allowsContextMenuPlugins]
+    }
+
+    unsafe fn setAllowsContextMenuPlugins_(self, value: BOOL) {
+        msg_send![self, setAllowsContextMenuPlugins: value]
+    }
+
+    unsafe fn popUpMenuPositioningItem_atLocation_inView_(
+        self,
+        menu_item: id,
+        location: NSPoint,
+        view: id,
+    ) -> BOOL {
+        msg_send![self, popUpMenuPositioningItem: menu_item atLocation:location inView:view]
+    }
+
+    unsafe fn showsStateColumn(self) -> BOOL {
+        msg_send![self, showsStateColumn]
+    }
+
+    unsafe fn setShowsStateColumn_(self, value: BOOL) {
+        msg_send![self, setShowsStateColumn: value]
+    }
+
+    unsafe fn highlightedItem(self) -> id {
+        msg_send![self, highlightedItem]
+    }
+
+    unsafe fn userInterfaceLayoutDirection(self) -> NSUserInterfaceLayoutDirection {
+        msg_send![self, userInterfaceLayoutDirection]
+    }
+
+    unsafe fn setUserInterfaceLayoutDirection_(self, value: NSUserInterfaceLayoutDirection) {
+        msg_send![self, setUserInterfaceLayoutDirection: value]
+    }
+
+    unsafe fn delegate(self) -> id {
+        msg_send![self, delegate]
+    }
+
+    unsafe fn setDelegate_(self, delegate: id) {
+        msg_send![self, setDelegate: delegate]
+    }
+
+    unsafe fn cancelTracking(self) {
+        msg_send![self, cancelTracking]
+    }
+
+    unsafe fn cancelTrackingWithoutAnimation(self) {
+        msg_send![self, cancelTrackingWithoutAnimation]
     }
 }
 

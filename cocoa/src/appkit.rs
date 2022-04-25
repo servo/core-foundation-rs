@@ -824,7 +824,7 @@ pub trait NSMenu: Sized {
         msg_send![class!(NSMenu), new]
     }
 
-
+    // Managing the Menu Bar
     unsafe fn menuBarVisible(_: Self) -> BOOL {
         msg_send![class!(NSMenu), menuBarVisible]
     }
@@ -833,16 +833,10 @@ pub trait NSMenu: Sized {
         msg_send![class!(NSMenu), setMenuBarVisible: visible]
     }
 
-    unsafe fn popUpContextMenu_withEvent_forView_(_: Self, menu: id, event: id, view: id) {
-        msg_send![class!(NSMenu), popUpContextMenu:menu withEvent:event forView:view]
-    }
-
-    unsafe fn popUpContextMenu_withEvent_forView_withFont(_: Self, menu: id, event: id, view: id, font: id) {
-        msg_send![class!(NSMenu), popUpContextMenu:menu withEvent:event forView:view withFont:font]
-    }
-
+    // Creating an NSMenu Object
     unsafe fn initWithTitle_(self, title: id /* NSString */) -> id;
 
+    // Adding and Removing Menu Items
     unsafe fn insertItem_AtIndex_(self, menu_item: id, index: NSInteger) -> id;
     unsafe fn insertItemWithTitle_action_keyEquivalent_atIndex(
         self,
@@ -858,12 +852,14 @@ pub trait NSMenu: Sized {
     unsafe fn itemChanged_(self, menu_item: id);
     unsafe fn removeAllItems(self);
 
+    // Finding Menu Items
     unsafe fn itemWithTag_(self, tag: NSInteger) -> id;
     unsafe fn itemWithTitle_(self, title: id /* NSString */) -> id;
     unsafe fn itemAtIndex_(self, index: NSInteger) -> id;
     unsafe fn numberOfItems(self) -> NSInteger;
     unsafe fn itemArray(self) -> id /* NSArray */;
 
+    // Finding Indices of Menu Items
     unsafe fn indexOfItem_(self, menu_item: id) -> NSInteger;
     unsafe fn indexOfItemWithTitle_(self, title: id /* NSString */) -> NSInteger;
     unsafe fn indexOfItemWithTag_(self, tag: NSInteger) -> NSInteger;
@@ -871,32 +867,50 @@ pub trait NSMenu: Sized {
     unsafe fn indexOfItemWithRepresentedObject_(self, object: id) -> NSInteger;
     unsafe fn indexOfItemWithSubmenu_(self, submenu: id) -> NSInteger;
 
+    // Managing Submenus
     unsafe fn setSubmenu_forItem_(self, submenu: id, menu_item: id);
     unsafe fn supermenu(self) -> id;
 
+    // Enabling and Disabling Menu Items
     unsafe fn autoenablesItems(self) -> BOOL;
     unsafe fn setAutoenablesItems(self, state: BOOL);
     unsafe fn update(self);
 
+    // Getting and Setting the Menu Font
     unsafe fn font(self) -> id;
     unsafe fn setFont_(self, font: id);
 
+    // Handling Keyboard Equivalents
     unsafe fn performKeyEquivalent_(self, key: id /* NSString */) -> BOOL;
+
+    // Simulating Mouse Clicks
     unsafe fn performActionForItemAtIndex_(self, index: NSInteger);
 
+    // Managing the Title
     unsafe fn title(self) -> id; /* NSString */
     unsafe fn setTitle_(self, title: id /* NSString */);
 
+    // Configuring Menu Size
     unsafe fn minimumWidth(self) -> NSInteger;
     unsafe fn setMinimumWidth_(self, value: NSInteger);
-
     unsafe fn size(self) -> NSInteger;
     unsafe fn setSize_(self, value: NSInteger);
 
+    // Getting the Menu Properties
     unsafe fn propertiesToUpdate(self) -> NSMenuProperties;
 
+    // Displaying Contextual Menus
     unsafe fn allowsContextMenuPlugins(self) -> BOOL;
     unsafe fn setAllowsContextMenuPlugins_(self, value: BOOL);
+
+    // Displaying Context-Sensitive Help
+    unsafe fn popUpContextMenu_withEvent_forView_(_: Self, menu: id, event: id, view: id) {
+        msg_send![class!(NSMenu), popUpContextMenu:menu withEvent:event forView:view]
+    }
+
+    unsafe fn popUpContextMenu_withEvent_forView_withFont(_: Self, menu: id, event: id, view: id, font: id) {
+        msg_send![class!(NSMenu), popUpContextMenu:menu withEvent:event forView:view withFont:font]
+    }
 
     unsafe fn popUpMenuPositioningItem_atLocation_inView_(
         self,
@@ -905,17 +919,22 @@ pub trait NSMenu: Sized {
         view: id,
     ) -> BOOL;
 
+    // Managing Display of the State Column
     unsafe fn showsStateColumn(self) -> BOOL;
     unsafe fn setShowsStateColumn_(self, value: BOOL);
 
+    // Handling Highlighting
     unsafe fn highlightedItem(self) -> id;
 
+    // Managing the User Interface
     unsafe fn userInterfaceLayoutDirection(self) -> NSUserInterfaceLayoutDirection;
     unsafe fn setUserInterfaceLayoutDirection_(self, value: NSUserInterfaceLayoutDirection);
 
+    // Managing the Delegate
     unsafe fn delegate(self) -> id;
     unsafe fn setDelegate_(self, delegate: id);
 
+    // Handling Tracking
     unsafe fn cancelTracking(self);
     unsafe fn cancelTrackingWithoutAnimation(self);
 }

@@ -1152,63 +1152,71 @@ pub trait NSMenuItem: Sized {
         msg_send![class!(NSMenuItem), new]
     }
 
-    unsafe fn separatorItem(_: Self) -> id {
-        msg_send![class!(NSMenuItem), separatorItem]
-    }
-
+    // Creating a Menu Item
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id;
 
+    // Enabling a Menu Item
+    unsafe fn isEnabled(self) -> BOOL;
+    unsafe fn setEnabled_(self, value: BOOL);
+
+    // Managing Hidden Status
     unsafe fn isHidden(self) -> BOOL;
     unsafe fn setHidden_(self, value: BOOL);
-
     unsafe fn isHiddenOrHasHiddenAncestor(self) -> BOOL;
 
+    // Managing the Target Action
     unsafe fn target(self) -> id;
     unsafe fn setTarget_(self, value: id);
-
     unsafe fn action(self) -> SEL;
     unsafe fn setAction_(self, value: SEL);
 
+    // Managing the Title
     unsafe fn title(self) -> id; /* NSString */
     unsafe fn setTitle_(self, value: id /* NSString */);
-
     unsafe fn attributedTitle(self) -> id; /* NSAttributedString */
     unsafe fn setAttributedTitle_(self, value: id /* NSAttributedString */);
 
+    // Managing the Tag
     unsafe fn tag(self) -> NSInteger;
     unsafe fn setTag_(self, value: NSInteger);
 
+    // Managing the State
     unsafe fn state(self) -> NSConstrolStateValue;
     unsafe fn setState_(self, value: NSConstrolStateValue);
 
+    // Managing the Image
     unsafe fn image(self) -> id;
     unsafe fn setImage_(self, value: id);
-
     unsafe fn onStateImage(self) -> id;
     unsafe fn setOnStateImage_(self, value: id);
-
     unsafe fn offStateImage(self) -> id;
     unsafe fn setOffStateImage_(self, value: id);
-
     unsafe fn mixedStateImage(self) -> id;
     unsafe fn setMixedStateImage_(self, value: id);
 
+    // Managing Submenus
     unsafe fn submenu(self) -> id;
     unsafe fn setSubmenu_(self, value: id);
     unsafe fn hasSubmenu(self) -> BOOL;
     unsafe fn parentItem(self) -> id;
 
+    // Getting a Separator Item
+    unsafe fn separatorItem(_: Self) -> id {
+        msg_send![class!(NSMenuItem), separatorItem]
+    }
     unsafe fn isSeparatorItem(self) -> BOOL;
 
+    // Managing the Owning Menu
     unsafe fn menu(self) -> id;
     unsafe fn setMenu_(self, value: id);
 
+    // Managing Key Equivalents
     unsafe fn keyEquivalent(self) -> id;
     unsafe fn setKeyEquivalent_(self, value: id);
-
     unsafe fn keyEquivalentModifierMask(self) -> NSEventModifierFlags;
     unsafe fn setKeyEquivalentModifierMask_(self, mask: NSEventModifierFlags);
 
+    // Managing User Key Equivalents
     unsafe fn usesUserKeyEquivalents(self) -> BOOL;
     unsafe fn setUsesUserKeyEquivalents_(self, value: BOOL);
     unsafe fn userKeyEquivalent(self) -> id; /* NSString */
@@ -1222,27 +1230,41 @@ pub trait NSMenuItem: Sized {
     unsafe fn allowsKeyEquivalentWhenHidden(self) -> BOOL;
     unsafe fn setAllowsKeyEquivalentWhenHidden_(self, value: BOOL);
 
+    // Managing Alternates
     unsafe fn isAlternate(self) -> BOOL;
     unsafe fn setAlternate_(self, value: BOOL);
 
+    // Managing Indentation Levels
     unsafe fn indentationLevel(self) -> BOOL;
     unsafe fn setIndentationLevel_(self, value: BOOL);
 
+    // Managing Tool Tips
     unsafe fn toolTip(self) -> id; /* NSString */
     unsafe fn setToolTip_(self, value: id /* NSString */);
 
+    // Representing an Object
     unsafe fn representedObject(self) -> id;
     unsafe fn setRepresentedObject_(self, value: id);
 
+    // Managing the View
     unsafe fn view(self) -> id;
     unsafe fn setView_(self, value: id);
 
+    // Getting Highlighted Status
     unsafe fn isHighlighted(self) -> BOOL;
 }
 
 impl NSMenuItem for id {
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id {
         msg_send![self, initWithTitle:title action:action keyEquivalent:key]
+    }
+
+    unsafe fn isEnabled(self) -> BOOL {
+        msg_send![self, isEnabled]
+    }
+
+    unsafe fn setEnabled_(self, value: BOOL) {
+        msg_send![self, setEnabled: value]
     }
 
     unsafe fn isHidden(self) -> BOOL {

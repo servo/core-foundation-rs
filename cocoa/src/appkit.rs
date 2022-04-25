@@ -236,6 +236,14 @@ pub enum NSUserInterfaceLayoutDirection {
     NSUserInterfaceLayoutDirectionRightToLeft = 1,
 }
 
+#[repr(i64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSConstrolStateValue {
+    NSControlStateValueOff = 0,
+    NSControlStateValueOn = 1,
+    NSControlStateValueMixed = -1,
+}
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSWindowTitleVisibility {
@@ -1130,9 +1138,87 @@ pub trait NSMenuItem: Sized {
     }
 
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id;
+
+    unsafe fn isHidden(self) -> BOOL;
+    unsafe fn setHidden_(self, value: BOOL);
+
+    unsafe fn isHiddenOrHasHiddenAncestor(self) -> BOOL;
+
+    unsafe fn target(self) -> id;
+    unsafe fn setTarget_(self, value: id);
+
+    unsafe fn action(self) -> SEL;
+    unsafe fn setAction_(self, value: SEL);
+
+    unsafe fn title(self) -> id; /* NSString */
+    unsafe fn setTitle_(self, value: id /* NSString */);
+
+    unsafe fn attributedTitle(self) -> id; /* NSAttributedString */
+    unsafe fn setAttributedTitle_(self, value: id /* NSAttributedString */);
+
+    unsafe fn tag(self) -> NSInteger;
+    unsafe fn setTag_(self, value: NSInteger);
+
+    unsafe fn state(self) -> NSConstrolStateValue;
+    unsafe fn setState_(self, value: NSConstrolStateValue);
+
+    unsafe fn image(self) -> id;
+    unsafe fn setImage_(self, value: id);
+
+    unsafe fn onStateImage(self) -> id;
+    unsafe fn setOnStateImage_(self, value: id);
+
+    unsafe fn offStateImage(self) -> id;
+    unsafe fn setOffStateImage_(self, value: id);
+
+    unsafe fn mixedStateImage(self) -> id;
+    unsafe fn setMixedStateImage_(self, value: id);
+
+    unsafe fn submenu(self) -> id;
+    unsafe fn setSubmenu_(self, value: id);
+    unsafe fn hasSubmenu(self) -> BOOL;
+    unsafe fn parentItem(self) -> id;
+
+    unsafe fn isSeparatorItem(self) -> BOOL;
+
+    unsafe fn menu(self) -> id;
+    unsafe fn setMenu_(self, value: id);
+
+    unsafe fn keyEquivalent(self) -> id;
+    unsafe fn setKeyEquivalent_(self, value: id);
+
+    unsafe fn keyEquivalentModifierMask(self) -> NSEventModifierFlags;
     unsafe fn setKeyEquivalentModifierMask_(self, mask: NSEventModifierFlags);
-    unsafe fn setSubmenu_(self, submenu: id);
-    unsafe fn setTarget_(self, target: id);
+
+    unsafe fn usesUserKeyEquivalents(self) -> BOOL;
+    unsafe fn setUsesUserKeyEquivalents_(self, value: BOOL);
+    unsafe fn userKeyEquivalent(self) -> id; /* NSString */
+
+    unsafe fn allowsAutomaticKeyEquivalentLocalization(self) -> BOOL;
+    unsafe fn setAllowsAutomaticKeyEquivalentLocalization_(self, value: BOOL);
+
+    unsafe fn allowsAutomaticKeyEquivalentMirroring(self) -> BOOL;
+    unsafe fn setAllowsAutomaticKeyEquivalentMirroring_(self, value: BOOL);
+
+    unsafe fn allowsKeyEquivalentWhenHidden(self) -> BOOL;
+    unsafe fn setAllowsKeyEquivalentWhenHidden_(self, value: BOOL);
+
+    unsafe fn isAlternate(self) -> BOOL;
+    unsafe fn setAlternate_(self, value: BOOL);
+
+    unsafe fn indentationLevel(self) -> BOOL;
+    unsafe fn setIndentationLevel_(self, value: BOOL);
+
+    unsafe fn toolTip(self) -> id; /* NSString */
+    unsafe fn setToolTip_(self, value: id /* NSString */);
+
+    unsafe fn representedObject(self) -> id;
+    unsafe fn setRepresentedObject_(self, value: id);
+
+    unsafe fn view(self) -> id;
+    unsafe fn setView_(self, value: id);
+
+    unsafe fn isHighlighted(self) -> BOOL;
 }
 
 impl NSMenuItem for id {
@@ -1140,16 +1226,220 @@ impl NSMenuItem for id {
         msg_send![self, initWithTitle:title action:action keyEquivalent:key]
     }
 
+    unsafe fn isHidden(self) -> BOOL {
+        msg_send![self, isHidden]
+    }
+
+    unsafe fn setHidden_(self, value: BOOL) {
+        msg_send![self, setHidden: value]
+    }
+
+    unsafe fn isHiddenOrHasHiddenAncestor(self) -> BOOL {
+        msg_send![self, isHiddenOrHasHiddenAncestor]
+    }
+
+    unsafe fn target(self) -> id {
+        msg_send![self, target]
+    }
+
+    unsafe fn setTarget_(self, value: id) {
+        msg_send![self, setTarget: value]
+    }
+
+    unsafe fn action(self) -> SEL {
+        msg_send![self, action]
+    }
+
+    unsafe fn setAction_(self, value: SEL) {
+        msg_send![self, setAction: value]
+    }
+
+    unsafe fn title(self) -> id /* NSString */ {
+        msg_send![self, title]
+    }
+
+    unsafe fn setTitle_(self, value: id /* NSString */) {
+        msg_send![self, setTitle: value]
+    }
+
+    unsafe fn attributedTitle(self) -> id /* NSAttributedString */ {
+        msg_send![self, attributedTitle]
+    }
+
+    unsafe fn setAttributedTitle_(self, value: id /* NSAttributedString */) {
+        msg_send![self, setAttributedTitle: value]
+    }
+
+    unsafe fn tag(self) -> NSInteger {
+        msg_send![self, tag]
+    }
+
+    unsafe fn setTag_(self, value: NSInteger) {
+        msg_send![self, setTag: value]
+    }
+
+    unsafe fn state(self) -> NSConstrolStateValue {
+        msg_send![self, state]
+    }
+
+    unsafe fn setState_(self, value: NSConstrolStateValue) {
+        msg_send![self, setState: value]
+    }
+
+    unsafe fn image(self) -> id {
+        msg_send![self, image]
+    }
+
+    unsafe fn setImage_(self, value: id) {
+        msg_send![self, setImage: value]
+    }
+
+    unsafe fn onStateImage(self) -> id {
+        msg_send![self, onStateImage]
+    }
+
+    unsafe fn setOnStateImage_(self, value: id) {
+        msg_send![self, setOnStateImage: value]
+    }
+
+    unsafe fn offStateImage(self) -> id {
+        msg_send![self, offStateImage]
+    }
+
+    unsafe fn setOffStateImage_(self, value: id) {
+        msg_send![self, setOffStateImage: value]
+    }
+
+    unsafe fn mixedStateImage(self) -> id {
+        msg_send![self, mixedStateImage]
+    }
+
+    unsafe fn setMixedStateImage_(self, value: id) {
+        msg_send![self, setMixedStateImage: value]
+    }
+
+    unsafe fn submenu(self) -> id {
+        msg_send![self, submenu]
+    }
+
+    unsafe fn setSubmenu_(self, value: id) {
+        msg_send![self, setSubmenu: value]
+    }
+
+    unsafe fn hasSubmenu(self) -> BOOL {
+        msg_send![self, hasSubmenu]
+    }
+
+    unsafe fn parentItem(self) -> id {
+        msg_send![self, parentItem]
+    }
+
+    unsafe fn isSeparatorItem(self) -> BOOL {
+        msg_send![self, separatorItem]
+    }
+
+    unsafe fn menu(self) -> id {
+        msg_send![self, menu]
+    }
+
+    unsafe fn setMenu_(self, value: id) {
+        msg_send![self, setMenu: value]
+    }
+
+    unsafe fn keyEquivalent(self) -> id {
+        msg_send![self, keyEquivalent]
+    }
+
+    unsafe fn setKeyEquivalent_(self, value: id) {
+        msg_send![self, setKeyEquivalent: value]
+    }
+
+    unsafe fn keyEquivalentModifierMask(self) -> NSEventModifierFlags {
+        msg_send![self, keyEquivalentModifierMask]
+    }
+
     unsafe fn setKeyEquivalentModifierMask_(self, mask: NSEventModifierFlags) {
-        msg_send![self, setKeyEquivalentModifierMask:mask]
+        msg_send![self, setKeyEquivalentModifierMask: mask]
     }
 
-    unsafe fn setSubmenu_(self, submenu: id) {
-        msg_send![self, setSubmenu:submenu]
+    unsafe fn usesUserKeyEquivalents(self) -> BOOL {
+        msg_send![self, usesUserKeyEquivalents]
     }
 
-    unsafe fn setTarget_(self, target: id) {
-        msg_send![self, setTarget:target]
+    unsafe fn setUsesUserKeyEquivalents_(self, value: BOOL) {
+        msg_send![self, setUsesUserKeyEquivalents: value]
+    }
+
+    unsafe fn userKeyEquivalent(self) -> id /* NSString */ {
+        msg_send![self, userKeyEquivalent]
+    }
+
+    unsafe fn allowsAutomaticKeyEquivalentLocalization(self) -> BOOL {
+        msg_send![self, allowsAutomaticKeyEquivalentLocalization]
+    }
+
+    unsafe fn setAllowsAutomaticKeyEquivalentLocalization_(self, value: BOOL) {
+        msg_send![self, setAllowsAutomaticKeyEquivalentLocalization: value]
+    }
+
+    unsafe fn allowsAutomaticKeyEquivalentMirroring(self) -> BOOL {
+        msg_send![self, allowsAutomaticKeyEquivalentMirroring]
+    }
+
+    unsafe fn setAllowsAutomaticKeyEquivalentMirroring_(self, value: BOOL) {
+        msg_send![self, setAllowsAutomaticKeyEquivalentMirroring: value]
+    }
+
+    unsafe fn allowsKeyEquivalentWhenHidden(self) -> BOOL {
+        msg_send![self, allowsKeyEquivalentWhenHidden]
+    }
+
+    unsafe fn setAllowsKeyEquivalentWhenHidden_(self, value: BOOL) {
+        msg_send![self, setAllowsKeyEquivalentWhenHidden: value]
+    }
+
+    unsafe fn isAlternate(self) -> BOOL {
+        msg_send![self, isAlternate]
+    }
+
+    unsafe fn setAlternate_(self, value: BOOL) {
+        msg_send![self, setAlternate: value]
+    }
+
+    unsafe fn indentationLevel(self) -> BOOL {
+        msg_send![self, indentationLevel]
+    }
+
+    unsafe fn setIndentationLevel_(self, value: BOOL) {
+        msg_send![self, setIndentationLevel: value]
+    }
+
+    unsafe fn toolTip(self) -> id /* NSString */ {
+        msg_send![self, toolTip]
+    }
+
+    unsafe fn setToolTip_(self, value: id /* NSString */) {
+        msg_send![self, setToolTip: value]
+    }
+
+    unsafe fn representedObject(self) -> id {
+        msg_send![self, representedObject]
+    }
+
+    unsafe fn setRepresentedObject_(self, value: id) {
+        msg_send![self, setRepresentedObject: value]
+    }
+
+    unsafe fn view(self) -> id {
+        msg_send![self, view]
+    }
+
+    unsafe fn setView_(self, value: id) {
+        msg_send![self, setView: value]
+    }
+
+    unsafe fn isHighlighted(self) -> BOOL {
+        msg_send![self, isHighlighted]
     }
 }
 

@@ -837,7 +837,7 @@ pub trait NSMenu: Sized {
     unsafe fn initWithTitle_(self, title: id /* NSString */) -> id;
 
     // Adding and Removing Menu Items
-    unsafe fn insertItem_AtIndex_(self, menu_item: id, index: NSInteger) -> id;
+    unsafe fn insertItem_atIndex_(self, menu_item: id, index: NSInteger);
     unsafe fn insertItemWithTitle_action_keyEquivalent_atIndex(
         self,
         title: id, /* NSString */
@@ -944,7 +944,7 @@ impl NSMenu for id {
         msg_send![self, initWithTitle: title]
     }
 
-    unsafe fn insertItem_AtIndex_(self, menu_item: id, index: NSInteger) -> id {
+    unsafe fn insertItem_atIndex_(self, menu_item: id, index: NSInteger) {
         msg_send![self, insertItem:menu_item atIndex:index]
     }
     unsafe fn insertItemWithTitle_action_keyEquivalent_atIndex(

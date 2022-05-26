@@ -1,7 +1,7 @@
 [package]
 name = "core-graphics"
 description = "Bindings to Core Graphics for macOS"
-homepage = "https://github.com/servo/core-graphics-rs"
+homepage = "https://github.com/servo/core-foundation-rs"
 repository = "https://github.com/servo/core-foundation-rs"
 version = "0.22.3"
 authors = ["The Servo Project Developers"]

@@ -3947,7 +3947,7 @@ pub trait NSTabViewItem: Sized {
     unsafe fn setInitialFirstResponder_(self,initialFirstResponder:id);
     unsafe fn tabView(self) -> id;
     unsafe fn tooltip(self) -> id;
-    unsafe fn setTooltip_(self,toolTip:id);
+    unsafe fn setToolTip_(self,toolTip:id);
 }
 
 impl NSTabViewItem for id {
@@ -4014,8 +4014,8 @@ impl NSTabViewItem for id {
         msg_send![self, tooltip]
     }
 
-    unsafe fn setTooltip_(self,toolTip:id){
-        msg_send![self, setTooltip:toolTip]
+    unsafe fn setToolTip_(self,toolTip:id){
+        msg_send![self, setToolTip:toolTip]
     }
 }
 

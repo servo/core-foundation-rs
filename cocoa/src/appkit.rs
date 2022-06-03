@@ -1802,6 +1802,39 @@ impl NSWindow for id {
     // TODO: Constraint-Based Layouts
 }
 
+pub trait NSPanel: Sized {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class!(NSPanel), alloc]
+    }
+
+    // NSPanel subclasses NSWindow, hence we only add the added methods
+    // https://developer.apple.com/documentation/appkit/nspanel
+    unsafe fn setBecomesKeyOnlyIfNeeded(self, becomesKeyOnlyIfNeeded: BOOL);
+    unsafe fn becomesKeyOnlyIfNeeded(self) -> BOOL;
+    unsafe fn setFloatingPanel(self, floatingPanel: BOOL);
+    unsafe fn floatingPanel(self) -> BOOL;
+}
+
+impl NSPanel for id {
+    // NSPanel subclasses NSWindow, hence we only add the added methods
+    // https://developer.apple.com/documentation/appkit/nspanel
+    unsafe fn setBecomesKeyOnlyIfNeeded(self, becomesKeyOnlyIfNeeded: BOOL) {
+        msg_send![self, setBecomesKeyOnlyIfNeeded: becomesKeyOnlyIfNeeded]
+    }
+
+    unsafe fn becomesKeyOnlyIfNeeded(self) -> BOOL {
+        msg_send![self, becomesKeyOnlyIfNeeded]
+    }
+
+    unsafe fn setFloatingPanel(self, floatingPanel: BOOL) {
+        msg_send![self, setFloatingPanel: floatingPanel]
+    }
+
+    unsafe fn floatingPanel(self) -> BOOL {
+        msg_send![self, isFloatingPanel]
+    }
+}
+
 #[repr(i64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSModalResponse {

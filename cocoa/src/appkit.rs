@@ -1813,6 +1813,7 @@ pub trait NSPanel: Sized {
     unsafe fn becomesKeyOnlyIfNeeded(self) -> BOOL;
     unsafe fn setFloatingPanel(self, floatingPanel: BOOL);
     unsafe fn floatingPanel(self) -> BOOL;
+    unsafe fn setWorksWhenModal(self, worksWithPanel: BOOL);
 }
 
 impl NSPanel for id {
@@ -1832,6 +1833,10 @@ impl NSPanel for id {
 
     unsafe fn floatingPanel(self) -> BOOL {
         msg_send![self, isFloatingPanel]
+    }
+
+    unsafe fn setWorksWhenModal(self, worksWhenModal: BOOL) {
+        msg_send![self, setWorksWhenModal: worksWhenModal]
     }
 }
 

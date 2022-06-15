@@ -25,8 +25,9 @@ use std::ops::Mul;
 use std::ptr;
 
 use appkit::CGLContextObj;
-use base::{BOOL, id, nil, YES};
+use base::{id, nil};
 use foundation::NSUInteger;
+use objc2::runtime::Bool;
 
 // CABase.h
 
@@ -108,16 +109,14 @@ impl CALayer {
     #[inline]
     pub fn needs_display_for_key(key: &CFString) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![class!(CALayer), needsDisplayForKey:(key.as_CFTypeRef())];
-            flag == YES
+            msg_send_bool![class!(CALayer), needsDisplayForKey:(key.as_CFTypeRef())]
         }
     }
 
     #[inline]
     pub fn should_archive_value_for_key(key: &CFString) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![class!(CALayer), shouldArchiveValueForKey:(key.as_CFTypeRef())];
-            flag == YES
+            msg_send_bool![class!(CALayer), shouldArchiveValueForKey:(key.as_CFTypeRef())]
         }
     }
 
@@ -236,53 +235,49 @@ impl CALayer {
     #[inline]
     pub fn is_hidden(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), isHidden];
-            flag == YES
+            msg_send_bool![self.id(), isHidden]
         }
     }
 
     #[inline]
     pub fn set_hidden(&self, hidden: bool) {
         unsafe {
-            msg_send![self.id(), setHidden:hidden as BOOL]
+            msg_send![self.id(), setHidden: Bool::from(hidden)]
         }
     }
 
     #[inline]
     pub fn is_double_sided(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), isDoubleSided];
-            flag == YES
+            msg_send_bool![self.id(), isDoubleSided]
         }
     }
 
     #[inline]
     pub fn set_double_sided(&self, double_sided: bool) {
         unsafe {
-            msg_send![self.id(), setDoubleSided:double_sided as BOOL]
+            msg_send![self.id(), setDoubleSided: Bool::from(double_sided)]
         }
     }
 
     #[inline]
     pub fn is_geometry_flipped(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), isGeometryFlipped];
-            flag == YES
+            msg_send_bool![self.id(), isGeometryFlipped]
         }
     }
 
     #[inline]
     pub fn set_geometry_flipped(&self, geometry_flipped: bool) {
         unsafe {
-            msg_send![self.id(), setGeometryFlipped:geometry_flipped as BOOL]
+            msg_send![self.id(), setGeometryFlipped: Bool::from(geometry_flipped)]
         }
     }
 
     #[inline]
     pub fn contents_are_flipped(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), contentsAreFlipped];
-            flag == YES
+            msg_send_bool![self.id(), contentsAreFlipped]
         }
     }
 
@@ -323,28 +318,28 @@ impl CALayer {
     #[inline]
     pub fn insert_sublayer_at_index(&self, sublayer: &CALayer, index: u32) {
         unsafe {
-            msg_send![self.id(), insertSublayer:sublayer.id() atIndex:index]
+            msg_send![self.id(), insertSublayer: sublayer.id(), atIndex: index]
         }
     }
 
     #[inline]
     pub fn insert_sublayer_below(&self, sublayer: &CALayer, sibling: &CALayer) {
         unsafe {
-            msg_send![self.id(), insertSublayer:sublayer.id() below:sibling.id()]
+            msg_send![self.id(), insertSublayer: sublayer.id(), below: sibling.id()]
         }
     }
 
     #[inline]
     pub fn insert_sublayer_above(&self, sublayer: &CALayer, sibling: &CALayer) {
         unsafe {
-            msg_send![self.id(), insertSublayer:sublayer.id() above:sibling.id()]
+            msg_send![self.id(), insertSublayer: sublayer.id(), above: sibling.id()]
         }
     }
 
     #[inline]
     pub fn replace_sublayer_with(&self, old_layer: &CALayer, new_layer: &CALayer) {
         unsafe {
-            msg_send![self.id(), replaceSublayer:old_layer.id() with:new_layer.id()]
+            msg_send![self.id(), replaceSublayer: old_layer.id(), with: new_layer.id()]
         }
     }
 
@@ -387,15 +382,14 @@ impl CALayer {
     #[inline]
     pub fn masks_to_bounds(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), masksToBounds];
-            flag == YES
+            msg_send_bool![self.id(), masksToBounds]
         }
     }
 
     #[inline]
     pub fn set_masks_to_bounds(&self, flag: bool) {
         unsafe {
-            msg_send![self.id(), setMasksToBounds:flag as BOOL]
+            msg_send![self.id(), setMasksToBounds: Bool::from(flag)]
         }
     }
 
@@ -406,7 +400,7 @@ impl CALayer {
                 None => nil,
                 Some(ref layer) => layer.id(),
             };
-            msg_send![self.id(), convertPoint:*point fromLayer:layer]
+            msg_send![self.id(), convertPoint: *point, fromLayer: layer]
         }
     }
 
@@ -417,7 +411,7 @@ impl CALayer {
                 None => nil,
                 Some(ref layer) => layer.id(),
             };
-            msg_send![self.id(), convertPoint:*point toLayer:layer]
+            msg_send![self.id(), convertPoint: *point, toLayer: layer]
         }
     }
 
@@ -428,7 +422,7 @@ impl CALayer {
                 None => nil,
                 Some(ref layer) => layer.id(),
             };
-            msg_send![self.id(), convertRect:*rect fromLayer:layer]
+            msg_send![self.id(), convertRect: *rect, fromLayer: layer]
         }
     }
 
@@ -439,7 +433,7 @@ impl CALayer {
                 None => nil,
                 Some(ref layer) => layer.id(),
             };
-            msg_send![self.id(), convertRect:*rect toLayer:layer]
+            msg_send![self.id(), convertRect: *rect, toLayer: layer]
         }
     }
 
@@ -451,7 +445,7 @@ impl CALayer {
                 None => nil,
                 Some(ref layer) => layer.id(),
             };
-            msg_send![self.id(), convertTime:time fromLayer:layer]
+            msg_send![self.id(), convertTime: time, fromLayer: layer]
         }
     }
 
@@ -463,7 +457,7 @@ impl CALayer {
                 None => nil,
                 Some(ref layer) => layer.id(),
             };
-            msg_send![self.id(), convertTime:time toLayer:layer]
+            msg_send![self.id(), convertTime: time, toLayer: layer]
         }
     }
 
@@ -482,8 +476,7 @@ impl CALayer {
     #[inline]
     pub fn contains_point(&self, point: &CGPoint) -> bool {
         unsafe {
-            let result: BOOL = msg_send![self.id(), containsPoint:*point];
-            result == YES
+            msg_send_bool![self.id(), containsPoint:*point]
         }
     }
 
@@ -622,15 +615,14 @@ impl CALayer {
     #[inline]
     pub fn is_opaque(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), isOpaque];
-            flag == YES
+            msg_send_bool![self.id(), isOpaque]
         }
     }
 
     #[inline]
     pub fn set_opaque(&self, opaque: bool) {
         unsafe {
-            msg_send![self.id(), setOpaque:opaque as BOOL]
+            msg_send![self.id(), setOpaque: Bool::from(opaque)]
         }
     }
 
@@ -658,8 +650,7 @@ impl CALayer {
     #[inline]
     pub fn needs_display(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), needsDisplay];
-            flag == YES
+            msg_send_bool![self.id(), needsDisplay]
         }
     }
 
@@ -673,30 +664,28 @@ impl CALayer {
     #[inline]
     pub fn needs_display_on_bounds_change(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), needsDisplayOnBoundsChange];
-            flag == YES
+            msg_send_bool![self.id(), needsDisplayOnBoundsChange]
         }
     }
 
     #[inline]
     pub fn set_needs_display_on_bounds_change(&self, flag: bool) {
         unsafe {
-            msg_send![self.id(), setNeedsDisplayOnBoundsChange:flag as BOOL]
+            msg_send![self.id(), setNeedsDisplayOnBoundsChange: Bool::from(flag)]
         }
     }
 
     #[inline]
     pub fn draws_asynchronously(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), drawsAsynchronously];
-            flag == YES
+            msg_send_bool![self.id(), drawsAsynchronously]
         }
     }
 
     #[inline]
     pub fn set_draws_asynchronously(&self, flag: bool) {
         unsafe {
-            msg_send![self.id(), setDrawsAsynchronously:flag as BOOL]
+            msg_send![self.id(), setDrawsAsynchronously: Bool::from(flag)]
         }
     }
 
@@ -883,15 +872,14 @@ impl CALayer {
     #[inline]
     pub fn should_rasterize(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), shouldRasterize];
-            flag == YES
+            msg_send_bool![self.id(), shouldRasterize]
         }
     }
 
     #[inline]
     pub fn set_should_rasterize(&self, flag: bool) {
         unsafe {
-            msg_send![self.id(), setShouldRasterize:(flag as BOOL)]
+            msg_send![self.id(), setShouldRasterize: Bool::from(flag)]
         }
     }
 
@@ -1044,8 +1032,7 @@ impl CALayer {
     #[inline]
     pub fn needs_layout(&self) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![self.id(), needsLayout];
-            flag == YES
+            msg_send_bool![self.id(), needsLayout]
         }
     }
 
@@ -1115,7 +1102,7 @@ impl CALayer {
             Some(ref for_key) => for_key.as_CFTypeRef(),
             None => ptr::null(),
         };
-        msg_send![self.id(), addAnimation:animation forKey:for_key]
+        msg_send![self.id(), addAnimation: animation, forKey: for_key]
     }
 
     #[inline]
@@ -1218,7 +1205,7 @@ impl CALayer {
     #[inline]
     pub fn set_contents_opaque(&self, opaque: bool) {
         unsafe {
-            msg_send![self.id(), setContentsOpaque:opaque as BOOL]
+            msg_send![self.id(), setContentsOpaque: Bool::from(opaque)]
         }
     }
 }
@@ -1415,7 +1402,7 @@ impl CARenderer {
         let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
 
         let renderer: id =
-            msg_send![class!(CARenderer), rendererWithCGLContext:context
+            msg_send![class!(CARenderer), rendererWithCGLContext:context,
                                                          options:options.as_CFTypeRef()];
         debug_assert!(renderer != nil);
         CARenderer(renderer)
@@ -1438,8 +1425,8 @@ impl CARenderer {
         let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
 
         let renderer: id =
-            msg_send![class!(CARenderer), rendererWithMTLTexture:metal_texture
-                                                         options:options.as_CFTypeRef()];
+            msg_send![class!(CARenderer), rendererWithMTLTexture: metal_texture,
+                                                         options: options.as_CFTypeRef()];
         debug_assert!(renderer != nil);
         CARenderer(renderer)
     }
@@ -1484,7 +1471,7 @@ impl CARenderer {
     #[inline]
     pub fn begin_frame_at(&self, time: CFTimeInterval, timestamp: Option<&CVTimeStamp>) {
         unsafe {
-            msg_send![self.id(), beginFrameAtTime:time timeStamp:timestamp]
+            msg_send![self.id(), beginFrameAtTime: time, timeStamp: timestamp]
         }
     }
 
@@ -1539,7 +1526,8 @@ pub mod transaction {
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
 
-    use base::{BOOL, YES, id};
+    use base::id;
+    use objc2::runtime::Bool;
 
     #[inline]
     pub fn begin() {
@@ -1605,15 +1593,14 @@ pub mod transaction {
     #[inline]
     pub fn disable_actions() -> bool {
         unsafe {
-            let flag: BOOL = msg_send![class!(CATransaction), disableActions];
-            flag == YES
+            msg_send_bool![class!(CATransaction), disableActions]
         }
     }
 
     #[inline]
     pub fn set_disable_actions(flag: bool) {
         unsafe {
-            msg_send![class!(CATransaction), setDisableActions:flag as BOOL]
+            msg_send![class!(CATransaction), setDisableActions: Bool::from(flag)]
         }
     }
 
@@ -1651,7 +1638,7 @@ pub mod transaction {
     pub fn set_value_for_key(value: id, key: &str) {
         unsafe {
             let key: CFString = CFString::from(key);
-            msg_send![class!(CATransaction), setValue: value forKey: key.as_concrete_TypeRef()]
+            msg_send![class!(CATransaction), setValue: value, forKey: key.as_concrete_TypeRef()]
         }
     }
 }

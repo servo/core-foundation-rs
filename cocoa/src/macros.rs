@@ -57,7 +57,7 @@ macro_rules! delegate {
             $( ($($sel:ident :)+) => $func:expr),*
         }
     ) => ({
-        let mut decl = objc2::declare::ClassDecl::new($name, class!(NSObject)).unwrap();
+        let mut decl = objc2::declare::ClassBuilder::new($name, class!(NSObject)).unwrap();
 
         $(
             decl.add_ivar::<$var_type>(stringify!($var));

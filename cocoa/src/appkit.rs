@@ -9,10 +9,11 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, BOOL, SEL};
+use base::{id, SEL};
 use block::Block;
 use foundation::{NSInteger, NSUInteger, NSTimeInterval,
                  NSPoint, NSSize, NSRect, NSRange, NSRectEdge};
+use objc2::runtime::Bool;
 use libc;
 
 pub use core_graphics::base::CGFloat;
@@ -429,22 +430,22 @@ pub trait NSApplication: Sized {
     }
 
     unsafe fn mainMenu(self) -> id;
-    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL;
-    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> BOOL;
+    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> bool;
+    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> bool;
     unsafe fn presentationOptions_(self) -> NSApplicationPresentationOptions;
     unsafe fn setMainMenu_(self, menu: id);
     unsafe fn setServicesMenu_(self, menu: id);
     unsafe fn setWindowsMenu_(self, menu: id);
-    unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL);
+    unsafe fn activateIgnoringOtherApps_(self, ignore: bool);
     unsafe fn run(self);
     unsafe fn finishLaunching(self);
     unsafe fn nextEventMatchingMask_untilDate_inMode_dequeue_(self,
                                                               mask: NSUInteger,
                                                               expiration: id,
                                                               in_mode: id,
-                                                              dequeue: BOOL) -> id;
+                                                              dequeue: bool) -> id;
     unsafe fn sendEvent_(self, an_event: id);
-    unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL);
+    unsafe fn postEvent_atStart_(self, anEvent: id, flag: bool);
     unsafe fn stop_(self, sender: id);
     unsafe fn setApplicationIconImage_(self, image: id);
     unsafe fn requestUserAttention_(self, requestType: NSRequestUserAttentionType);
@@ -455,12 +456,12 @@ impl NSApplication for id {
         msg_send![self, mainMenu]
     }
 
-    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL {
-        msg_send![self, setActivationPolicy:policy as NSInteger]
+    unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> bool {
+        msg_send_bool![self, setActivationPolicy:policy as NSInteger]
     }
 
-    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> BOOL {
-        msg_send![self, setPresentationOptions:options.bits]
+    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> bool {
+        msg_send_bool![self, setPresentationOptions:options.bits]
     }
 
     unsafe fn presentationOptions_(self) -> NSApplicationPresentationOptions {
@@ -480,8 +481,8 @@ impl NSApplication for id {
         msg_send![self, setWindowsMenu:menu]
     }
 
-    unsafe fn activateIgnoringOtherApps_(self, ignore: BOOL) {
-        msg_send![self, activateIgnoringOtherApps:ignore]
+    unsafe fn activateIgnoringOtherApps_(self, ignore: bool) {
+        msg_send![self, activateIgnoringOtherApps: Bool::from(ignore)]
     }
 
     unsafe fn run(self) {
@@ -496,19 +497,19 @@ impl NSApplication for id {
                                                               mask: NSUInteger,
                                                               expiration: id,
                                                               in_mode: id,
-                                                              dequeue: BOOL) -> id {
-        msg_send![self, nextEventMatchingMask:mask
-                                    untilDate:expiration
-                                       inMode:in_mode
-                                      dequeue:dequeue]
+                                                              dequeue: bool) -> id {
+        msg_send![self, nextEventMatchingMask:mask,
+                                    untilDate:expiration,
+                                       inMode:in_mode,
+                                      dequeue:Bool::from(dequeue)]
     }
 
     unsafe fn sendEvent_(self, an_event: id) {
         msg_send![self, sendEvent:an_event]
     }
 
-    unsafe fn postEvent_atStart_(self, anEvent: id, flag: BOOL) {
-        msg_send![self, postEvent:anEvent atStart:flag]
+    unsafe fn postEvent_atStart_(self, anEvent: id, flag: bool) {
+        msg_send![self, postEvent: anEvent, atStart: Bool::from(flag)]
     }
 
     unsafe fn stop_(self, sender: id) {
@@ -529,7 +530,7 @@ pub trait NSRunningApplication: Sized {
         msg_send![class!(NSRunningApplication), currentApplication]
     }
 
-    unsafe fn activateWithOptions_(self, options: NSApplicationActivationOptions) -> BOOL;
+    unsafe fn activateWithOptions_(self, options: NSApplicationActivationOptions) -> bool;
 
     unsafe fn runningApplicationWithProcessIdentifier(_: Self, pid: libc::pid_t) -> id {
         msg_send![class!(NSRunningApplication), runningApplicationWithProcessIdentifier:pid]
@@ -537,8 +538,8 @@ pub trait NSRunningApplication: Sized {
 }
 
 impl NSRunningApplication for id {
-    unsafe fn activateWithOptions_(self, options: NSApplicationActivationOptions) -> BOOL {
-        msg_send![self, activateWithOptions:options as NSUInteger]
+    unsafe fn activateWithOptions_(self, options: NSApplicationActivationOptions) -> bool {
+        msg_send_bool![self, activateWithOptions:options as NSUInteger]
     }
 }
 
@@ -548,7 +549,7 @@ pub trait NSPasteboard: Sized {
     }
 
     unsafe fn pasteboardByFilteringData_ofType(_: Self, data: id, _type: id) -> id {
-        msg_send![class!(NSPasteboard), pasteboardByFilteringData:data ofType:_type]
+        msg_send![class!(NSPasteboard), pasteboardByFilteringData:data, ofType:_type]
     }
 
     unsafe fn pasteboardByFilteringFile(_: Self, file: id) -> id {
@@ -570,10 +571,10 @@ pub trait NSPasteboard: Sized {
     unsafe fn releaseGlobally(self);
 
     unsafe fn clearContents(self) -> NSInteger;
-    unsafe fn writeObjects(self, objects: id) -> BOOL;
-    unsafe fn setData_forType(self, data: id, dataType: id) -> BOOL;
-    unsafe fn setPropertyList_forType(self, plist: id, dataType: id) -> BOOL;
-    unsafe fn setString_forType(self, string: id, dataType: id) -> BOOL;
+    unsafe fn writeObjects(self, objects: id) -> bool;
+    unsafe fn setData_forType(self, data: id, dataType: id) -> bool;
+    unsafe fn setPropertyList_forType(self, plist: id, dataType: id) -> bool;
+    unsafe fn setString_forType(self, string: id, dataType: id) -> bool;
 
     unsafe fn readObjectsForClasses_options(self, classArray: id, options: id) -> id;
     unsafe fn pasteboardItems(self) -> id;
@@ -583,8 +584,8 @@ pub trait NSPasteboard: Sized {
     unsafe fn stringForType(self, dataType: id) -> id;
 
     unsafe fn availableTypeFromArray(self, types: id) -> id;
-    unsafe fn canReadItemWithDataConformingToTypes(self, types: id) -> BOOL;
-    unsafe fn canReadObjectForClasses_options(self, classArray: id, options: id) -> BOOL;
+    unsafe fn canReadItemWithDataConformingToTypes(self, types: id) -> bool;
+    unsafe fn canReadObjectForClasses_options(self, classArray: id, options: id) -> bool;
     unsafe fn types(self) -> id;
     unsafe fn typesFilterableTo(_: Self, _type: id) -> id {
         msg_send![class!(NSPasteboard), typesFilterableTo:_type]
@@ -595,8 +596,8 @@ pub trait NSPasteboard: Sized {
 
     unsafe fn declareTypes_owner(self, newTypes: id, newOwner: id) -> NSInteger;
     unsafe fn addTypes_owner(self, newTypes: id, newOwner: id) -> NSInteger;
-    unsafe fn writeFileContents(self, filename: id) -> BOOL;
-    unsafe fn writeFileWrapper(self, wrapper: id) -> BOOL;
+    unsafe fn writeFileContents(self, filename: id) -> bool;
+    unsafe fn writeFileWrapper(self, wrapper: id) -> bool;
 
     unsafe fn readFileContentsType_toFile(self, _type: id, filename: id) -> id;
     unsafe fn readFileWrapper(self) -> id;
@@ -611,24 +612,24 @@ impl NSPasteboard for id {
         msg_send![self, clearContents]
     }
 
-    unsafe fn writeObjects(self, objects: id) -> BOOL {
-        msg_send![self, writeObjects:objects]
+    unsafe fn writeObjects(self, objects: id) -> bool {
+        msg_send_bool![self, writeObjects:objects]
     }
 
-    unsafe fn setData_forType(self, data: id, dataType: id) -> BOOL {
-        msg_send![self, setData:data forType:dataType]
+    unsafe fn setData_forType(self, data: id, dataType: id) -> bool {
+        msg_send_bool![self, setData: data, forType: dataType]
     }
 
-    unsafe fn setPropertyList_forType(self, plist: id, dataType: id) -> BOOL {
-        msg_send![self, setPropertyList:plist forType:dataType]
+    unsafe fn setPropertyList_forType(self, plist: id, dataType: id) -> bool {
+        msg_send_bool![self, setPropertyList: plist, forType: dataType]
     }
 
-    unsafe fn setString_forType(self, string: id, dataType: id) -> BOOL {
-        msg_send![self, setString:string forType:dataType]
+    unsafe fn setString_forType(self, string: id, dataType: id) -> bool {
+        msg_send_bool![self, setString: string, forType: dataType]
     }
 
     unsafe fn readObjectsForClasses_options(self, classArray: id, options: id) -> id {
-        msg_send![self, readObjectsForClasses:classArray options:options]
+        msg_send![self, readObjectsForClasses: classArray, options: options]
     }
 
     unsafe fn pasteboardItems(self) -> id {
@@ -655,12 +656,12 @@ impl NSPasteboard for id {
         msg_send![self, availableTypeFromArray:types]
     }
 
-    unsafe fn canReadItemWithDataConformingToTypes(self, types: id) -> BOOL {
-        msg_send![self, canReadItemWithDataConformingToTypes:types]
+    unsafe fn canReadItemWithDataConformingToTypes(self, types: id) -> bool {
+        msg_send_bool![self, canReadItemWithDataConformingToTypes:types]
     }
 
-    unsafe fn canReadObjectForClasses_options(self, classArray: id, options: id) -> BOOL {
-        msg_send![self, canReadObjectForClasses:classArray options:options]
+    unsafe fn canReadObjectForClasses_options(self, classArray: id, options: id) -> bool {
+        msg_send_bool![self, canReadObjectForClasses: classArray, options: options]
     }
 
     unsafe fn types(self) -> id {
@@ -676,23 +677,23 @@ impl NSPasteboard for id {
     }
 
     unsafe fn declareTypes_owner(self, newTypes: id, newOwner: id) -> NSInteger {
-        msg_send![self, declareTypes:newTypes owner:newOwner]
+        msg_send![self, declareTypes: newTypes, owner: newOwner]
     }
 
     unsafe fn addTypes_owner(self, newTypes: id, newOwner: id) -> NSInteger {
-        msg_send![self, addTypes:newTypes owner:newOwner]
+        msg_send![self, addTypes: newTypes, owner: newOwner]
     }
 
-    unsafe fn writeFileContents(self, filename: id) -> BOOL {
-        msg_send![self, writeFileContents:filename]
+    unsafe fn writeFileContents(self, filename: id) -> bool {
+        msg_send_bool![self, writeFileContents:filename]
     }
 
-    unsafe fn writeFileWrapper(self, wrapper: id) -> BOOL {
-        msg_send![self, writeFileWrapper:wrapper]
+    unsafe fn writeFileWrapper(self, wrapper: id) -> bool {
+        msg_send_bool![self, writeFileWrapper:wrapper]
     }
 
     unsafe fn readFileContentsType_toFile(self, _type: id, filename: id) -> id {
-        msg_send![self, readFileContentsType:_type toFile:filename]
+        msg_send![self, readFileContentsType: _type, toFile: filename]
     }
 
     unsafe fn readFileWrapper(self) -> id {
@@ -704,10 +705,10 @@ impl NSPasteboard for id {
 pub trait NSPasteboardItem: Sized {
     unsafe fn types(self) -> id;
 
-    unsafe fn setDataProvider_forTypes(self, dataProvider: id, types: id) -> BOOL;
-    unsafe fn setData_forType(self, data: id, _type: id) -> BOOL;
-    unsafe fn setString_forType(self, string: id, _type: id) -> BOOL;
-    unsafe fn setPropertyList_forType(self, propertyList: id, _type: id) -> BOOL;
+    unsafe fn setDataProvider_forTypes(self, dataProvider: id, types: id) -> bool;
+    unsafe fn setData_forType(self, data: id, _type: id) -> bool;
+    unsafe fn setString_forType(self, string: id, _type: id) -> bool;
+    unsafe fn setPropertyList_forType(self, propertyList: id, _type: id) -> bool;
 
     unsafe fn dataForType(self, _type: id) -> id;
     unsafe fn stringForType(self, _type: id) -> id;
@@ -719,20 +720,20 @@ impl NSPasteboardItem for id {
         msg_send![self, types]
     }
 
-    unsafe fn setDataProvider_forTypes(self, dataProvider: id, types: id) -> BOOL {
-        msg_send![self, setDataProvider:dataProvider forTypes:types]
+    unsafe fn setDataProvider_forTypes(self, dataProvider: id, types: id) -> bool {
+        msg_send_bool![self, setDataProvider: dataProvider, forTypes: types]
     }
 
-    unsafe fn setData_forType(self, data: id, _type: id) -> BOOL {
-        msg_send![self, setData:data forType:_type]
+    unsafe fn setData_forType(self, data: id, _type: id) -> bool {
+        msg_send_bool![self, setData: data, forType: _type]
     }
 
-    unsafe fn setString_forType(self, string: id, _type: id) -> BOOL {
-        msg_send![self, setString:string forType:_type]
+    unsafe fn setString_forType(self, string: id, _type: id) -> bool {
+        msg_send_bool![self, setString: string, forType: _type]
     }
 
-    unsafe fn setPropertyList_forType(self, propertyList: id, _type: id) -> BOOL {
-        msg_send![self, setPropertyList:propertyList forType:_type]
+    unsafe fn setPropertyList_forType(self, propertyList: id, _type: id) -> bool {
+        msg_send_bool![self, setPropertyList: propertyList, forType: _type]
     }
 
     unsafe fn dataForType(self, _type: id) -> id {
@@ -755,7 +756,7 @@ pub trait NSPasteboardItemDataProvider: Sized {
 
 impl NSPasteboardItemDataProvider for id {
     unsafe fn pasteboard_item_provideDataForType(self, pasteboard: id, item: id, _type: id) {
-        msg_send![self, pasteboard:pasteboard item:item provideDataForType:_type]
+        msg_send![self, pasteboard: pasteboard, item: item, provideDataForType: _type]
     }
 
     unsafe fn pasteboardFinishedWithDataProvider(self, pasteboard: id) {
@@ -776,7 +777,7 @@ impl NSPasteboardWriting for id {
     }
 
     unsafe fn writingOptionsForType_pasteboard(self, _type: id, pasteboard: id) -> NSPasteboardWritingOptions {
-        msg_send![self, writingOptionsForType:_type pasteboard:pasteboard]
+        msg_send![self, writingOptionsForType: _type, pasteboard: pasteboard]
     }
 
     unsafe fn pasteboardPropertyListForType(self, _type: id) -> id {
@@ -793,7 +794,7 @@ pub trait NSPasteboardReading: Sized {
 
 impl NSPasteboardReading for id {
     unsafe fn initWithPasteboardPropertyList_ofType(self, propertyList: id, _type: id) -> id {
-        msg_send![self, initWithPasteboardPropertyList:propertyList ofType:_type]
+        msg_send![self, initWithPasteboardPropertyList: propertyList, ofType: _type]
     }
 
     unsafe fn readableTypesForPasteboard(self, pasteboard: id) -> id {
@@ -802,7 +803,7 @@ impl NSPasteboardReading for id {
     }
     unsafe fn readingOptionsForType_pasteboard(self, _type: id, pasteboard: id) -> NSPasteboardReadingOptions {
         let class: id = msg_send![self, class];
-        msg_send![class, readingOptionsForType:_type pasteboard:pasteboard]
+        msg_send![class, readingOptionsForType: _type, pasteboard: pasteboard]
     }
 }
 
@@ -835,7 +836,7 @@ pub trait NSMenu: Sized {
     }
 
     unsafe fn initWithTitle_(self, title: id /* NSString */) -> id;
-    unsafe fn setAutoenablesItems(self, state: BOOL);
+    unsafe fn setAutoenablesItems(self, state: bool);
 
     unsafe fn addItem_(self, menu_item: id);
     unsafe fn addItemWithTitle_action_keyEquivalent(self, title: id, action: SEL, key: id) -> id;
@@ -847,8 +848,8 @@ impl NSMenu for id {
         msg_send![self, initWithTitle:title]
     }
 
-    unsafe fn setAutoenablesItems(self, state: BOOL) {
-        msg_send![self, setAutoenablesItems: state]
+    unsafe fn setAutoenablesItems(self, state: bool) {
+        msg_send![self, setAutoenablesItems: Bool::from(state)]
     }
 
     unsafe fn addItem_(self, menu_item: id) {
@@ -856,7 +857,7 @@ impl NSMenu for id {
     }
 
     unsafe fn addItemWithTitle_action_keyEquivalent(self, title: id, action: SEL, key: id) -> id {
-        msg_send![self, addItemWithTitle:title action:action keyEquivalent:key]
+        msg_send![self, addItemWithTitle: title, action: action, keyEquivalent: key]
     }
 
     unsafe fn itemAtIndex_(self, index: NSInteger) -> id {
@@ -885,7 +886,7 @@ pub trait NSMenuItem: Sized {
 
 impl NSMenuItem for id {
     unsafe fn initWithTitle_action_keyEquivalent_(self, title: id, action: SEL, key: id) -> id {
-        msg_send![self, initWithTitle:title action:action keyEquivalent:key]
+        msg_send![self, initWithTitle: title, action: action, keyEquivalent: key]
     }
 
     unsafe fn setKeyEquivalentModifierMask_(self, mask: NSEventModifierFlags) {
@@ -941,19 +942,19 @@ pub trait NSWindow: Sized {
                                                            rect: NSRect,
                                                            style: NSWindowStyleMask,
                                                            backing: NSBackingStoreType,
-                                                           defer: BOOL) -> id;
+                                                           defer: bool) -> id;
     unsafe fn initWithContentRect_styleMask_backing_defer_screen_(self,
                                                                   rect: NSRect,
                                                                   style: NSWindowStyleMask,
                                                                   backing: NSBackingStoreType,
-                                                                  defer: BOOL,
+                                                                  defer: bool,
                                                                   screen: id) -> id;
 
     // Configuring Windows
     unsafe fn styleMask(self) -> NSWindowStyleMask;
     unsafe fn setStyleMask_(self, styleMask: NSWindowStyleMask);
     unsafe fn toggleFullScreen_(self, sender: id);
-    unsafe fn worksWhenModal(self) -> BOOL;
+    unsafe fn worksWhenModal(self) -> bool;
     unsafe fn alphaValue(self) -> CGFloat;
     unsafe fn setAlphaValue_(self, windowAlpha: CGFloat);
     unsafe fn backgroundColor(self) -> id;
@@ -962,26 +963,26 @@ pub trait NSWindow: Sized {
     unsafe fn setColorSpace_(self, colorSpace: id);
     unsafe fn contentView(self) -> id;
     unsafe fn setContentView_(self, view: id);
-    unsafe fn canHide(self) -> BOOL;
-    unsafe fn setCanHide_(self, canHide: BOOL);
-    unsafe fn hidesOnDeactivate(self) -> BOOL;
-    unsafe fn setHidesOnDeactivate_(self, hideOnDeactivate: BOOL);
+    unsafe fn canHide(self) -> bool;
+    unsafe fn setCanHide_(self, canHide: bool);
+    unsafe fn hidesOnDeactivate(self) -> bool;
+    unsafe fn setHidesOnDeactivate_(self, hideOnDeactivate: bool);
     unsafe fn collectionBehavior(self) -> NSWindowCollectionBehavior;
     unsafe fn setCollectionBehavior_(self, collectionBehavior: NSWindowCollectionBehavior);
-    unsafe fn setOpaque_(self, opaque: BOOL);
-    unsafe fn hasShadow(self) -> BOOL;
-    unsafe fn setHasShadow_(self, hasShadow: BOOL);
+    unsafe fn setOpaque_(self, opaque: bool);
+    unsafe fn hasShadow(self) -> bool;
+    unsafe fn setHasShadow_(self, hasShadow: bool);
     unsafe fn invalidateShadow(self);
-    unsafe fn autorecalculatesContentBorderThicknessForEdge_(self, edge: NSRectEdge) -> BOOL;
+    unsafe fn autorecalculatesContentBorderThicknessForEdge_(self, edge: NSRectEdge) -> bool;
     unsafe fn setAutorecalculatesContentBorderThickness_forEdge_(self,
-                                                                 autorecalculateContentBorderThickness: BOOL,
-                                                                 edge: NSRectEdge) -> BOOL;
+                                                                 autorecalculateContentBorderThickness: bool,
+                                                                 edge: NSRectEdge) -> bool;
     unsafe fn contentBorderThicknessForEdge_(self, edge: NSRectEdge) -> CGFloat;
     unsafe fn setContentBorderThickness_forEdge_(self, borderThickness: CGFloat, edge: NSRectEdge);
     unsafe fn delegate(self) -> id;
     unsafe fn setDelegate_(self, delegate: id);
-    unsafe fn preventsApplicationTerminationWhenModal(self) -> BOOL;
-    unsafe fn setPreventsApplicationTerminationWhenModal_(self, flag: BOOL);
+    unsafe fn preventsApplicationTerminationWhenModal(self) -> bool;
+    unsafe fn setPreventsApplicationTerminationWhenModal_(self, flag: bool);
 
     // TODO: Accessing Window Information
 
@@ -1005,8 +1006,8 @@ pub trait NSWindow: Sized {
     unsafe fn setFrameTopLeftPoint_(self, point: NSPoint);
     unsafe fn constrainFrameRect_toScreen_(self, frameRect: NSRect, screen: id);
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint;
-    unsafe fn setFrame_display_(self, windowFrame: NSRect, display: BOOL);
-    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL);
+    unsafe fn setFrame_display_(self, windowFrame: NSRect, display: bool);
+    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool);
     unsafe fn aspectRatio(self) -> NSSize;
     unsafe fn setAspectRatio_(self, aspectRatio: NSSize);
     unsafe fn minSize(self) -> NSSize;
@@ -1016,13 +1017,13 @@ pub trait NSWindow: Sized {
     unsafe fn performZoom_(self, sender: id);
     unsafe fn zoom_(self, sender: id);
     unsafe fn resizeFlags(self) -> NSInteger;
-    unsafe fn showsResizeIndicator(self) -> BOOL;
-    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: BOOL);
+    unsafe fn showsResizeIndicator(self) -> bool;
+    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool);
     unsafe fn resizeIncrements(self) -> NSSize;
     unsafe fn setResizeIncrements_(self, resizeIncrements: NSSize);
-    unsafe fn preservesContentDuringLiveResize(self) -> BOOL;
-    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: BOOL);
-    unsafe fn inLiveResize(self) -> BOOL;
+    unsafe fn preservesContentDuringLiveResize(self) -> bool;
+    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool);
+    unsafe fn inLiveResize(self) -> bool;
 
     // Sizing Content
     unsafe fn contentAspectRatio(self) -> NSSize;
@@ -1037,7 +1038,7 @@ pub trait NSWindow: Sized {
     unsafe fn setContentResizeIncrements_(self, contentResizeIncrements: NSSize);
 
     // Managing Window Visibility and Occlusion State
-    unsafe fn isVisible(self) -> BOOL; // NOTE: Deprecated in 10.9
+    unsafe fn isVisible(self) -> bool; // NOTE: Deprecated in 10.9
     unsafe fn occlusionState(self) -> NSWindowOcclusionState;
 
     // Managing Window Layers
@@ -1050,15 +1051,15 @@ pub trait NSWindow: Sized {
     unsafe fn setLevel_(self, level: NSInteger);
 
     // Managing Key Status
-    unsafe fn isKeyWindow(self) -> BOOL;
-    unsafe fn canBecomeKeyWindow(self) -> BOOL;
+    unsafe fn isKeyWindow(self) -> bool;
+    unsafe fn canBecomeKeyWindow(self) -> bool;
     unsafe fn makeKeyWindow(self);
     unsafe fn makeKeyAndOrderFront_(self, sender: id);
     // skipped: becomeKeyWindow (should not be invoked directly, according to Apple's documentation)
     // skipped: resignKeyWindow (should not be invoked directly, according to Apple's documentation)
 
     // Managing Main Status
-    unsafe fn canBecomeMainWindow(self) -> BOOL;
+    unsafe fn canBecomeMainWindow(self) -> bool;
     unsafe fn makeMainWindow(self);
     // skipped: becomeMainWindow (should not be invoked directly, according to Apple's documentation)
     // skipped: resignMainWindow (should not be invoked directly, according to Apple's documentation)
@@ -1079,8 +1080,8 @@ pub trait NSWindow: Sized {
     unsafe fn standardWindowButton_(self, windowButtonKind: NSWindowButton) -> id;
 
     // Managing Window Tabs
-    unsafe fn allowsAutomaticWindowTabbing(_: Self) -> BOOL;
-    unsafe fn setAllowsAutomaticWindowTabbing_(_: Self, allowsAutomaticWindowTabbing: BOOL);
+    unsafe fn allowsAutomaticWindowTabbing(_: Self) -> bool;
+    unsafe fn setAllowsAutomaticWindowTabbing_(_: Self, allowsAutomaticWindowTabbing: bool);
     unsafe fn tabbingIdentifier(self) -> id;
     unsafe fn tabbingMode(self) -> NSWindowTabbingMode;
     unsafe fn setTabbingMode_(self, tabbingMode: NSWindowTabbingMode);
@@ -1094,7 +1095,7 @@ pub trait NSWindow: Sized {
     unsafe fn initialFirstResponder(self) -> id;
     unsafe fn firstResponder(self) -> id;
     unsafe fn setInitialFirstResponder_(self, responder: id);
-    unsafe fn makeFirstResponder_(self, responder: id) -> BOOL;
+    unsafe fn makeFirstResponder_(self, responder: id) -> bool;
 
     // TODO: Managing the Key View Loop
 
@@ -1102,11 +1103,11 @@ pub trait NSWindow: Sized {
     unsafe fn keyDown_(self, event: id);
 
     // Handling Mouse Events
-    unsafe fn acceptsMouseMovedEvents(self) -> BOOL;
-    unsafe fn ignoresMouseEvents(self) -> BOOL;
-    unsafe fn setIgnoresMouseEvents_(self, ignoreMouseEvents: BOOL);
+    unsafe fn acceptsMouseMovedEvents(self) -> bool;
+    unsafe fn ignoresMouseEvents(self) -> bool;
+    unsafe fn setIgnoresMouseEvents_(self, ignoreMouseEvents: bool);
     unsafe fn mouseLocationOutsideOfEventStream(self) -> NSPoint;
-    unsafe fn setAcceptsMouseMovedEvents_(self, acceptMouseMovedEvents: BOOL);
+    unsafe fn setAcceptsMouseMovedEvents_(self, acceptMouseMovedEvents: bool);
     unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(_: Self,
                                                                point: NSPoint,
                                                                windowNumber: NSInteger) -> NSInteger;
@@ -1127,15 +1128,15 @@ pub trait NSWindow: Sized {
     unsafe fn convertRectFromScreen_(self, rect: NSRect) -> NSRect;
 
     // Accessing Edited Status
-    unsafe fn isDocumentEdited(self) -> BOOL;
-    unsafe fn setDocumentEdited_(self, documentEdited: BOOL);
+    unsafe fn isDocumentEdited(self) -> bool;
+    unsafe fn setDocumentEdited_(self, documentEdited: bool);
 
     // Managing Titles
     unsafe fn title(self) -> id;
     unsafe fn setTitle_(self, title: id);
     unsafe fn setTitleWithRepresentedFilename_(self, filePath: id);
     unsafe fn setTitleVisibility_(self, visibility: NSWindowTitleVisibility);
-    unsafe fn setTitlebarAppearsTransparent_(self, transparent: BOOL);
+    unsafe fn setTitlebarAppearsTransparent_(self, transparent: bool);
     unsafe fn representedFilename(self) -> id;
     unsafe fn setRepresentedFilename_(self, filePath: id);
     unsafe fn representedURL(self) -> id;
@@ -1144,18 +1145,18 @@ pub trait NSWindow: Sized {
     // Accessing Screen Information
     unsafe fn screen(self) -> id;
     unsafe fn deepestScreen(self) -> id;
-    unsafe fn displaysWhenScreenProfileChanges(self) -> BOOL;
-    unsafe fn setDisplaysWhenScreenProfileChanges_(self, displaysWhenScreenProfileChanges: BOOL);
+    unsafe fn displaysWhenScreenProfileChanges(self) -> bool;
+    unsafe fn setDisplaysWhenScreenProfileChanges_(self, displaysWhenScreenProfileChanges: bool);
 
     // Moving Windows
-    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: BOOL);
-    unsafe fn setMovable_(self, movable: BOOL);
+    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool);
+    unsafe fn setMovable_(self, movable: bool);
     unsafe fn center(self);
 
     // Closing Windows
     unsafe fn performClose_(self, sender: id);
     unsafe fn close(self);
-    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: BOOL);
+    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool);
 
     // Minimizing Windows
     unsafe fn performMiniaturize_(self, sender: id);
@@ -1182,23 +1183,23 @@ impl NSWindow for id {
                                                            rect: NSRect,
                                                            style: NSWindowStyleMask,
                                                            backing: NSBackingStoreType,
-                                                           defer: BOOL) -> id {
-        msg_send![self, initWithContentRect:rect
-                                  styleMask:style.bits
-                                    backing:backing as NSUInteger
-                                      defer:defer]
+                                                           defer: bool) -> id {
+        msg_send![self, initWithContentRect:rect,
+                                  styleMask:style.bits,
+                                    backing:backing as NSUInteger,
+                                      defer:Bool::from(defer)]
     }
 
     unsafe fn initWithContentRect_styleMask_backing_defer_screen_(self,
                                                                   rect: NSRect,
                                                                   style: NSWindowStyleMask,
                                                                   backing: NSBackingStoreType,
-                                                                  defer: BOOL,
+                                                                  defer: bool,
                                                                   screen: id) -> id {
-        msg_send![self, initWithContentRect:rect
-                                  styleMask:style.bits
-                                    backing:backing as NSUInteger
-                                      defer:defer
+        msg_send![self, initWithContentRect:rect,
+                                  styleMask:style.bits,
+                                    backing:backing as NSUInteger,
+                                      defer:Bool::from(defer),
                                      screen:screen]
     }
 
@@ -1216,8 +1217,8 @@ impl NSWindow for id {
         msg_send![self, toggleFullScreen:sender]
     }
 
-    unsafe fn worksWhenModal(self) -> BOOL {
-        msg_send![self, worksWhenModal]
+    unsafe fn worksWhenModal(self) -> bool {
+        msg_send_bool![self, worksWhenModal]
     }
 
     unsafe fn alphaValue(self) -> CGFloat {
@@ -1252,20 +1253,20 @@ impl NSWindow for id {
         msg_send![self, setContentView:view]
     }
 
-    unsafe fn canHide(self) -> BOOL {
-        msg_send![self, canHide]
+    unsafe fn canHide(self) -> bool {
+        msg_send_bool![self, canHide]
     }
 
-    unsafe fn setCanHide_(self, canHide: BOOL) {
-        msg_send![self, setCanHide:canHide]
+    unsafe fn setCanHide_(self, canHide: bool) {
+        msg_send![self, setCanHide: Bool::from(canHide)]
     }
 
-    unsafe fn hidesOnDeactivate(self) -> BOOL {
-        msg_send![self, hidesOnDeactivate]
+    unsafe fn hidesOnDeactivate(self) -> bool {
+        msg_send_bool![self, hidesOnDeactivate]
     }
 
-    unsafe fn setHidesOnDeactivate_(self, hideOnDeactivate: BOOL) {
-        msg_send![self, setHidesOnDeactivate:hideOnDeactivate]
+    unsafe fn setHidesOnDeactivate_(self, hideOnDeactivate: bool) {
+        msg_send![self, setHidesOnDeactivate: Bool::from(hideOnDeactivate)]
     }
 
     unsafe fn collectionBehavior(self) -> NSWindowCollectionBehavior {
@@ -1276,31 +1277,31 @@ impl NSWindow for id {
         msg_send![self, setCollectionBehavior:collectionBehavior]
     }
 
-    unsafe fn setOpaque_(self, opaque: BOOL) {
-        msg_send![self, setOpaque:opaque]
+    unsafe fn setOpaque_(self, opaque: bool) {
+        msg_send![self, setOpaque: Bool::from(opaque)]
     }
 
-    unsafe fn hasShadow(self) -> BOOL {
-        msg_send![self, hasShadow]
+    unsafe fn hasShadow(self) -> bool {
+        msg_send_bool![self, hasShadow]
     }
 
-    unsafe fn setHasShadow_(self, hasShadow: BOOL) {
-        msg_send![self, setHasShadow:hasShadow]
+    unsafe fn setHasShadow_(self, hasShadow: bool) {
+        msg_send![self, setHasShadow: Bool::from(hasShadow)]
     }
 
     unsafe fn invalidateShadow(self) {
         msg_send![self, invalidateShadow]
     }
 
-    unsafe fn autorecalculatesContentBorderThicknessForEdge_(self, edge: NSRectEdge) -> BOOL {
-        msg_send![self, autorecalculatesContentBorderThicknessForEdge:edge]
+    unsafe fn autorecalculatesContentBorderThicknessForEdge_(self, edge: NSRectEdge) -> bool {
+        msg_send_bool![self, autorecalculatesContentBorderThicknessForEdge:edge]
     }
 
     unsafe fn setAutorecalculatesContentBorderThickness_forEdge_(self,
-                                                                 autorecalculateContentBorderThickness: BOOL,
-                                                                 edge: NSRectEdge) -> BOOL {
-        msg_send![self, setAutorecalculatesContentBorderThickness:
-                        autorecalculateContentBorderThickness forEdge:edge]
+                                                                 autorecalculateContentBorderThickness: bool,
+                                                                 edge: NSRectEdge) -> bool {
+        msg_send_bool![self, setAutorecalculatesContentBorderThickness:
+                        Bool::from(autorecalculateContentBorderThickness), forEdge:edge]
     }
 
     unsafe fn contentBorderThicknessForEdge_(self, edge: NSRectEdge) -> CGFloat {
@@ -1308,7 +1309,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setContentBorderThickness_forEdge_(self, borderThickness: CGFloat, edge: NSRectEdge) {
-        msg_send![self, setContentBorderThickness:borderThickness forEdge:edge]
+        msg_send![self, setContentBorderThickness:borderThickness, forEdge:edge]
     }
 
     unsafe fn delegate(self) -> id {
@@ -1319,12 +1320,12 @@ impl NSWindow for id {
         msg_send![self, setDelegate:delegate]
     }
 
-    unsafe fn preventsApplicationTerminationWhenModal(self) -> BOOL {
-        msg_send![self, preventsApplicationTerminationWhenModal]
+    unsafe fn preventsApplicationTerminationWhenModal(self) -> bool {
+        msg_send_bool![self, preventsApplicationTerminationWhenModal]
     }
 
-    unsafe fn setPreventsApplicationTerminationWhenModal_(self, flag: BOOL) {
-        msg_send![self, setPreventsApplicationTerminationWhenModal:flag]
+    unsafe fn setPreventsApplicationTerminationWhenModal_(self, flag: bool) {
+        msg_send![self, setPreventsApplicationTerminationWhenModal: Bool::from(flag)]
     }
 
     // TODO: Accessing Window Information
@@ -1332,15 +1333,15 @@ impl NSWindow for id {
     // Getting Layout Information
 
     unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSWindowStyleMask) -> NSRect {
-        msg_send![self, contentRectForFrameRect:windowFrame styleMask:windowStyle.bits]
+        msg_send![self, contentRectForFrameRect: windowFrame, styleMask: windowStyle.bits]
     }
 
     unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSWindowStyleMask) -> NSRect {
-        msg_send![self, frameRectForContentRect:windowContentRect styleMask:windowStyle.bits]
+        msg_send![self, frameRectForContentRect: windowContentRect, styleMask: windowStyle.bits]
     }
 
     unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSWindowStyleMask) -> CGFloat {
-        msg_send![self, minFrameWidthWithTitle:windowTitle styleMask:windowStyle.bits]
+        msg_send![self, minFrameWidthWithTitle: windowTitle, styleMask: windowStyle.bits]
     }
 
     unsafe fn contentRectForFrameRect_(self, windowFrame: NSRect) -> NSRect {
@@ -1382,19 +1383,19 @@ impl NSWindow for id {
     }
 
     unsafe fn constrainFrameRect_toScreen_(self, frameRect: NSRect, screen: id) {
-        msg_send![self, constrainFrameRect:frameRect toScreen:screen]
+        msg_send![self, constrainFrameRect: frameRect, toScreen: screen]
     }
 
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint {
         msg_send![self, cascadeTopLeftFromPoint:topLeft]
     }
 
-    unsafe fn setFrame_display_(self, windowFrame: NSRect, display: BOOL) {
-        msg_send![self, setFrame:windowFrame display:display]
+    unsafe fn setFrame_display_(self, windowFrame: NSRect, display: bool) {
+        msg_send![self, setFrame: windowFrame, display: Bool::from(display)]
     }
 
-    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL) {
-        msg_send![self, setFrame:windowFrame displayViews:display]
+    unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: bool) {
+        msg_send![self, setFrame: windowFrame, displayViews: Bool::from(display)]
     }
 
     unsafe fn aspectRatio(self) -> NSSize {
@@ -1433,12 +1434,12 @@ impl NSWindow for id {
         msg_send![self, resizeFlags]
     }
 
-    unsafe fn showsResizeIndicator(self) -> BOOL {
-        msg_send![self, showsResizeIndicator]
+    unsafe fn showsResizeIndicator(self) -> bool {
+        msg_send_bool![self, showsResizeIndicator]
     }
 
-    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: BOOL) {
-        msg_send![self, setShowsResizeIndicator:showsResizeIndicator]
+    unsafe fn setShowsResizeIndicator_(self, showsResizeIndicator: bool) {
+        msg_send![self, setShowsResizeIndicator: Bool::from(showsResizeIndicator)]
     }
 
     unsafe fn resizeIncrements(self) -> NSSize {
@@ -1449,16 +1450,16 @@ impl NSWindow for id {
         msg_send![self, setResizeIncrements:resizeIncrements]
     }
 
-    unsafe fn preservesContentDuringLiveResize(self) -> BOOL {
-        msg_send![self, preservesContentDuringLiveResize]
+    unsafe fn preservesContentDuringLiveResize(self) -> bool {
+        msg_send_bool![self, preservesContentDuringLiveResize]
     }
 
-    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: BOOL) {
-        msg_send![self, setPreservesContentDuringLiveResize:preservesContentDuringLiveResize]
+    unsafe fn setPreservesContentDuringLiveResize_(self, preservesContentDuringLiveResize: bool) {
+        msg_send![self, setPreservesContentDuringLiveResize: Bool::from(preservesContentDuringLiveResize)]
     }
 
-    unsafe fn inLiveResize(self) -> BOOL {
-        msg_send![self, inLiveResize]
+    unsafe fn inLiveResize(self) -> bool {
+        msg_send_bool![self, inLiveResize]
     }
 
     // Sizing Content
@@ -1505,8 +1506,8 @@ impl NSWindow for id {
 
     // Managing Window Visibility and Occlusion State
 
-    unsafe fn isVisible(self) -> BOOL {
-        msg_send![self, isVisible]
+    unsafe fn isVisible(self) -> bool {
+        msg_send_bool![self, isVisible]
     }
 
     unsafe fn occlusionState(self) -> NSWindowOcclusionState {
@@ -1532,7 +1533,7 @@ impl NSWindow for id {
     }
 
     unsafe fn orderFrontWindow_relativeTo_(self, ordering_mode: NSWindowOrderingMode, other_window_number: NSInteger) {
-        msg_send![self, orderWindow:ordering_mode relativeTo:other_window_number]
+        msg_send![self, orderWindow: ordering_mode, relativeTo: other_window_number]
     }
 
     unsafe fn level(self) -> NSInteger {
@@ -1545,12 +1546,12 @@ impl NSWindow for id {
 
     // Managing Key Status
 
-    unsafe fn isKeyWindow(self) -> BOOL {
-        msg_send![self, isKeyWindow]
+    unsafe fn isKeyWindow(self) -> bool {
+        msg_send_bool![self, isKeyWindow]
     }
 
-    unsafe fn canBecomeKeyWindow(self) -> BOOL {
-        msg_send![self, canBecomeKeyWindow]
+    unsafe fn canBecomeKeyWindow(self) -> bool {
+        msg_send_bool![self, canBecomeKeyWindow]
     }
 
     unsafe fn makeKeyWindow(self) {
@@ -1563,8 +1564,8 @@ impl NSWindow for id {
 
     // Managing Main Status
 
-    unsafe fn canBecomeMainWindow(self) -> BOOL {
-        msg_send![self, canBecomeMainWindow]
+    unsafe fn canBecomeMainWindow(self) -> bool {
+        msg_send_bool![self, canBecomeMainWindow]
     }
 
     unsafe fn makeMainWindow(self) {
@@ -1599,12 +1600,12 @@ impl NSWindow for id {
     }
 
     // Managing Window Tabs
-    unsafe fn allowsAutomaticWindowTabbing(_: Self) -> BOOL {
-        msg_send![class!(NSWindow), allowsAutomaticWindowTabbing]
+    unsafe fn allowsAutomaticWindowTabbing(_: Self) -> bool {
+        msg_send_bool![class!(NSWindow), allowsAutomaticWindowTabbing]
     }
 
-    unsafe fn setAllowsAutomaticWindowTabbing_(_: Self, allowsAutomaticWindowTabbing: BOOL) {
-        msg_send![class!(NSWindow), setAllowsAutomaticWindowTabbing:allowsAutomaticWindowTabbing]
+    unsafe fn setAllowsAutomaticWindowTabbing_(_: Self, allowsAutomaticWindowTabbing: bool) {
+        msg_send![class!(NSWindow), setAllowsAutomaticWindowTabbing: Bool::from(allowsAutomaticWindowTabbing)]
     }
 
     unsafe fn tabbingIdentifier(self) -> id {
@@ -1620,7 +1621,7 @@ impl NSWindow for id {
     }
 
     unsafe fn addTabbedWindow_ordered_(self, window: id, ordering_mode: NSWindowOrderingMode) {
-        msg_send![self, addTabbedWindow:window ordered: ordering_mode]
+        msg_send![self, addTabbedWindow: window, ordered: ordering_mode]
     }
 
     unsafe fn toggleTabBar_(self, sender: id) {
@@ -1643,8 +1644,8 @@ impl NSWindow for id {
         msg_send![self, setInitialFirstResponder:responder]
     }
 
-    unsafe fn makeFirstResponder_(self, responder: id) -> BOOL {
-        msg_send![self, makeFirstResponder:responder]
+    unsafe fn makeFirstResponder_(self, responder: id) -> bool {
+        msg_send_bool![self, makeFirstResponder:responder]
     }
 
     // TODO: Managing the Key View Loop
@@ -1657,30 +1658,30 @@ impl NSWindow for id {
 
     // Handling Mouse Events
 
-    unsafe fn acceptsMouseMovedEvents(self) -> BOOL {
-        msg_send![self, acceptsMouseMovedEvents]
+    unsafe fn acceptsMouseMovedEvents(self) -> bool {
+        msg_send_bool![self, acceptsMouseMovedEvents]
     }
 
-    unsafe fn ignoresMouseEvents(self) -> BOOL {
-        msg_send![self, ignoresMouseEvents]
+    unsafe fn ignoresMouseEvents(self) -> bool {
+        msg_send_bool![self, ignoresMouseEvents]
     }
 
-    unsafe fn setIgnoresMouseEvents_(self, ignoreMouseEvents: BOOL) {
-        msg_send![self, setIgnoresMouseEvents:ignoreMouseEvents]
+    unsafe fn setIgnoresMouseEvents_(self, ignoreMouseEvents: bool) {
+        msg_send![self, setIgnoresMouseEvents: Bool::from(ignoreMouseEvents)]
     }
 
     unsafe fn mouseLocationOutsideOfEventStream(self) -> NSPoint {
         msg_send![self, mouseLocationOutsideOfEventStream]
     }
 
-    unsafe fn setAcceptsMouseMovedEvents_(self, acceptMouseMovedEvents: BOOL) {
-        msg_send![self, setAcceptsMouseMovedEvents:acceptMouseMovedEvents]
+    unsafe fn setAcceptsMouseMovedEvents_(self, acceptMouseMovedEvents: bool) {
+        msg_send![self, setAcceptsMouseMovedEvents: Bool::from(acceptMouseMovedEvents)]
     }
 
     unsafe fn windowNumberAtPoint_belowWindowWithWindowNumber_(_: Self,
                                                                point: NSPoint,
                                                                windowNumber: NSInteger) -> NSInteger {
-        msg_send![class!(NSWindow), windowNumberAtPoint:point belowWindowWithWindowNumber:windowNumber]
+        msg_send![class!(NSWindow), windowNumberAtPoint: point, belowWindowWithWindowNumber: windowNumber]
     }
 
     // Converting Coordinates
@@ -1690,7 +1691,7 @@ impl NSWindow for id {
     }
 
     unsafe fn backingAlignedRect_options_(self, rect: NSRect, options: NSAlignmentOptions) -> NSRect {
-        msg_send![self, backingAlignedRect:rect options:options]
+        msg_send![self, backingAlignedRect: rect, options: options]
     }
 
     unsafe fn convertRectFromBacking_(self, rect: NSRect) -> NSRect {
@@ -1711,12 +1712,12 @@ impl NSWindow for id {
 
     // Accessing Edited Status
 
-    unsafe fn isDocumentEdited(self) -> BOOL {
-        msg_send![self, isDocumentEdited]
+    unsafe fn isDocumentEdited(self) -> bool {
+        msg_send_bool![self, isDocumentEdited]
     }
 
-    unsafe fn setDocumentEdited_(self, documentEdited: BOOL) {
-        msg_send![self, setDocumentEdited:documentEdited]
+    unsafe fn setDocumentEdited_(self, documentEdited: bool) {
+        msg_send![self, setDocumentEdited: Bool::from(documentEdited)]
     }
 
     // Managing Titles
@@ -1737,8 +1738,8 @@ impl NSWindow for id {
         msg_send![self, setTitleVisibility:visibility]
     }
 
-    unsafe fn setTitlebarAppearsTransparent_(self, transparent: BOOL) {
-        msg_send![self, setTitlebarAppearsTransparent:transparent]
+    unsafe fn setTitlebarAppearsTransparent_(self, transparent: bool) {
+        msg_send![self, setTitlebarAppearsTransparent: Bool::from(transparent)]
     }
 
     unsafe fn representedFilename(self) -> id {
@@ -1767,22 +1768,22 @@ impl NSWindow for id {
         msg_send![self, deepestScreen]
     }
 
-    unsafe fn displaysWhenScreenProfileChanges(self) -> BOOL {
-        msg_send![self, displaysWhenScreenProfileChanges]
+    unsafe fn displaysWhenScreenProfileChanges(self) -> bool {
+        msg_send_bool![self, displaysWhenScreenProfileChanges]
     }
 
-    unsafe fn setDisplaysWhenScreenProfileChanges_(self, displaysWhenScreenProfileChanges: BOOL) {
-        msg_send![self, setDisplaysWhenScreenProfileChanges:displaysWhenScreenProfileChanges]
+    unsafe fn setDisplaysWhenScreenProfileChanges_(self, displaysWhenScreenProfileChanges: bool) {
+        msg_send![self, setDisplaysWhenScreenProfileChanges: Bool::from(displaysWhenScreenProfileChanges)]
     }
 
     // Moving Windows
 
-    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: BOOL) {
-        msg_send![self, setMovableByWindowBackground:movableByWindowBackground]
+    unsafe fn setMovableByWindowBackground_(self, movableByWindowBackground: bool) {
+        msg_send![self, setMovableByWindowBackground: Bool::from(movableByWindowBackground)]
     }
 
-    unsafe fn setMovable_(self, movable: BOOL) {
-        msg_send![self, setMovable:movable]
+    unsafe fn setMovable_(self, movable: bool) {
+        msg_send![self, setMovable: Bool::from(movable)]
     }
 
     unsafe fn center(self) {
@@ -1799,8 +1800,8 @@ impl NSWindow for id {
         msg_send![self, close]
     }
 
-    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: BOOL) {
-        msg_send![self, setReleasedWhenClosed:releasedWhenClosed]
+    unsafe fn setReleasedWhenClosed_(self, releasedWhenClosed: bool) {
+        msg_send![self, setReleasedWhenClosed: Bool::from(releasedWhenClosed)]
     }
 
     // Minimizing Windows
@@ -1849,34 +1850,34 @@ pub trait NSPanel: Sized {
 
     // NSPanel subclasses NSWindow, hence we only add the added methods
     // https://developer.apple.com/documentation/appkit/nspanel
-    unsafe fn setBecomesKeyOnlyIfNeeded(self, becomesKeyOnlyIfNeeded: BOOL);
-    unsafe fn becomesKeyOnlyIfNeeded(self) -> BOOL;
-    unsafe fn setFloatingPanel(self, floatingPanel: BOOL);
-    unsafe fn floatingPanel(self) -> BOOL;
-    unsafe fn setWorksWhenModal(self, worksWithPanel: BOOL);
+    unsafe fn setBecomesKeyOnlyIfNeeded(self, becomesKeyOnlyIfNeeded: bool);
+    unsafe fn becomesKeyOnlyIfNeeded(self) -> bool;
+    unsafe fn setFloatingPanel(self, floatingPanel: bool);
+    unsafe fn floatingPanel(self) -> bool;
+    unsafe fn setWorksWhenModal(self, worksWithPanel: bool);
 }
 
 impl NSPanel for id {
     // NSPanel subclasses NSWindow, hence we only add the added methods
     // https://developer.apple.com/documentation/appkit/nspanel
-    unsafe fn setBecomesKeyOnlyIfNeeded(self, becomesKeyOnlyIfNeeded: BOOL) {
-        msg_send![self, setBecomesKeyOnlyIfNeeded: becomesKeyOnlyIfNeeded]
+    unsafe fn setBecomesKeyOnlyIfNeeded(self, becomesKeyOnlyIfNeeded: bool) {
+        msg_send![self, setBecomesKeyOnlyIfNeeded: Bool::from(becomesKeyOnlyIfNeeded)]
     }
 
-    unsafe fn becomesKeyOnlyIfNeeded(self) -> BOOL {
-        msg_send![self, becomesKeyOnlyIfNeeded]
+    unsafe fn becomesKeyOnlyIfNeeded(self) -> bool {
+        msg_send_bool![self, becomesKeyOnlyIfNeeded]
     }
 
-    unsafe fn setFloatingPanel(self, floatingPanel: BOOL) {
-        msg_send![self, setFloatingPanel: floatingPanel]
+    unsafe fn setFloatingPanel(self, floatingPanel: bool) {
+        msg_send![self, setFloatingPanel: Bool::from(floatingPanel)]
     }
 
-    unsafe fn floatingPanel(self) -> BOOL {
-        msg_send![self, isFloatingPanel]
+    unsafe fn floatingPanel(self) -> bool {
+        msg_send_bool![self, isFloatingPanel]
     }
 
-    unsafe fn setWorksWhenModal(self, worksWhenModal: BOOL) {
-        msg_send![self, setWorksWhenModal: worksWhenModal]
+    unsafe fn setWorksWhenModal(self, worksWhenModal: bool) {
+        msg_send![self, setWorksWhenModal: Bool::from(worksWhenModal)]
     }
 }
 
@@ -1895,7 +1896,7 @@ pub trait NSSavePanel: Sized {
     }
 
     unsafe fn setDirectoryURL(self, url: id);
-    unsafe fn setCanCreateDirectories(self, canCreateDirectories: BOOL);
+    unsafe fn setCanCreateDirectories(self, canCreateDirectories: bool);
     unsafe fn URL(self) -> id;
     unsafe fn runModal(self) -> NSModalResponse;
 }
@@ -1905,8 +1906,8 @@ impl NSSavePanel for id {
         msg_send![self, setDirectoryURL: url]
     }
 
-    unsafe fn setCanCreateDirectories(self, canCreateDirectories: BOOL) {
-        msg_send![self, setCanCreateDirectories: canCreateDirectories]
+    unsafe fn setCanCreateDirectories(self, canCreateDirectories: bool) {
+        msg_send![self, setCanCreateDirectories: Bool::from(canCreateDirectories)]
     }
 
     unsafe fn URL(self) -> id {
@@ -1923,28 +1924,28 @@ pub trait NSOpenPanel: NSSavePanel {
         msg_send![class!(NSOpenPanel), openPanel]
     }
 
-    unsafe fn setCanChooseFiles_(self, canChooseFiles: BOOL);
-    unsafe fn setCanChooseDirectories_(self, canChooseDirectories: BOOL);
-    unsafe fn setResolvesAliases_(self, resolvesAliases: BOOL);
-    unsafe fn setAllowsMultipleSelection_(self, allowsMultipleSelection: BOOL);
+    unsafe fn setCanChooseFiles_(self, canChooseFiles: bool);
+    unsafe fn setCanChooseDirectories_(self, canChooseDirectories: bool);
+    unsafe fn setResolvesAliases_(self, resolvesAliases: bool);
+    unsafe fn setAllowsMultipleSelection_(self, allowsMultipleSelection: bool);
     unsafe fn URLs(self) -> id;
 }
 
 impl NSOpenPanel for id {
-    unsafe fn setCanChooseFiles_(self, canChooseFiles: BOOL) {
-        msg_send![self, setCanChooseFiles: canChooseFiles]
+    unsafe fn setCanChooseFiles_(self, canChooseFiles: bool) {
+        msg_send![self, setCanChooseFiles: Bool::from(canChooseFiles)]
     }
 
-    unsafe fn setCanChooseDirectories_(self, canChooseDirectories: BOOL) {
-        msg_send![self, setCanChooseDirectories: canChooseDirectories]
+    unsafe fn setCanChooseDirectories_(self, canChooseDirectories: bool) {
+        msg_send![self, setCanChooseDirectories: Bool::from(canChooseDirectories)]
     }
 
-    unsafe fn setResolvesAliases_(self, resolvesAliases: BOOL) {
-        msg_send![self, setResolvesAliases: resolvesAliases]
+    unsafe fn setResolvesAliases_(self, resolvesAliases: bool) {
+        msg_send![self, setResolvesAliases: Bool::from(resolvesAliases)]
     }
 
-    unsafe fn setAllowsMultipleSelection_(self, allowsMultipleSelection: BOOL) {
-        msg_send![self, setAllowsMultipleSelection: allowsMultipleSelection]
+    unsafe fn setAllowsMultipleSelection_(self, allowsMultipleSelection: bool) {
+        msg_send![self, setAllowsMultipleSelection: Bool::from(allowsMultipleSelection)]
     }
 
     unsafe fn URLs(self) -> id {
@@ -1983,15 +1984,15 @@ pub trait NSView: Sized {
     unsafe fn setFrameSize(self, frameSize: NSSize);
     unsafe fn setFrameOrigin(self, frameOrigin: NSPoint);
     unsafe fn display_(self);
-    unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: BOOL);
+    unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: bool);
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint;
     unsafe fn addSubview_(self, view: id);
     unsafe fn superview(self) -> id;
     unsafe fn removeFromSuperview(self);
     unsafe fn setAutoresizingMask_(self, autoresizingMask: NSAutoresizingMaskOptions);
 
-    unsafe fn wantsLayer(self) -> BOOL;
-    unsafe fn setWantsLayer(self, wantsLayer: BOOL);
+    unsafe fn wantsLayer(self) -> bool;
+    unsafe fn setWantsLayer(self, wantsLayer: bool);
     unsafe fn layer(self) -> id;
     unsafe fn setLayer(self, layer: id);
 
@@ -2032,12 +2033,12 @@ impl NSView for id {
         msg_send![self, display]
     }
 
-    unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: BOOL) {
-        msg_send![self, setWantsBestResolutionOpenGLSurface:flag]
+    unsafe fn setWantsBestResolutionOpenGLSurface_(self, flag: bool) {
+        msg_send![self, setWantsBestResolutionOpenGLSurface: Bool::from(flag)]
     }
 
     unsafe fn convertPoint_fromView_(self, point: NSPoint, view: id) -> NSPoint {
-        msg_send![self, convertPoint:point fromView:view]
+        msg_send![self, convertPoint: point, fromView: view]
     }
 
     unsafe fn addSubview_(self, view: id) {
@@ -2056,12 +2057,12 @@ impl NSView for id {
         msg_send![self, setAutoresizingMask:autoresizingMask]
     }
 
-    unsafe fn wantsLayer(self) -> BOOL {
-        msg_send![self, wantsLayer]
+    unsafe fn wantsLayer(self) -> bool {
+        msg_send_bool![self, wantsLayer]
     }
 
-    unsafe fn setWantsLayer(self, wantsLayer: BOOL) {
-        msg_send![self, setWantsLayer:wantsLayer]
+    unsafe fn setWantsLayer(self, wantsLayer: bool) {
+        msg_send![self, setWantsLayer: Bool::from(wantsLayer)]
     }
 
     unsafe fn layer(self) -> id {
@@ -2116,7 +2117,7 @@ pub trait NSOpenGLView: Sized {
 
 impl NSOpenGLView for id {
     unsafe fn initWithFrame_pixelFormat_(self,  frameRect: NSRect, format: id) -> id {
-        msg_send![self, initWithFrame:frameRect pixelFormat:format]
+        msg_send![self, initWithFrame: frameRect, pixelFormat: format]
     }
 
     unsafe fn display_(self) {
@@ -2158,7 +2159,7 @@ impl NSOpenGLPixelFormat for id {
     // Managing the Pixel Format
 
     unsafe fn getValues_forAttribute_forVirtualScreen_(self, val: *mut GLint, attrib: NSOpenGLPixelFormatAttribute, screen: GLint) {
-        msg_send![self, getValues:val forAttribute:attrib forVirtualScreen:screen]
+        msg_send![self, getValues: val, forAttribute: attrib, forVirtualScreen:screen]
     }
 
     unsafe fn numberOfVirtualScreens(self) -> GLint {
@@ -2205,7 +2206,7 @@ impl NSOpenGLContext for id {
     // Context Creation
 
     unsafe fn initWithFormat_shareContext_(self, format: id /* (NSOpenGLPixelFormat *) */, shareContext: id /* (NSOpenGLContext *) */) -> id /* (instancetype) */ {
-        msg_send![self, initWithFormat:format shareContext:shareContext]
+        msg_send![self, initWithFormat: format, shareContext: shareContext]
     }
 
     unsafe fn initWithCGLContextObj_(self, context: CGLContextObj) -> id /* (instancetype) */ {
@@ -2253,11 +2254,11 @@ impl NSOpenGLContext for id {
     // Context Parameter Handling
 
     unsafe fn setValues_forParameter_(self, vals: *const GLint, param: NSOpenGLContextParameter) {
-        msg_send![self, setValues:vals forParameter:param]
+        msg_send![self, setValues: vals, forParameter: param]
     }
 
     unsafe fn getValues_forParameter_(self, vals: *mut GLint, param: NSOpenGLContextParameter) {
-        msg_send![self, getValues:vals forParameter:param]
+        msg_send![self, getValues: vals, forParameter: param]
     }
 
     // Working with Virtual Screens
@@ -2546,7 +2547,7 @@ pub trait NSEvent: Sized {
         context: id /* (NSGraphicsContext *) */,
         characters: id /* (NSString *) */,
         unmodCharacters: id /* (NSString *) */,
-        repeatKey: BOOL,
+        repeatKey: bool,
         code: libc::c_ushort) -> id /* (NSEvent *) */;
     unsafe fn mouseEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_clickCount_pressure_(
         _: Self,
@@ -2604,7 +2605,7 @@ pub trait NSEvent: Sized {
     unsafe fn characters(self) -> id /* (NSString *) */;
     unsafe fn charactersIgnoringModifiers(self) -> id /* (NSString *) */;
     unsafe fn keyCode(self) -> libc::c_ushort;
-    unsafe fn isARepeat(self) -> BOOL;
+    unsafe fn isARepeat(self) -> bool;
 
     // Getting Mouse Event Information
     unsafe fn pressedMouseButtons(_: Self) -> NSUInteger;
@@ -2614,8 +2615,8 @@ pub trait NSEvent: Sized {
     unsafe fn clickCount(self) -> NSInteger;
     unsafe fn pressure(self) -> libc::c_float;
     unsafe fn stage(self) -> NSInteger;
-    unsafe fn setMouseCoalescingEnabled_(_: Self, flag: BOOL);
-    unsafe fn isMouseCoalescingEnabled(_: Self) -> BOOL;
+    unsafe fn setMouseCoalescingEnabled_(_: Self, flag: bool);
+    unsafe fn isMouseCoalescingEnabled(_: Self) -> bool;
 
     // Getting Mouse-Tracking Event Information
     unsafe fn eventNumber(self) -> NSInteger;
@@ -2662,7 +2663,7 @@ pub trait NSEvent: Sized {
     // Getting Touch and Gesture Information
     unsafe fn magnification(self) -> CGFloat;
     unsafe fn touchesMatchingPhase_inView_(self, phase: NSTouchPhase, view: id /* (NSView *) */) -> id /* (NSSet *) */;
-    unsafe fn isSwipeTrackingFromScrollEventsEnabled(_: Self) -> BOOL;
+    unsafe fn isSwipeTrackingFromScrollEventsEnabled(_: Self) -> bool;
 
     // Monitoring Application Events
     // TODO: addGlobalMonitorForEventsMatchingMask_handler_ (unsure how to bind to blocks)
@@ -2670,7 +2671,7 @@ pub trait NSEvent: Sized {
     unsafe fn removeMonitor_(_: Self, eventMonitor: id);
 
     // Scroll Wheel and Flick Events
-    unsafe fn hasPreciseScrollingDeltas(self) -> BOOL;
+    unsafe fn hasPreciseScrollingDeltas(self) -> bool;
     unsafe fn scrollingDeltaX(self) -> CGFloat;
     unsafe fn scrollingDeltaY(self) -> CGFloat;
     unsafe fn momentumPhase(self) -> NSEventPhase;
@@ -2694,18 +2695,18 @@ impl NSEvent for id {
         context: id /* (NSGraphicsContext *) */,
         characters: id /* (NSString *) */,
         unmodCharacters: id /* (NSString *) */,
-        repeatKey: BOOL,
+        repeatKey: bool,
         code: libc::c_ushort) -> id /* (NSEvent *) */
     {
-        msg_send![class!(NSEvent), keyEventWithType:eventType
-                                            location:location
-                                       modifierFlags:modifierFlags
-                                           timestamp:timestamp
-                                        windowNumber:windowNumber
-                                             context:context
-                                          characters:characters
-                         charactersIgnoringModifiers:unmodCharacters
-                                           isARepeat:repeatKey
+        msg_send![class!(NSEvent), keyEventWithType:eventType,
+                                            location:location,
+                                       modifierFlags:modifierFlags,
+                                           timestamp:timestamp,
+                                        windowNumber:windowNumber,
+                                             context:context,
+                                          characters:characters,
+                         charactersIgnoringModifiers:unmodCharacters,
+                                           isARepeat:Bool::from(repeatKey),
                                              keyCode:code]
     }
 
@@ -2721,14 +2722,14 @@ impl NSEvent for id {
         clickCount: NSInteger,
         pressure: libc::c_float) -> id /* (NSEvent *) */
     {
-        msg_send![class!(NSEvent), mouseEventWithType:eventType
-                                              location:location
-                                         modifierFlags:modifierFlags
-                                             timestamp:timestamp
-                                          windowNumber:windowNumber
-                                               context:context
-                                           eventNumber:eventNumber
-                                            clickCount:clickCount
+        msg_send![class!(NSEvent), mouseEventWithType:eventType,
+                                              location:location,
+                                         modifierFlags:modifierFlags,
+                                             timestamp:timestamp,
+                                          windowNumber:windowNumber,
+                                               context:context,
+                                           eventNumber:eventNumber,
+                                            clickCount:clickCount,
                                               pressure:pressure]
     }
 
@@ -2744,14 +2745,14 @@ impl NSEvent for id {
         trackingNumber: NSInteger,
         userData: *mut c_void) -> id /* (NSEvent *) */
     {
-        msg_send![class!(NSEvent), enterExitEventWithType:eventType
-                                                  location:location
-                                             modifierFlags:modifierFlags
-                                                 timestamp:timestamp
-                                              windowNumber:windowNumber
-                                                   context:context
-                                               eventNumber:eventNumber
-                                            trackingNumber:trackingNumber
+        msg_send![class!(NSEvent), enterExitEventWithType:eventType,
+                                                  location:location,
+                                             modifierFlags:modifierFlags,
+                                                 timestamp:timestamp,
+                                              windowNumber:windowNumber,
+                                                   context:context,
+                                               eventNumber:eventNumber,
+                                            trackingNumber:trackingNumber,
                                                   userData:userData]
     }
 
@@ -2767,14 +2768,14 @@ impl NSEvent for id {
         data1: NSInteger,
         data2: NSInteger) -> id /* (NSEvent *) */
     {
-        msg_send![class!(NSEvent), otherEventWithType:eventType
-                                              location:location
-                                         modifierFlags:modifierFlags
-                                             timestamp:timestamp
-                                          windowNumber:windowNumber
-                                               context:context
-                                               subtype:subtype
-                                                 data1:data1
+        msg_send![class!(NSEvent), otherEventWithType:eventType,
+                                              location:location,
+                                         modifierFlags:modifierFlags,
+                                             timestamp:timestamp,
+                                          windowNumber:windowNumber,
+                                               context:context,
+                                               subtype:subtype,
+                                                 data1:data1,
                                                  data2:data2]
     }
 
@@ -2853,8 +2854,8 @@ impl NSEvent for id {
         msg_send![self, keyCode]
     }
 
-    unsafe fn isARepeat(self) -> BOOL {
-        msg_send![self, isARepeat]
+    unsafe fn isARepeat(self) -> bool {
+        msg_send_bool![self, isARepeat]
     }
 
     // Getting Mouse Event Information
@@ -2887,12 +2888,12 @@ impl NSEvent for id {
         msg_send![self, stage]
     }
 
-    unsafe fn setMouseCoalescingEnabled_(_: Self, flag: BOOL) {
-        msg_send![class!(NSEvent), setMouseCoalescingEnabled:flag]
+    unsafe fn setMouseCoalescingEnabled_(_: Self, flag: bool) {
+        msg_send![class!(NSEvent), setMouseCoalescingEnabled: Bool::from(flag)]
     }
 
-    unsafe fn isMouseCoalescingEnabled(_: Self) -> BOOL {
-        msg_send![class!(NSEvent), isMouseCoalescingEnabled]
+    unsafe fn isMouseCoalescingEnabled(_: Self) -> bool {
+        msg_send_bool![class!(NSEvent), isMouseCoalescingEnabled]
     }
 
     // Getting Mouse-Tracking Event Information
@@ -3020,7 +3021,7 @@ impl NSEvent for id {
     // Requesting and Stopping Periodic Events
 
     unsafe fn startPeriodicEventsAfterDelay_withPeriod_(_: Self, delaySeconds: NSTimeInterval, periodSeconds: NSTimeInterval) {
-        msg_send![class!(NSEvent), startPeriodicEventsAfterDelay:delaySeconds withPeriod:periodSeconds]
+        msg_send![class!(NSEvent), startPeriodicEventsAfterDelay: delaySeconds, withPeriod: periodSeconds]
     }
 
     unsafe fn stopPeriodicEvents(_: Self) {
@@ -3034,11 +3035,11 @@ impl NSEvent for id {
     }
 
     unsafe fn touchesMatchingPhase_inView_(self, phase: NSTouchPhase, view: id /* (NSView *) */) -> id /* (NSSet *) */ {
-        msg_send![self, touchesMatchingPhase:phase inView:view]
+        msg_send![self, touchesMatchingPhase: phase, inView: view]
     }
 
-    unsafe fn isSwipeTrackingFromScrollEventsEnabled(_: Self) -> BOOL {
-        msg_send![class!(NSEvent), isSwipeTrackingFromScrollEventsEnabled]
+    unsafe fn isSwipeTrackingFromScrollEventsEnabled(_: Self) -> bool {
+        msg_send_bool![class!(NSEvent), isSwipeTrackingFromScrollEventsEnabled]
     }
 
     // Monitoring Application Events
@@ -3052,8 +3053,8 @@ impl NSEvent for id {
 
     // Scroll Wheel and Flick Events
 
-    unsafe fn hasPreciseScrollingDeltas(self) -> BOOL {
-        msg_send![self, hasPreciseScrollingDeltas]
+    unsafe fn hasPreciseScrollingDeltas(self) -> bool {
+        msg_send_bool![self, hasPreciseScrollingDeltas]
     }
 
     unsafe fn scrollingDeltaX(self) -> CGFloat {
@@ -3093,7 +3094,7 @@ pub trait NSScreen: Sized {
     unsafe fn deviceDescription(self) -> id /* (NSDictionary *) */;
     unsafe fn visibleFrame(self) -> NSRect;
     unsafe fn colorSpace(self) -> id /* (NSColorSpace *) */;
-    unsafe fn screensHaveSeparateSpaces(_: Self) -> BOOL;
+    unsafe fn screensHaveSeparateSpaces(_: Self) -> bool;
 
     // Screen Backing Coordinate Conversion
     unsafe fn backingAlignedRect_options_(self, aRect: NSRect, options: NSAlignmentOptions) -> NSRect;
@@ -3143,14 +3144,14 @@ impl NSScreen for id {
         msg_send![self, colorSpace]
     }
 
-    unsafe fn screensHaveSeparateSpaces(_: Self) -> BOOL {
-        msg_send![class!(NSScreen), screensHaveSeparateSpaces]
+    unsafe fn screensHaveSeparateSpaces(_: Self) -> bool {
+        msg_send_bool![class!(NSScreen), screensHaveSeparateSpaces]
     }
 
     // Screen Backing Coordinate Conversion
 
     unsafe fn backingAlignedRect_options_(self, aRect: NSRect, options: NSAlignmentOptions) -> NSRect {
-        msg_send![self, backingAlignedRect:aRect options:options]
+        msg_send![self, backingAlignedRect: aRect, options: options]
     }
 
     unsafe fn backingScaleFactor(self) -> CGFloat {
@@ -3172,19 +3173,19 @@ pub trait NSControl: Sized {
         msg_send![class!(NSControl), alloc]
     }
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
-    unsafe fn isEnabled_(self) -> BOOL;
-    unsafe fn setEnabled_(self, enabled: BOOL) -> BOOL;
+    unsafe fn isEnabled_(self) -> bool;
+    unsafe fn setEnabled_(self, enabled: bool) -> bool;
 }
 
 impl NSControl for id {
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
         msg_send![self, initWithFrame:frameRect]
     }
-    unsafe fn isEnabled_(self) -> BOOL {
-        msg_send![self, isEnabled]
+    unsafe fn isEnabled_(self) -> bool {
+        msg_send_bool![self, isEnabled]
     }
-    unsafe fn setEnabled_(self, enabled: BOOL) -> BOOL {
-        msg_send![self, setEnabled:enabled]
+    unsafe fn setEnabled_(self, enabled: bool) -> bool {
+        msg_send_bool![self, setEnabled: Bool::from(enabled)]
     }
 }
 
@@ -3250,8 +3251,8 @@ pub trait NSImage: Sized {
     unsafe fn initWithDataIgnoringOrientation_(self, data: id /* (NSData *) */) -> id;
     unsafe fn initWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> id;
     unsafe fn initWithSize_flipped_drawingHandler_(self, size: NSSize,
-                                                   drawingHandlerShouldBeCalledWithFlippedContext: BOOL,
-                                                   drawingHandler: *mut Block<(NSRect,), BOOL>);
+                                                   drawingHandlerShouldBeCalledWithFlippedContext: bool,
+                                                   drawingHandler: *mut Block<(NSRect,), Bool>);
     unsafe fn initWithSize_(self, aSize: NSSize) -> id;
 
     unsafe fn imageNamed_(_: Self, name: id /* (NSString *) */) -> id {
@@ -3259,12 +3260,12 @@ pub trait NSImage: Sized {
     }
 
     unsafe fn name(self) -> id /* (NSString *) */;
-    unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL;
+    unsafe fn setName_(self, name: id /* (NSString *) */) -> bool;
 
     unsafe fn size(self) -> NSSize;
-    unsafe fn template(self) -> BOOL;
+    unsafe fn template(self) -> bool;
 
-    unsafe fn canInitWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> BOOL;
+    unsafe fn canInitWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> bool;
     unsafe fn imageTypes(self) -> id /* (NSArray<NSString *> ) */;
     unsafe fn imageUnfilteredTypes(self) -> id /* (NSArray<NSString *> ) */;
 
@@ -3276,9 +3277,9 @@ pub trait NSImage: Sized {
                                                        referenceContext: id /* (NSGraphicsContext *) */,
                                                        hints: id /* (NSDictionary<NSString *, id> *) */)
                                                        -> id /* (NSImageRep *) */;
-    unsafe fn prefersColorMatch(self) -> BOOL;
-    unsafe fn usesEPSOnResolutionMismatch(self) -> BOOL;
-    unsafe fn matchesOnMultipleResolution(self) -> BOOL;
+    unsafe fn prefersColorMatch(self) -> bool;
+    unsafe fn usesEPSOnResolutionMismatch(self) -> bool;
+    unsafe fn matchesOnMultipleResolution(self) -> bool;
 
     unsafe fn drawInRect_(self, rect: NSRect);
     unsafe fn drawAtPoint_fromRect_operation_fraction_(self, point: NSPoint, srcRect: NSRect,
@@ -3286,15 +3287,15 @@ pub trait NSImage: Sized {
     unsafe fn drawInRect_fromRect_operation_fraction_(self, dstRect: NSRect, srcRect: NSRect,
                                                       op: NSCompositingOperation, delta: CGFloat);
     unsafe fn drawInRect_fromRect_operation_fraction_respectFlipped_hints_(self, dstSpacePortionRect: NSRect,
-        srcSpacePortionRect: NSRect, op: NSCompositingOperation, delta: CGFloat, respectContextIsFlipped: BOOL,
+        srcSpacePortionRect: NSRect, op: NSCompositingOperation, delta: CGFloat, respectContextIsFlipped: bool,
         hints: id /* (NSDictionary<NSString *, id> *) */);
     unsafe fn drawRepresentation_inRect_(self, imageRep: id /* (NSImageRep *) */, dstRect: NSRect);
 
-    unsafe fn isValid(self) -> BOOL;
+    unsafe fn isValid(self) -> bool;
     unsafe fn backgroundColor(self) -> id /* (NSColor *) */;
 
     unsafe fn lockFocus(self);
-    unsafe fn lockFocusFlipped_(self, flipped: BOOL);
+    unsafe fn lockFocusFlipped_(self, flipped: bool);
     unsafe fn unlockFocus(self);
 
     unsafe fn alignmentRect(self) -> NSRect;
@@ -3312,14 +3313,14 @@ pub trait NSImage: Sized {
 
     unsafe fn hitTestRect_withImageDestinationRect_context_hints_flipped_(self, testRectDestSpace: NSRect,
         imageRectDestSpace: NSRect, referenceContext: id /* (NSGraphicsContext *) */,
-        hints: id /* (NSDictionary<NSString *, id> *) */, flipped: BOOL) -> BOOL;
+        hints: id /* (NSDictionary<NSString *, id> *) */, flipped: bool) -> bool;
 
     unsafe fn accessibilityDescription(self) -> id /* (NSString *) */;
 
     unsafe fn layerContentsForContentsScale_(self, layerContentsScale: CGFloat) -> id /* (id) */;
     unsafe fn recommendedLayerContentsScale_(self, preferredContentsScale: CGFloat) -> CGFloat;
 
-    unsafe fn matchesOnlyOnBestFittingAxis(self) -> BOOL;
+    unsafe fn matchesOnlyOnBestFittingAxis(self) -> bool;
 }
 
 impl NSImage for id {
@@ -3344,10 +3345,10 @@ impl NSImage for id {
     }
 
     unsafe fn initWithSize_flipped_drawingHandler_(self, size: NSSize,
-                                                   drawingHandlerShouldBeCalledWithFlippedContext: BOOL,
-                                                   drawingHandler: *mut Block<(NSRect,), BOOL>) {
-        msg_send![self, initWithSize:size
-                             flipped:drawingHandlerShouldBeCalledWithFlippedContext
+                                                   drawingHandlerShouldBeCalledWithFlippedContext: bool,
+                                                   drawingHandler: *mut Block<(NSRect,), Bool>) {
+        msg_send![self, initWithSize:size,
+                             flipped:Bool::from(drawingHandlerShouldBeCalledWithFlippedContext),
                       drawingHandler:drawingHandler]
     }
 
@@ -3359,20 +3360,20 @@ impl NSImage for id {
         msg_send![self, name]
     }
 
-    unsafe fn setName_(self, name: id /* (NSString *) */) -> BOOL {
-        msg_send![self, setName:name]
+    unsafe fn setName_(self, name: id /* (NSString *) */) -> bool {
+        msg_send_bool![self, setName:name]
     }
 
     unsafe fn size(self) -> NSSize {
         msg_send![self, size]
     }
 
-    unsafe fn template(self) -> BOOL {
-        msg_send![self, template]
+    unsafe fn template(self) -> bool {
+        msg_send_bool![self, template]
     }
 
-    unsafe fn canInitWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> BOOL {
-        msg_send![self, canInitWithPasteboard:pasteboard]
+    unsafe fn canInitWithPasteboard_(self, pasteboard: id /* (NSPasteboard *) */) -> bool {
+        msg_send_bool![self, canInitWithPasteboard:pasteboard]
     }
 
     unsafe fn imageTypes(self) -> id /* (NSArray<NSString *> ) */ {
@@ -3403,19 +3404,19 @@ impl NSImage for id {
                                                        referenceContext: id /* (NSGraphicsContext *) */,
                                                        hints: id /* (NSDictionary<NSString *, id> *) */)
                                                        -> id /* (NSImageRep *) */ {
-        msg_send![self, bestRepresentationForRect:rect context:referenceContext hints:hints]
+        msg_send![self, bestRepresentationForRect: rect, context: referenceContext, hints: hints]
     }
 
-    unsafe fn prefersColorMatch(self) -> BOOL {
-        msg_send![self, prefersColorMatch]
+    unsafe fn prefersColorMatch(self) -> bool {
+        msg_send_bool![self, prefersColorMatch]
     }
 
-    unsafe fn usesEPSOnResolutionMismatch(self) -> BOOL {
-        msg_send![self, usesEPSOnResolutionMismatch]
+    unsafe fn usesEPSOnResolutionMismatch(self) -> bool {
+        msg_send_bool![self, usesEPSOnResolutionMismatch]
     }
 
-    unsafe fn matchesOnMultipleResolution(self) -> BOOL {
-        msg_send![self, matchesOnMultipleResolution]
+    unsafe fn matchesOnMultipleResolution(self) -> bool {
+        msg_send_bool![self, matchesOnMultipleResolution]
     }
 
     unsafe fn drawInRect_(self, rect: NSRect) {
@@ -3424,31 +3425,31 @@ impl NSImage for id {
 
     unsafe fn drawAtPoint_fromRect_operation_fraction_(self, point: NSPoint, srcRect: NSRect,
                                                        op: NSCompositingOperation, delta: CGFloat) {
-        msg_send![self, drawAtPoint:point fromRect:srcRect operation:op fraction:delta]
+        msg_send![self, drawAtPoint: point, fromRect: srcRect, operation: op, fraction: delta]
     }
 
     unsafe fn drawInRect_fromRect_operation_fraction_(self, dstRect: NSRect, srcRect: NSRect,
                                                       op: NSCompositingOperation, delta: CGFloat) {
-        msg_send![self, drawInRect:dstRect fromRect:srcRect operation:op fraction:delta]
+        msg_send![self, drawInRect: dstRect, fromRect: srcRect, operation: op, fraction: delta]
     }
 
     unsafe fn drawInRect_fromRect_operation_fraction_respectFlipped_hints_(self, dstSpacePortionRect: NSRect,
-        srcSpacePortionRect: NSRect, op: NSCompositingOperation, delta: CGFloat, respectContextIsFlipped: BOOL,
+        srcSpacePortionRect: NSRect, op: NSCompositingOperation, delta: CGFloat, respectContextIsFlipped: bool,
         hints: id /* (NSDictionary<NSString *, id> *) */) {
-        msg_send![self, drawInRect:dstSpacePortionRect
-                          fromRect:srcSpacePortionRect
-                         operation:op
-                          fraction:delta
-                    respectFlipped:respectContextIsFlipped
+        msg_send![self, drawInRect:dstSpacePortionRect,
+                          fromRect:srcSpacePortionRect,
+                         operation:op,
+                          fraction:delta,
+                    respectFlipped:Bool::from(respectContextIsFlipped),
                              hints:hints]
     }
 
     unsafe fn drawRepresentation_inRect_(self, imageRep: id /* (NSImageRep *) */, dstRect: NSRect) {
-        msg_send![self, drawRepresentation:imageRep inRect:dstRect]
+        msg_send![self, drawRepresentation: imageRep, inRect: dstRect]
     }
 
-    unsafe fn isValid(self) -> BOOL {
-        msg_send![self, isValid]
+    unsafe fn isValid(self) -> bool {
+        msg_send_bool![self, isValid]
     }
 
     unsafe fn backgroundColor(self) -> id /* (NSColor *) */ {
@@ -3459,8 +3460,8 @@ impl NSImage for id {
         msg_send![self, lockFocus]
     }
 
-    unsafe fn lockFocusFlipped_(self, flipped: BOOL) {
-        msg_send![self, lockFocusFlipped:flipped]
+    unsafe fn lockFocusFlipped_(self, flipped: bool) {
+        msg_send![self, lockFocusFlipped: Bool::from(flipped)]
     }
 
     unsafe fn unlockFocus(self) {
@@ -3489,7 +3490,7 @@ impl NSImage for id {
 
     unsafe fn TIFFRepresentationUsingCompression_factor_(self, comp: NSTIFFCompression, aFloat: f32)
                                                          -> id /* (NSData *) */ {
-        msg_send![self, TIFFRepresentationUsingCompression:comp factor:aFloat]
+        msg_send![self, TIFFRepresentationUsingCompression: comp, factor: aFloat]
     }
 
     unsafe fn cancelIncrementalLoad(self) {
@@ -3498,12 +3499,12 @@ impl NSImage for id {
 
     unsafe fn hitTestRect_withImageDestinationRect_context_hints_flipped_(self, testRectDestSpace: NSRect,
         imageRectDestSpace: NSRect, referenceContext: id /* (NSGraphicsContext *) */,
-        hints: id /* (NSDictionary<NSString *, id> *) */, flipped: BOOL) -> BOOL {
-        msg_send![self, hitTestRect:testRectDestSpace
-           withImageDestinationRect:imageRectDestSpace
-                            context:referenceContext
-                              hints:hints
-                            flipped:flipped]
+        hints: id /* (NSDictionary<NSString *, id> *) */, flipped: bool) -> bool {
+        msg_send_bool![self, hitTestRect:testRectDestSpace,
+           withImageDestinationRect:imageRectDestSpace,
+                            context:referenceContext,
+                              hints:hints,
+                            flipped:Bool::from(flipped)]
     }
 
     unsafe fn accessibilityDescription(self) -> id /* (NSString *) */ {
@@ -3518,8 +3519,8 @@ impl NSImage for id {
         msg_send![self, recommendedLayerContentsScale:preferredContentsScale]
     }
 
-    unsafe fn matchesOnlyOnBestFittingAxis(self) -> BOOL {
-        msg_send![self, matchesOnlyOnBestFittingAxis]
+    unsafe fn matchesOnlyOnBestFittingAxis(self) -> bool {
+        msg_send_bool![self, matchesOnlyOnBestFittingAxis]
     }
 }
 
@@ -3657,19 +3658,19 @@ pub enum NSImageLoadStatus {
 impl_Encode!(NSImageLoadStatus, usize);
 
 pub trait NSSound: Sized {
-    unsafe fn canInitWithPasteboard_(_: Self, pasteboard: id) -> BOOL {
-        msg_send![class!(NSSound), canInitWithPasteboard:pasteboard]
+    unsafe fn canInitWithPasteboard_(_: Self, pasteboard: id) -> bool {
+        msg_send_bool![class!(NSSound), canInitWithPasteboard:pasteboard]
     }
 
-    unsafe fn initWithContentsOfFile_withReference_(self, filepath: id, byRef: BOOL) -> id;
-    unsafe fn initWithContentsOfURL_withReference_(self, fileUrl: id, byRef: BOOL) -> id;
+    unsafe fn initWithContentsOfFile_withReference_(self, filepath: id, byRef: bool) -> id;
+    unsafe fn initWithContentsOfURL_withReference_(self, fileUrl: id, byRef: bool) -> id;
     unsafe fn initWithData_(self, audioData: id) -> id;
     unsafe fn initWithPasteboard_(self, pasteboard: id) -> id;
 
     unsafe fn name(self) -> id;
     unsafe fn volume(self) -> f32;
     unsafe fn currentTime(self) -> NSTimeInterval;
-    unsafe fn loops(self) -> BOOL;
+    unsafe fn loops(self) -> bool;
     unsafe fn playbackDeviceIdentifier(self) -> id;
     unsafe fn delegate(self) -> id;
 
@@ -3683,22 +3684,22 @@ pub trait NSSound: Sized {
 
     unsafe fn duration(self) -> NSTimeInterval;
 
-    unsafe fn playing(self) -> BOOL;
-    unsafe fn pause(self) -> BOOL;
-    unsafe fn play(self) -> BOOL;
-    unsafe fn resume(self) -> BOOL;
-    unsafe fn stop(self) -> BOOL;
+    unsafe fn playing(self) -> bool;
+    unsafe fn pause(self) -> bool;
+    unsafe fn play(self) -> bool;
+    unsafe fn resume(self) -> bool;
+    unsafe fn stop(self) -> bool;
 
     unsafe fn writeToPasteboard_(self, pasteboard: id);
 }
 
 impl NSSound for id {
-    unsafe fn initWithContentsOfFile_withReference_(self, filepath: id, byRef: BOOL) -> id {
-        msg_send![self, initWithContentsOfFile:filepath withReference:byRef]
+    unsafe fn initWithContentsOfFile_withReference_(self, filepath: id, byRef: bool) -> id {
+        msg_send![self, initWithContentsOfFile: filepath, withReference: Bool::from(byRef)]
     }
 
-    unsafe fn initWithContentsOfURL_withReference_(self, fileUrl: id, byRef: BOOL) -> id {
-        msg_send![self, initWithContentsOfURL:fileUrl withReference:byRef]
+    unsafe fn initWithContentsOfURL_withReference_(self, fileUrl: id, byRef: bool) -> id {
+        msg_send![self, initWithContentsOfURL: fileUrl, withReference: Bool::from(byRef)]
     }
 
     unsafe fn initWithData_(self, audioData: id) -> id {
@@ -3721,8 +3722,8 @@ impl NSSound for id {
         msg_send![self, currentTime]
     }
 
-    unsafe fn loops(self) -> BOOL {
-        msg_send![self, loops]
+    unsafe fn loops(self) -> bool {
+        msg_send_bool![self, loops]
     }
 
     unsafe fn playbackDeviceIdentifier(self) -> id {
@@ -3737,24 +3738,24 @@ impl NSSound for id {
         msg_send![self, duration]
     }
 
-    unsafe fn playing(self) -> BOOL {
-        msg_send![self, playing]
+    unsafe fn playing(self) -> bool {
+        msg_send_bool![self, playing]
     }
 
-    unsafe fn pause(self) -> BOOL {
-        msg_send![self, pause]
+    unsafe fn pause(self) -> bool {
+        msg_send_bool![self, pause]
     }
 
-    unsafe fn play(self) -> BOOL {
-        msg_send![self, play]
+    unsafe fn play(self) -> bool {
+        msg_send_bool![self, play]
     }
 
-    unsafe fn resume(self) -> BOOL {
-        msg_send![self, resume]
+    unsafe fn resume(self) -> bool {
+        msg_send_bool![self, resume]
     }
 
-    unsafe fn stop(self) -> BOOL {
-        msg_send![self, stop]
+    unsafe fn stop(self) -> bool {
+        msg_send_bool![self, stop]
     }
 
     unsafe fn writeToPasteboard_(self, pasteboard: id) {
@@ -3807,7 +3808,7 @@ pub trait NSStatusBar: Sized {
 
     unsafe fn statusItemWithLength_(self, length: CGFloat) -> id /* (NSStatusItem *) */;
     unsafe fn removeStatusItem_(self, item: id /* (NSStatusItem *) */);
-    unsafe fn isVertical(self) -> BOOL;
+    unsafe fn isVertical(self) -> bool;
 }
 
 impl NSStatusBar for id {
@@ -3819,8 +3820,8 @@ impl NSStatusBar for id {
         msg_send![self, removeStatusItem:item]
     }
 
-    unsafe fn isVertical(self) -> BOOL {
-        msg_send![self, isVertical]
+    unsafe fn isVertical(self) -> bool {
+        msg_send_bool![self, isVertical]
     }
 }
 
@@ -3833,7 +3834,7 @@ pub trait NSTextField: Sized {
         msg_send![class!(NSTextField), alloc]
     }
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
-    unsafe fn setEditable_(self, editable: BOOL);
+    unsafe fn setEditable_(self, editable: bool);
     unsafe fn setStringValue_(self, label: id /* NSString */);
 }
 
@@ -3841,8 +3842,8 @@ impl NSTextField for id {
     unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
         msg_send![self, initWithFrame:frameRect]
     }
-    unsafe fn setEditable_(self, editable: BOOL) {
-        msg_send![self, setEditable:editable]
+    unsafe fn setEditable_(self, editable: bool) {
+        msg_send![self, setEditable: Bool::from(editable)]
     }
     unsafe fn setStringValue_(self, label: id) {
         msg_send![self, setStringValue:label]
@@ -3891,14 +3892,14 @@ pub trait NSTabView: Sized {
     unsafe fn setTabViewType_(self,tabViewType: NSTabViewType);
     unsafe fn controlTint(self) -> id;
     unsafe fn setControlTint_(self,controlTint:id);
-    unsafe fn drawsBackground(self) -> BOOL;
-    unsafe fn setDrawsBackground_(self,drawsBackground:BOOL);
+    unsafe fn drawsBackground(self) -> bool;
+    unsafe fn setDrawsBackground_(self,drawsBackground: bool);
     unsafe fn minimumSize(self) -> id;
     unsafe fn contentRect(self) -> id;
     unsafe fn controlSize(self) -> id;
     unsafe fn setControlSize_(self,controlSize:id);
-    unsafe fn allowsTruncatedLabels(self) -> BOOL;
-    unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels:BOOL);
+    unsafe fn allowsTruncatedLabels(self) -> bool;
+    unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels: bool);
     unsafe fn setDelegate_(self, delegate:id);
     unsafe fn delegate(self) -> id;
     unsafe fn tabViewAtPoint_(self, point:id) -> id;
@@ -3913,7 +3914,7 @@ impl NSTabView for id {
         msg_send![self, addTabViewItem:tabViewItem]
     }
     unsafe fn insertTabViewItem_atIndex_(self, tabViewItem: id,index:NSInteger) {
-        msg_send![self, addTabViewItem:tabViewItem atIndex:index]
+        msg_send![self, addTabViewItem: tabViewItem, atIndex: index]
     }
     unsafe fn removeTabViewItem_(self,tabViewItem:id){
         msg_send![self, removeTabViewItem:tabViewItem]
@@ -3991,11 +3992,11 @@ impl NSTabView for id {
         msg_send![self, setControlTint:controlTint]
     }
 
-    unsafe fn drawsBackground(self) -> BOOL{
-        msg_send![self, drawsBackground]
+    unsafe fn drawsBackground(self) -> bool {
+        msg_send_bool![self, drawsBackground]
     }
-    unsafe fn setDrawsBackground_(self,drawsBackground:BOOL){
-        msg_send![self, setDrawsBackground:drawsBackground as libc::c_int]
+    unsafe fn setDrawsBackground_(self, drawsBackground: bool) {
+        msg_send![self, setDrawsBackground: Bool::from(drawsBackground)]
     }
 
     unsafe fn minimumSize(self) -> id{
@@ -4011,11 +4012,11 @@ impl NSTabView for id {
         msg_send![self, setControlSize:controlSize]
     }
 
-    unsafe fn allowsTruncatedLabels(self) -> BOOL{
-        msg_send![self, allowsTruncatedLabels]
+    unsafe fn allowsTruncatedLabels(self) -> bool {
+        msg_send_bool![self, allowsTruncatedLabels]
     }
-    unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels:BOOL){
-        msg_send![self, setAllowsTruncatedLabels:allowTruncatedLabels as libc::c_int]
+    unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels: bool) {
+        msg_send![self, setAllowsTruncatedLabels: Bool::from(allowTruncatedLabels)]
     }
 
     unsafe fn setDelegate_(self, delegate:id){
@@ -4048,10 +4049,10 @@ pub trait NSTabViewItem: Sized {
     }
 
     unsafe fn initWithIdentifier_(self, identifier:id) -> id;
-    unsafe fn drawLabel_inRect_(self,shouldTruncateLabel:BOOL,labelRect:NSRect);
+    unsafe fn drawLabel_inRect_(self, shouldTruncateLabel: bool, labelRect:NSRect);
     unsafe fn label(self) -> id;
     unsafe fn setLabel_(self,label:id);
-    unsafe fn sizeOfLabel_(self, computeMin:BOOL);
+    unsafe fn sizeOfLabel_(self, computeMin: bool);
     unsafe fn tabState(self) -> NSTabState;
     unsafe fn identifier(self)-> id;
     unsafe fn setIdentifier_(self,identifier:id);
@@ -4071,8 +4072,8 @@ impl NSTabViewItem for id {
         msg_send![self, initWithIdentifier:identifier]
     }
 
-    unsafe fn drawLabel_inRect_(self, shouldTruncateLabel:BOOL,labelRect:NSRect){
-        msg_send![self, drawLabel:shouldTruncateLabel as libc::c_int inRect:labelRect]
+    unsafe fn drawLabel_inRect_(self, shouldTruncateLabel: bool, labelRect: NSRect) {
+        msg_send![self, drawLabel: Bool::from(shouldTruncateLabel), inRect: labelRect]
     }
 
     unsafe fn label(self)->id{
@@ -4082,8 +4083,8 @@ impl NSTabViewItem for id {
         msg_send![self, setLabel:label]
     }
 
-    unsafe fn sizeOfLabel_(self,computeMin:BOOL){
-        msg_send![self, sizeOfLabel:computeMin as libc::c_int]
+    unsafe fn sizeOfLabel_(self, computeMin: bool) {
+        msg_send![self, sizeOfLabel: Bool::from(computeMin)]
     }
 
     unsafe fn tabState(self) -> NSTabState{
@@ -4268,19 +4269,19 @@ impl NSColor for id {
         msg_send![class!(NSColor), clearColor]
     }
     unsafe fn colorWithRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
-        msg_send![class!(NSColor), colorWithRed:r green:g blue:b alpha:a]
+        msg_send![class!(NSColor), colorWithRed: r, green: g, blue: b, alpha: a]
     }
     unsafe fn colorWithSRGBRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
-        msg_send![class!(NSColor), colorWithSRGBRed:r green:g blue:b alpha:a]
+        msg_send![class!(NSColor), colorWithSRGBRed: r, green: g, blue: b, alpha: a]
     }
     unsafe fn colorWithDeviceRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
-        msg_send![class!(NSColor), colorWithDeviceRed:r green:g blue:b alpha:a]
+        msg_send![class!(NSColor), colorWithDeviceRed: r, green: g, blue: b, alpha: a]
     }
     unsafe fn colorWithDisplayP3Red_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
-        msg_send![class!(NSColor), colorWithDisplayP3Red:r green:g blue:b alpha:a]
+        msg_send![class!(NSColor), colorWithDisplayP3Red: r, green: g, blue: b, alpha: a]
     }
     unsafe fn colorWithCalibratedRed_green_blue_alpha_(_:Self, r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) -> id {
-        msg_send![class!(NSColor), colorWithCalibratedRed:r green:g blue:b alpha:a]
+        msg_send![class!(NSColor), colorWithCalibratedRed: r, green: g, blue: b, alpha: a]
     }
 
     unsafe fn colorUsingColorSpace_(self, color_space: id) -> id {
@@ -4333,8 +4334,8 @@ pub trait NSToolbar: Sized {
     unsafe fn init_(self) -> id /* NSToolbar */;
     unsafe fn initWithIdentifier_(self, identifier: id) -> id /* NSToolbar */;
 
-    unsafe fn showsBaselineSeparator(self) -> BOOL;
-    unsafe fn setShowsBaselineSeparator_(self, value: BOOL);
+    unsafe fn showsBaselineSeparator(self) -> bool;
+    unsafe fn setShowsBaselineSeparator_(self, value: bool);
 }
 
 impl NSToolbar for id {
@@ -4346,12 +4347,12 @@ impl NSToolbar for id {
         msg_send![self, initWithIdentifier:identifier]
     }
 
-    unsafe fn showsBaselineSeparator(self) -> BOOL {
-        msg_send![self, showsBaselineSeparator]
+    unsafe fn showsBaselineSeparator(self) -> bool {
+        msg_send_bool![self, showsBaselineSeparator]
     }
 
-    unsafe fn setShowsBaselineSeparator_(self, value: BOOL) {
-        msg_send![self, setShowsBaselineSeparator:value]
+    unsafe fn setShowsBaselineSeparator_(self, value: bool) {
+        msg_send![self, setShowsBaselineSeparator: Bool::from(value)]
     }
 }
 
@@ -4365,7 +4366,7 @@ pub trait NSSpellChecker : Sized {
         stringToCheck: id,
         startingOffset: NSInteger,
         language: id,
-        wrapFlag: BOOL,
+        wrapFlag: bool,
         tag: NSInteger) -> (NSRange, NSInteger);
     unsafe fn uniqueSpellDocumentTag(_: Self) -> NSInteger;
     unsafe fn closeSpellDocumentWithTag(self, tag: NSInteger);
@@ -4380,7 +4381,7 @@ impl NSSpellChecker for id {
     unsafe fn checkSpellingOfString_startingAt(self,
                                                stringToCheck: id,
                                                startingOffset: NSInteger) -> NSRange {
-        msg_send![self, checkSpellingOfString:stringToCheck startingAt:startingOffset]
+        msg_send![self, checkSpellingOfString: stringToCheck, startingAt: startingOffset]
     }
 
     unsafe fn checkSpellingOfString_startingAt_language_wrap_inSpellDocumentWithTag_wordCount(
@@ -4388,16 +4389,17 @@ impl NSSpellChecker for id {
         stringToCheck: id,
         startingOffset: NSInteger,
         language: id,
-        wrapFlag: BOOL,
+        wrapFlag: bool,
         tag: NSInteger) -> (NSRange, NSInteger) {
         let mut wordCount = 0;
-        let range = msg_send![self,
-            checkSpellingOfString:stringToCheck
-            startingAt:startingOffset
-            language:language
-            wrap:wrapFlag
-            inSpellDocumentWithTag:tag
-            wordCount:&mut wordCount
+        let range = msg_send![
+            self,
+            checkSpellingOfString:stringToCheck,
+            startingAt:startingOffset,
+            language:language,
+            wrap:Bool::from(wrapFlag),
+            inSpellDocumentWithTag:tag,
+            wordCount:&mut wordCount,
         ];
         (range, wordCount)
     }
@@ -4411,7 +4413,7 @@ impl NSSpellChecker for id {
     }
 
     unsafe fn ignoreWord_inSpellDocumentWithTag(self, wordToIgnore: id, tag: NSInteger) {
-        msg_send![self, ignoreWord:wordToIgnore inSpellDocumentWithTag:tag]
+        msg_send![self, ignoreWord: wordToIgnore, inSpellDocumentWithTag: tag]
     }
 }
 
@@ -4425,7 +4427,7 @@ pub trait NSNib: Sized {
 
 impl NSNib for id {
     unsafe fn initWithNibNamed_bundle_(self, name: id, bundle: id) -> id {
-        msg_send![self, initWithNibNamed:name bundle:bundle]
+        msg_send![self, initWithNibNamed: name, bundle: bundle]
     }
 }
 

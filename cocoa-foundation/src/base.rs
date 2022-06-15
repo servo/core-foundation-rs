@@ -9,6 +9,7 @@
 
 use objc2::runtime;
 
+#[allow(deprecated)]
 pub use objc2::runtime::{BOOL, NO, YES};
 
 pub type Class = *mut runtime::Class;

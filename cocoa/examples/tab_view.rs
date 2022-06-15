@@ -1,6 +1,6 @@
 extern crate cocoa;
 
-use cocoa::base::{selector, id, nil, NO};
+use cocoa::base::{selector, id, nil};
 
 
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
@@ -71,7 +71,7 @@ unsafe fn create_app(title: id, content: id) -> id {
             NSWindowStyleMask::NSMiniaturizableWindowMask |
             NSWindowStyleMask::NSUnifiedTitleAndToolbarWindowMask,
 		NSBackingStoreType::NSBackingStoreBuffered,
-		NO
+		false
 	).autorelease();
     window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
     window.center();

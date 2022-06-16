@@ -1,6 +1,6 @@
 use std::os::raw::c_void;
 
-use objc_encode::{Encoding, RefEncode};
+use objc2_encode::{Encoding, RefEncode};
 
 pub enum CGImage {}
 pub type CGImageRef = *mut CGImage;

@@ -21,7 +21,7 @@ extern crate core_graphics;
 extern crate cocoa_foundation;
 extern crate foreign_types;
 extern crate libc;
-extern crate objc_encode;
+extern crate objc2_encode;
 #[macro_use]
 extern crate objc2;
 

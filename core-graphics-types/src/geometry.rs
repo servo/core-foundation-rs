@@ -10,7 +10,7 @@
 use base::CGFloat;
 use core_foundation::base::TCFType;
 use core_foundation::dictionary::CFDictionary;
-use objc_encode::{Encode, Encoding};
+use objc2_encode::{Encode, Encoding};
 
 pub const CG_ZERO_POINT: CGPoint = CGPoint {
     x: 0.0,

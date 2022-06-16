@@ -14,7 +14,7 @@ use std::os::raw::c_void;
 use base::{id, BOOL, NO, SEL, nil};
 use block::Block;
 use libc;
-use objc_encode::{Encode, Encoding, RefEncode};
+use objc2_encode::{Encode, Encoding, RefEncode};
 
 
 #[cfg(target_pointer_width = "32")]
@@ -38,7 +38,7 @@ mod macos {
     use base::id;
     use core_graphics_types::base::CGFloat;
     use core_graphics_types::geometry::CGRect;
-    use objc_encode::{Encode, Encoding};
+    use objc2_encode::{Encode, Encoding};
 
     #[repr(C)]
     #[derive(Copy, Clone)]

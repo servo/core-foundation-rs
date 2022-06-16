@@ -18,8 +18,8 @@ pub struct __CFAttributedString(c_void);
 pub type CFAttributedStringRef = *const __CFAttributedString;
 pub type CFMutableAttributedStringRef = *const __CFAttributedString;
 
-unsafe impl ::objc_encode::RefEncode for __CFAttributedString {
-    const ENCODING_REF: ::objc_encode::Encoding<'static> = ::objc_encode::Encoding::Object;
+unsafe impl ::objc2_encode::RefEncode for __CFAttributedString {
+    const ENCODING_REF: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Object;
 }
 
 extern {

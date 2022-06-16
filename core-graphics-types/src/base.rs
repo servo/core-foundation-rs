@@ -26,7 +26,7 @@ pub type CGFloat = libc::c_double;
 #[cfg(not(target_pointer_width = "64"))]
 pub type CGFloat = libc::c_float;
 
-pub type CGError = libc::int32_t;
+pub type CGError = i32;
 
 pub type CGGlyph = libc::c_ushort;
 

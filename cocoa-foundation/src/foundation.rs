@@ -612,7 +612,7 @@ pub trait NSString: Sized {
     unsafe fn init_str(self, string: &str) -> Self;
     unsafe fn UTF8String(self) -> *const libc::c_char;
     unsafe fn len(self) -> usize;
-    unsafe fn isEqualToString(self, &str) -> bool;
+    unsafe fn isEqualToString(self, _: &str) -> bool;
     unsafe fn substringWithRange(self, range: NSRange) -> id;
 }
 

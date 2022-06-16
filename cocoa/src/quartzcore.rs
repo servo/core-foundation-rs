@@ -1096,13 +1096,13 @@ impl CALayer {
     #[inline]
     pub fn actions(&self) -> CFDictionary<CFStringRef, CFTypeRef> {
         unsafe {
-            msg_send![self.id(), actions]
+            CFDictionary::wrap_under_get_rule(msg_send![self.id(), actions])
         }
     }
 
     #[inline]
     pub unsafe fn set_actions(&self, actions: CFDictionary<CFStringRef, CFTypeRef>) {
-        msg_send![self.id(), setActions:actions]
+        msg_send![self.id(), setActions: actions.as_concrete_TypeRef()]
     }
 
     // TODO(pcwalton): Wrap `CAAnimation`.
@@ -1531,6 +1531,7 @@ impl CARenderer {
 // really just a module.
 pub mod transaction {
     use block::{Block, ConcreteBlock, IntoConcreteBlock, RcBlock};
+    use core_foundation::base::TCFType;
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
 
@@ -1638,7 +1639,7 @@ pub mod transaction {
     pub fn value_for_key(key: &str) -> id {
         unsafe {
             let key: CFString = CFString::from(key);
-            msg_send![class!(CATransaction), valueForKey:key]
+            msg_send![class!(CATransaction), valueForKey: key.as_concrete_TypeRef()]
         }
     }
 
@@ -1646,7 +1647,7 @@ pub mod transaction {
     pub fn set_value_for_key(value: id, key: &str) {
         unsafe {
             let key: CFString = CFString::from(key);
-            msg_send![class!(CATransaction), setValue:value forKey:key]
+            msg_send![class!(CATransaction), setValue: value forKey: key.as_concrete_TypeRef()]
         }
     }
 }

@@ -193,7 +193,7 @@ pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {
 }
 
 pub fn new_ui_font_for_language(ui_type: CTFontUIFontType,
-                                size: f64,
+                                size: CGFloat,
                                 language: Option<CFString>)
                                 -> CTFont {
     unsafe {

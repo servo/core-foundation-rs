@@ -16,18 +16,8 @@ use block::Block;
 use libc;
 use objc2_encode::{Encode, Encoding, RefEncode};
 
+pub use objc2::ffi::{NSInteger, NSUInteger, NSIntegerMax};
 
-#[cfg(target_pointer_width = "32")]
-pub type NSInteger = libc::c_int;
-#[cfg(target_pointer_width = "32")]
-pub type NSUInteger = libc::c_uint;
-
-#[cfg(target_pointer_width = "64")]
-pub type NSInteger = libc::c_long;
-#[cfg(target_pointer_width = "64")]
-pub type NSUInteger = libc::c_ulong;
-
-pub const NSIntegerMax: NSInteger = NSInteger::max_value();
 pub const NSNotFound: NSInteger = NSIntegerMax;
 
 const UTF8_ENCODING: usize = 4;

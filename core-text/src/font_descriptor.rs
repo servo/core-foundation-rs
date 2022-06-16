@@ -20,6 +20,7 @@ use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 use core_graphics::base::CGFloat;
 
 use std::path::PathBuf;
+use core_foundation::boolean::CFBoolean;
 
 /*
 * CTFontTraits.h
@@ -144,7 +145,19 @@ trait TraitAccessorPrivate {
 impl TraitAccessorPrivate for CTFontTraits {
     fn extract_number_for_key(&self, key: CFStringRef) -> CFNumber {
         let cftype = self.get(key);
-        cftype.downcast::<CFNumber>().unwrap()
+        let number = cftype.downcast::<CFNumber>();
+        match number {
+            Some(number) => number,
+            None => {
+                // The value was not able to be converted to a CFNumber, this violates the Core
+                // Foundation's docs (see https://developer.apple.com/documentation/coretext/kctfontsymbolictrait)
+                // but can occur in practice with certain fonts in MacOS 13 (Ventura). When this
+                // does occur in Ventura, the value returned is always a CFBoolean, so we attempt to
+                // convert into a boolean and create a number from there.
+                let value_as_bool = bool::from(cftype.downcast::<CFBoolean>().expect("Should be able to convert value into CFBoolean"));
+                CFNumber::from(value_as_bool as i32)
+            }
+        }
     }
 }
 

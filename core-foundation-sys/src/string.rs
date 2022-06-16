@@ -192,6 +192,10 @@ pub struct __CFString(c_void);
 
 pub type CFStringRef = *const __CFString;
 
+unsafe impl ::objc_encode::Encode for &'_ __CFString {
+    const ENCODING: ::objc_encode::Encoding<'static> = ::objc_encode::Encoding::Object;
+}
+
 extern {
     /*
      * CFString.h

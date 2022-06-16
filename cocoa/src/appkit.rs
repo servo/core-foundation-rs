@@ -167,12 +167,16 @@ pub enum NSApplicationActivationPolicy {
     NSApplicationActivationPolicyERROR = -1
 }
 
+impl_Encode!(NSApplicationActivationPolicy, i64);
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSApplicationActivationOptions {
     NSApplicationActivateAllWindows = 1 << 0,
     NSApplicationActivateIgnoringOtherApps = 1 << 1
 }
+
+impl_Encode!(NSApplicationActivationOptions, u64);
 
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -181,6 +185,8 @@ pub enum NSApplicationTerminateReply {
     NSTerminateNow = 1,
     NSTerminateLater = 2,
 }
+
+impl_Encode!(NSApplicationTerminateReply, u64);
 
 bitflags! {
     pub struct NSApplicationPresentationOptions : NSUInteger {
@@ -200,6 +206,8 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSApplicationPresentationOptions, NSUInteger);
+
 bitflags! {
     pub struct NSWindowStyleMask: NSUInteger {
         const NSBorderlessWindowMask      = 0;
@@ -218,12 +226,16 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSWindowStyleMask, NSUInteger);
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSWindowTitleVisibility {
     NSWindowTitleVisible = 0,
     NSWindowTitleHidden = 1
 }
+
+impl_Encode!(NSWindowTitleVisibility, u64);
 
 #[repr(i64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -233,6 +245,8 @@ pub enum NSWindowTabbingMode {
     NSWindowTabbingModePreferred = 2
 }
 
+impl_Encode!(NSWindowTabbingMode, i64);
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSBackingStoreType {
@@ -241,6 +255,8 @@ pub enum NSBackingStoreType {
     NSBackingStoreBuffered      = 2
 }
 
+impl_Encode!(NSBackingStoreType, u64);
+
 bitflags! {
     pub struct NSWindowOrderingMode: NSInteger {
         const NSWindowAbove =  1;
@@ -248,6 +264,8 @@ bitflags! {
         const NSWindowOut   =  0;
     }
 }
+
+impl_Encode!(NSWindowOrderingMode, NSInteger);
 
 bitflags! {
     pub struct NSAlignmentOptions: libc::c_ulonglong {
@@ -284,6 +302,8 @@ bitflags! {
                                         | NSAlignmentOptions::NSAlignMaxYNearest.bits;
     }
 }
+
+impl_Encode!(NSAlignmentOptions, libc::c_ulonglong);
 
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -329,6 +349,8 @@ pub enum NSOpenGLPixelFormatAttribute {
     NSOpenGLPFAVirtualScreenCount       = 128,
 }
 
+impl_Encode!(NSOpenGLPixelFormatAttribute, u64);
+
 #[repr(u64)]
 #[allow(non_camel_case_types)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -337,6 +359,8 @@ pub enum NSOpenGLPFAOpenGLProfiles {
     NSOpenGLProfileVersion3_2Core = 0x3200,
     NSOpenGLProfileVersion4_1Core = 0x4100,
 }
+
+impl_Encode!(NSOpenGLPFAOpenGLProfiles, u64);
 
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -353,6 +377,8 @@ pub enum NSOpenGLContextParameter {
     NSOpenGLCPMPSwapsInFlight       = 315,
 }
 
+impl_Encode!(NSOpenGLContextParameter, u64);
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSWindowButton {
@@ -364,6 +390,8 @@ pub enum NSWindowButton {
     NSWindowDocumentVersionsButton = 6,
     NSWindowFullScreenButton       = 7,
 }
+
+impl_Encode!(NSWindowButton, u64);
 
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -382,12 +410,16 @@ pub enum NSBezelStyle {
     NSRoundedDisclosureBezelStyle  = 14,
 }
 
+impl_Encode!(NSBezelStyle, u64);
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSRequestUserAttentionType {
     NSCriticalRequest      = 0,
     NSInformationalRequest = 10,
 }
+
+impl_Encode!(NSRequestUserAttentionType, u64);
 
 pub static NSMainMenuWindowLevel: i32 = 24;
 
@@ -783,11 +815,15 @@ pub enum NSPasteboardReadingOptions {
     NSPasteboardReadingAsKeyedArchive = 1 << 2
 }
 
+impl_Encode!(NSPasteboardReadingOptions, u64);
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSPasteboardWritingOptions {
     NSPasteboardWritingPromised = 1 << 9,
 }
+
+impl_Encode!(NSPasteboardWritingOptions, u64);
 
 pub trait NSMenu: Sized {
     unsafe fn alloc(_: Self) -> id {
@@ -885,11 +921,15 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSWindowCollectionBehavior, NSUInteger);
+
 bitflags! {
     pub struct NSWindowOcclusionState: NSUInteger {
         const NSWindowOcclusionStateVisible = 1 << 1;
     }
 }
+
+impl_Encode!(NSWindowOcclusionState, NSUInteger);
 
 pub trait NSWindow: Sized {
     unsafe fn alloc(_: Self) -> id {
@@ -1847,6 +1887,8 @@ pub enum NSModalResponse {
     NSModalResponseCancel = 0,
 }
 
+impl_Encode!(NSModalResponse, i64);
+
 pub trait NSSavePanel: Sized {
     unsafe fn savePanel(_: Self) -> id {
         msg_send![class!(NSSavePanel), savePanel]
@@ -1926,6 +1968,8 @@ pub enum NSViewLayerContentsPlacement {
     NSViewLayerContentsPlacementLeft = 10,
     NSViewLayerContentsPlacementTopLeft = 11,
 }
+
+impl_Encode!(NSViewLayerContentsPlacement, usize);
 
 pub trait NSView: Sized {
     unsafe fn alloc(_: Self) -> id {
@@ -2240,12 +2284,16 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSEventSwipeTrackingOptions, NSUInteger);
+
 #[repr(i64)] // NSInteger
 pub enum NSEventGestureAxis {
     NSEventGestureAxisNone = 0,
     NSEventGestureAxisHorizontal,
     NSEventGestureAxisVertical,
 }
+
+impl_Encode!(NSEventGestureAxis, i64);
 
 bitflags! {
     pub struct NSEventPhase: NSUInteger {
@@ -2258,6 +2306,8 @@ bitflags! {
        const NSEventPhaseMayBegin    = 0x1 << 5;
     }
 }
+
+impl_Encode!(NSEventPhase, NSUInteger);
 
 bitflags! {
     pub struct NSTouchPhase: NSUInteger {
@@ -2272,6 +2322,8 @@ bitflags! {
         const NSTouchPhaseAny           = !0; // NSUIntegerMax
     }
 }
+
+impl_Encode!(NSTouchPhase, NSUInteger);
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u64)] // NSUInteger
@@ -2308,6 +2360,8 @@ pub enum NSEventType {
     NSEventTypePressure     = 34,
 }
 
+impl_Encode!(NSEventType, u64);
+
 bitflags! {
     pub struct NSEventMask: libc::c_ulonglong {
         const NSLeftMouseDownMask         = 1 << NSLeftMouseDown as libc::c_ulonglong;
@@ -2343,6 +2397,8 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSEventMask, libc::c_ulonglong);
+
 impl NSEventMask {
     pub fn from_type(ty: NSEventType) -> NSEventMask {
         NSEventMask { bits: 1 << ty as libc::c_ulonglong }
@@ -2363,8 +2419,11 @@ bitflags! {
     }
 }
 
-// Not sure of the type here
+impl_Encode!(NSEventModifierFlags, NSUInteger);
+
+#[repr(usize)] // NSUInteger
 pub enum NSPointingDeviceType {
+    __Unknown = 0,
     // TODO: Not sure what these values are
     // NSUnknownPointingDevice = NX_TABLET_POINTER_UNKNOWN,
     // NSPenPointingDevice     = NX_TABLET_POINTER_PEN,
@@ -2372,13 +2431,18 @@ pub enum NSPointingDeviceType {
     // NSEraserPointingDevice  = NX_TABLET_POINTER_ERASER,
 }
 
-// Not sure of the type here
+impl_Encode!(NSPointingDeviceType, usize);
+
+#[repr(usize)] // NSUInteger
 pub enum NSEventButtonMask {
+    __Unknown = 0,
     // TODO: Not sure what these values are
     // NSPenTipMask =       NX_TABLET_BUTTON_PENTIPMASK,
     // NSPenLowerSideMask = NX_TABLET_BUTTON_PENLOWERSIDEMASK,
     // NSPenUpperSideMask = NX_TABLET_BUTTON_PENUPPERSIDEMASK,
 }
+
+impl_Encode!(NSEventButtonMask, usize);
 
 #[repr(i16)]
 pub enum NSEventSubtype {
@@ -2394,6 +2458,8 @@ pub enum NSEventSubtype {
     NSScreenChangedEventType = 8,
     NSAWTEventType = 16,
 }
+
+impl_Encode!(NSEventSubtype, i16);
 
 pub const NSUpArrowFunctionKey: libc::c_ushort = 0xF700;
 pub const NSDownArrowFunctionKey: libc::c_ushort = 0xF701;
@@ -3550,6 +3616,8 @@ pub enum NSCompositingOperation {
    NSCompositePlusLighter = 13
 }
 
+impl_Encode!(NSCompositingOperation, usize);
+
 #[repr(usize)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum NSImageCacheMode {
@@ -3558,6 +3626,8 @@ pub enum NSImageCacheMode {
     NSImageCacheBySize,
     NSImageCacheNever
 }
+
+impl_Encode!(NSImageCacheMode, usize);
 
 #[repr(usize)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -3572,6 +3642,8 @@ pub enum NSTIFFCompression {
     NSTIFFCompressionOldJPEG = 32865
 }
 
+impl_Encode!(NSTIFFCompression, usize);
+
 #[repr(usize)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum NSImageLoadStatus {
@@ -3581,6 +3653,8 @@ pub enum NSImageLoadStatus {
     NSImageLoadStatusUnexpectedEOF,
     NSImageLoadStatusReadError
 }
+
+impl_Encode!(NSImageLoadStatus, usize);
 
 pub trait NSSound: Sized {
     unsafe fn canInitWithPasteboard_(_: Self, pasteboard: id) -> BOOL {
@@ -3786,6 +3860,8 @@ pub enum NSTabViewType {
     NSNoTabsNoBorder         = 6
 }
 
+impl_Encode!(NSTabViewType, u64);
+
 pub trait NSTabView: Sized {
     unsafe fn new(_: Self) -> id  {
         msg_send![class!(NSTabView), new]
@@ -3960,6 +4036,8 @@ pub enum NSTabState {
     NSBackgroundTab = 1,
     NSPressedTab = 2
 }
+
+impl_Encode!(NSTabState, u64);
 
 pub trait NSTabViewItem: Sized {
     unsafe fn alloc(_: Self) -> id {

@@ -17,9 +17,11 @@ extern crate block;
 extern crate bitflags;
 extern crate core_foundation;
 extern crate core_graphics;
+#[macro_use]
 extern crate cocoa_foundation;
 extern crate foreign_types;
 extern crate libc;
+extern crate objc_encode;
 #[macro_use]
 extern crate objc;
 

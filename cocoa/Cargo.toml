@@ -19,4 +19,6 @@ cocoa-foundation = { path = "../cocoa-foundation", version = "0.1" }
 core-foundation = { path = "../core-foundation", version = "0.9" }
 core-graphics = { path = "../core-graphics", version = "0.22" }
 foreign-types = "0.3"
-objc = "0.2.3"
+# Current `master` of objc
+objc = { version = "=0.3.0-alpha.0", package = "objc2" }
+objc-encode = "1.1.0"

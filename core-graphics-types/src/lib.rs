@@ -9,6 +9,7 @@
 
 extern crate libc;
 extern crate core_foundation;
+extern crate objc_encode;
 
 pub mod base;
 pub mod geometry;

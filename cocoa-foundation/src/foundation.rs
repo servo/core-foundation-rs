@@ -12,7 +12,7 @@
 use base::{id, nil, BOOL, NO, SEL};
 use block::Block;
 use libc;
-use objc_encode::{Encode, Encoding, RefEncode};
+use objc2_encode::{Encode, Encoding, RefEncode};
 use std::os::raw::c_void;
 use std::ptr;
 
@@ -36,7 +36,7 @@ mod macos {
     use base::id;
     use core_graphics_types::base::CGFloat;
     use core_graphics_types::geometry::CGRect;
-    use objc_encode::{Encode, Encoding};
+    use objc2_encode::{Encode, Encoding};
     use std::mem;
 
     #[repr(C)]

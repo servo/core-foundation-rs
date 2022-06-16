@@ -18,4 +18,4 @@ libc = "0.2"
 core-foundation = { path = "../core-foundation", version = "0.9" }
 core-graphics-types = { path = "../core-graphics-types", version = "0.1" }
 objc2 = { version = "=0.3.0-beta.1" }
-objc-encode = { version = "=2.0.0-pre.1", package = "objc2-encode" }
+objc2-encode = { version = "=2.0.0-pre.1" }

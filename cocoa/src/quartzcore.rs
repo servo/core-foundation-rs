@@ -1485,9 +1485,9 @@ pub struct CATransform3D {
     pub m44: CGFloat,
 }
 
-unsafe impl ::objc_encode::Encode for CATransform3D {
-    const ENCODING: ::objc_encode::Encoding<'static> =
-        ::objc_encode::Encoding::Array(16, &CGFloat::ENCODING);
+unsafe impl ::objc2_encode::Encode for CATransform3D {
+    const ENCODING: ::objc2_encode::Encoding<'static> =
+        ::objc2_encode::Encoding::Array(16, &CGFloat::ENCODING);
 }
 
 impl PartialEq for CATransform3D {
@@ -1641,8 +1641,8 @@ pub struct CVTimeStamp {
     pub reserved: u64,
 }
 
-unsafe impl ::objc_encode::Encode for CVTimeStamp {
-    const ENCODING: ::objc_encode::Encoding<'static> = ::objc_encode::Encoding::Struct(
+unsafe impl ::objc2_encode::Encode for CVTimeStamp {
+    const ENCODING: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Struct(
         "CVTimeStamp",
         &[
             u32::ENCODING,
@@ -1658,9 +1658,9 @@ unsafe impl ::objc_encode::Encode for CVTimeStamp {
     );
 }
 
-unsafe impl ::objc_encode::RefEncode for CVTimeStamp {
-    const ENCODING_REF: ::objc_encode::Encoding<'static> =
-        ::objc_encode::Encoding::Pointer(&<Self as ::objc_encode::Encode>::ENCODING);
+unsafe impl ::objc2_encode::RefEncode for CVTimeStamp {
+    const ENCODING_REF: ::objc2_encode::Encoding<'static> =
+        ::objc2_encode::Encoding::Pointer(&<Self as ::objc2_encode::Encode>::ENCODING);
 }
 
 pub type CVTimeStampFlags = u64;
@@ -1691,8 +1691,8 @@ pub struct CVSMPTETime {
     pub frames: i16,
 }
 
-unsafe impl ::objc_encode::Encode for CVSMPTETime {
-    const ENCODING: ::objc_encode::Encoding<'static> = ::objc_encode::Encoding::Struct(
+unsafe impl ::objc2_encode::Encode for CVSMPTETime {
+    const ENCODING: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Struct(
         "CVSMPTETime",
         &[
             i16::ENCODING,

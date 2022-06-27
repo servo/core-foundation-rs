@@ -966,6 +966,7 @@ pub trait NSWindow: Sized {
     unsafe fn constrainFrameRect_toScreen_(self, frameRect: NSRect, screen: id);
     unsafe fn cascadeTopLeftFromPoint_(self, topLeft: NSPoint) -> NSPoint;
     unsafe fn setFrame_display_(self, windowFrame: NSRect, display: BOOL);
+    unsafe fn setFrame_display_animate_(self, windowFrame: NSRect, display: BOOL, animate: BOOL);
     unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL);
     unsafe fn aspectRatio(self) -> NSSize;
     unsafe fn setAspectRatio_(self, aspectRatio: NSSize);
@@ -1351,6 +1352,10 @@ impl NSWindow for id {
 
     unsafe fn setFrame_display_(self, windowFrame: NSRect, display: BOOL) {
         msg_send![self, setFrame:windowFrame display:display]
+    }
+
+    unsafe fn setFrame_display_animate_(self, windowFrame: NSRect, display: BOOL, animate: BOOL) {
+        msg_send![self, setFrame:windowFrame display:display animate: animate]
     }
 
     unsafe fn setFrame_displayViews_(self, windowFrame: NSRect, display: BOOL) {

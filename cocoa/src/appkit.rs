@@ -4461,6 +4461,31 @@ impl NSCursor for id {
     }
 }
 
+pub trait NSDockTile: Sized {
+    unsafe fn showsApplicatinBadge(self) -> BOOL;
+    unsafe fn setShowsApplicatinBadge_(self, value: BOOL) -> id;
+    unsafe fn badgeLabel(self) -> id /* NSString */;
+    unsafe fn setBadgeLabel_(self, label: id /* NSString */) -> id;
+}
+
+impl NSDockTile for id {
+    unsafe fn showsApplicatinBadge(self) -> BOOL {
+        msg_send![self, showsApplicationBadge]
+    }
+
+    unsafe fn setShowsApplicatinBadge_(self, value: BOOL) -> id {
+        msg_send![self, setShowsApplicationBadge:value]
+    }
+
+    unsafe fn badgeLabel(self) -> id /* NSString */ {
+        msg_send![self, badgeLabel]
+    }
+
+    unsafe fn setBadgeLabel_(self, label: id /* NSString */) -> id {
+        msg_send![self, setBadgeLabel:label]
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

@@ -2,7 +2,7 @@ extern crate cocoa;
 extern crate core_graphics;
 
 #[macro_use]
-extern crate objc;
+extern crate objc2;
 
 use cocoa::base::{selector, nil, NO, id};
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
@@ -14,8 +14,8 @@ use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, 
 
 use core_graphics::display::CGDisplay;
 
-use objc::runtime::{Object, Sel};
-use objc::declare::ClassDecl;
+use objc2::runtime::{Object, Sel};
+use objc2::declare::ClassDecl;
 
 fn main() {
     unsafe {

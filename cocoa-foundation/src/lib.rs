@@ -18,7 +18,7 @@ extern crate foreign_types;
 extern crate libc;
 pub extern crate objc_encode;
 #[macro_use]
-extern crate objc;
+extern crate objc2;
 
 pub use objc_encode as __objc_encode;
 

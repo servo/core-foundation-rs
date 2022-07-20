@@ -1,6 +1,6 @@
 extern crate cocoa;
 
-use cocoa::base::{selector, nil, NO};
+use cocoa::base::{selector, nil};
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
                         NSString};
 use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSWindow,
@@ -39,7 +39,7 @@ fn main() {
                                                                       NSSize::new(200., 200.)),
                                                           NSWindowStyleMask::NSTitledWindowMask,
                                                           NSBackingStoreBuffered,
-                                                          NO)
+                                                          false)
             .autorelease();
         window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
         window.center();

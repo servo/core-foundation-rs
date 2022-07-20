@@ -1,10 +1,16 @@
 use std::os::raw::c_void;
 
+use objc2_encode::{Encoding, RefEncode};
+
 pub enum CGImage {}
 pub type CGImageRef = *mut CGImage;
 
 #[repr(C)]
 pub struct __CGColor(c_void);
+
+unsafe impl RefEncode for __CGColor {
+    const ENCODING_REF: Encoding<'static> = Encoding::Unknown;
+}
 
 pub type CGColorRef = *const __CGColor;
 
@@ -14,6 +20,10 @@ pub type CGColorSpaceRef = *mut CGColorSpace;
 pub enum CGPath {}
 pub type CGPathRef = *mut CGPath;
 
+unsafe impl RefEncode for CGPath {
+    const ENCODING_REF: Encoding<'static> = Encoding::Unknown;
+}
+
 pub enum CGDataProvider {}
 pub type CGDataProviderRef = *mut CGDataProvider;
 
@@ -22,6 +32,10 @@ pub type CGFontRef = *mut CGFont;
 
 pub enum CGContext {}
 pub type CGContextRef = *mut CGContext;
+
+unsafe impl RefEncode for CGContext {
+    const ENCODING_REF: Encoding<'static> = Encoding::Unknown;
+}
 
 pub enum CGGradient {}
 pub type CGGradientRef = *mut CGGradient;

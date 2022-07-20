@@ -11,22 +11,14 @@
 
 use std::ptr;
 use std::os::raw::c_void;
-use base::{id, BOOL, NO, SEL, nil};
+use base::{id, SEL, nil};
+use objc2::runtime::Bool;
 use block::Block;
 use libc;
+use objc2_encode::{Encode, Encoding, RefEncode};
 
+pub use objc2::ffi::{NSInteger, NSUInteger, NSIntegerMax};
 
-#[cfg(target_pointer_width = "32")]
-pub type NSInteger = libc::c_int;
-#[cfg(target_pointer_width = "32")]
-pub type NSUInteger = libc::c_uint;
-
-#[cfg(target_pointer_width = "64")]
-pub type NSInteger = libc::c_long;
-#[cfg(target_pointer_width = "64")]
-pub type NSUInteger = libc::c_ulong;
-
-pub const NSIntegerMax: NSInteger = NSInteger::max_value();
 pub const NSNotFound: NSInteger = NSIntegerMax;
 
 const UTF8_ENCODING: usize = 4;
@@ -37,7 +29,7 @@ mod macos {
     use base::id;
     use core_graphics_types::base::CGFloat;
     use core_graphics_types::geometry::CGRect;
-    use objc;
+    use objc2_encode::{Encode, Encoding};
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -56,13 +48,9 @@ mod macos {
         }
     }
 
-    unsafe impl objc::Encode for NSPoint {
-        fn encode() -> objc::Encoding {
-            let encoding = format!("{{CGPoint={}{}}}",
-                                   CGFloat::encode().as_str(),
-                                   CGFloat::encode().as_str());
-            unsafe { objc::Encoding::from_str(&encoding) }
-        }
+    unsafe impl Encode for NSPoint {
+        const ENCODING: Encoding<'static> =
+            Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
     }
 
     #[repr(C)]
@@ -82,13 +70,9 @@ mod macos {
         }
     }
 
-    unsafe impl objc::Encode for NSSize {
-        fn encode() -> objc::Encoding {
-            let encoding = format!("{{CGSize={}{}}}",
-                                   CGFloat::encode().as_str(),
-                                   CGFloat::encode().as_str());
-            unsafe { objc::Encoding::from_str(&encoding) }
-        }
+    unsafe impl Encode for NSSize {
+        const ENCODING: Encoding<'static> =
+            Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
     }
 
     #[repr(C)]
@@ -122,13 +106,9 @@ mod macos {
         }
     }
 
-    unsafe impl objc::Encode for NSRect {
-        fn encode() -> objc::Encoding {
-            let encoding = format!("{{CGRect={}{}}}",
-                                   NSPoint::encode().as_str(),
-                                   NSSize::encode().as_str());
-            unsafe { objc::Encoding::from_str(&encoding) }
-        }
+    unsafe impl Encode for NSRect {
+        const ENCODING: Encoding<'static> =
+            Encoding::Struct("CGRect", &[NSPoint::ENCODING, NSSize::ENCODING]);
     }
 
     // Same as CGRectEdge
@@ -139,6 +119,8 @@ mod macos {
         NSRectMaxXEdge,
         NSRectMaxYEdge,
     }
+
+    impl_Encode!(NSRectEdge, u32);
 
     #[link(name = "Foundation", kind = "framework")]
     extern {
@@ -167,6 +149,11 @@ pub use self::macos::*;
 pub struct NSRange {
     pub location: NSUInteger,
     pub length: NSUInteger,
+}
+
+unsafe impl Encode for NSRange {
+    const ENCODING: Encoding<'static> =
+        Encoding::Struct("_NSRange", &[NSUInteger::ENCODING, NSUInteger::ENCODING]);
 }
 
 impl NSRange {
@@ -212,6 +199,17 @@ pub struct NSOperatingSystemVersion {
     pub patchVersion: NSUInteger,
 }
 
+unsafe impl Encode for NSOperatingSystemVersion {
+    const ENCODING: Encoding<'static> = Encoding::Struct(
+        "NSOperatingSystemVersion",
+        &[
+            NSUInteger::ENCODING,
+            NSUInteger::ENCODING,
+            NSUInteger::ENCODING,
+        ],
+    );
+}
+
 impl NSOperatingSystemVersion {
     #[inline]
     pub fn new(majorVersion: NSUInteger, minorVersion: NSUInteger, patchVersion: NSUInteger) -> NSOperatingSystemVersion {
@@ -249,7 +247,7 @@ impl NSProcessInfo for id {
     }
 
     unsafe fn isOperatingSystemAtLeastVersion(self, version: NSOperatingSystemVersion) -> bool {
-        msg_send![self, isOperatingSystemAtLeastVersion: version]
+        msg_send_bool![self, isOperatingSystemAtLeastVersion: version]
     }
 }
 
@@ -261,7 +259,7 @@ pub trait NSArray: Sized {
     }
 
     unsafe fn arrayWithObjects(_: Self, objects: &[id]) -> id {
-        msg_send![class!(NSArray), arrayWithObjects:objects.as_ptr()
+        msg_send![class!(NSArray), arrayWithObjects:objects.as_ptr(),
                                     count:objects.len()]
     }
 
@@ -318,15 +316,15 @@ pub trait NSDictionary: Sized {
     }
 
     unsafe fn dictionaryWithObject_forKey_(_: Self, anObject: id, aKey: id) -> id {
-        msg_send![class!(NSDictionary), dictionaryWithObject:anObject forKey:aKey]
+        msg_send![class!(NSDictionary), dictionaryWithObject: anObject, forKey: aKey]
     }
 
     unsafe fn dictionaryWithObjects_forKeys_(_: Self, objects: id, keys: id) -> id {
-        msg_send![class!(NSDictionary), dictionaryWithObjects:objects forKeys:keys]
+        msg_send![class!(NSDictionary), dictionaryWithObjects: objects, forKeys: keys]
     }
 
     unsafe fn dictionaryWithObjects_forKeys_count_(_: Self, objects: *const id, keys: *const id, count: NSUInteger) -> id {
-        msg_send![class!(NSDictionary), dictionaryWithObjects:objects forKeys:keys count:count]
+        msg_send![class!(NSDictionary), dictionaryWithObjects: objects, forKeys: keys, count: count]
     }
 
     unsafe fn dictionaryWithObjectsAndKeys_(_: Self, firstObject: id) -> id {
@@ -337,7 +335,7 @@ pub trait NSDictionary: Sized {
     unsafe fn initWithContentsOfFile_(self, path: id) -> id;
     unsafe fn initWithContentsOfURL_(self, aURL: id) -> id;
     unsafe fn initWithDictionary_(self, otherDicitonary: id) -> id;
-    unsafe fn initWithDictionary_copyItems_(self, otherDicitonary: id, flag: BOOL) -> id;
+    unsafe fn initWithDictionary_copyItems_(self, otherDicitonary: id, flag: bool) -> id;
     unsafe fn initWithObjects_forKeys_(self, objects: id, keys: id) -> id;
     unsafe fn initWithObjects_forKeys_count_(self, objects: id, keys: id, count: NSUInteger) -> id;
     unsafe fn initWithObjectsAndKeys_(self, firstObject: id) -> id;
@@ -348,7 +346,7 @@ pub trait NSDictionary: Sized {
 
     unsafe fn count(self) -> NSUInteger;
 
-    unsafe fn isEqualToDictionary_(self, otherDictionary: id) -> BOOL;
+    unsafe fn isEqualToDictionary_(self, otherDictionary: id) -> bool;
 
     unsafe fn allKeys(self) -> id;
     unsafe fn allKeysForObject_(self, anObject: id) -> id;
@@ -360,27 +358,27 @@ pub trait NSDictionary: Sized {
 
     unsafe fn keyEnumerator(self) -> id;
     unsafe fn objectEnumerator(self) -> id;
-    unsafe fn enumerateKeysAndObjectsUsingBlock_(self, block: *mut Block<(id, id, *mut BOOL), ()>);
+    unsafe fn enumerateKeysAndObjectsUsingBlock_(self, block: *mut Block<(id, id, *mut Bool), ()>);
     unsafe fn enumerateKeysAndObjectsWithOptions_usingBlock_(self, opts: NSEnumerationOptions,
-                                                             block: *mut Block<(id, id, *mut BOOL), ()>);
+                                                             block: *mut Block<(id, id, *mut Bool), ()>);
 
     unsafe fn keysSortedByValueUsingSelector_(self, comparator: SEL) -> id;
     unsafe fn keysSortedByValueUsingComparator_(self, cmptr: NSComparator) -> id;
     unsafe fn keysSortedByValueWithOptions_usingComparator_(self, opts: NSEnumerationOptions, cmptr: NSComparator) -> id;
 
-    unsafe fn keysOfEntriesPassingTest_(self, predicate: *mut Block<(id, id, *mut BOOL), BOOL>) -> id;
+    unsafe fn keysOfEntriesPassingTest_(self, predicate: *mut Block<(id, id, *mut Bool), Bool>) -> id;
     unsafe fn keysOfEntriesWithOptions_PassingTest_(self, opts: NSEnumerationOptions,
-                                                    predicate: *mut Block<(id, id, *mut BOOL), BOOL>) -> id;
+                                                    predicate: *mut Block<(id, id, *mut Bool), Bool>) -> id;
 
-    unsafe fn writeToFile_atomically_(self, path: id, flag: BOOL) -> BOOL;
-    unsafe fn writeToURL_atomically_(self, aURL: id, flag: BOOL) -> BOOL;
+    unsafe fn writeToFile_atomically_(self, path: id, flag: bool) -> bool;
+    unsafe fn writeToURL_atomically_(self, aURL: id, flag: bool) -> bool;
 
     unsafe fn fileCreationDate(self) -> id;
-    unsafe fn fileExtensionHidden(self) -> BOOL;
+    unsafe fn fileExtensionHidden(self) -> bool;
     unsafe fn fileGroupOwnerAccountID(self) -> id;
     unsafe fn fileGroupOwnerAccountName(self) -> id;
-    unsafe fn fileIsAppendOnly(self) -> BOOL;
-    unsafe fn fileIsImmutable(self) -> BOOL;
+    unsafe fn fileIsAppendOnly(self) -> bool;
+    unsafe fn fileIsImmutable(self) -> bool;
     unsafe fn fileModificationDate(self) -> id;
     unsafe fn fileOwnerAccountID(self) -> id;
     unsafe fn fileOwnerAccountName(self) -> id;
@@ -413,16 +411,16 @@ impl NSDictionary for id {
         msg_send![self, initWithDictionary:otherDictionary]
     }
 
-    unsafe fn initWithDictionary_copyItems_(self, otherDictionary: id, flag: BOOL) -> id {
-        msg_send![self, initWithDictionary:otherDictionary copyItems:flag]
+    unsafe fn initWithDictionary_copyItems_(self, otherDictionary: id, flag: bool) -> id {
+        msg_send![self, initWithDictionary: otherDictionary, copyItems: Bool::from(flag)]
     }
 
     unsafe fn initWithObjects_forKeys_(self, objects: id, keys: id) -> id {
-        msg_send![self, initWithObjects:objects forKeys:keys]
+        msg_send![self, initWithObjects: objects, forKeys: keys]
     }
 
     unsafe fn initWithObjects_forKeys_count_(self, objects: id, keys: id, count: NSUInteger) -> id {
-        msg_send![self, initWithObjects:objects forKeys:keys count:count]
+        msg_send![self, initWithObjects: objects, forKeys: keys, count: count]
     }
 
     unsafe fn initWithObjectsAndKeys_(self, firstObject: id) -> id {
@@ -433,8 +431,8 @@ impl NSDictionary for id {
         msg_send![self, count]
     }
 
-    unsafe fn isEqualToDictionary_(self, otherDictionary: id) -> BOOL {
-        msg_send![self, isEqualToDictionary:otherDictionary]
+    unsafe fn isEqualToDictionary_(self, otherDictionary: id) -> bool {
+        msg_send_bool![self, isEqualToDictionary:otherDictionary]
     }
 
     unsafe fn allKeys(self) -> id {
@@ -458,7 +456,7 @@ impl NSDictionary for id {
     }
 
     unsafe fn objectsForKeys_notFoundMarker_(self, keys: id, anObject: id) -> id {
-        msg_send![self, objectsForKeys:keys notFoundMarker:anObject]
+        msg_send![self, objectsForKeys: keys, notFoundMarker: anObject]
     }
 
     unsafe fn valueForKey_(self, key: id) -> id {
@@ -473,13 +471,13 @@ impl NSDictionary for id {
         msg_send![self, objectEnumerator]
     }
 
-    unsafe fn enumerateKeysAndObjectsUsingBlock_(self, block: *mut Block<(id, id, *mut BOOL), ()>) {
+    unsafe fn enumerateKeysAndObjectsUsingBlock_(self, block: *mut Block<(id, id, *mut Bool), ()>) {
         msg_send![self, enumerateKeysAndObjectsUsingBlock:block]
     }
 
     unsafe fn enumerateKeysAndObjectsWithOptions_usingBlock_(self, opts: NSEnumerationOptions,
-                                                     block: *mut Block<(id, id, *mut BOOL), ()>) {
-        msg_send![self, enumerateKeysAndObjectsWithOptions:opts usingBlock:block]
+                                                     block: *mut Block<(id, id, *mut Bool), ()>) {
+        msg_send![self, enumerateKeysAndObjectsWithOptions:opts, usingBlock:block]
     }
 
     unsafe fn keysSortedByValueUsingSelector_(self, comparator: SEL) -> id {
@@ -491,33 +489,33 @@ impl NSDictionary for id {
     }
 
     unsafe fn keysSortedByValueWithOptions_usingComparator_(self, opts: NSEnumerationOptions, cmptr: NSComparator) -> id {
-        let rv: id = msg_send![self, keysSortedByValueWithOptions:opts usingComparator:cmptr];
+        let rv: id = msg_send![self, keysSortedByValueWithOptions:opts, usingComparator:cmptr];
         rv
     }
 
-    unsafe fn keysOfEntriesPassingTest_(self, predicate: *mut Block<(id, id, *mut BOOL), BOOL>) -> id {
+    unsafe fn keysOfEntriesPassingTest_(self, predicate: *mut Block<(id, id, *mut Bool), Bool>) -> id {
         msg_send![self, keysOfEntriesPassingTest:predicate]
     }
 
     unsafe fn keysOfEntriesWithOptions_PassingTest_(self, opts: NSEnumerationOptions,
-                                                    predicate: *mut Block<(id, id, *mut BOOL), BOOL>) -> id {
-        msg_send![self, keysOfEntriesWithOptions:opts PassingTest:predicate]
+                                                    predicate: *mut Block<(id, id, *mut Bool), Bool>) -> id {
+        msg_send![self, keysOfEntriesWithOptions:opts, PassingTest:predicate]
     }
 
-    unsafe fn writeToFile_atomically_(self, path: id, flag: BOOL) -> BOOL {
-        msg_send![self, writeToFile:path atomically:flag]
+    unsafe fn writeToFile_atomically_(self, path: id, flag: bool) -> bool {
+        msg_send_bool![self, writeToFile:path, atomically: Bool::from(flag)]
     }
 
-    unsafe fn writeToURL_atomically_(self, aURL: id, flag: BOOL) -> BOOL {
-        msg_send![self, writeToURL:aURL atomically:flag]
+    unsafe fn writeToURL_atomically_(self, aURL: id, flag: bool) -> bool {
+        msg_send_bool![self, writeToURL: aURL, atomically: Bool::from(flag)]
     }
 
     unsafe fn fileCreationDate(self) -> id {
         msg_send![self, fileCreationDate]
     }
 
-    unsafe fn fileExtensionHidden(self) -> BOOL {
-        msg_send![self, fileExtensionHidden]
+    unsafe fn fileExtensionHidden(self) -> bool {
+        msg_send_bool![self, fileExtensionHidden]
     }
 
     unsafe fn fileGroupOwnerAccountID(self) -> id {
@@ -528,12 +526,12 @@ impl NSDictionary for id {
         msg_send![self, fileGroupOwnerAccountName]
     }
 
-    unsafe fn fileIsAppendOnly(self) -> BOOL {
-        msg_send![self, fileIsAppendOnly]
+    unsafe fn fileIsAppendOnly(self) -> bool {
+        msg_send_bool![self, fileIsAppendOnly]
     }
 
-    unsafe fn fileIsImmutable(self) -> BOOL {
-        msg_send![self, fileIsImmutable]
+    unsafe fn fileIsImmutable(self) -> bool {
+        msg_send_bool![self, fileIsImmutable]
     }
 
     unsafe fn fileModificationDate(self) -> id {
@@ -581,7 +579,7 @@ impl NSDictionary for id {
     }
 
     unsafe fn descriptionWithLocale_indent_(self, locale: id, indent: NSUInteger) -> id {
-        msg_send![self, descriptionWithLocale:locale indent:indent]
+        msg_send![self, descriptionWithLocale:locale, indent:indent]
     }
 }
 
@@ -591,6 +589,8 @@ bitflags! {
         const NSEnumerationReverse = 1 << 1;
     }
 }
+
+impl_Encode!(NSEnumerationOptions, libc::c_ulonglong);
 
 pub type NSComparator = *mut Block<(id, id), NSComparisonResult>;
 
@@ -602,6 +602,8 @@ pub enum NSComparisonResult {
     NSOrderedDescending = 1
 }
 
+impl_Encode!(NSComparisonResult, isize);
+
 pub trait NSString: Sized {
     unsafe fn alloc(_: Self) -> id {
         msg_send![class!(NSString), alloc]
@@ -611,15 +613,14 @@ pub trait NSString: Sized {
     unsafe fn init_str(self, string: &str) -> Self;
     unsafe fn UTF8String(self) -> *const libc::c_char;
     unsafe fn len(self) -> usize;
-    unsafe fn isEqualToString(self, &str) -> bool;
+    unsafe fn isEqualToString(self, _: &str) -> bool;
     unsafe fn substringWithRange(self, range: NSRange) -> id;
 }
 
 impl NSString for id {
     unsafe fn isEqualToString(self, other: &str) -> bool {
         let other = NSString::alloc(nil).init_str(other);
-        let rv: BOOL = msg_send![self, isEqualToString:other];
-        rv != NO
+        msg_send_bool![self, isEqualToString: other]
     }
 
     unsafe fn stringByAppendingString_(self, other: id) -> id {
@@ -627,10 +628,12 @@ impl NSString for id {
     }
 
     unsafe fn init_str(self, string: &str) -> id {
-        return msg_send![self,
-                         initWithBytes:string.as_ptr()
-                             length:string.len()
-                             encoding:UTF8_ENCODING as id];
+        msg_send![
+            self,
+            initWithBytes: string.as_ptr() as *const c_void,
+            length: string.len(),
+            encoding: UTF8_ENCODING,
+        ]
     }
 
     unsafe fn len(self) -> usize {
@@ -668,6 +671,22 @@ struct NSFastEnumerationState {
     pub extra: [libc::c_ulong; 5]
 }
 
+unsafe impl Encode for NSFastEnumerationState {
+    const ENCODING: Encoding<'static> = Encoding::Struct(
+        "?",
+        &[
+            libc::c_ulong::ENCODING,
+            Encoding::Pointer(&Encoding::Object),
+            Encoding::Pointer(&libc::c_ulong::ENCODING),
+            Encoding::Array(5, &libc::c_ulong::ENCODING),
+        ],
+    );
+}
+
+unsafe impl RefEncode for NSFastEnumerationState {
+    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+}
+
 const NS_FAST_ENUM_BUF_SIZE: usize = 16;
 
 pub struct NSFastIterator {
@@ -676,7 +695,7 @@ pub struct NSFastIterator {
     mut_val: Option<libc::c_ulong>,
     len: usize,
     idx: usize,
-    object: id
+    object: id,
 }
 
 impl Iterator for NSFastIterator {
@@ -685,7 +704,7 @@ impl Iterator for NSFastIterator {
     fn next(&mut self) -> Option<id> {
         if self.idx >= self.len {
             self.len = unsafe {
-                msg_send![self.object, countByEnumeratingWithState:&mut self.state objects:self.buffer.as_mut_ptr() count:NS_FAST_ENUM_BUF_SIZE]
+                msg_send![self.object, countByEnumeratingWithState:&mut self.state, objects:self.buffer.as_mut_ptr(), count:NS_FAST_ENUM_BUF_SIZE]
             };
             self.idx = 0;
         }
@@ -755,10 +774,10 @@ impl NSRunLoop for id {
                                                            anArgument: id,
                                                            order: NSUInteger,
                                                            modes: id) {
-        msg_send![self, performSelector:aSelector
-                                 target:target
-                               argument:anArgument
-                                  order:order
+        msg_send![self, performSelector:aSelector,
+                                 target:target,
+                               argument:anArgument,
+                                  order:order,
                                   modes:modes]
     }
 }
@@ -773,6 +792,8 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSURLBookmarkCreationOptions, NSUInteger);
+
 pub type NSURLBookmarkFileCreationOptions = NSURLBookmarkCreationOptions;
 
 bitflags! {
@@ -783,6 +804,7 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSURLBookmarkResolutionOptions, NSUInteger);
 
 pub trait NSURL: Sized {
     unsafe fn alloc(_: Self) -> id;
@@ -791,18 +813,18 @@ pub trait NSURL: Sized {
     unsafe fn initWithString_(self, string: id) -> id;
     unsafe fn URLWithString_relativeToURL_(_:Self, string: id, url: id) -> id;
     unsafe fn initWithString_relativeToURL_(self, string: id, url: id) -> id;
-    unsafe fn fileURLWithPath_isDirectory_(_:Self, path: id, is_dir: BOOL) -> id;
-    unsafe fn initFileURLWithPath_isDirectory_(self, path: id, is_dir: BOOL) -> id;
+    unsafe fn fileURLWithPath_isDirectory_(_:Self, path: id, is_dir: bool) -> id;
+    unsafe fn initFileURLWithPath_isDirectory_(self, path: id, is_dir: bool) -> id;
     unsafe fn fileURLWithPath_relativeToURL_(_:Self, path: id, url: id) -> id;
     unsafe fn initFileURLWithPath_relativeToURL_(self, path: id, url: id) -> id;
-    unsafe fn fileURLWithPath_isDirectory_relativeToURL_(_:Self, path: id, is_dir: BOOL, url: id) -> id;
-    unsafe fn initFileURLWithPath_isDirectory_relativeToURL_(self, path: id, is_dir: BOOL, url: id) -> id;
+    unsafe fn fileURLWithPath_isDirectory_relativeToURL_(_:Self, path: id, is_dir: bool, url: id) -> id;
+    unsafe fn initFileURLWithPath_isDirectory_relativeToURL_(self, path: id, is_dir: bool, url: id) -> id;
     unsafe fn fileURLWithPath_(_:Self, path: id) -> id;
     unsafe fn initFileURLWithPath_(self, path: id) -> id;
     unsafe fn fileURLWithPathComponents_(_:Self, path_components: id /* (NSArray<NSString*>*) */) -> id;
     unsafe fn URLByResolvingAliasFileAtURL_options_error_(_:Self, url: id, options: NSURLBookmarkResolutionOptions, error: *mut id /* (NSError _Nullable) */) -> id;
-    unsafe fn URLByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(_:Self, data: id /* (NSData) */, options: NSURLBookmarkResolutionOptions, relative_to_url: id, is_stale: *mut BOOL, error: *mut id /* (NSError _Nullable) */) -> id;
-    unsafe fn initByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(self, data: id /* (NSData) */, options: NSURLBookmarkResolutionOptions, relative_to_url: id, is_stale: *mut BOOL, error: *mut id /* (NSError _Nullable) */) -> id;
+    unsafe fn URLByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(_:Self, data: id /* (NSData) */, options: NSURLBookmarkResolutionOptions, relative_to_url: id, is_stale: *mut Bool, error: *mut id /* (NSError _Nullable) */) -> id;
+    unsafe fn initByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(self, data: id /* (NSData) */, options: NSURLBookmarkResolutionOptions, relative_to_url: id, is_stale: *mut Bool, error: *mut id /* (NSError _Nullable) */) -> id;
     // unsafe fn fileURLWithFileSystemRepresentation_isDirectory_relativeToURL_
     // unsafe fn getFileSystemRepresentation_maxLength_
     // unsafe fn initFileURLWithFileSystemRepresentation_isDirectory_relativeToURL_
@@ -812,11 +834,11 @@ pub trait NSURL: Sized {
     unsafe fn initWithDataRepresentation_relativeToURL_(self, data: id /* (NSData) */, url: id) -> id;
     unsafe fn dataRepresentation(self) -> id /* (NSData) */;
 
-    unsafe fn isEqual_(self, id: id) -> BOOL;
+    unsafe fn isEqual_(self, id: id) -> bool;
 
-    unsafe fn checkResourceIsReachableAndReturnError_(self, error: id /* (NSError _Nullable) */) -> BOOL;
-    unsafe fn isFileReferenceURL(self) -> BOOL;
-    unsafe fn isFileURL(self) -> BOOL;
+    unsafe fn checkResourceIsReachableAndReturnError_(self, error: id /* (NSError _Nullable) */) -> bool;
+    unsafe fn isFileReferenceURL(self) -> bool;
+    unsafe fn isFileURL(self) -> bool;
 
     unsafe fn absoluteString(self) -> id /* (NSString) */;
     unsafe fn absoluteURL(self) -> id /* (NSURL) */;
@@ -851,19 +873,19 @@ pub trait NSURL: Sized {
     unsafe fn filePathURL(self) -> id;
     unsafe fn fileReferenceURL(self) -> id;
     unsafe fn URLByAppendingPathComponent_(self, path_component: id /* (NSString) */) -> id;
-    unsafe fn URLByAppendingPathComponent_isDirectory_(self, path_component: id /* (NSString) */, is_dir: BOOL) -> id;
+    unsafe fn URLByAppendingPathComponent_isDirectory_(self, path_component: id /* (NSString) */, is_dir: bool) -> id;
     unsafe fn URLByAppendingPathExtension_(self, extension: id /* (NSString) */) -> id;
     unsafe fn URLByDeletingLastPathComponent(self) -> id;
     unsafe fn URLByDeletingPathExtension(self) -> id;
     unsafe fn URLByResolvingSymlinksInPath(self) -> id;
     unsafe fn URLByStandardizingPath(self) -> id;
-    unsafe fn hasDirectoryPath(self) -> BOOL;
+    unsafe fn hasDirectoryPath(self) -> bool;
 
     unsafe fn bookmarkDataWithContentsOfURL_error_(_:Self, url: id, error: id /* (NSError _Nullable) */) -> id /* (NSData) */;
     unsafe fn bookmarkDataWithOptions_includingResourceValuesForKeys_relativeToURL_error_(self, options: NSURLBookmarkCreationOptions, resource_value_for_keys: id /* (NSArray<NSURLResourceKey>) */, relative_to_url: id, error: id /* (NSError _Nullable) */) -> id /* (NSData) */;
     // unsafe fn resourceValuesForKeys_fromBookmarkData_
     unsafe fn writeBookmarkData_toURL_options_error_(_:Self, data: id /* (NSData) */, to_url: id, options: NSURLBookmarkFileCreationOptions, error: id /* (NSError _Nullable) */) -> id;
-    unsafe fn startAccessingSecurityScopedResource(self) -> BOOL;
+    unsafe fn startAccessingSecurityScopedResource(self) -> bool;
     unsafe fn stopAccessingSecurityScopedResource(self);
     unsafe fn NSURLBookmarkFileCreationOptions(self) -> NSURLBookmarkFileCreationOptions;
     unsafe fn NSURLBookmarkCreationOptions(self) -> NSURLBookmarkCreationOptions;
@@ -889,28 +911,28 @@ impl NSURL for id {
         msg_send![self, initWithString:string]
     }
     unsafe fn URLWithString_relativeToURL_(_:Self, string: id, url: id) -> id {
-        msg_send![class!(NSURL), URLWithString: string relativeToURL:url]
+        msg_send![class!(NSURL), URLWithString: string, relativeToURL: url]
     }
     unsafe fn initWithString_relativeToURL_(self, string: id, url: id) -> id {
-        msg_send![self, initWithString:string relativeToURL:url]
+        msg_send![self, initWithString:string, relativeToURL:url]
     }
-    unsafe fn fileURLWithPath_isDirectory_(_:Self, path: id, is_dir: BOOL) -> id {
-        msg_send![class!(NSURL), fileURLWithPath:path isDirectory:is_dir]
+    unsafe fn fileURLWithPath_isDirectory_(_:Self, path: id, is_dir: bool) -> id {
+        msg_send![class!(NSURL), fileURLWithPath: path, isDirectory: Bool::from(is_dir)]
     }
-    unsafe fn initFileURLWithPath_isDirectory_(self, path: id, is_dir: BOOL) -> id {
-        msg_send![self, initFileURLWithPath:path isDirectory:is_dir]
+    unsafe fn initFileURLWithPath_isDirectory_(self, path: id, is_dir: bool) -> id {
+        msg_send![self, initFileURLWithPath: path, isDirectory: Bool::from(is_dir)]
     }
     unsafe fn fileURLWithPath_relativeToURL_(_:Self, path: id, url: id) -> id {
-        msg_send![class!(NSURL), fileURLWithPath:path relativeToURL:url]
+        msg_send![class!(NSURL), fileURLWithPath:path, relativeToURL:url]
     }
     unsafe fn initFileURLWithPath_relativeToURL_(self, path: id, url: id) -> id {
-        msg_send![self, initFileURLWithPath:path relativeToURL:url]
+        msg_send![self, initFileURLWithPath:path, relativeToURL:url]
     }
-    unsafe fn fileURLWithPath_isDirectory_relativeToURL_(_:Self, path: id, is_dir: BOOL, url: id) -> id {
-        msg_send![class!(NSURL), fileURLWithPath:path isDirectory:is_dir relativeToURL:url]
+    unsafe fn fileURLWithPath_isDirectory_relativeToURL_(_:Self, path: id, is_dir: bool, url: id) -> id {
+        msg_send![class!(NSURL), fileURLWithPath: path, isDirectory: Bool::from(is_dir), relativeToURL: url]
     }
-    unsafe fn initFileURLWithPath_isDirectory_relativeToURL_(self, path: id, is_dir: BOOL, url: id) -> id {
-        msg_send![self, initFileURLWithPath:path isDirectory:is_dir relativeToURL:url]
+    unsafe fn initFileURLWithPath_isDirectory_relativeToURL_(self, path: id, is_dir: bool, url: id) -> id {
+        msg_send![self, initFileURLWithPath: path, isDirectory: Bool::from(is_dir), relativeToURL: url]
     }
     unsafe fn fileURLWithPath_(_:Self, path: id) -> id {
         msg_send![class!(NSURL), fileURLWithPath:path]
@@ -922,45 +944,45 @@ impl NSURL for id {
         msg_send![class!(NSURL), fileURLWithPathComponents:path_components]
     }
     unsafe fn URLByResolvingAliasFileAtURL_options_error_(_:Self, url: id, options: NSURLBookmarkResolutionOptions, error: *mut id /* (NSError _Nullable) */) -> id {
-        msg_send![class!(NSURL), URLByResolvingAliasFileAtURL:url options:options error:error]
+        msg_send![class!(NSURL), URLByResolvingAliasFileAtURL: url, options: options, error: error]
     }
-    unsafe fn URLByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(_:Self, data: id /* (NSData) */, options: NSURLBookmarkResolutionOptions, relative_to_url: id, is_stale: *mut BOOL, error: *mut id /* (NSError _Nullable) */) -> id {
-        msg_send![class!(NSURL), URLByResolvingBookmarkData:data options:options relativeToURL:relative_to_url bookmarkDataIsStale:is_stale error:error]
+    unsafe fn URLByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(_:Self, data: id /* (NSData) */, options: NSURLBookmarkResolutionOptions, relative_to_url: id, is_stale: *mut Bool, error: *mut id /* (NSError _Nullable) */) -> id {
+        msg_send![class!(NSURL), URLByResolvingBookmarkData: data, options: options, relativeToURL: relative_to_url, bookmarkDataIsStale: is_stale, error: error]
     }
-    unsafe fn initByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(self, data: id /* (NSData) */, options: NSURLBookmarkResolutionOptions, relative_to_url: id, is_stale: *mut BOOL, error: *mut id /* (NSError _Nullable) */) -> id {
-        msg_send![self, initByResolvingBookmarkData:data options:options relativeToURL:relative_to_url bookmarkDataIsStale:is_stale error:error]
+    unsafe fn initByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(self, data: id /* (NSData) */, options: NSURLBookmarkResolutionOptions, relative_to_url: id, is_stale: *mut Bool, error: *mut id /* (NSError _Nullable) */) -> id {
+        msg_send![self, initByResolvingBookmarkData: data, options: options, relativeToURL: relative_to_url, bookmarkDataIsStale: is_stale, error: error]
     }
     // unsafe fn fileURLWithFileSystemRepresentation_isDirectory_relativeToURL_
     // unsafe fn getFileSystemRepresentation_maxLength_
     // unsafe fn initFileURLWithFileSystemRepresentation_isDirectory_relativeToURL_
     unsafe fn absoluteURLWithDataRepresentation_relativeToURL_(_:Self, data: id /* (NSData) */, url: id) -> id {
-        msg_send![class!(NSURL), absoluteURLWithDataRepresentation:data relativeToURL:url]
+        msg_send![class!(NSURL), absoluteURLWithDataRepresentation:data, relativeToURL:url]
     }
     unsafe fn initAbsoluteURLWithDataRepresentation_relativeToURL_(self, data: id /* (NSData) */, url: id) -> id {
-        msg_send![self, initAbsoluteURLWithDataRepresentation:data relativeToURL:url]
+        msg_send![self, initAbsoluteURLWithDataRepresentation:data, relativeToURL:url]
     }
     unsafe fn URLWithDataRepresentation_relativeToURL_(_:Self, data: id /* (NSData) */, url: id) -> id {
-        msg_send![class!(NSURL), URLWithDataRepresentation:data relativeToURL:url]
+        msg_send![class!(NSURL), URLWithDataRepresentation:data, relativeToURL:url]
     }
     unsafe fn initWithDataRepresentation_relativeToURL_(self, data: id /* (NSData) */, url: id) -> id {
-        msg_send![self, initWithDataRepresentation:data relativeToURL:url]
+        msg_send![self, initWithDataRepresentation:data, relativeToURL:url]
     }
     unsafe fn dataRepresentation(self) -> id /* (NSData) */ {
         msg_send![self, dataRepresentation]
     }
 
-    unsafe fn isEqual_(self, id: id) -> BOOL {
-        msg_send![self, isEqual:id]
+    unsafe fn isEqual_(self, id: id) -> bool {
+        msg_send_bool![self, isEqual:id]
     }
 
-    unsafe fn checkResourceIsReachableAndReturnError_(self, error: id /* (NSError _Nullable) */) -> BOOL {
-        msg_send![self, checkResourceIsReachableAndReturnError:error]
+    unsafe fn checkResourceIsReachableAndReturnError_(self, error: id /* (NSError _Nullable) */) -> bool {
+        msg_send_bool![self, checkResourceIsReachableAndReturnError:error]
     }
-    unsafe fn isFileReferenceURL(self) -> BOOL {
-        msg_send![self, isFileReferenceURL]
+    unsafe fn isFileReferenceURL(self) -> bool {
+        msg_send_bool![self, isFileReferenceURL]
     }
-    unsafe fn isFileURL(self) -> BOOL {
-        msg_send![self, isFileURL]
+    unsafe fn isFileURL(self) -> bool {
+        msg_send_bool![self, isFileURL]
     }
 
     unsafe fn absoluteString(self) -> id /* (NSString) */ {
@@ -1042,8 +1064,8 @@ impl NSURL for id {
     unsafe fn URLByAppendingPathComponent_(self, path_component: id /* (NSString) */) -> id {
         msg_send![self, URLByAppendingPathComponent:path_component]
     }
-    unsafe fn URLByAppendingPathComponent_isDirectory_(self, path_component: id /* (NSString) */, is_dir: BOOL) -> id {
-        msg_send![self, URLByAppendingPathComponent:path_component isDirectory:is_dir]
+    unsafe fn URLByAppendingPathComponent_isDirectory_(self, path_component: id /* (NSString) */, is_dir: bool) -> id {
+        msg_send![self, URLByAppendingPathComponent:path_component, isDirectory: Bool::from(is_dir)]
     }
     unsafe fn URLByAppendingPathExtension_(self, extension: id /* (NSString) */) -> id {
         msg_send![self, URLByAppendingPathExtension:extension]
@@ -1060,22 +1082,22 @@ impl NSURL for id {
     unsafe fn URLByStandardizingPath(self) -> id {
         msg_send![self, URLByStandardizingPath]
     }
-    unsafe fn hasDirectoryPath(self) -> BOOL {
-        msg_send![self, hasDirectoryPath]
+    unsafe fn hasDirectoryPath(self) -> bool {
+        msg_send_bool![self, hasDirectoryPath]
     }
 
     unsafe fn bookmarkDataWithContentsOfURL_error_(_:Self, url: id, error: id /* (NSError _Nullable) */) -> id /* (NSData) */ {
-        msg_send![class!(NSURL), bookmarkDataWithContentsOfURL:url error:error]
+        msg_send![class!(NSURL), bookmarkDataWithContentsOfURL:url, error:error]
     }
     unsafe fn bookmarkDataWithOptions_includingResourceValuesForKeys_relativeToURL_error_(self, options: NSURLBookmarkCreationOptions, resource_value_for_keys: id /* (NSArray<NSURLResourceKey>) */, relative_to_url: id, error: id /* (NSError _Nullable) */) -> id /* (NSData) */ {
-        msg_send![self, bookmarkDataWithOptions:options includingResourceValuesForKeys:resource_value_for_keys relativeToURL:relative_to_url error:error]
+        msg_send![self, bookmarkDataWithOptions:options, includingResourceValuesForKeys:resource_value_for_keys, relativeToURL:relative_to_url, error:error]
     }
     // unsafe fn resourceValuesForKeys_fromBookmarkData_
     unsafe fn writeBookmarkData_toURL_options_error_(_:Self, data: id /* (NSData) */, to_url: id, options: NSURLBookmarkFileCreationOptions, error: id /* (NSError _Nullable) */) -> id {
-        msg_send![class!(NSURL), writeBookmarkData:data toURL:to_url options:options error:error]
+        msg_send![class!(NSURL), writeBookmarkData:data, toURL:to_url, options:options, error:error]
     }
-    unsafe fn startAccessingSecurityScopedResource(self) -> BOOL {
-        msg_send![self, startAccessingSecurityScopedResource]
+    unsafe fn startAccessingSecurityScopedResource(self) -> bool {
+        msg_send_bool![self, startAccessingSecurityScopedResource]
     }
     unsafe fn stopAccessingSecurityScopedResource(self) {
         msg_send![self, stopAccessingSecurityScopedResource]
@@ -1104,7 +1126,7 @@ pub trait NSBundle: Sized {
     unsafe fn loadNibNamed_owner_topLevelObjects_(self,
                                           name: id /* NSString */,
                                           owner: id,
-                                          topLevelObjects: *mut id /* NSArray */) -> BOOL;
+                                          topLevelObjects: *mut id /* NSArray */) -> bool;
 
     unsafe fn bundleIdentifier(self) -> id /* NSString */;
 
@@ -1119,9 +1141,9 @@ impl NSBundle for id {
     unsafe fn loadNibNamed_owner_topLevelObjects_(self,
                                           name: id /* NSString */,
                                           owner: id,
-                                          topLevelObjects: *mut id /* NSArray* */) -> BOOL {
-        msg_send![self, loadNibNamed:name
-                               owner:owner
+                                          topLevelObjects: *mut id /* NSArray* */) -> bool {
+        msg_send_bool![self, loadNibNamed:name,
+                               owner:owner,
                      topLevelObjects:topLevelObjects]
     }
 
@@ -1140,16 +1162,16 @@ pub trait NSData: Sized {
     }
 
     unsafe fn dataWithBytes_length_(_: Self, bytes: *const c_void, length: NSUInteger) -> id {
-        msg_send![class!(NSData), dataWithBytes:bytes length:length]
+        msg_send![class!(NSData), dataWithBytes:bytes, length:length]
     }
 
     unsafe fn dataWithBytesNoCopy_length_(_: Self, bytes: *const c_void, length: NSUInteger) -> id {
-        msg_send![class!(NSData), dataWithBytesNoCopy:bytes length:length]
+        msg_send![class!(NSData), dataWithBytesNoCopy:bytes, length:length]
     }
 
     unsafe fn dataWithBytesNoCopy_length_freeWhenDone_(_: Self, bytes: *const c_void,
-                                                      length: NSUInteger, freeWhenDone: BOOL) -> id {
-        msg_send![class!(NSData), dataWithBytesNoCopy:bytes length:length freeWhenDone:freeWhenDone]
+                                                      length: NSUInteger, freeWhenDone: bool) -> id {
+        msg_send![class!(NSData), dataWithBytesNoCopy: bytes, length: length, freeWhenDone: Bool::from(freeWhenDone)]
     }
 
     unsafe fn dataWithContentsOfFile_(_: Self, path: id) -> id {
@@ -1158,7 +1180,7 @@ pub trait NSData: Sized {
 
     unsafe fn dataWithContentsOfFile_options_error_(_: Self, path: id, mask: NSDataReadingOptions,
                                                     errorPtr: *mut id) -> id {
-        msg_send![class!(NSData), dataWithContentsOfFile:path options:mask error:errorPtr]
+        msg_send![class!(NSData), dataWithContentsOfFile: path, options: mask, error: errorPtr]
     }
 
     unsafe fn dataWithContentsOfURL_(_: Self, aURL: id) -> id {
@@ -1167,7 +1189,7 @@ pub trait NSData: Sized {
 
     unsafe fn dataWithContentsOfURL_options_error_(_: Self, aURL: id, mask: NSDataReadingOptions,
                                                    errorPtr: *mut id) -> id {
-        msg_send![class!(NSData), dataWithContentsOfURL:aURL options:mask error:errorPtr]
+        msg_send![class!(NSData), dataWithContentsOfURL: aURL, options: mask, error: errorPtr]
     }
 
     unsafe fn dataWithData_(_: Self, aData: id) -> id {
@@ -1184,7 +1206,7 @@ pub trait NSData: Sized {
                                                       deallocator: *mut Block<(*const c_void, NSUInteger), ()>)
                                                       -> id;
     unsafe fn initWithBytesNoCopy_length_freeWhenDone_(self, bytes: *const c_void,
-                                                       length: NSUInteger, freeWhenDone: BOOL) -> id;
+                                                       length: NSUInteger, freeWhenDone: bool) -> id;
     unsafe fn initWithContentsOfFile_(self, path: id) -> id;
     unsafe fn initWithContentsOfFile_options_error(self, path: id, mask: NSDataReadingOptions, errorPtr: *mut id)
                                                    -> id;
@@ -1195,7 +1217,7 @@ pub trait NSData: Sized {
 
     unsafe fn bytes(self) -> *const c_void;
     unsafe fn description(self) -> id;
-    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const c_void, NSRange, *mut BOOL), ()>);
+    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const c_void, NSRange, *mut Bool), ()>);
     unsafe fn getBytes_length_(self, buffer: *mut c_void, length: NSUInteger);
     unsafe fn getBytes_range_(self, buffer: *mut c_void, range: NSRange);
     unsafe fn subdataWithRange_(self, range: NSRange) -> id;
@@ -1208,40 +1230,40 @@ pub trait NSData: Sized {
     unsafe fn isEqualToData_(self, otherData: id) -> id;
     unsafe fn length(self) -> NSUInteger;
 
-    unsafe fn writeToFile_atomically_(self, path: id, atomically: BOOL) -> BOOL;
-    unsafe fn writeToFile_options_error_(self, path: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> BOOL;
-    unsafe fn writeToURL_atomically_(self, aURL: id, atomically: BOOL) -> BOOL;
-    unsafe fn writeToURL_options_error_(self, aURL: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> BOOL;
+    unsafe fn writeToFile_atomically_(self, path: id, atomically: bool) -> bool;
+    unsafe fn writeToFile_options_error_(self, path: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> bool;
+    unsafe fn writeToURL_atomically_(self, aURL: id, atomically: bool) -> bool;
+    unsafe fn writeToURL_options_error_(self, aURL: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> bool;
 }
 
 impl NSData for id {
     unsafe fn initWithBase64EncodedData_options_(self, base64Data: id, options: NSDataBase64DecodingOptions)
                                                  -> id {
-        msg_send![self, initWithBase64EncodedData:base64Data options:options]
+        msg_send![self, initWithBase64EncodedData: base64Data, options: options]
     }
 
     unsafe fn initWithBase64EncodedString_options_(self, base64String: id, options: NSDataBase64DecodingOptions)
                                                    -> id {
-        msg_send![self, initWithBase64EncodedString:base64String options:options]
+        msg_send![self, initWithBase64EncodedString: base64String, options: options]
     }
 
     unsafe fn initWithBytes_length_(self, bytes: *const c_void, length: NSUInteger) -> id {
-        msg_send![self,initWithBytes:bytes length:length]
+        msg_send![self, initWithBytes: bytes, length: length]
     }
 
     unsafe fn initWithBytesNoCopy_length_(self, bytes: *const c_void, length: NSUInteger) -> id {
-        msg_send![self, initWithBytesNoCopy:bytes length:length]
+        msg_send![self, initWithBytesNoCopy: bytes, length: length]
     }
 
     unsafe fn initWithBytesNoCopy_length_deallocator_(self, bytes: *const c_void, length: NSUInteger,
                                                       deallocator: *mut Block<(*const c_void, NSUInteger), ()>)
                                                       -> id {
-        msg_send![self, initWithBytesNoCopy:bytes length:length deallocator:deallocator]
+        msg_send![self, initWithBytesNoCopy: bytes, length: length, deallocator: deallocator]
     }
 
     unsafe fn initWithBytesNoCopy_length_freeWhenDone_(self, bytes: *const c_void,
-                                                       length: NSUInteger, freeWhenDone: BOOL) -> id {
-        msg_send![self, initWithBytesNoCopy:bytes length:length freeWhenDone:freeWhenDone]
+                                                       length: NSUInteger, freeWhenDone: bool) -> id {
+        msg_send![self, initWithBytesNoCopy: bytes, length: length, freeWhenDone: Bool::from(freeWhenDone)]
     }
 
     unsafe fn initWithContentsOfFile_(self, path: id) -> id {
@@ -1250,7 +1272,7 @@ impl NSData for id {
 
     unsafe fn initWithContentsOfFile_options_error(self, path: id, mask: NSDataReadingOptions, errorPtr: *mut id)
                                                    -> id {
-        msg_send![self, initWithContentsOfFile:path options:mask error:errorPtr]
+        msg_send![self, initWithContentsOfFile: path, options: mask, error: errorPtr]
     }
 
     unsafe fn initWithContentsOfURL_(self, aURL: id) -> id {
@@ -1259,7 +1281,7 @@ impl NSData for id {
 
     unsafe fn initWithContentsOfURL_options_error_(self, aURL: id, mask: NSDataReadingOptions, errorPtr: *mut id)
                                                    -> id {
-        msg_send![self, initWithContentsOfURL:aURL options:mask error:errorPtr]
+        msg_send![self, initWithContentsOfURL: aURL, options: mask, error: errorPtr]
     }
 
     unsafe fn initWithData_(self, data: id) -> id {
@@ -1274,16 +1296,16 @@ impl NSData for id {
         msg_send![self, description]
     }
 
-    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const c_void, NSRange, *mut BOOL), ()>) {
+    unsafe fn enumerateByteRangesUsingBlock_(self, block: *mut Block<(*const c_void, NSRange, *mut Bool), ()>) {
         msg_send![self, enumerateByteRangesUsingBlock:block]
     }
 
     unsafe fn getBytes_length_(self, buffer: *mut c_void, length: NSUInteger) {
-        msg_send![self, getBytes:buffer length:length]
+        msg_send![self, getBytes: buffer, length: length]
     }
 
     unsafe fn getBytes_range_(self, buffer: *mut c_void, range: NSRange) {
-        msg_send![self, getBytes:buffer range:range]
+        msg_send![self, getBytes: buffer, range: range]
     }
 
     unsafe fn subdataWithRange_(self, range: NSRange) -> id {
@@ -1292,7 +1314,7 @@ impl NSData for id {
 
     unsafe fn rangeOfData_options_range_(self, dataToFind: id, options: NSDataSearchOptions, searchRange: NSRange)
                                          -> NSRange {
-        msg_send![self, rangeOfData:dataToFind options:options range:searchRange]
+        msg_send![self, rangeOfData: dataToFind, options: options, range: searchRange]
     }
 
     unsafe fn base64EncodedDataWithOptions_(self, options: NSDataBase64EncodingOptions) -> id {
@@ -1311,20 +1333,20 @@ impl NSData for id {
         msg_send![self, length]
     }
 
-    unsafe fn writeToFile_atomically_(self, path: id, atomically: BOOL) -> BOOL {
-        msg_send![self, writeToFile:path atomically:atomically]
+    unsafe fn writeToFile_atomically_(self, path: id, atomically: bool) -> bool {
+        msg_send_bool![self, writeToFile: path, atomically: Bool::from(atomically)]
     }
 
-    unsafe fn writeToFile_options_error_(self, path: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> BOOL {
-        msg_send![self, writeToFile:path options:mask error:errorPtr]
+    unsafe fn writeToFile_options_error_(self, path: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> bool {
+        msg_send_bool![self, writeToFile: path, options: mask, error: errorPtr]
     }
 
-    unsafe fn writeToURL_atomically_(self, aURL: id, atomically: BOOL) -> BOOL {
-        msg_send![self, writeToURL:aURL atomically:atomically]
+    unsafe fn writeToURL_atomically_(self, aURL: id, atomically: bool) -> bool {
+        msg_send_bool![self, writeToURL: aURL, atomically: Bool::from(atomically)]
     }
 
-    unsafe fn writeToURL_options_error_(self, aURL: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> BOOL {
-        msg_send![self, writeToURL:aURL options:mask error:errorPtr]
+    unsafe fn writeToURL_options_error_(self, aURL: id, mask: NSDataWritingOptions, errorPtr: *mut id) -> bool {
+        msg_send_bool![self, writeToURL: aURL, options: mask, error: errorPtr]
     }
 }
 
@@ -1336,6 +1358,8 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSDataReadingOptions, libc::c_ulonglong);
+
 bitflags! {
     pub struct NSDataBase64EncodingOptions: libc::c_ulonglong {
         const NSDataBase64Encoding64CharacterLineLength = 1 << 0;
@@ -1345,11 +1369,15 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSDataBase64EncodingOptions, libc::c_ulonglong);
+
 bitflags! {
     pub struct NSDataBase64DecodingOptions: libc::c_ulonglong {
        const NSDataBase64DecodingIgnoreUnknownCharacters = 1 << 0;
     }
 }
+
+impl_Encode!(NSDataBase64DecodingOptions, libc::c_ulonglong);
 
 bitflags! {
     pub struct NSDataWritingOptions: libc::c_ulonglong {
@@ -1358,6 +1386,8 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSDataWritingOptions, libc::c_ulonglong);
+
 bitflags! {
     pub struct NSDataSearchOptions: libc::c_ulonglong {
         const NSDataSearchBackwards = 1 << 0;
@@ -1365,11 +1395,13 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSDataSearchOptions, libc::c_ulonglong);
+
 pub trait NSUserDefaults {
     unsafe fn standardUserDefaults() -> Self;
 
-    unsafe fn setBool_forKey_(self, value: BOOL, key: id);
-    unsafe fn bool_forKey_(self, key: id) -> BOOL;
+    unsafe fn setBool_forKey_(self, value: bool, key: id);
+    unsafe fn bool_forKey_(self, key: id) -> bool;
 
     unsafe fn removeObject_forKey_(self, key: id);
 }
@@ -1379,12 +1411,12 @@ impl NSUserDefaults for id {
         msg_send![class!(NSUserDefaults), standardUserDefaults]
     }
 
-    unsafe fn setBool_forKey_(self, value: BOOL, key: id) {
-        msg_send![self, setBool:value forKey:key]
+    unsafe fn setBool_forKey_(self, value: bool, key: id) {
+        msg_send![self, setBool: Bool::from(value), forKey: key]
     }
 
-    unsafe fn bool_forKey_(self, key: id) -> BOOL {
-        msg_send![self, boolForKey: key]
+    unsafe fn bool_forKey_(self, key: id) -> bool {
+        msg_send_bool![self, boolForKey: key]
     }
 
     unsafe fn removeObject_forKey_(self, key: id) {

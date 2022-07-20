@@ -505,7 +505,7 @@ impl<'tap_life> CGEventTap<'tap_life> {
                     callback_ref: Box::from_raw(cbr),
                 })
             } else {
-                Box::from_raw(cbr);
+                let _ = Box::from_raw(cbr);
                 Err(())
             }
         }

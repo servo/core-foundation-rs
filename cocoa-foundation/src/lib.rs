@@ -16,8 +16,20 @@ extern crate core_foundation;
 extern crate core_graphics_types;
 extern crate foreign_types;
 extern crate libc;
+pub extern crate objc2_encode;
 #[macro_use]
-extern crate objc;
+extern crate objc2;
+
+pub use objc2_encode as __objc2_encode;
+
+#[macro_export]
+macro_rules! impl_Encode {
+    ($t:ty, $delegation:ty) => {
+        unsafe impl $crate::__objc2_encode::Encode for $t {
+            const ENCODING: $crate::__objc2_encode::Encoding<'static> = <$delegation>::ENCODING;
+        }
+    }
+}
 
 pub mod base;
 pub mod foundation;

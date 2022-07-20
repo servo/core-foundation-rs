@@ -2,9 +2,9 @@ extern crate cocoa;
 extern crate core_graphics;
 
 #[macro_use]
-extern crate objc;
+extern crate objc2;
 
-use cocoa::base::{selector, nil, NO, id};
+use cocoa::base::{selector, nil, id};
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
                         NSString, NSUInteger};
 use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSWindow,
@@ -14,8 +14,8 @@ use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, 
 
 use core_graphics::display::CGDisplay;
 
-use objc::runtime::{Object, Sel};
-use objc::declare::ClassDecl;
+use objc2::runtime::{Object, Sel};
+use objc2::declare::ClassBuilder;
 
 fn main() {
     unsafe {
@@ -45,7 +45,7 @@ fn main() {
 
         // Create NSWindowDelegate
         let superclass = class!(NSObject);
-        let mut decl = ClassDecl::new("MyWindowDelegate", superclass).unwrap();
+        let mut decl = ClassBuilder::new("MyWindowDelegate", superclass).unwrap();
 
         extern fn will_use_fillscreen_presentation_options(_: &Object, _: Sel, _: id, _: NSUInteger) -> NSUInteger {
             // Set initial presentation options for fullscreen
@@ -81,7 +81,7 @@ fn main() {
             .initWithContentRect_styleMask_backing_defer_(NSRect::new(NSPoint::new(0., 0.), size),
                                                           NSWindowStyleMask::NSTitledWindowMask,
                                                           NSBackingStoreBuffered,
-                                                          NO)
+                                                          false)
             .autorelease();
         window.setDelegate_(delegate_object);
         let title = NSString::alloc(nil).init_str("Fullscreen!");

@@ -241,6 +241,14 @@ pub enum NSBackingStoreType {
     NSBackingStoreBuffered      = 2
 }
 
+pub enum NSWindowToolbarStyle {
+    NSWindowToolbarStyleAutomatic      = 0,
+    NSWindowToolbarStyleExpanded       = 1,
+    NSWindowToolbarStylePreference     = 2,
+    NSWindowToolbarStyleUnified        = 3,
+    NSWindowToolbarStyleUnifiedCompact = 4,
+}
+
 bitflags! {
     pub struct NSWindowOrderingMode: NSInteger {
         const NSWindowAbove =  1;
@@ -1025,7 +1033,9 @@ pub trait NSWindow: Sized {
 
     // Managing Toolbars
     unsafe fn toolbar(self) -> id /* NSToolbar */;
+    unsafe fn toolbarStyle(self) -> NSWindowToolbarStyle;
     unsafe fn setToolbar_(self, toolbar: id /* NSToolbar */);
+    unsafe fn setToolbarStyle_(self, toolbarStyle: NSWindowToolbarStyle);
     unsafe fn runToolbarCustomizationPalette(self, sender: id);
 
     // TODO: Managing Attached Windows
@@ -1537,8 +1547,16 @@ impl NSWindow for id {
         msg_send![self, toolbar]
     }
 
+    unsafe fn toolbarStyle(self) -> NSWindowToolbarStyle {
+        msg_send![self, toolbarStyle]
+    }
+
     unsafe fn setToolbar_(self, toolbar: id /* NSToolbar */) {
         msg_send![self, setToolbar:toolbar]
+    }
+
+    unsafe fn setToolbarStyle_(self, toolbarStyle: NSWindowToolbarStyle) {
+        msg_send![self, setToolbarStyle:toolbarStyle]
     }
 
     unsafe fn runToolbarCustomizationPalette(self, sender: id) {

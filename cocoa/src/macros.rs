@@ -13,12 +13,12 @@
 /// # Example with NSWindowDelegate
 /// ``` no_run
 /// #[macro_use] extern crate cocoa;
-/// #[macro_use] extern crate objc;
+/// #[macro_use] extern crate objc2;
 ///
 /// use cocoa::appkit::NSWindow;
 /// use cocoa::base::{id, nil};
 ///
-/// use objc::runtime::{Object, Sel};
+/// use objc2::runtime::{Object, Sel};
 ///
 /// # fn main() {
 /// unsafe {
@@ -33,7 +33,7 @@
 ///
 ///     my_window.setDelegate_(delegate!("MyWindowDelegate", {
 ///         window: id = my_window, // Declare instance variable(s)
-///         (onWindowWillEnterFullscreen:) => on_enter_fullscreen as extern fn(&Object, Sel, id) // Declare function(s)
+///         (onWindowWillEnterFullscreen:) => on_enter_fullscreen as extern fn(_, _, _) // Declare function(s)
 ///     }));
 /// }
 /// # }
@@ -57,7 +57,7 @@ macro_rules! delegate {
             $( ($($sel:ident :)+) => $func:expr),*
         }
     ) => ({
-        let mut decl = objc::declare::ClassDecl::new($name, class!(NSObject)).unwrap();
+        let mut decl = objc2::declare::ClassDecl::new($name, class!(NSObject)).unwrap();
 
         $(
             decl.add_ivar::<$var_type>(stringify!($var));

@@ -3214,7 +3214,7 @@ pub trait NSButton: Sized {
      }
      unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
      unsafe fn setTarget_(self, target: id /* Instance */);
-     unsafe fn setAction_(self, selector: objc::runtime::Sel /* (Instance *) */);
+     unsafe fn setAction_(self, selector: objc2::runtime::Sel /* (Instance *) */);
 }
 
 impl NSButton for id {
@@ -3234,7 +3234,7 @@ impl NSButton for id {
         msg_send![self, setTarget:target]
     }
 
-    unsafe fn setAction_(self, selector: objc::runtime::Sel /* (Instance method *) */) {
+    unsafe fn setAction_(self, selector: objc2::runtime::Sel /* (Instance method *) */) {
         msg_send![self, setAction:selector]
     }
 }

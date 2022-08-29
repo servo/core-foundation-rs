@@ -2,7 +2,7 @@ extern crate cocoa;
 extern crate core_graphics;
 
 #[macro_use]
-extern crate objc;
+extern crate objc2;
 
 use cocoa::base::{selector, nil, NO, id};
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
@@ -14,8 +14,8 @@ use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicyRegular, 
 
 use core_graphics::display::CGDisplay;
 
-use objc::runtime::{Object, Sel};
-use objc::declare::ClassDecl;
+use objc2::runtime::{Object, Sel};
+use objc2::declare::ClassDecl;
 
 fn main() {
     unsafe {
@@ -65,11 +65,11 @@ fn main() {
         }
 
         decl.add_method(sel!(window:willUseFullScreenPresentationOptions:),
-            will_use_fillscreen_presentation_options as extern fn(&Object, Sel, id, NSUInteger) -> NSUInteger);
+            will_use_fillscreen_presentation_options as extern fn(_, _, _, _) -> _);
         decl.add_method(sel!(windowWillEnterFullScreen:),
-            window_entering_fullscreen as extern fn(&Object, Sel, id));
+            window_entering_fullscreen as extern fn(_, _, _));
         decl.add_method(sel!(windowDidEnterFullScreen:),
-            window_entering_fullscreen as extern fn(&Object, Sel, id));
+            window_entering_fullscreen as extern fn(_, _, _));
 
         let delegate_class = decl.register();
         let delegate_object = msg_send![delegate_class, new];

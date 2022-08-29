@@ -12,11 +12,11 @@ license = "MIT / Apache-2.0"
 default-target = "x86_64-apple-darwin"
 
 [dependencies]
-block = { version = "=0.2.0-alpha.5", package = "block2" }
+block = { version = "=0.2.0-alpha.6", package = "block2" }
 bitflags = "1.0"
 libc = "0.2"
 core-foundation = { path = "../core-foundation", version = "0.9" }
 core-graphics-types = { path = "../core-graphics-types", version = "0.1" }
 foreign-types = "0.3"
-objc2 = { version = "=0.3.0-beta.1" }
-objc2-encode = { version = "=2.0.0-pre.1" }
+objc2 = { version = "=0.3.0-beta.2" }
+objc2-encode = { version = "=2.0.0-pre.2" }

@@ -41,7 +41,7 @@ pub struct CGSize {
 }
 
 unsafe impl Encode for CGSize {
-    const ENCODING: Encoding<'static> =
+    const ENCODING: Encoding =
         Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
@@ -70,7 +70,7 @@ pub struct CGPoint {
 }
 
 unsafe impl Encode for CGPoint {
-    const ENCODING: Encoding<'static> =
+    const ENCODING: Encoding =
         Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
 
@@ -99,7 +99,7 @@ pub struct CGRect {
 }
 
 unsafe impl Encode for CGRect {
-    const ENCODING: Encoding<'static> =
+    const ENCODING: Encoding =
         Encoding::Struct("CGRect", &[CGPoint::ENCODING, CGSize::ENCODING]);
 }
 
@@ -168,7 +168,7 @@ pub struct CGAffineTransform {
 }
 
 unsafe impl Encode for CGAffineTransform {
-    const ENCODING: Encoding<'static> = Encoding::Struct(
+    const ENCODING: Encoding = Encoding::Struct(
         "CGAffineTransform",
         &[
             CGFloat::ENCODING,

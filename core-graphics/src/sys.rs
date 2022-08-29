@@ -9,7 +9,7 @@ pub type CGImageRef = *mut CGImage;
 pub struct __CGColor(c_void);
 
 unsafe impl RefEncode for __CGColor {
-    const ENCODING_REF: Encoding<'static> = Encoding::Unknown;
+    const ENCODING_REF: Encoding = Encoding::Unknown;
 }
 
 pub type CGColorRef = *const __CGColor;
@@ -21,7 +21,7 @@ pub enum CGPath {}
 pub type CGPathRef = *mut CGPath;
 
 unsafe impl RefEncode for CGPath {
-    const ENCODING_REF: Encoding<'static> = Encoding::Unknown;
+    const ENCODING_REF: Encoding = Encoding::Unknown;
 }
 
 pub enum CGDataProvider {}
@@ -34,7 +34,7 @@ pub enum CGContext {}
 pub type CGContextRef = *mut CGContext;
 
 unsafe impl RefEncode for CGContext {
-    const ENCODING_REF: Encoding<'static> = Encoding::Unknown;
+    const ENCODING_REF: Encoding = Encoding::Unknown;
 }
 
 pub enum CGGradient {}

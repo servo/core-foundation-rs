@@ -1632,7 +1632,7 @@ pub mod transaction {
 
     #[inline]
     pub fn set_completion_block<F>(block: ConcreteBlock<(), (), F>)
-                                   where F: 'static + IntoConcreteBlock<(), Ret = ()> {
+                                   where F: 'static + IntoConcreteBlock<(), Output = ()> {
         unsafe {
             let block = block.copy();
             msg_send![class!(CATransaction), setCompletionBlock:&*block]
@@ -1668,7 +1668,7 @@ pub struct CATransform3D {
 }
 
 unsafe impl ::objc2_encode::Encode for CATransform3D {
-    const ENCODING: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Array(16, &CGFloat::ENCODING);
+    const ENCODING: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Array(16, &CGFloat::ENCODING);
 }
 
 impl PartialEq for CATransform3D {
@@ -1824,7 +1824,7 @@ pub struct CVTimeStamp {
 }
 
 unsafe impl ::objc2_encode::Encode for CVTimeStamp {
-    const ENCODING: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Struct(
+    const ENCODING: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Struct(
         "CVTimeStamp",
         &[
             u32::ENCODING,
@@ -1841,7 +1841,7 @@ unsafe impl ::objc2_encode::Encode for CVTimeStamp {
 }
 
 unsafe impl ::objc2_encode::RefEncode for CVTimeStamp {
-    const ENCODING_REF: ::objc2_encode::Encoding<'static> =
+    const ENCODING_REF: ::objc2_encode::Encoding =
         ::objc2_encode::Encoding::Pointer(&<Self as ::objc2_encode::Encode>::ENCODING);
 }
 
@@ -1874,7 +1874,7 @@ pub struct CVSMPTETime {
 }
 
 unsafe impl ::objc2_encode::Encode for CVSMPTETime {
-    const ENCODING: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Struct(
+    const ENCODING: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Struct(
         "CVSMPTETime",
         &[
             i16::ENCODING,

@@ -54,7 +54,7 @@ mod macos {
     }
 
     unsafe impl Encode for NSPoint {
-        const ENCODING: Encoding<'static> =
+        const ENCODING: Encoding =
             Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
     }
 
@@ -76,7 +76,7 @@ mod macos {
     }
 
     unsafe impl Encode for NSSize {
-        const ENCODING: Encoding<'static> =
+        const ENCODING: Encoding =
             Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
     }
 
@@ -108,7 +108,7 @@ mod macos {
     }
 
     unsafe impl Encode for NSRect {
-        const ENCODING: Encoding<'static> =
+        const ENCODING: Encoding =
             Encoding::Struct("CGRect", &[NSPoint::ENCODING, NSSize::ENCODING]);
     }
 
@@ -152,7 +152,7 @@ pub struct NSRange {
 }
 
 unsafe impl Encode for NSRange {
-    const ENCODING: Encoding<'static> =
+    const ENCODING: Encoding =
         Encoding::Struct("_NSRange", &[NSUInteger::ENCODING, NSUInteger::ENCODING]);
 }
 
@@ -199,7 +199,7 @@ pub struct NSOperatingSystemVersion {
 }
 
 unsafe impl Encode for NSOperatingSystemVersion {
-    const ENCODING: Encoding<'static> = Encoding::Struct(
+    const ENCODING: Encoding = Encoding::Struct(
         "NSOperatingSystemVersion",
         &[
             NSUInteger::ENCODING,
@@ -709,7 +709,7 @@ struct NSFastEnumerationState {
 }
 
 unsafe impl Encode for NSFastEnumerationState {
-    const ENCODING: Encoding<'static> = Encoding::Struct(
+    const ENCODING: Encoding = Encoding::Struct(
         "?",
         &[
             libc::c_ulong::ENCODING,
@@ -721,7 +721,7 @@ unsafe impl Encode for NSFastEnumerationState {
 }
 
 unsafe impl RefEncode for NSFastEnumerationState {
-    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 const NS_FAST_ENUM_BUF_SIZE: usize = 16;

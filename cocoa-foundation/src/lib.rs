@@ -25,7 +25,7 @@ pub use objc2_encode as __objc2_encode;
 macro_rules! impl_Encode {
     ($t:ty, $delegation:ty) => {
         unsafe impl $crate::__objc2_encode::Encode for $t {
-            const ENCODING: $crate::__objc2_encode::Encoding<'static> = <$delegation>::ENCODING;
+            const ENCODING: $crate::__objc2_encode::Encoding = <$delegation>::ENCODING;
         }
     };
 }

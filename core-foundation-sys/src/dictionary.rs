@@ -52,7 +52,7 @@ pub type CFDictionaryRef = *const __CFDictionary;
 pub type CFMutableDictionaryRef = *mut __CFDictionary;
 
 unsafe impl ::objc2_encode::RefEncode for __CFDictionary {
-    const ENCODING_REF: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Object;
+    const ENCODING_REF: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Object;
 }
 
 extern "C" {

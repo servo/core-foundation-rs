@@ -37,7 +37,7 @@ pub type CFArrayRef = *const __CFArray;
 pub type CFMutableArrayRef = *mut __CFArray;
 
 unsafe impl ::objc2_encode::RefEncode for __CFArray {
-    const ENCODING_REF: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Object;
+    const ENCODING_REF: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Object;
 }
 
 extern "C" {

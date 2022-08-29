@@ -207,7 +207,7 @@ pub fn CFStringGetCharacterFromInlineBuffer(buf: *mut CFStringInlineBuffer, idx:
 */
 
 unsafe impl ::objc2_encode::RefEncode for __CFString {
-    const ENCODING_REF: ::objc2_encode::Encoding<'static> = ::objc2_encode::Encoding::Object;
+    const ENCODING_REF: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Object;
 }
 
 extern "C" {

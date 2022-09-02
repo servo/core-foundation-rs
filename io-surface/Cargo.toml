@@ -14,4 +14,3 @@ default-target = "x86_64-apple-darwin"
 core-foundation = { path = "../core-foundation", version = "0.9", default-features = false }
 core-foundation-sys = { path = "../core-foundation-sys", version = "0.8" }
 cgl = "0.3"
-leaky-cow = "0.1.1"

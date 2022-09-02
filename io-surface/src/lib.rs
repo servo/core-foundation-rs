@@ -13,7 +13,6 @@
 extern crate core_foundation;
 extern crate core_foundation_sys;
 extern crate cgl;
-extern crate leaky_cow;
 
 // Rust bindings to the IOSurface framework on macOS.
 
@@ -23,7 +22,6 @@ use core_foundation::string::{CFString, CFStringRef};
 use core_foundation_sys::base::mach_port_t;
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString, GLenum};
 use std::os::raw::{c_int, c_void};
-use leaky_cow::LeakyCow;
 use std::slice;
 use std::ffi::CStr;
 
@@ -145,9 +143,7 @@ impl IOSurface {
             if gl_error != kCGLNoError {
                 let error_msg = CStr::from_ptr(CGLErrorString(gl_error));
                 let error_msg = error_msg.to_string_lossy();
-                // This will only actually leak memory if error_msg is a `Cow::Owned`, which
-                // will only happen if the platform gives us invalid unicode.
-                panic!("{}", error_msg.leak());
+                panic!("{}", error_msg);
             }
         }
     }

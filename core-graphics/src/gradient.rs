@@ -17,8 +17,6 @@ use core_foundation::array::{ CFArray, CFArrayRef };
 use core_foundation::base::{CFRelease, CFRetain, TCFType};
 use foreign_types::ForeignType;
 
-use libc::size_t;
-
 bitflags! {
     #[repr(C)]
     pub struct CGGradientDrawingOptions: u32 {
@@ -56,7 +54,7 @@ impl CGGradient {
 
 #[link(name = "CoreGraphics", kind = "framework")]
 extern {
-    fn CGGradientCreateWithColorComponents(color_space: ::sys::CGColorSpaceRef, components: *const CGFloat, locations: *const CGFloat, count: size_t) -> ::sys::CGGradientRef;
+    fn CGGradientCreateWithColorComponents(color_space: ::sys::CGColorSpaceRef, components: *const CGFloat, locations: *const CGFloat, count: usize) -> ::sys::CGGradientRef;
     fn CGGradientCreateWithColors(color_space: ::sys::CGColorSpaceRef, colors: CFArrayRef, locations: *const CGFloat) -> ::sys::CGGradientRef;
 }
 

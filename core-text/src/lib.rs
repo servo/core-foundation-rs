@@ -18,7 +18,6 @@ If you don't have one this will cause leaks.
 */
 
 extern crate foreign_types;
-extern crate libc;
 
 #[macro_use]
 extern crate core_foundation;

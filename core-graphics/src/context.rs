@@ -15,8 +15,7 @@ use geometry::{CGPoint, CGSize};
 use gradient::{CGGradient, CGGradientDrawingOptions};
 use color::CGColor;
 use path::CGPathRef;
-use libc::{c_int, size_t};
-use std::os::raw::c_void;
+use std::os::raw::{c_void, c_int};
 
 use std::cmp;
 use std::ptr;
@@ -140,10 +139,10 @@ impl CGContext {
     }
 
     pub fn create_bitmap_context(data: Option<*mut c_void>,
-                                 width: size_t,
-                                 height: size_t,
-                                 bits_per_component: size_t,
-                                 bytes_per_row: size_t,
+                                 width: usize,
+                                 height: usize,
+                                 bits_per_component: usize,
+                                 bytes_per_row: usize,
                                  space: &CGColorSpace,
                                  bitmap_info: u32)
                                  -> CGContext {
@@ -176,19 +175,19 @@ impl CGContextRef {
         }
     }
 
-    pub fn width(&self) -> size_t {
+    pub fn width(&self) -> usize {
         unsafe {
             CGBitmapContextGetWidth(self.as_ptr())
         }
     }
 
-    pub fn height(&self) -> size_t {
+    pub fn height(&self) -> usize {
         unsafe {
             CGBitmapContextGetHeight(self.as_ptr())
         }
     }
 
-    pub fn bytes_per_row(&self) -> size_t {
+    pub fn bytes_per_row(&self) -> usize {
         unsafe {
             CGBitmapContextGetBytesPerRow(self.as_ptr())
         }
@@ -657,17 +656,17 @@ extern {
     fn CGContextRelease(c: ::sys::CGContextRef);
 
     fn CGBitmapContextCreate(data: *mut c_void,
-                             width: size_t,
-                             height: size_t,
-                             bitsPerComponent: size_t,
-                             bytesPerRow: size_t,
+                             width: usize,
+                             height: usize,
+                             bitsPerComponent: usize,
+                             bytesPerRow: usize,
                              space: ::sys::CGColorSpaceRef,
                              bitmapInfo: u32)
                              -> ::sys::CGContextRef;
     fn CGBitmapContextGetData(context: ::sys::CGContextRef) -> *mut c_void;
-    fn CGBitmapContextGetWidth(context: ::sys::CGContextRef) -> size_t;
-    fn CGBitmapContextGetHeight(context: ::sys::CGContextRef) -> size_t;
-    fn CGBitmapContextGetBytesPerRow(context: ::sys::CGContextRef) -> size_t;
+    fn CGBitmapContextGetWidth(context: ::sys::CGContextRef) -> usize;
+    fn CGBitmapContextGetHeight(context: ::sys::CGContextRef) -> usize;
+    fn CGBitmapContextGetBytesPerRow(context: ::sys::CGContextRef) -> usize;
     fn CGBitmapContextCreateImage(context: ::sys::CGContextRef) -> ::sys::CGImageRef;
     fn CGContextGetTypeID() -> CFTypeID;
     fn CGContextGetClipBoundingBox(c: ::sys::CGContextRef) -> CGRect;
@@ -689,7 +688,7 @@ extern {
     fn CGContextSetTextDrawingMode(c: ::sys::CGContextRef, mode: CGTextDrawingMode);
     fn CGContextSetFillColorWithColor(c: ::sys::CGContextRef, color: ::sys::CGColorRef);
     fn CGContextSetLineCap(c: ::sys::CGContextRef, cap: CGLineCap);
-    fn CGContextSetLineDash(c: ::sys::CGContextRef, phase: CGFloat, lengths: *const CGFloat, count: size_t);
+    fn CGContextSetLineDash(c: ::sys::CGContextRef, phase: CGFloat, lengths: *const CGFloat, count: usize);
     fn CGContextSetLineJoin(c: ::sys::CGContextRef, join: CGLineJoin);
     fn CGContextSetLineWidth(c: ::sys::CGContextRef, width: CGFloat);
     fn CGContextSetMiterLimit(c: ::sys::CGContextRef, limit: CGFloat);
@@ -739,7 +738,7 @@ extern {
                          rect: CGRect);
     fn CGContextFillRects(context: ::sys::CGContextRef,
                           rects: *const CGRect,
-                          count: size_t);
+                          count: usize);
     fn CGContextStrokeRect(context: ::sys::CGContextRef,
                            rect: CGRect);
     fn CGContextStrokeRectWithWidth(context: ::sys::CGContextRef,
@@ -749,7 +748,7 @@ extern {
                            rect: CGRect);
     fn CGContextClipToRects(context: ::sys::CGContextRef,
                             rects: *const CGRect,
-                            count: size_t);
+                            count: usize);
     fn CGContextClipToMask(ctx: ::sys::CGContextRef, rect: CGRect, mask: ::sys::CGImageRef);
     fn CGContextReplacePathWithStrokedPath(context: ::sys::CGContextRef);
     fn CGContextFillEllipseInRect(context: ::sys::CGContextRef,
@@ -758,7 +757,7 @@ extern {
                                     rect: CGRect);
     fn CGContextStrokeLineSegments(context: ::sys::CGContextRef,
                                     points: *const CGPoint,
-                                    count: size_t);
+                                    count: usize);
     fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
     fn CGContextSetInterpolationQuality(c: ::sys::CGContextRef, quality: CGInterpolationQuality);
     fn CGContextGetInterpolationQuality(c: ::sys::CGContextRef) -> CGInterpolationQuality;
@@ -769,7 +768,7 @@ extern {
     fn CGContextShowGlyphsAtPositions(c: ::sys::CGContextRef,
                                       glyphs: *const CGGlyph,
                                       positions: *const CGPoint,
-                                      count: size_t);
+                                      count: usize);
 
     fn CGContextSaveGState(c: ::sys::CGContextRef);
     fn CGContextRestoreGState(c: ::sys::CGContextRef);

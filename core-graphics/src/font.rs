@@ -18,7 +18,7 @@ use geometry::CGRect;
 
 use foreign_types::ForeignType;
 
-use libc::{c_int, size_t};
+use std::os::raw::c_int;
 
 pub use core_graphics_types::base::CGGlyph;
 
@@ -159,12 +159,12 @@ extern {
 
     fn CGFontGetGlyphBBoxes(font: ::sys::CGFontRef,
                             glyphs: *const CGGlyph,
-                            count: size_t,
+                            count: usize,
                             bboxes: *mut CGRect)
                             -> bool;
     fn CGFontGetGlyphAdvances(font: ::sys::CGFontRef,
                               glyphs: *const CGGlyph,
-                              count: size_t,
+                              count: usize,
                               advances: *mut c_int)
                               -> bool;
     fn CGFontGetUnitsPerEm(font: ::sys::CGFontRef) -> c_int;

@@ -28,8 +28,7 @@ use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 use core_graphics::path::CGPath;
 
 use foreign_types::ForeignType;
-use libc::{self, size_t};
-use std::os::raw::c_void;
+use std::os::raw::{c_void, c_uint, c_double};
 use std::ptr;
 
 type CGContextRef = *mut <CGContext as ForeignType>::CType;
@@ -365,7 +364,7 @@ impl CTFont {
         }
     }
 
-    pub fn units_per_em(&self) -> libc::c_uint {
+    pub fn units_per_em(&self) -> c_uint {
         unsafe {
             CTFontGetUnitsPerEm(self.0)
         }
@@ -460,7 +459,7 @@ impl CTFont {
             CTFontDrawGlyphs(self.as_concrete_TypeRef(),
                              glyphs.as_ptr(),
                              positions.as_ptr(),
-                             glyphs.len() as size_t,
+                             glyphs.len() as usize,
                              context.as_ptr())
         }
     }
@@ -639,7 +638,7 @@ extern {
     fn CTFontGetAscent(font: CTFontRef) -> CGFloat;
     fn CTFontGetDescent(font: CTFontRef) -> CGFloat;
     fn CTFontGetLeading(font: CTFontRef) -> CGFloat;
-    fn CTFontGetUnitsPerEm(font: CTFontRef) -> libc::c_uint;
+    fn CTFontGetUnitsPerEm(font: CTFontRef) -> c_uint;
     fn CTFontGetGlyphCount(font: CTFontRef) -> CFIndex;
     fn CTFontGetBoundingBox(font: CTFontRef) -> CGRect;
     fn CTFontGetUnderlinePosition(font: CTFontRef) -> CGFloat;
@@ -663,7 +662,7 @@ extern {
                                   glyphs: *const CGGlyph,
                                   advances: *mut CGSize,
                                   count: CFIndex)
-                                  -> libc::c_double;
+                                  -> c_double;
     fn CTFontGetVerticalTranslationsForGlyphs(font: CTFontRef,
                                               orientation: CTFontOrientation,
                                               glyphs: *const CGGlyph,
@@ -683,7 +682,7 @@ extern {
     fn CTFontDrawGlyphs(font: CTFontRef,
                         glyphs: *const CGGlyph,
                         positions: *const CGPoint,
-                        count: size_t,
+                        count: usize,
                         context: CGContextRef);
     //fn CTFontGetLigatureCaretPositions
 

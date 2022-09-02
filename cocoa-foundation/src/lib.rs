@@ -15,7 +15,6 @@ extern crate bitflags;
 extern crate core_foundation;
 extern crate core_graphics_types;
 extern crate foreign_types;
-extern crate libc;
 #[macro_use]
 extern crate objc;
 

@@ -12,23 +12,23 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 
-use libc;
+use std::os::raw::c_ushort;
 
 #[cfg(any(target_arch = "x86",
           target_arch = "arm",
           target_arch = "aarch64"))]
-pub type boolean_t = libc::c_int;
+pub type boolean_t = std::os::raw::c_int;
 #[cfg(target_arch = "x86_64")]
-pub type boolean_t = libc::c_uint;
+pub type boolean_t = std::os::raw::c_uint;
 
 #[cfg(target_pointer_width = "64")]
-pub type CGFloat = libc::c_double;
+pub type CGFloat = std::os::raw::c_double;
 #[cfg(not(target_pointer_width = "64"))]
-pub type CGFloat = libc::c_float;
+pub type CGFloat = std::os::raw::c_float;
 
-pub type CGError = libc::int32_t;
+pub type CGError = i32;
 
-pub type CGGlyph = libc::c_ushort;
+pub type CGGlyph = c_ushort;
 
 pub const kCGErrorSuccess: CGError = 0;
 pub const kCGErrorFailure: CGError = 1000;

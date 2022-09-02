@@ -18,8 +18,9 @@ use core_foundation_sys::base::{kCFAllocatorDefault, Boolean};
 use std::fmt;
 use std::ptr;
 use std::path::{Path, PathBuf};
+use std::os::raw::c_char;
 
-use libc::{c_char, strlen, PATH_MAX};
+use libc::{strlen, PATH_MAX};
 
 #[cfg(unix)]
 use std::os::unix::ffi::OsStrExt;

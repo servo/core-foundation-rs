@@ -10,7 +10,6 @@
 #![crate_name = "io_surface"]
 #![crate_type = "rlib"]
 
-extern crate libc;
 extern crate core_foundation;
 extern crate core_foundation_sys;
 extern crate cgl;
@@ -23,8 +22,7 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef};
 use core_foundation_sys::base::mach_port_t;
 use cgl::{kCGLNoError, CGLGetCurrentContext, CGLTexImageIOSurface2D, CGLErrorString, GLenum};
-use libc::{c_int, size_t};
-use std::os::raw::c_void;
+use std::os::raw::{c_int, c_void};
 use leaky_cow::LeakyCow;
 use std::slice;
 use std::ffi::CStr;
@@ -141,7 +139,7 @@ impl IOSurface {
                                                   height,
                                                   BGRA as GLenum,
                                                   UNSIGNED_INT_8_8_8_8_REV,
-                                                  self.as_concrete_TypeRef() as *mut libc::c_void,
+                                                  self.as_concrete_TypeRef() as *mut c_void,
                                                   0);
 
             if gl_error != kCGLNoError {
@@ -211,9 +209,9 @@ extern {
     pub fn IOSurfaceUnlock(buffer: IOSurfaceRef, options: u32, seed: *mut u32) -> IOReturn;
     pub fn IOSurfaceGetSeed(buffer: IOSurfaceRef) -> u32;
 
-    pub fn IOSurfaceGetHeight(buffer: IOSurfaceRef) -> size_t;
+    pub fn IOSurfaceGetHeight(buffer: IOSurfaceRef) -> usize;
     pub fn IOSurfaceGetWidth(buffer: IOSurfaceRef) -> usize;
-    pub fn IOSurfaceGetBytesPerRow(buffer: IOSurfaceRef) -> size_t;
+    pub fn IOSurfaceGetBytesPerRow(buffer: IOSurfaceRef) -> usize;
     pub fn IOSurfaceGetBaseAddress(buffer: IOSurfaceRef) -> *mut c_void;
     pub fn IOSurfaceGetElementHeight(buffer: IOSurfaceRef) -> usize;
     pub fn IOSurfaceGetElementWidth(buffer: IOSurfaceRef) -> usize;

@@ -6,7 +6,7 @@ use core_foundation::{
 use event_source::CGEventSource;
 use foreign_types::ForeignType;
 use geometry::CGPoint;
-use libc::c_void;
+use std::os::raw::{c_ulong, c_void};
 use std::mem::ManuallyDrop;
 
 pub type CGEventField = u32;
@@ -645,7 +645,7 @@ impl CGEvent {
     }
 
     pub fn set_string_from_utf16_unchecked(&self, buf: &[u16]) {
-        let buflen = buf.len() as libc::c_ulong;
+        let buflen = buf.len() as c_ulong;
         unsafe {
             CGEventKeyboardSetUnicodeString(self.as_ptr(), buflen, buf.as_ptr());
         }
@@ -763,7 +763,7 @@ extern {
     /// keyboard event and do their own translation based on the virtual
     /// keycode and perceived event state.
     fn CGEventKeyboardSetUnicodeString(event: ::sys::CGEventRef,
-                                       length: libc::c_ulong,
+                                       length: c_ulong,
                                        string: *const u16);
 
     /// Return the integer value of a field in an event.

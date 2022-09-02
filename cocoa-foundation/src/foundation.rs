@@ -10,21 +10,19 @@
 #![allow(non_upper_case_globals)]
 
 use std::ptr;
-use std::os::raw::c_void;
+use std::os::raw::{c_char, c_double, c_ulong, c_ulonglong, c_void};
 use base::{id, BOOL, NO, SEL, nil};
 use block::Block;
-use libc;
-
 
 #[cfg(target_pointer_width = "32")]
-pub type NSInteger = libc::c_int;
+pub type NSInteger = std::os::raw::c_int;
 #[cfg(target_pointer_width = "32")]
-pub type NSUInteger = libc::c_uint;
+pub type NSUInteger = std::os::raw::c_uint;
 
 #[cfg(target_pointer_width = "64")]
-pub type NSInteger = libc::c_long;
+pub type NSInteger = std::os::raw::c_long;
 #[cfg(target_pointer_width = "64")]
-pub type NSUInteger = libc::c_ulong;
+pub type NSUInteger = std::os::raw::c_ulong;
 
 pub const NSIntegerMax: NSInteger = NSInteger::max_value();
 pub const NSNotFound: NSInteger = NSIntegerMax;
@@ -253,7 +251,7 @@ impl NSProcessInfo for id {
     }
 }
 
-pub type NSTimeInterval = libc::c_double;
+pub type NSTimeInterval = c_double;
 
 pub trait NSArray: Sized {
     unsafe fn array(_: Self) -> id {
@@ -385,7 +383,7 @@ pub trait NSDictionary: Sized {
     unsafe fn fileOwnerAccountID(self) -> id;
     unsafe fn fileOwnerAccountName(self) -> id;
     unsafe fn filePosixPermissions(self) -> NSUInteger;
-    unsafe fn fileSize(self) -> libc::c_ulonglong;
+    unsafe fn fileSize(self) -> c_ulonglong;
     unsafe fn fileSystemFileNumber(self) -> NSUInteger;
     unsafe fn fileSystemNumber(self) -> NSInteger;
     unsafe fn fileType(self) -> id;
@@ -552,7 +550,7 @@ impl NSDictionary for id {
         msg_send![self, filePosixPermissions]
     }
 
-    unsafe fn fileSize(self) -> libc::c_ulonglong {
+    unsafe fn fileSize(self) -> c_ulonglong {
         msg_send![self, fileSize]
     }
 
@@ -586,7 +584,7 @@ impl NSDictionary for id {
 }
 
 bitflags! {
-    pub struct NSEnumerationOptions: libc::c_ulonglong {
+    pub struct NSEnumerationOptions: c_ulonglong {
         const NSEnumerationConcurrent = 1 << 0;
         const NSEnumerationReverse = 1 << 1;
     }
@@ -609,7 +607,7 @@ pub trait NSString: Sized {
 
     unsafe fn stringByAppendingString_(self, other: id) -> id;
     unsafe fn init_str(self, string: &str) -> Self;
-    unsafe fn UTF8String(self) -> *const libc::c_char;
+    unsafe fn UTF8String(self) -> *const c_char;
     unsafe fn len(self) -> usize;
     unsafe fn isEqualToString(self, &str) -> bool;
     unsafe fn substringWithRange(self, range: NSRange) -> id;
@@ -637,7 +635,7 @@ impl NSString for id {
         msg_send![self, lengthOfBytesUsingEncoding:UTF8_ENCODING]
     }
 
-    unsafe fn UTF8String(self) -> *const libc::c_char {
+    unsafe fn UTF8String(self) -> *const c_char {
         msg_send![self, UTF8String]
     }
 
@@ -662,10 +660,10 @@ impl NSDate for id {
 
 #[repr(C)]
 struct NSFastEnumerationState {
-    pub state: libc::c_ulong,
+    pub state: c_ulong,
     pub items_ptr: *mut id,
-    pub mutations_ptr: *mut libc::c_ulong,
-    pub extra: [libc::c_ulong; 5]
+    pub mutations_ptr: *mut c_ulong,
+    pub extra: [c_ulong; 5]
 }
 
 const NS_FAST_ENUM_BUF_SIZE: usize = 16;
@@ -673,7 +671,7 @@ const NS_FAST_ENUM_BUF_SIZE: usize = 16;
 pub struct NSFastIterator {
     state: NSFastEnumerationState,
     buffer: [id; NS_FAST_ENUM_BUF_SIZE],
-    mut_val: Option<libc::c_ulong>,
+    mut_val: Option<c_ulong>,
     len: usize,
     idx: usize,
     object: id
@@ -1329,7 +1327,7 @@ impl NSData for id {
 }
 
 bitflags! {
-    pub struct NSDataReadingOptions: libc::c_ulonglong {
+    pub struct NSDataReadingOptions: c_ulonglong {
        const NSDataReadingMappedIfSafe = 1 << 0;
        const NSDataReadingUncached = 1 << 1;
        const NSDataReadingMappedAlways = 1 << 3;
@@ -1337,7 +1335,7 @@ bitflags! {
 }
 
 bitflags! {
-    pub struct NSDataBase64EncodingOptions: libc::c_ulonglong {
+    pub struct NSDataBase64EncodingOptions: c_ulonglong {
         const NSDataBase64Encoding64CharacterLineLength = 1 << 0;
         const NSDataBase64Encoding76CharacterLineLength = 1 << 1;
         const NSDataBase64EncodingEndLineWithCarriageReturn = 1 << 4;
@@ -1346,20 +1344,20 @@ bitflags! {
 }
 
 bitflags! {
-    pub struct NSDataBase64DecodingOptions: libc::c_ulonglong {
+    pub struct NSDataBase64DecodingOptions: c_ulonglong {
        const NSDataBase64DecodingIgnoreUnknownCharacters = 1 << 0;
     }
 }
 
 bitflags! {
-    pub struct NSDataWritingOptions: libc::c_ulonglong {
+    pub struct NSDataWritingOptions: c_ulonglong {
         const NSDataWritingAtomic = 1 << 0;
         const NSDataWritingWithoutOverwriting = 1 << 1;
     }
 }
 
 bitflags! {
-    pub struct NSDataSearchOptions: libc::c_ulonglong {
+    pub struct NSDataSearchOptions: c_ulonglong {
         const NSDataSearchBackwards = 1 << 0;
         const NSDataSearchAnchored = 1 << 1;
     }

@@ -6,7 +6,6 @@ use core_foundation::data::CFData;
 use color_space::CGColorSpace;
 use data_provider::{CGDataProviderRef, CGDataProvider};
 use geometry::CGRect;
-use libc::size_t;
 use foreign_types::{ForeignType, ForeignTypeRef};
 
 #[repr(C)]
@@ -40,11 +39,11 @@ foreign_type! {
 }
 
 impl CGImage {
-    pub fn new(width: size_t,
-               height: size_t,
-               bits_per_component: size_t,
-               bits_per_pixel: size_t,
-               bytes_per_row: size_t,
+    pub fn new(width: usize,
+               height: usize,
+               bits_per_component: usize,
+               bits_per_pixel: usize,
+               bytes_per_row: usize,
                colorspace: &CGColorSpace,
                bitmap_info: u32,
                provider: &CGDataProvider,
@@ -76,31 +75,31 @@ impl CGImage {
 }
 
 impl CGImageRef {
-    pub fn width(&self) -> size_t {
+    pub fn width(&self) -> usize {
         unsafe {
             CGImageGetWidth(self.as_ptr())
         }
     }
 
-    pub fn height(&self) -> size_t {
+    pub fn height(&self) -> usize {
         unsafe {
             CGImageGetHeight(self.as_ptr())
         }
     }
 
-    pub fn bits_per_component(&self) -> size_t {
+    pub fn bits_per_component(&self) -> usize {
         unsafe {
             CGImageGetBitsPerComponent(self.as_ptr())
         }
     }
 
-    pub fn bits_per_pixel(&self) -> size_t {
+    pub fn bits_per_pixel(&self) -> usize {
         unsafe {
             CGImageGetBitsPerPixel(self.as_ptr())
         }
     }
 
-    pub fn bytes_per_row(&self) -> size_t {
+    pub fn bytes_per_row(&self) -> usize {
         unsafe {
             CGImageGetBytesPerRow(self.as_ptr())
         }
@@ -138,19 +137,19 @@ impl CGImageRef {
 #[link(name = "CoreGraphics", kind = "framework")]
 extern {
     fn CGImageGetTypeID() -> CFTypeID;
-    fn CGImageGetWidth(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetHeight(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetBitsPerComponent(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetBitsPerPixel(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetBytesPerRow(image: ::sys::CGImageRef) -> size_t;
+    fn CGImageGetWidth(image: ::sys::CGImageRef) -> usize;
+    fn CGImageGetHeight(image: ::sys::CGImageRef) -> usize;
+    fn CGImageGetBitsPerComponent(image: ::sys::CGImageRef) -> usize;
+    fn CGImageGetBitsPerPixel(image: ::sys::CGImageRef) -> usize;
+    fn CGImageGetBytesPerRow(image: ::sys::CGImageRef) -> usize;
     fn CGImageGetColorSpace(image: ::sys::CGImageRef) -> ::sys::CGColorSpaceRef;
     fn CGImageGetDataProvider(image: ::sys::CGImageRef) -> ::sys::CGDataProviderRef;
     fn CGImageRelease(image: ::sys::CGImageRef);
-    fn CGImageCreate(width: size_t,
-                     height: size_t,
-                     bitsPerComponent: size_t,
-                     bitsPerPixel: size_t,
-                     bytesPerRow: size_t,
+    fn CGImageCreate(width: usize,
+                     height: usize,
+                     bitsPerComponent: usize,
+                     bitsPerPixel: usize,
+                     bytesPerRow: usize,
                      space: ::sys::CGColorSpaceRef,
                      bitmapInfo: u32,
                      provider: ::sys::CGDataProviderRef,

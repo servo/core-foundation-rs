@@ -1,6 +1,6 @@
 [package]
 name = "core-text"
-version = "19.2.0"
+version = "19.3.0"
 authors = ["The Servo Project Developers"]
 description = "Bindings to the Core Text framework."
 license = "MIT/Apache-2.0"
@@ -18,5 +18,5 @@ libc = ["core-foundation/libc", "core-graphics/libc"]
 
 [dependencies]
 foreign-types = "0.3"
-core-foundation = { path = "../core-foundation", version = "0.9", default-features = false }
-core-graphics = { path = "../core-graphics", version = "0.22.0", default-features = false }
+core-foundation = { path = "../core-foundation", version = "0.9.4", default-features = false }
+core-graphics = { path = "../core-graphics", version = "0.22.4", default-features = false }

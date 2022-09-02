@@ -21,6 +21,7 @@ use core_graphics::context::CGContext;
 use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 use core_graphics::path::{CGPath, SysCGPathRef};
 use foreign_types::ForeignType;
+use objc2::encode::{Encode, Encoding, RefEncode};
 use std::ops::Mul;
 use std::ptr;
 
@@ -1485,9 +1486,8 @@ pub struct CATransform3D {
     pub m44: CGFloat,
 }
 
-unsafe impl ::objc2_encode::Encode for CATransform3D {
-    const ENCODING: ::objc2_encode::Encoding =
-        ::objc2_encode::Encoding::Array(16, &CGFloat::ENCODING);
+unsafe impl Encode for CATransform3D {
+    const ENCODING: Encoding = Encoding::Array(16, &CGFloat::ENCODING);
 }
 
 impl PartialEq for CATransform3D {
@@ -1641,8 +1641,8 @@ pub struct CVTimeStamp {
     pub reserved: u64,
 }
 
-unsafe impl ::objc2_encode::Encode for CVTimeStamp {
-    const ENCODING: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Struct(
+unsafe impl Encode for CVTimeStamp {
+    const ENCODING: Encoding = Encoding::Struct(
         "CVTimeStamp",
         &[
             u32::ENCODING,
@@ -1658,9 +1658,8 @@ unsafe impl ::objc2_encode::Encode for CVTimeStamp {
     );
 }
 
-unsafe impl ::objc2_encode::RefEncode for CVTimeStamp {
-    const ENCODING_REF: ::objc2_encode::Encoding =
-        ::objc2_encode::Encoding::Pointer(&<Self as ::objc2_encode::Encode>::ENCODING);
+unsafe impl RefEncode for CVTimeStamp {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&<Self as Encode>::ENCODING);
 }
 
 pub type CVTimeStampFlags = u64;
@@ -1691,8 +1690,8 @@ pub struct CVSMPTETime {
     pub frames: i16,
 }
 
-unsafe impl ::objc2_encode::Encode for CVSMPTETime {
-    const ENCODING: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Struct(
+unsafe impl Encode for CVSMPTETime {
+    const ENCODING: Encoding = Encoding::Struct(
         "CVSMPTETime",
         &[
             i16::ENCODING,

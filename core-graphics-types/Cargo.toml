@@ -11,7 +11,7 @@ license = "MIT OR Apache-2.0"
 bitflags = "1.0"
 core-foundation = { path = "../core-foundation", version = "0.9" }
 libc = "0.2"
-objc2-encode = { version = "=2.0.0-pre.2" }
+objc2-encode = { version = "=2.0.0-pre.3" }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

@@ -30,3 +30,14 @@ pub type CGError = libc::int32_t;
 
 pub type CGGlyph = libc::c_ushort;
 
+pub const kCGErrorSuccess: CGError = 0;
+pub const kCGErrorFailure: CGError = 1000;
+pub const kCGErrorIllegalArgument: CGError = 1001;
+pub const kCGErrorInvalidConnection: CGError = 1002;
+pub const kCGErrorInvalidContext: CGError = 1003;
+pub const kCGErrorCannotComplete: CGError = 1004;
+pub const kCGErrorNotImplemented: CGError = 1006;
+pub const kCGErrorRangeCheck: CGError = 1007;
+pub const kCGErrorTypeCheck: CGError = 1008;
+pub const kCGErrorInvalidOperation: CGError = 1010;
+pub const kCGErrorNoneAvailable: CGError = 1011;

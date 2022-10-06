@@ -389,6 +389,12 @@ impl CGContextRef {
         }
     }
 
+    pub fn reset_clip(&self) {
+        unsafe {
+            CGContextResetClip(self.as_ptr());
+        }
+    }
+
     pub fn draw_path(&self, mode: CGPathDrawingMode) {
         unsafe {
             CGContextDrawPath(self.as_ptr(), mode);
@@ -714,6 +720,7 @@ extern {
     fn CGContextEOFillPath(c: ::sys::CGContextRef);
     fn CGContextClip(c: ::sys::CGContextRef);
     fn CGContextEOClip(c: ::sys::CGContextRef);
+    fn CGContextResetClip(c: ::sys::CGContextRef);
     fn CGContextStrokePath(c: ::sys::CGContextRef);
     fn CGContextSetRGBFillColor(context: ::sys::CGContextRef,
                                 red: CGFloat,

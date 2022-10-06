@@ -612,6 +612,12 @@ impl CGContextRef {
             CGContextSetShadowWithColor(self.as_ptr(), offset, blur, color.as_concrete_TypeRef());
         }
     }
+
+    pub fn set_alpha(&self, alpha: CGFloat) {
+        unsafe {
+            CGContextSetAlpha(self.as_ptr(), alpha);
+        }
+    }
 }
 
 #[test]
@@ -771,5 +777,7 @@ extern {
 
     fn CGContextSetShadow(c: ::sys::CGContextRef, offset: CGSize, blur: CGFloat);
     fn CGContextSetShadowWithColor(c: ::sys::CGContextRef, offset: CGSize, blur: CGFloat, color: ::sys::CGColorRef);
+
+    fn CGContextSetAlpha(c: ::sys::CGContextRef, alpha: CGFloat);
 }
 

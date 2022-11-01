@@ -102,9 +102,8 @@ impl AsRawFd for CFFileDescriptor {
 
 
 #[cfg(test)]
+#[cfg(feature = "libc")]
 mod test {
-    extern crate libc;
-
     use super::*;
     use std::ffi::CString;
     use std::os::raw::c_void;

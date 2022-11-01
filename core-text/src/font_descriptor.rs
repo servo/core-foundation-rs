@@ -15,11 +15,9 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::set::CFSetRef;
 use core_foundation::string::{CFString, CFStringRef};
-use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::CGFloat;
 
 use std::os::raw::c_void;
-use std::path::PathBuf;
 
 /*
 * CTFontTraits.h
@@ -259,7 +257,11 @@ impl CTFontDescriptor {
         }
     }
 
-    pub fn font_path(&self) -> Option<PathBuf> {
+    #[cfg(unix)]
+    #[cfg(feature = "libc")]
+    pub fn font_path(&self) -> Option<std::path::PathBuf> {
+        use core_foundation::url::{CFURL, CFURLRef};
+
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.0, kCTFontURLAttribute);
             if value.is_null() {
@@ -332,6 +334,7 @@ pub fn debug_descriptor(desc: &CTFontDescriptor) {
     println!("name: {}", desc.font_name());
     println!("style: {}", desc.style_name());
     println!("display: {}", desc.display_name());
+    #[cfg(feature = "libc")]
     println!("path: {:?}", desc.font_path());
     desc.show();
 }

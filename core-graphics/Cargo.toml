@@ -14,7 +14,7 @@ highsierra = []
 
 [dependencies]
 bitflags = "1.0"
-core-foundation = { path = "../core-foundation", version = "0.9" }
+core-foundation = { path = "../core-foundation", version = "0.9", default-features = false }
 core-graphics-types = { path = "../core-graphics-types", version = "0.1" }
 foreign-types = "0.3.0"
 libc = "0.2"

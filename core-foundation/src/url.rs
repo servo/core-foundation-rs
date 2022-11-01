@@ -14,18 +14,10 @@ pub use core_foundation_sys::url::*;
 use base::{TCFType, CFIndex};
 use string::{CFString};
 
-use core_foundation_sys::base::{kCFAllocatorDefault, Boolean};
+use core_foundation_sys::base::kCFAllocatorDefault;
 use std::fmt;
 use std::ptr;
-use std::path::{Path, PathBuf};
-use std::os::raw::c_char;
-
-use libc::{strlen, PATH_MAX};
-
-#[cfg(unix)]
-use std::os::unix::ffi::OsStrExt;
-#[cfg(unix)]
-use std::ffi::OsStr;
+use std::path::Path;
 
 
 declare_TCFType!(CFURL, CFURLRef);
@@ -46,6 +38,7 @@ impl CFURL {
         let path_bytes;
         #[cfg(unix)]
         {
+            use std::os::unix::ffi::OsStrExt;
             path_bytes = path.as_ref().as_os_str().as_bytes()
         }
         #[cfg(not(unix))]
@@ -75,17 +68,24 @@ impl CFURL {
     }
 
     #[cfg(unix)]
-    pub fn to_path(&self) -> Option<PathBuf> {
+    #[cfg(feature = "libc")]
+    pub fn to_path(&self) -> Option<std::path::PathBuf> {
+        use std::os::unix::ffi::OsStrExt;
+        use std::ffi::{CStr, OsStr};
+        use std::os::raw::c_char;
+        use core_foundation_sys::base::Boolean;
         // implementing this on Windows is more complicated because of the different OsStr representation
+        //
+        // TODO: Refactor this such that it doesn't depend so much on OS specifics
         unsafe {
-            let mut buf = [0u8; PATH_MAX as usize];
+            let mut buf = [0u8; libc::PATH_MAX as usize];
             let result = CFURLGetFileSystemRepresentation(self.0, true as Boolean, buf.as_mut_ptr(), buf.len() as CFIndex);
             if result == false as Boolean {
                 return None;
             }
-            let len = strlen(buf.as_ptr() as *const c_char);
-            let path = OsStr::from_bytes(&buf[0..len]);
-            Some(PathBuf::from(path))
+            let slice = CStr::from_ptr(buf.as_ptr() as *const c_char);
+            let path = OsStr::from_bytes(slice.to_bytes());
+            Some(std::path::PathBuf::from(path))
         }
     }
 
@@ -117,9 +117,11 @@ fn file_url_from_path() {
 }
 
 #[cfg(unix)]
+#[cfg(feature = "libc")]
 #[test]
 fn non_utf8() {
     use std::ffi::OsStr;
+    use std::os::unix::ffi::OsStrExt;
     let path = Path::new(OsStr::from_bytes(b"/\xC0/blame"));
     let cfurl = CFURL::from_path(path, false).unwrap();
     assert_eq!(cfurl.to_path().unwrap(), path);

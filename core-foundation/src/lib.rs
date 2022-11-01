@@ -16,6 +16,7 @@
 //! other frameworks that use the CoreFoundation framework.
 
 extern crate core_foundation_sys;
+#[cfg(feature = "libc")]
 extern crate libc;
 
 #[cfg(feature = "with-chrono")]

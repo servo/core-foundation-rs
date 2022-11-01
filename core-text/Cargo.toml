@@ -10,12 +10,13 @@ repository = "https://github.com/servo/core-foundation-rs"
 default-target = "x86_64-apple-darwin"
 
 [features]
-default = ["mountainlion"]
+default = ["mountainlion", "libc"]
 # For OS X 10.7 compat, exclude this feature. It will exclude some things from
 # the exposed APIs in the crate.
 mountainlion = []
+libc = ["core-foundation/libc"]
 
 [dependencies]
 foreign-types = "0.3"
-core-foundation = { path = "../core-foundation", version = "0.9" }
+core-foundation = { path = "../core-foundation", version = "0.9", default-features = false }
 core-graphics = { path = "../core-graphics", version = "0.22.0" }

@@ -614,7 +614,7 @@ impl CGEvent {
     }
 
     #[cfg(feature = "elcapitan")]
-    pub fn post_to_pid(&self, pid: libc::pid_t) {
+    pub fn post_to_pid(&self, pid: libc_::pid_t) {
         unsafe {
             CGEventPostToPid(pid, self.as_ptr());
         }
@@ -736,7 +736,7 @@ extern {
 
     #[cfg(feature = "elcapitan")]
     /// Post an event to a specified process ID
-    fn CGEventPostToPid(pid: libc::pid_t, event: ::sys::CGEventRef);
+    fn CGEventPostToPid(pid: libc_::pid_t, event: ::sys::CGEventRef);
 
     /// Set the event flags of an event.
     fn CGEventSetFlags(event: ::sys::CGEventRef, flags: CGEventFlags);

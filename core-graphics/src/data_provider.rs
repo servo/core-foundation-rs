@@ -10,7 +10,6 @@
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
 
-use libc::off_t;
 use std::mem;
 use std::ptr;
 use std::sync::Arc;
@@ -22,13 +21,15 @@ pub type CGDataProviderGetBytesCallback = Option<unsafe extern fn (*mut c_void, 
 pub type CGDataProviderReleaseInfoCallback = Option<unsafe extern fn (*mut c_void)>;
 pub type CGDataProviderRewindCallback = Option<unsafe extern fn (*mut c_void)>;
 pub type CGDataProviderSkipBytesCallback = Option<unsafe extern fn (*mut c_void, usize)>;
-pub type CGDataProviderSkipForwardCallback = Option<unsafe extern fn (*mut c_void, off_t) -> off_t>;
+#[cfg(feature = "libc")]
+pub type CGDataProviderSkipForwardCallback = Option<unsafe extern fn (*mut c_void, libc_::off_t) -> libc_::off_t>;
 
 pub type CGDataProviderGetBytePointerCallback = Option<unsafe extern fn (*mut c_void) -> *mut c_void>;
 pub type CGDataProviderGetBytesAtOffsetCallback = Option<unsafe extern fn (*mut c_void, *mut c_void, usize, usize)>;
 pub type CGDataProviderReleaseBytePointerCallback = Option<unsafe extern fn (*mut c_void, *const c_void)>;
 pub type CGDataProviderReleaseDataCallback = Option<unsafe extern fn (*mut c_void, *const c_void, usize)>;
-pub type CGDataProviderGetBytesAtPositionCallback = Option<unsafe extern fn (*mut c_void, *mut c_void, off_t, usize)>;
+#[cfg(feature = "libc")]
+pub type CGDataProviderGetBytesAtPositionCallback = Option<unsafe extern fn (*mut c_void, *mut c_void, libc_::off_t, usize)>;
 
 foreign_type! {
     #[doc(hidden)]

@@ -8,16 +8,18 @@ authors = ["The Servo Project Developers"]
 license = "MIT / Apache-2.0"
 
 [features]
-default = []
-elcapitan = []
+default = ["libc"]
+elcapitan = ["libc"]
 highsierra = []
+libc = ["libc_", "core-foundation/libc"]
 
 [dependencies]
 bitflags = "1.0"
 core-foundation = { path = "../core-foundation", version = "0.9", default-features = false }
 core-graphics-types = { path = "../core-graphics-types", version = "0.1" }
 foreign-types = "0.3.0"
-libc = "0.2"
+# TODO: Use dep:libc functionality once in MSRV
+libc_ = { version = "0.2", optional = true, package = "libc" }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

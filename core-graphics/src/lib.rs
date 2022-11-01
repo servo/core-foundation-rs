@@ -7,7 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate libc;
+#[cfg(feature = "libc")]
+extern crate libc_;
 
 #[macro_use]
 extern crate core_foundation;

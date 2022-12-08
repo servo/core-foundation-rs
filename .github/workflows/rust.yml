@@ -9,8 +9,12 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+permissions: {}
 jobs:
   build:
+    permissions:
+      contents: read #  to fetch code (actions/checkout)
+
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

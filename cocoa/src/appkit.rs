@@ -390,6 +390,145 @@ pub enum NSBezelStyle {
     NSRoundedDisclosureBezelStyle  = 14,
 }
 
+// https://developer.apple.com/documentation/appkit/nsvisualeffectview/blendingmode
+#[allow(dead_code)]
+#[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSVisualEffectBlendingMode {
+    BehindWindow = 0,
+    WithinWindow = 1
+}
+
+// https://developer.apple.com/documentation/appkit/nsvisualeffectview/state
+#[allow(dead_code)]
+#[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum NSVisualEffectState {
+    FollowsWindowActiveState = 0,
+    Active = 1,
+    Inactive = 2
+}
+
+/// <https://developer.apple.com/documentation/appkit/nsvisualeffectview/material>
+#[repr(u64)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NSVisualEffectMaterial {
+    /// A default material for the view's effectiveAppearance.
+    #[deprecated = "Use a semantic material instead."]
+    AppearanceBased = 0,
+    #[deprecated = "Use a semantic material instead."]
+    Light = 1,
+    #[deprecated = "Use a semantic material instead."]
+    Dark = 2,
+    #[deprecated = "Use a semantic material instead."]
+    MediumLight = 8,
+    #[deprecated = "Use a semantic material instead."]
+    UltraDark = 9,
+
+    // macOS 10.10+
+    Titlebar = 3,
+    Selection = 4,
+
+    // macOS 10.11+
+    Menu = 5,
+    Popover = 6,
+    Sidebar = 7,
+
+    // macOS 10.14+
+    HeaderView = 10,
+    Sheet = 11,
+    WindowBackground = 12,
+    HudWindow = 13,
+    FullScreenUI = 15,
+    Tooltip = 17,
+    ContentBackground = 18,
+    UnderWindowBackground = 21,
+    UnderPageBackground = 22
+}
+
+// macOS 10.10+ - https://developer.apple.com/documentation/appkit/nsvisualeffectview
+#[allow(non_snake_case)]
+pub trait NSVisualEffectView: Sized {
+    unsafe fn alloc(_: Self) -> id {
+        msg_send![class!(NSVisualEffectView), alloc]
+    }
+
+    unsafe fn init(self) -> id;
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id;
+    unsafe fn bounds(self) -> NSRect;
+    unsafe fn frame(self) -> NSRect;
+    unsafe fn setFrameSize(self, frameSize: NSSize);
+    unsafe fn setFrameOrigin(self, frameOrigin: NSPoint);
+
+    unsafe fn superview(self) -> id;
+    unsafe fn removeFromSuperview(self);
+    // API_AVAILABLE(macos(10.12));
+    unsafe fn isEmphasized(self) -> BOOL;
+    // API_AVAILABLE(macos(10.12));
+    unsafe fn setEmphasized_(self, emphasized: BOOL);
+
+    unsafe fn setMaterial_(self, material: NSVisualEffectMaterial);
+    unsafe fn setState_(self, state: NSVisualEffectState);
+    unsafe fn setBlendingMode_(self, mode: NSVisualEffectBlendingMode);
+}
+
+#[allow(non_snake_case)]
+impl NSVisualEffectView for id {
+    unsafe fn init(self) -> id {
+        msg_send![self, init]
+    }
+
+    unsafe fn initWithFrame_(self, frameRect: NSRect) -> id {
+        msg_send![self, initWithFrame: frameRect]
+    }
+
+    unsafe fn bounds(self) -> NSRect {
+        msg_send![self, bounds]
+    }
+
+    unsafe fn frame(self) -> NSRect {
+        msg_send![self, frame]
+    }
+
+    unsafe fn setFrameSize(self, frameSize: NSSize) {
+        msg_send![self, setFrameSize: frameSize]
+    }
+
+    unsafe fn setFrameOrigin(self, frameOrigin: NSPoint) {
+        msg_send![self, setFrameOrigin: frameOrigin]
+    }
+
+    unsafe fn superview(self) -> id {
+        msg_send![self, superview]
+    }
+
+    unsafe fn removeFromSuperview(self) {
+        msg_send![self, removeFromSuperview]
+    }
+
+    // API_AVAILABLE(macos(10.12));
+    unsafe fn isEmphasized(self) -> BOOL {
+        msg_send![self, isEmphasized]
+    }
+
+    // API_AVAILABLE(macos(10.12));
+    unsafe fn setEmphasized_(self, emphasized: BOOL) {
+        msg_send![self, setEmphasized: emphasized]
+    }
+
+    unsafe fn setMaterial_(self, material: NSVisualEffectMaterial) {
+        msg_send![self, setMaterial: material]
+    }
+
+    unsafe fn setState_(self, state: NSVisualEffectState) {
+        msg_send![self, setState: state]
+    }
+
+    unsafe fn setBlendingMode_(self, mode: NSVisualEffectBlendingMode) {
+        msg_send![self, setBlendingMode: mode]
+    }
+}
+
 #[repr(u64)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSRequestUserAttentionType {

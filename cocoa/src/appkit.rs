@@ -1275,6 +1275,7 @@ pub trait NSWindow: Sized {
     unsafe fn setMiniwindowImage_(self, miniwindowImage: id);
     unsafe fn miniwindowTitle(self) -> id;
     unsafe fn setMiniwindowTitle_(self, miniwindowTitle: id);
+    unsafe fn setAppearance(self, appearance: id);
 
     // TODO: Getting the Dock Tile
     // TODO: Printing Windows
@@ -1955,6 +1956,10 @@ impl NSWindow for id {
         msg_send![self, setMiniwindowTitle:miniwindowTitle]
     }
 
+    unsafe fn setAppearance(self, appearance: id) {
+        msg_send![self, setAppearance: appearance]
+    }
+
     // TODO: Getting the Dock Tile
     // TODO: Printing Windows
     // TODO: Providing Services
@@ -2119,6 +2124,7 @@ pub trait NSView: Sized {
 
     unsafe fn layerContentsPlacement(self) -> NSViewLayerContentsPlacement;
     unsafe fn setLayerContentsPlacement(self, placement: NSViewLayerContentsPlacement);
+    unsafe fn setAppearance(self, appearance: id);
 }
 
 impl NSView for id {
@@ -2208,6 +2214,10 @@ impl NSView for id {
 
     unsafe fn setLayerContentsPlacement(self, placement: NSViewLayerContentsPlacement) {
         msg_send![self, setLayerContentsPlacement: placement]
+    }
+
+    unsafe fn setAppearance(self, appearance: id) {
+        msg_send![self, setAppearance: appearance]
     }
 }
 
@@ -4646,6 +4656,10 @@ impl NSDockTile for id {
     unsafe fn setBadgeLabel_(self, label: id /* NSString */) -> id {
         msg_send![self, setBadgeLabel:label]
     }
+}
+
+pub unsafe fn NSAppearance(named: id /* NSAppearanceName */) -> id {
+    objc::msg_send![class!(NSAppearance), appearanceNamed: named]
 }
 
 #[cfg(test)]

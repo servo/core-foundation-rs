@@ -11,12 +11,10 @@
 
 pub use core_foundation_sys::error::*;
 
+use crate::base::{CFIndex, TCFType};
+use crate::string::CFString;
 use std::error::Error;
 use std::fmt;
-
-use base::{CFIndex, TCFType};
-use string::CFString;
-
 
 declare_TCFType!{
     /// An error value.

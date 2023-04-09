@@ -10,6 +10,7 @@
 use std::borrow::Cow;
 use std::os::raw::c_void;
 use std::slice;
+use core_foundation::{declare_TCFType, impl_TCFType, impl_CFTypeDescription};
 use core_foundation::base::{CFIndex, CFTypeID, TCFType, CFType, CFRange};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFString;

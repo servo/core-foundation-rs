@@ -9,15 +9,15 @@
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
 use core_foundation::string::CFStringRef;
-use foreign_types::ForeignType;
+use foreign_types::{foreign_type, ForeignType};
 
 foreign_type! {
     #[doc(hidden)]
-    type CType = ::sys::CGColorSpace;
-    fn drop = |p| CFRelease(p as *mut _);
-    fn clone = |p| CFRetain(p as *const _) as *mut _;
-    pub struct CGColorSpace;
-    pub struct CGColorSpaceRef;
+    pub unsafe type CGColorSpace {
+        type CType = crate::sys::CGColorSpace;
+        fn drop = |p| CFRelease(p as *mut _);
+        fn clone = |p| CFRetain(p as *const _) as *mut _;
+    }
 }
 
 impl CGColorSpace {
@@ -109,9 +109,9 @@ extern {
     /// The name of the generic gray color space.
     pub static kCGColorSpaceGenericGray: CFStringRef;
 
-    fn CGColorSpaceCreateDeviceRGB() -> ::sys::CGColorSpaceRef;
-    fn CGColorSpaceCreateDeviceGray() -> ::sys::CGColorSpaceRef;
-    fn CGColorSpaceCreateWithName(name: CFStringRef) -> ::sys::CGColorSpaceRef;
+    fn CGColorSpaceCreateDeviceRGB() -> crate::sys::CGColorSpaceRef;
+    fn CGColorSpaceCreateDeviceGray() -> crate::sys::CGColorSpaceRef;
+    fn CGColorSpaceCreateWithName(name: CFStringRef) -> crate::sys::CGColorSpaceRef;
     fn CGColorSpaceGetTypeID() -> CFTypeID;
 }
 

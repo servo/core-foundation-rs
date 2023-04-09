@@ -12,17 +12,9 @@
 
 #![allow(non_snake_case)]
 
-/*!
-Many of these functions will add objects to the autorelease pool.
-If you don't have one this will cause leaks.
-*/
 
-extern crate foreign_types;
-extern crate libc;
-
-#[macro_use]
-extern crate core_foundation;
-extern crate core_graphics;
+//! Many of these functions will add objects to the autorelease pool.
+//! If you don't have one this will cause leaks.
 
 pub mod font;
 pub mod font_collection;

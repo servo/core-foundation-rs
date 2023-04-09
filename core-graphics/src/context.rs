@@ -7,23 +7,21 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::CGFloat;
-use color_space::CGColorSpace;
+use crate::base::CGFloat;
+use crate::color_space::CGColorSpace;
+use crate::font::{CGFont, CGGlyph};
+use crate::geometry::{CGPoint, CGSize, CGAffineTransform, CGRect};
+use crate::gradient::{CGGradient, CGGradientDrawingOptions};
+use crate::image::CGImage;
+use crate::color::CGColor;
+use crate::path::CGPathRef;
 use core_foundation::base::{CFTypeID, TCFType};
-use font::{CGFont, CGGlyph};
-use geometry::{CGPoint, CGSize};
-use gradient::{CGGradient, CGGradientDrawingOptions};
-use color::CGColor;
-use path::CGPathRef;
+use foreign_types::{foreign_type, ForeignType, ForeignTypeRef};
 use libc::{c_int, size_t};
 use std::os::raw::c_void;
-
 use std::cmp;
 use std::ptr;
 use std::slice;
-use geometry::{CGAffineTransform, CGRect};
-use image::CGImage;
-use foreign_types::{ForeignType, ForeignTypeRef};
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
@@ -109,11 +107,11 @@ pub enum CGInterpolationQuality {
 
 foreign_type! {
     #[doc(hidden)]
-    type CType = ::sys::CGContext;
-    fn drop = |cs| CGContextRelease(cs);
-    fn clone = |p| CGContextRetain(p);
-    pub struct CGContext;
-    pub struct CGContextRef;
+    pub unsafe type CGContext {
+        type CType = crate::sys::CGContext;
+        fn drop = |cs| CGContextRelease(cs);
+        fn clone = |p| CGContextRetain(p);
+    }
 }
 
 impl CGContext {
@@ -134,7 +132,7 @@ impl CGContext {
     /// [`CGContextRef`]: https://developer.apple.com/documentation/coregraphics/cgcontextref
     /// [`CGRetain`]: https://developer.apple.com/documentation/coregraphics/1586506-cgcontextretain
     /// [`NSGraphicsContext::CGContext`]: https://developer.apple.com/documentation/appkit/nsgraphicscontext/1535352-currentcontext
-    pub unsafe fn from_existing_context_ptr(ctx: *mut ::sys::CGContext) -> CGContext {
+    pub unsafe fn from_existing_context_ptr(ctx: *mut crate::sys::CGContext) -> CGContext {
         CGContextRetain(ctx);
         Self::from_ptr(ctx)
     }
@@ -653,138 +651,138 @@ fn create_bitmap_context_test() {
 
 #[link(name = "CoreGraphics", kind = "framework")]
 extern {
-    fn CGContextRetain(c: ::sys::CGContextRef) -> ::sys::CGContextRef;
-    fn CGContextRelease(c: ::sys::CGContextRef);
+    fn CGContextRetain(c: crate::sys::CGContextRef) -> crate::sys::CGContextRef;
+    fn CGContextRelease(c: crate::sys::CGContextRef);
 
     fn CGBitmapContextCreate(data: *mut c_void,
                              width: size_t,
                              height: size_t,
                              bitsPerComponent: size_t,
                              bytesPerRow: size_t,
-                             space: ::sys::CGColorSpaceRef,
+                             space: crate::sys::CGColorSpaceRef,
                              bitmapInfo: u32)
-                             -> ::sys::CGContextRef;
-    fn CGBitmapContextGetData(context: ::sys::CGContextRef) -> *mut c_void;
-    fn CGBitmapContextGetWidth(context: ::sys::CGContextRef) -> size_t;
-    fn CGBitmapContextGetHeight(context: ::sys::CGContextRef) -> size_t;
-    fn CGBitmapContextGetBytesPerRow(context: ::sys::CGContextRef) -> size_t;
-    fn CGBitmapContextCreateImage(context: ::sys::CGContextRef) -> ::sys::CGImageRef;
+                             -> crate::sys::CGContextRef;
+    fn CGBitmapContextGetData(context: crate::sys::CGContextRef) -> *mut c_void;
+    fn CGBitmapContextGetWidth(context: crate::sys::CGContextRef) -> size_t;
+    fn CGBitmapContextGetHeight(context: crate::sys::CGContextRef) -> size_t;
+    fn CGBitmapContextGetBytesPerRow(context: crate::sys::CGContextRef) -> size_t;
+    fn CGBitmapContextCreateImage(context: crate::sys::CGContextRef) -> crate::sys::CGImageRef;
     fn CGContextGetTypeID() -> CFTypeID;
-    fn CGContextGetClipBoundingBox(c: ::sys::CGContextRef) -> CGRect;
-    fn CGContextFlush(c: ::sys::CGContextRef);
-    fn CGContextSetBlendMode(c: ::sys::CGContextRef, blendMode: CGBlendMode);
-    fn CGContextSetAllowsFontSmoothing(c: ::sys::CGContextRef, allowsFontSmoothing: bool);
-    fn CGContextSetShouldSmoothFonts(c: ::sys::CGContextRef, shouldSmoothFonts: bool);
-    fn CGContextSetFontSmoothingStyle(c: ::sys::CGContextRef, style: c_int);
-    fn CGContextSetAllowsAntialiasing(c: ::sys::CGContextRef, allowsAntialiasing: bool);
-    fn CGContextSetShouldAntialias(c: ::sys::CGContextRef, shouldAntialias: bool);
-    fn CGContextSetAllowsFontSubpixelQuantization(c: ::sys::CGContextRef,
+    fn CGContextGetClipBoundingBox(c: crate::sys::CGContextRef) -> CGRect;
+    fn CGContextFlush(c: crate::sys::CGContextRef);
+    fn CGContextSetBlendMode(c: crate::sys::CGContextRef, blendMode: CGBlendMode);
+    fn CGContextSetAllowsFontSmoothing(c: crate::sys::CGContextRef, allowsFontSmoothing: bool);
+    fn CGContextSetShouldSmoothFonts(c: crate::sys::CGContextRef, shouldSmoothFonts: bool);
+    fn CGContextSetFontSmoothingStyle(c: crate::sys::CGContextRef, style: c_int);
+    fn CGContextSetAllowsAntialiasing(c: crate::sys::CGContextRef, allowsAntialiasing: bool);
+    fn CGContextSetShouldAntialias(c: crate::sys::CGContextRef, shouldAntialias: bool);
+    fn CGContextSetAllowsFontSubpixelQuantization(c: crate::sys::CGContextRef,
                                                   allowsFontSubpixelQuantization: bool);
-    fn CGContextSetShouldSubpixelQuantizeFonts(c: ::sys::CGContextRef,
+    fn CGContextSetShouldSubpixelQuantizeFonts(c: crate::sys::CGContextRef,
                                                shouldSubpixelQuantizeFonts: bool);
-    fn CGContextSetAllowsFontSubpixelPositioning(c: ::sys::CGContextRef,
+    fn CGContextSetAllowsFontSubpixelPositioning(c: crate::sys::CGContextRef,
                                                  allowsFontSubpixelPositioning: bool);
-    fn CGContextSetShouldSubpixelPositionFonts(c: ::sys::CGContextRef,
+    fn CGContextSetShouldSubpixelPositionFonts(c: crate::sys::CGContextRef,
                                                shouldSubpixelPositionFonts: bool);
-    fn CGContextSetTextDrawingMode(c: ::sys::CGContextRef, mode: CGTextDrawingMode);
-    fn CGContextSetFillColorWithColor(c: ::sys::CGContextRef, color: ::sys::CGColorRef);
-    fn CGContextSetLineCap(c: ::sys::CGContextRef, cap: CGLineCap);
-    fn CGContextSetLineDash(c: ::sys::CGContextRef, phase: CGFloat, lengths: *const CGFloat, count: size_t);
-    fn CGContextSetLineJoin(c: ::sys::CGContextRef, join: CGLineJoin);
-    fn CGContextSetLineWidth(c: ::sys::CGContextRef, width: CGFloat);
-    fn CGContextSetMiterLimit(c: ::sys::CGContextRef, limit: CGFloat);
+    fn CGContextSetTextDrawingMode(c: crate::sys::CGContextRef, mode: CGTextDrawingMode);
+    fn CGContextSetFillColorWithColor(c: crate::sys::CGContextRef, color: crate::sys::CGColorRef);
+    fn CGContextSetLineCap(c: crate::sys::CGContextRef, cap: CGLineCap);
+    fn CGContextSetLineDash(c: crate::sys::CGContextRef, phase: CGFloat, lengths: *const CGFloat, count: size_t);
+    fn CGContextSetLineJoin(c: crate::sys::CGContextRef, join: CGLineJoin);
+    fn CGContextSetLineWidth(c: crate::sys::CGContextRef, width: CGFloat);
+    fn CGContextSetMiterLimit(c: crate::sys::CGContextRef, limit: CGFloat);
 
-    fn CGContextAddPath(c: ::sys::CGContextRef, path: ::sys::CGPathRef);
-    fn CGContextAddCurveToPoint(c: ::sys::CGContextRef,
+    fn CGContextAddPath(c: crate::sys::CGContextRef, path: crate::sys::CGPathRef);
+    fn CGContextAddCurveToPoint(c: crate::sys::CGContextRef,
                                 cp1x: CGFloat,
                                 cp1y: CGFloat,
                                 cp2x: CGFloat,
                                 cp2y: CGFloat,
                                 x: CGFloat,
                                 y: CGFloat);
-    fn CGContextAddQuadCurveToPoint(c: ::sys::CGContextRef,
+    fn CGContextAddQuadCurveToPoint(c: crate::sys::CGContextRef,
                                     cpx: CGFloat,
                                     cpy: CGFloat,
                                     x: CGFloat,
                                     y: CGFloat);
-    fn CGContextAddLineToPoint(c: ::sys::CGContextRef,
+    fn CGContextAddLineToPoint(c: crate::sys::CGContextRef,
                                x: CGFloat,
                                y: CGFloat);
-    fn CGContextBeginPath(c: ::sys::CGContextRef);
-    fn CGContextClosePath(c: ::sys::CGContextRef);
-    fn CGContextMoveToPoint(c: ::sys::CGContextRef,
+    fn CGContextBeginPath(c: crate::sys::CGContextRef);
+    fn CGContextClosePath(c: crate::sys::CGContextRef);
+    fn CGContextMoveToPoint(c: crate::sys::CGContextRef,
                             x: CGFloat,
                             y: CGFloat);
-    fn CGContextDrawPath(c: ::sys::CGContextRef, mode: CGPathDrawingMode);
-    fn CGContextFillPath(c: ::sys::CGContextRef);
-    fn CGContextEOFillPath(c: ::sys::CGContextRef);
-    fn CGContextClip(c: ::sys::CGContextRef);
-    fn CGContextEOClip(c: ::sys::CGContextRef);
-    fn CGContextResetClip(c: ::sys::CGContextRef);
-    fn CGContextStrokePath(c: ::sys::CGContextRef);
-    fn CGContextSetRGBFillColor(context: ::sys::CGContextRef,
+    fn CGContextDrawPath(c: crate::sys::CGContextRef, mode: CGPathDrawingMode);
+    fn CGContextFillPath(c: crate::sys::CGContextRef);
+    fn CGContextEOFillPath(c: crate::sys::CGContextRef);
+    fn CGContextClip(c: crate::sys::CGContextRef);
+    fn CGContextEOClip(c: crate::sys::CGContextRef);
+    fn CGContextResetClip(c: crate::sys::CGContextRef);
+    fn CGContextStrokePath(c: crate::sys::CGContextRef);
+    fn CGContextSetRGBFillColor(context: crate::sys::CGContextRef,
                                 red: CGFloat,
                                 green: CGFloat,
                                 blue: CGFloat,
                                 alpha: CGFloat);
-    fn CGContextSetRGBStrokeColor(context: ::sys::CGContextRef,
+    fn CGContextSetRGBStrokeColor(context: crate::sys::CGContextRef,
                                   red: CGFloat,
                                   green: CGFloat,
                                   blue: CGFloat,
                                   alpha: CGFloat);
-    fn CGContextSetGrayFillColor(context: ::sys::CGContextRef, gray: CGFloat, alpha: CGFloat);
-    fn CGContextClearRect(context: ::sys::CGContextRef,
+    fn CGContextSetGrayFillColor(context: crate::sys::CGContextRef, gray: CGFloat, alpha: CGFloat);
+    fn CGContextClearRect(context: crate::sys::CGContextRef,
                           rect: CGRect);
-    fn CGContextFillRect(context: ::sys::CGContextRef,
+    fn CGContextFillRect(context: crate::sys::CGContextRef,
                          rect: CGRect);
-    fn CGContextFillRects(context: ::sys::CGContextRef,
+    fn CGContextFillRects(context: crate::sys::CGContextRef,
                           rects: *const CGRect,
                           count: size_t);
-    fn CGContextStrokeRect(context: ::sys::CGContextRef,
+    fn CGContextStrokeRect(context: crate::sys::CGContextRef,
                            rect: CGRect);
-    fn CGContextStrokeRectWithWidth(context: ::sys::CGContextRef,
+    fn CGContextStrokeRectWithWidth(context: crate::sys::CGContextRef,
                                     rect: CGRect,
                                     width: CGFloat);
-    fn CGContextClipToRect(context: ::sys::CGContextRef,
+    fn CGContextClipToRect(context: crate::sys::CGContextRef,
                            rect: CGRect);
-    fn CGContextClipToRects(context: ::sys::CGContextRef,
+    fn CGContextClipToRects(context: crate::sys::CGContextRef,
                             rects: *const CGRect,
                             count: size_t);
-    fn CGContextClipToMask(ctx: ::sys::CGContextRef, rect: CGRect, mask: ::sys::CGImageRef);
-    fn CGContextReplacePathWithStrokedPath(context: ::sys::CGContextRef);
-    fn CGContextFillEllipseInRect(context: ::sys::CGContextRef,
+    fn CGContextClipToMask(ctx: crate::sys::CGContextRef, rect: CGRect, mask: crate::sys::CGImageRef);
+    fn CGContextReplacePathWithStrokedPath(context: crate::sys::CGContextRef);
+    fn CGContextFillEllipseInRect(context: crate::sys::CGContextRef,
                                   rect: CGRect);
-    fn CGContextStrokeEllipseInRect(context: ::sys::CGContextRef,
+    fn CGContextStrokeEllipseInRect(context: crate::sys::CGContextRef,
                                     rect: CGRect);
-    fn CGContextStrokeLineSegments(context: ::sys::CGContextRef,
+    fn CGContextStrokeLineSegments(context: crate::sys::CGContextRef,
                                     points: *const CGPoint,
                                     count: size_t);
-    fn CGContextDrawImage(c: ::sys::CGContextRef, rect: CGRect, image: ::sys::CGImageRef);
-    fn CGContextSetInterpolationQuality(c: ::sys::CGContextRef, quality: CGInterpolationQuality);
-    fn CGContextGetInterpolationQuality(c: ::sys::CGContextRef) -> CGInterpolationQuality;
-    fn CGContextSetFont(c: ::sys::CGContextRef, font: ::sys::CGFontRef);
-    fn CGContextSetFontSize(c: ::sys::CGContextRef, size: CGFloat);
-    fn CGContextSetTextMatrix(c: ::sys::CGContextRef, t: CGAffineTransform);
-    fn CGContextSetTextPosition(c: ::sys::CGContextRef, x: CGFloat, y: CGFloat);
-    fn CGContextShowGlyphsAtPositions(c: ::sys::CGContextRef,
+    fn CGContextDrawImage(c: crate::sys::CGContextRef, rect: CGRect, image: crate::sys::CGImageRef);
+    fn CGContextSetInterpolationQuality(c: crate::sys::CGContextRef, quality: CGInterpolationQuality);
+    fn CGContextGetInterpolationQuality(c: crate::sys::CGContextRef) -> CGInterpolationQuality;
+    fn CGContextSetFont(c: crate::sys::CGContextRef, font: crate::sys::CGFontRef);
+    fn CGContextSetFontSize(c: crate::sys::CGContextRef, size: CGFloat);
+    fn CGContextSetTextMatrix(c: crate::sys::CGContextRef, t: CGAffineTransform);
+    fn CGContextSetTextPosition(c: crate::sys::CGContextRef, x: CGFloat, y: CGFloat);
+    fn CGContextShowGlyphsAtPositions(c: crate::sys::CGContextRef,
                                       glyphs: *const CGGlyph,
                                       positions: *const CGPoint,
                                       count: size_t);
 
-    fn CGContextSaveGState(c: ::sys::CGContextRef);
-    fn CGContextRestoreGState(c: ::sys::CGContextRef);
-    fn CGContextTranslateCTM(c: ::sys::CGContextRef, tx: CGFloat, ty: CGFloat);
-    fn CGContextScaleCTM(c: ::sys::CGContextRef, sx: CGFloat, sy: CGFloat);
-    fn CGContextRotateCTM(c: ::sys::CGContextRef, angle: CGFloat);
-    fn CGContextGetCTM(c: ::sys::CGContextRef) -> CGAffineTransform;
-    fn CGContextConcatCTM(c: ::sys::CGContextRef, transform: CGAffineTransform);
+    fn CGContextSaveGState(c: crate::sys::CGContextRef);
+    fn CGContextRestoreGState(c: crate::sys::CGContextRef);
+    fn CGContextTranslateCTM(c: crate::sys::CGContextRef, tx: CGFloat, ty: CGFloat);
+    fn CGContextScaleCTM(c: crate::sys::CGContextRef, sx: CGFloat, sy: CGFloat);
+    fn CGContextRotateCTM(c: crate::sys::CGContextRef, angle: CGFloat);
+    fn CGContextGetCTM(c: crate::sys::CGContextRef) -> CGAffineTransform;
+    fn CGContextConcatCTM(c: crate::sys::CGContextRef, transform: CGAffineTransform);
 
-    fn CGContextDrawLinearGradient(c: ::sys::CGContextRef, gradient: ::sys::CGGradientRef, startPoint: CGPoint, endPoint: CGPoint, options: CGGradientDrawingOptions);
-    fn CGContextDrawRadialGradient(c: ::sys::CGContextRef, gradient: ::sys::CGGradientRef,  startCenter: CGPoint, startRadius: CGFloat, endCenter:CGPoint, endRadius:CGFloat, options: CGGradientDrawingOptions);
+    fn CGContextDrawLinearGradient(c: crate::sys::CGContextRef, gradient: crate::sys::CGGradientRef, startPoint: CGPoint, endPoint: CGPoint, options: CGGradientDrawingOptions);
+    fn CGContextDrawRadialGradient(c: crate::sys::CGContextRef, gradient: crate::sys::CGGradientRef,  startCenter: CGPoint, startRadius: CGFloat, endCenter:CGPoint, endRadius:CGFloat, options: CGGradientDrawingOptions);
 
-    fn CGContextSetShadow(c: ::sys::CGContextRef, offset: CGSize, blur: CGFloat);
-    fn CGContextSetShadowWithColor(c: ::sys::CGContextRef, offset: CGSize, blur: CGFloat, color: ::sys::CGColorRef);
+    fn CGContextSetShadow(c: crate::sys::CGContextRef, offset: CGSize, blur: CGFloat);
+    fn CGContextSetShadowWithColor(c: crate::sys::CGContextRef, offset: CGSize, blur: CGFloat, color: crate::sys::CGColorRef);
 
-    fn CGContextSetAlpha(c: ::sys::CGContextRef, alpha: CGFloat);
+    fn CGContextSetAlpha(c: crate::sys::CGContextRef, alpha: CGFloat);
 }
 

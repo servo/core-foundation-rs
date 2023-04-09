@@ -11,15 +11,14 @@
 
 pub use core_foundation_sys::dictionary::*;
 
+use crate::base::{ItemRef, FromVoid, ToVoid};
+use crate::base::{CFIndexConvertible, TCFType};
+use crate::ConcreteCFType;
 use core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
 use std::mem;
 use std::os::raw::c_void;
 use std::ptr;
 use std::marker::PhantomData;
-
-use base::{ItemRef, FromVoid, ToVoid};
-use base::{CFIndexConvertible, TCFType};
-use ConcreteCFType;
 
 // consume the type parameters with PhantomDatas
 pub struct CFDictionary<K = *const c_void, V = *const c_void>(CFDictionaryRef, PhantomData<K>, PhantomData<V>);

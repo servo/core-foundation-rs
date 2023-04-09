@@ -7,10 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFAllocatorRef, CFTypeRef, CFIndex, CFRange, CFTypeID};
+use crate::string::CFStringRef;
+use crate::dictionary::CFDictionaryRef;
 use std::os::raw::c_void;
-use base::{CFAllocatorRef, CFTypeRef, CFIndex, CFRange, CFTypeID};
-use string::CFStringRef;
-use dictionary::CFDictionaryRef;
 
 #[repr(C)]
 pub struct __CFAttributedString(c_void);

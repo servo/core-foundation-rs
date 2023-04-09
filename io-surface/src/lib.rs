@@ -10,12 +10,6 @@
 #![crate_name = "io_surface"]
 #![crate_type = "rlib"]
 
-extern crate libc;
-extern crate core_foundation;
-extern crate core_foundation_sys;
-extern crate cgl;
-extern crate leaky_cow;
-
 // Rust bindings to the IOSurface framework on macOS.
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, CFTypeRef, CFType, TCFType};

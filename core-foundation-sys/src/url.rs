@@ -7,14 +7,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID, CFTypeRef, SInt32};
+use crate::data::CFDataRef;
+use crate::array::CFArrayRef;
+use crate::dictionary::CFDictionaryRef;
+use crate::string::{CFStringRef, CFStringEncoding};
+use crate::error::CFErrorRef;
 use std::os::raw::c_void;
-
-use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID, CFTypeRef, SInt32};
-use data::CFDataRef;
-use array::CFArrayRef;
-use dictionary::CFDictionaryRef;
-use string::{CFStringRef, CFStringEncoding};
-use error::CFErrorRef;
 
 #[repr(C)]
 pub struct __CFURL(c_void);

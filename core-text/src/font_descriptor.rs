@@ -9,6 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
+use core_foundation::{declare_TCFType, impl_TCFType, impl_CFTypeDescription};
 use core_foundation::array::CFArrayRef;
 use core_foundation::base::{CFType, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};

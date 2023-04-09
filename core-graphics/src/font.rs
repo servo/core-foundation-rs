@@ -7,28 +7,26 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::data_provider::CGDataProvider;
+use crate::geometry::CGRect;
 use core_foundation::base::{CFRelease, CFRetain, CFType, CFTypeID, TCFType};
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::data::{CFData, CFDataRef};
 use core_foundation::number::CFNumber;
 use core_foundation::string::{CFString, CFStringRef};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
-use data_provider::CGDataProvider;
-use geometry::CGRect;
-
-use foreign_types::ForeignType;
-
+use foreign_types::{foreign_type, ForeignType};
 use libc::{c_int, size_t};
 
 pub use core_graphics_types::base::CGGlyph;
 
 foreign_type! {
     #[doc(hidden)]
-    type CType = ::sys::CGFont;
-    fn drop = |p| CFRelease(p as *mut _);
-    fn clone = |p| CFRetain(p as *const _) as *mut _;
-    pub struct CGFont;
-    pub struct CGFontRef;
+    pub unsafe type CGFont {
+        type CType = crate::sys::CGFont;
+        fn drop = |p| CFRelease(p as *mut _);
+        fn clone = |p| CFRetain(p as *const _) as *mut _;
+    }
 }
 
 unsafe impl Send for CGFont {}
@@ -145,32 +143,32 @@ impl CGFont {
 #[link(name = "CoreGraphics", kind = "framework")]
 extern {
     // TODO: basically nothing has bindings (even commented-out) besides what we use.
-    fn CGFontCreateWithDataProvider(provider: ::sys::CGDataProviderRef) -> ::sys::CGFontRef;
-    fn CGFontCreateWithFontName(name: CFStringRef) -> ::sys::CGFontRef;
-    fn CGFontCreateCopyWithVariations(font: ::sys::CGFontRef, vars: CFDictionaryRef) -> ::sys::CGFontRef;
+    fn CGFontCreateWithDataProvider(provider: crate::sys::CGDataProviderRef) -> crate::sys::CGFontRef;
+    fn CGFontCreateWithFontName(name: CFStringRef) -> crate::sys::CGFontRef;
+    fn CGFontCreateCopyWithVariations(font: crate::sys::CGFontRef, vars: CFDictionaryRef) -> crate::sys::CGFontRef;
     fn CGFontGetTypeID() -> CFTypeID;
 
-    fn CGFontCopyPostScriptName(font: ::sys::CGFontRef) -> CFStringRef;
+    fn CGFontCopyPostScriptName(font: crate::sys::CGFontRef) -> CFStringRef;
 
     // These do the same thing as CFRetain/CFRelease, except
     // gracefully handle a NULL argument. We don't use them.
-    //fn CGFontRetain(font: ::sys::CGFontRef);
-    //fn CGFontRelease(font: ::sys::CGFontRef);
+    //fn CGFontRetain(font: crate::sys::CGFontRef);
+    //fn CGFontRelease(font: crate::sys::CGFontRef);
 
-    fn CGFontGetGlyphBBoxes(font: ::sys::CGFontRef,
+    fn CGFontGetGlyphBBoxes(font: crate::sys::CGFontRef,
                             glyphs: *const CGGlyph,
                             count: size_t,
                             bboxes: *mut CGRect)
                             -> bool;
-    fn CGFontGetGlyphAdvances(font: ::sys::CGFontRef,
+    fn CGFontGetGlyphAdvances(font: crate::sys::CGFontRef,
                               glyphs: *const CGGlyph,
                               count: size_t,
                               advances: *mut c_int)
                               -> bool;
-    fn CGFontGetUnitsPerEm(font: ::sys::CGFontRef) -> c_int;
+    fn CGFontGetUnitsPerEm(font: crate::sys::CGFontRef) -> c_int;
 
-    fn CGFontCopyTableTags(font: ::sys::CGFontRef) -> CFArrayRef;
-    fn CGFontCopyTableForTag(font: ::sys::CGFontRef, tag: u32) -> CFDataRef;
-    fn CGFontCopyVariations(font: ::sys::CGFontRef) -> CFDictionaryRef;
-    fn CGFontCopyVariationAxes(font: ::sys::CGFontRef) -> CFArrayRef;
+    fn CGFontCopyTableTags(font: crate::sys::CGFontRef) -> CFArrayRef;
+    fn CGFontCopyTableForTag(font: crate::sys::CGFontRef, tag: u32) -> CFDataRef;
+    fn CGFontCopyVariations(font: crate::sys::CGFontRef) -> CFDictionaryRef;
+    fn CGFontCopyVariationAxes(font: crate::sys::CGFontRef) -> CFArrayRef;
 }

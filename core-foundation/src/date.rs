@@ -10,9 +10,8 @@
 //! Core Foundation date objects.
 
 pub use core_foundation_sys::date::*;
+use crate::base::TCFType;
 use core_foundation_sys::base::kCFAllocatorDefault;
-
-use base::TCFType;
 
 #[cfg(feature = "with-chrono")]
 use chrono::NaiveDateTime;

@@ -7,9 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeRef};
-use data::CFDataRef;
-use error::CFErrorRef;
+use crate::base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeRef};
+use crate::data::CFDataRef;
+use crate::error::CFErrorRef;
 
 pub type CFPropertyListRef = CFTypeRef;
 

@@ -4,6 +4,7 @@ version = "19.2.0"
 authors = ["The Servo Project Developers"]
 description = "Bindings to the Core Text framework."
 license = "MIT OR Apache-2.0"
+edition = "2021"
 repository = "https://github.com/servo/core-foundation-rs"
 
 [package.metadata.docs.rs]
@@ -16,7 +17,7 @@ default = ["mountainlion"]
 mountainlion = []
 
 [dependencies]
-foreign-types = "0.3"
+foreign-types = "0.5.0"
 libc = "0.2"
 core-foundation = { path = "../core-foundation", version = "0.9" }
 core-graphics = { path = "../core-graphics", version = "0.22.0" }

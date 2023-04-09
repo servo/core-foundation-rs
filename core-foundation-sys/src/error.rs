@@ -7,10 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFTypeID, CFIndex};
+use crate::string::CFStringRef;
 use std::os::raw::c_void;
-
-use base::{CFTypeID, CFIndex};
-use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFError(c_void);

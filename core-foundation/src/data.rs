@@ -10,14 +10,14 @@
 //! Core Foundation byte buffers.
 
 pub use core_foundation_sys::data::*;
+
+use crate::base::{CFIndexConvertible, TCFType};
 use core_foundation_sys::base::CFIndex;
 use core_foundation_sys::base::{kCFAllocatorDefault};
 use std::ops::Deref;
 use std::slice;
 use std::sync::Arc;
 
-
-use base::{CFIndexConvertible, TCFType};
 
 
 declare_TCFType!{

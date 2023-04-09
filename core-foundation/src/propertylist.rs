@@ -9,18 +9,19 @@
 
 //! Core Foundation property lists
 
+pub use core_foundation_sys::propertylist::*;
+
+use crate::base::{CFType, TCFType, TCFTypeRef};
+use crate::data::CFData;
+use crate::error::CFError;
+use core_foundation_sys::error::CFErrorRef;
+use core_foundation_sys::base::{
+    CFGetRetainCount, CFGetTypeID, CFIndex, CFRetain,
+    CFShow, CFTypeID, kCFAllocatorDefault,
+};
 use std::ptr;
 use std::mem;
 use std::os::raw::c_void;
-
-use error::CFError;
-use data::CFData;
-use base::{CFType, TCFType, TCFTypeRef};
-
-pub use core_foundation_sys::propertylist::*;
-use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::base::{CFGetRetainCount, CFGetTypeID, CFIndex, CFRetain,
-                                CFShow, CFTypeID, kCFAllocatorDefault};
 
 pub fn create_with_data(data: CFData,
                         options: CFPropertyListMutabilityOptions)
@@ -84,13 +85,13 @@ pub trait CFPropertyListSubClass: TCFType {
     }
 }
 
-impl CFPropertyListSubClass for ::data::CFData {}
-impl CFPropertyListSubClass for ::string::CFString {}
-impl CFPropertyListSubClass for ::array::CFArray {}
-impl CFPropertyListSubClass for ::dictionary::CFDictionary {}
-impl CFPropertyListSubClass for ::date::CFDate {}
-impl CFPropertyListSubClass for ::boolean::CFBoolean {}
-impl CFPropertyListSubClass for ::number::CFNumber {}
+impl CFPropertyListSubClass for crate::data::CFData {}
+impl CFPropertyListSubClass for crate::string::CFString {}
+impl CFPropertyListSubClass for crate::array::CFArray {}
+impl CFPropertyListSubClass for crate::dictionary::CFDictionary {}
+impl CFPropertyListSubClass for crate::date::CFDate {}
+impl CFPropertyListSubClass for crate::boolean::CFBoolean {}
+impl CFPropertyListSubClass for crate::number::CFNumber {}
 
 
 declare_TCFType!{

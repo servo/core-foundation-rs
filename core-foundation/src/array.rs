@@ -11,15 +11,15 @@
 
 pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::CFIndex;
+
+use crate::base::{CFIndexConvertible, TCFType, CFRange};
+use crate::base::{FromVoid, ItemRef};
 use core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
 use std::mem;
 use std::marker::PhantomData;
 use std::os::raw::c_void;
 use std::ptr;
-use ConcreteCFType;
-
-use base::{CFIndexConvertible, TCFType, CFRange};
-use base::{FromVoid, ItemRef};
+use crate::ConcreteCFType;
 
 /// A heterogeneous immutable array.
 pub struct CFArray<T = *const c_void>(CFArrayRef, PhantomData<T>);

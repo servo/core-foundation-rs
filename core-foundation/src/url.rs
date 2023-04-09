@@ -11,15 +11,13 @@
 
 pub use core_foundation_sys::url::*;
 
-use base::{TCFType, CFIndex};
-use string::{CFString};
-
+use crate::base::{TCFType, CFIndex};
+use crate::string::{CFString};
 use core_foundation_sys::base::{kCFAllocatorDefault, Boolean};
+use libc::{c_char, strlen, PATH_MAX};
 use std::fmt;
 use std::ptr;
 use std::path::{Path, PathBuf};
-
-use libc::{c_char, strlen, PATH_MAX};
 
 #[cfg(unix)]
 use std::os::unix::ffi::OsStrExt;

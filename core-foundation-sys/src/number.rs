@@ -7,9 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFAllocatorRef, CFTypeID, CFComparisonResult};
 use std::os::raw::c_void;
-
-use base::{CFAllocatorRef, CFTypeID, CFComparisonResult};
 
 #[repr(C)]
 pub struct __CFBoolean(c_void);

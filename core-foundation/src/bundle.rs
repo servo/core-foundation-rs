@@ -9,16 +9,16 @@
 
 //! Core Foundation Bundle Type
 
-use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::bundle::*;
+
+use crate::base::{CFType, TCFType};
+use crate::url::CFURL;
+use crate::dictionary::CFDictionary;
+use crate::string::CFString;
+use core_foundation_sys::base::kCFAllocatorDefault;
 use core_foundation_sys::url::kCFURLPOSIXPathStyle;
 use std::path::PathBuf;
-
-use base::{CFType, TCFType};
-use url::CFURL;
-use dictionary::CFDictionary;
 use std::os::raw::c_void;
-use string::CFString;
 
 declare_TCFType!{
     /// A Bundle type.

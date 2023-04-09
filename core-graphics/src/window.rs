@@ -9,15 +9,14 @@
 
 #![allow(non_upper_case_globals)]
 
+use crate::geometry::CGRect;
+use crate::image::CGImage;
+use crate::sys;
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFType, TCFType};
 use core_foundation::dictionary::CFDictionary;
 use core_foundation::string::{CFString, CFStringRef};
 use foreign_types::ForeignType;
-
-use geometry::CGRect;
-use image::CGImage;
-use sys;
 
 pub type CGWindowID = u32;
 

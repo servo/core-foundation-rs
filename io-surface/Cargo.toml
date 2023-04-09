@@ -5,6 +5,7 @@ homepage = "https://github.com/servo/core-foundation-rs"
 repository = "https://github.com/servo/core-foundation-rs"
 version = "0.15.1"
 authors = ["The Servo Project Developers"]
+edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [package.metadata.docs.rs]

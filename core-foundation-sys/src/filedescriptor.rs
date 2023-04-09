@@ -7,11 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{Boolean, CFIndex, CFTypeID, CFOptionFlags, CFAllocatorRef};
+use crate::string::CFStringRef;
+use crate::runloop::CFRunLoopSourceRef;
 use std::os::raw::{c_int, c_void};
-
-use base::{Boolean, CFIndex, CFTypeID, CFOptionFlags, CFAllocatorRef};
-use string::CFStringRef;
-use runloop::CFRunLoopSourceRef;
 
 pub type CFFileDescriptorNativeDescriptor = c_int;
 

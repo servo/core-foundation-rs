@@ -7,10 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID};
+use crate::data::CFDataRef;
+use crate::string::{CFStringRef, UniChar};
 use std::os::raw::c_void;
-use base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID};
-use data::CFDataRef;
-use string::{CFStringRef, UniChar};
 
 pub type CFCharacterSetPredefinedSet = CFIndex;
 

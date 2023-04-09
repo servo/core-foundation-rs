@@ -9,12 +9,11 @@
 
 //! Immutable numbers.
 
-use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::number::*;
+
+use crate::base::TCFType;
+use core_foundation_sys::base::kCFAllocatorDefault;
 use std::os::raw::c_void;
-
-use base::TCFType;
-
 
 declare_TCFType!{
     /// An immutable numeric value.

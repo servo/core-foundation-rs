@@ -7,14 +7,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::c_void;
+use crate::line::CTLine;
+use core_foundation::{declare_TCFType, impl_TCFType, impl_CFTypeDescription};
 use core_foundation::base::{CFRange, CFTypeID, TCFType};
 use core_foundation::array::{CFArrayRef, CFArray};
 use core_graphics::context::{CGContext, CGContextRef};
 use core_graphics::geometry::CGPoint;
 use core_graphics::path::{CGPath, SysCGPathRef};
 use foreign_types::{ForeignType, ForeignTypeRef};
-use crate::line::CTLine;
+use std::os::raw::c_void;
 
 #[repr(C)]
 pub struct __CTFrame(c_void);

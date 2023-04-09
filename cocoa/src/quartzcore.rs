@@ -9,6 +9,10 @@
 
 #![allow(non_upper_case_globals)]
 
+use crate::appkit::CGLContextObj;
+use crate::base::{BOOL, id, nil, YES};
+use crate::foundation::NSUInteger;
+use bitflags::bitflags;
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFType, CFTypeRef, TCFType};
 use core_foundation::date::CFTimeInterval;
@@ -21,12 +25,9 @@ use core_graphics::context::CGContext;
 use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 use core_graphics::path::{CGPath, SysCGPathRef};
 use foreign_types::ForeignType;
+use objc::{class, msg_send, sel, sel_impl};
 use std::ops::Mul;
 use std::ptr;
-
-use appkit::CGLContextObj;
-use base::{BOOL, id, nil, YES};
-use foundation::NSUInteger;
 
 // CABase.h
 
@@ -1530,11 +1531,11 @@ impl CARenderer {
 // You can't actually construct any `CATransaction` objects, so that class is
 // really just a module.
 pub mod transaction {
+    use crate::base::{BOOL, YES, id};
     use block::{Block, ConcreteBlock, IntoConcreteBlock, RcBlock};
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
-
-    use base::{BOOL, YES, id};
+    use objc::{class, msg_send, sel, sel_impl};
 
     #[inline]
     pub fn begin() {

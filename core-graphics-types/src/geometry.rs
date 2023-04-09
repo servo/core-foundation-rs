@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::CGFloat;
+use crate::base::CGFloat;
 use core_foundation::base::TCFType;
 use core_foundation::dictionary::CFDictionary;
 
@@ -178,8 +178,8 @@ impl CGAffineTransform {
 }
 
 mod ffi {
-    use base::{CGFloat, boolean_t};
-    use geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
+    use crate::base::{CGFloat, boolean_t};
+    use crate::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
     use core_foundation::dictionary::CFDictionaryRef;
 
     #[link(name = "CoreGraphics", kind = "framework")]

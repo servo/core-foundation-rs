@@ -10,10 +10,9 @@
 //! An immutable bag of elements.
 
 pub use core_foundation_sys::set::*;
+
+use crate::base::{CFIndexConvertible, TCFType};
 use core_foundation_sys::base::{CFTypeRef, CFRelease, kCFAllocatorDefault};
-
-use base::{CFIndexConvertible, TCFType};
-
 use std::os::raw::c_void;
 use std::marker::PhantomData;
 

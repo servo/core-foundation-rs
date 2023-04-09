@@ -9,12 +9,11 @@
 
 #![allow(non_upper_case_globals)]
 
-use std::ptr;
-use std::os::raw::c_void;
-use base::{id, BOOL, NO, SEL, nil};
+use crate::base::{id, BOOL, NO, SEL, nil};
 use block::Block;
 use libc;
-
+use std::ptr;
+use std::os::raw::c_void;
 
 #[cfg(target_pointer_width = "32")]
 pub type NSInteger = libc::c_int;
@@ -33,11 +32,11 @@ const UTF8_ENCODING: usize = 4;
 
 #[cfg(target_os = "macos")]
 mod macos {
-    use std::mem;
-    use base::id;
+    use crate::base::id;
     use core_graphics_types::base::CGFloat;
     use core_graphics_types::geometry::CGRect;
     use objc;
+    use std::mem;
 
     #[repr(C)]
     #[derive(Copy, Clone)]
@@ -611,7 +610,7 @@ pub trait NSString: Sized {
     unsafe fn init_str(self, string: &str) -> Self;
     unsafe fn UTF8String(self) -> *const libc::c_char;
     unsafe fn len(self) -> usize;
-    unsafe fn isEqualToString(self, &str) -> bool;
+    unsafe fn isEqualToString(self, aString: &str) -> bool;
     unsafe fn substringWithRange(self, range: NSRange) -> id;
 }
 

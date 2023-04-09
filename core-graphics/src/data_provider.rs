@@ -9,14 +9,12 @@
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
-
+use foreign_types::{foreign_type, ForeignType, ForeignTypeRef};
 use libc::{size_t, off_t};
 use std::mem;
 use std::ptr;
 use std::sync::Arc;
 use std::os::raw::c_void;
-
-use foreign_types::{ForeignType, ForeignTypeRef};
 
 pub type CGDataProviderGetBytesCallback = Option<unsafe extern fn (*mut c_void, *mut c_void, size_t) -> size_t>;
 pub type CGDataProviderReleaseInfoCallback = Option<unsafe extern fn (*mut c_void)>;
@@ -32,11 +30,11 @@ pub type CGDataProviderGetBytesAtPositionCallback = Option<unsafe extern fn (*mu
 
 foreign_type! {
     #[doc(hidden)]
-    type CType = ::sys::CGDataProvider;
-    fn drop = |cs| CFRelease(cs as *mut _);
-    fn clone = |p| CFRetain(p as *const _) as *mut _;
-    pub struct CGDataProvider;
-    pub struct CGDataProviderRef;
+    pub unsafe type CGDataProvider {
+        type CType = crate::sys::CGDataProvider;
+        fn drop = |cs| CFRelease(cs as *mut _);
+        fn clone = |p| CFRetain(p as *const _) as *mut _;
+    }
 }
 
 impl CGDataProvider {
@@ -145,7 +143,7 @@ fn test_data_provider() {
 
 #[link(name = "CoreGraphics", kind = "framework")]
 extern {
-    fn CGDataProviderCopyData(provider: ::sys::CGDataProviderRef) -> CFDataRef;
+    fn CGDataProviderCopyData(provider: crate::sys::CGDataProviderRef) -> CFDataRef;
     //fn CGDataProviderCreateDirect
     //fn CGDataProviderCreateSequential
     //fn CGDataProviderCreateWithCFData
@@ -153,7 +151,7 @@ extern {
                                     data: *const c_void,
                                     size: size_t,
                                     releaseData: CGDataProviderReleaseDataCallback
-                                   ) -> ::sys::CGDataProviderRef;
+                                   ) -> crate::sys::CGDataProviderRef;
     //fn CGDataProviderCreateWithFilename(filename: *c_char) -> CGDataProviderRef;
     //fn CGDataProviderCreateWithURL
     fn CGDataProviderGetTypeID() -> CFTypeID;

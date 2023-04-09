@@ -7,12 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFTypeID, CFAllocatorRef};
+use crate::url::CFURLRef;
+use crate::dictionary::CFDictionaryRef;
+use crate::string::CFStringRef;
 use std::os::raw::c_void;
-
-use base::{CFTypeID, CFAllocatorRef};
-use url::CFURLRef;
-use dictionary::CFDictionaryRef;
-use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFBundle(c_void);

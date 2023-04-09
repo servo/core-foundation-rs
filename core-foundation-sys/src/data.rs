@@ -7,9 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFAllocatorRef, CFTypeID, CFIndex, CFRange};
 use std::os::raw::c_void;
-
-use base::{CFAllocatorRef, CFTypeID, CFIndex, CFRange};
 
 #[repr(C)]
 pub struct __CFData(c_void);

@@ -7,17 +7,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use font_descriptor;
-use font_descriptor::{CTFontDescriptor, CTFontDescriptorCreateMatchingFontDescriptors};
-use font_manager::{CTFontManagerCopyAvailableFontFamilyNames, CTFontManagerCopyAvailablePostScriptNames};
-
+use crate::font_descriptor;
+use crate::font_descriptor::{CTFontDescriptor, CTFontDescriptorCreateMatchingFontDescriptors};
+use crate::font_manager::{CTFontManagerCopyAvailableFontFamilyNames, CTFontManagerCopyAvailablePostScriptNames};
+use core_foundation::{declare_TCFType, impl_TCFType, impl_CFTypeDescription};
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFTypeID, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
 use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
-
 use std::os::raw::c_void;
 
 #[repr(C)]
@@ -30,7 +29,6 @@ declare_TCFType! {
 }
 impl_TCFType!(CTFontCollection, CTFontCollectionRef, CTFontCollectionGetTypeID);
 impl_CFTypeDescription!(CTFontCollection);
-
 
 impl CTFontCollection {
     pub fn get_descriptors(&self) -> Option<CFArray<CTFontDescriptor>> {

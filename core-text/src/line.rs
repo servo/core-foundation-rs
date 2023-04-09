@@ -7,7 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::run::CTRun;
 use std::os::raw::c_void;
+use core_foundation::{declare_TCFType, impl_TCFType, impl_CFTypeDescription};
 use core_foundation::attributed_string::CFAttributedStringRef;
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFIndex, CFRange, CFTypeID, TCFType};
@@ -15,7 +17,6 @@ use core_graphics::base::{CGFloat};
 use core_graphics::context::{CGContext};
 use core_graphics::geometry::{CGPoint,CGRect};
 use foreign_types::{ForeignType};
-use run::CTRun;
 
 #[repr(C)]
 pub struct __CTLine(c_void);

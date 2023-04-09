@@ -10,6 +10,7 @@
 use std::borrow::Cow;
 use std::os::raw::c_void;
 use std::slice;
+use core_foundation::{declare_TCFType, impl_TCFType, impl_CFTypeDescription};
 use core_foundation::base::{CFIndex, CFTypeID, TCFType, CFType, CFRange};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFString;
@@ -107,9 +108,10 @@ impl CTRun {
 #[test]
 fn create_runs() {
     use core_foundation::attributed_string::CFMutableAttributedString;
-    use string_attributes::*;
-    use line::*;
-    use font;
+    use crate::string_attributes::*;
+    use crate::line::*;
+    use crate::font;
+
     let mut string = CFMutableAttributedString::new();
     string.replace_str(&CFString::new("Food"), CFRange::init(0, 0));
     let len = string.char_len();

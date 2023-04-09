@@ -7,9 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFAllocatorRef, CFIndex, CFTypeID, Boolean};
 use std::os::raw::c_void;
-
-use base::{CFAllocatorRef, CFIndex, CFTypeID, Boolean};
 
 pub type CFSetApplierFunction = extern "C" fn (value: *const c_void,
                                                context: *const c_void);

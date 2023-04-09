@@ -7,6 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::string::CFString;
+use crate::ConcreteCFType;
 use std;
 use std::fmt;
 use std::marker::PhantomData;
@@ -16,9 +18,6 @@ use std::ops::{Deref, DerefMut};
 use std::os::raw::c_void;
 
 pub use core_foundation_sys::base::*;
-
-use string::CFString;
-use ConcreteCFType;
 
 pub trait CFIndexConvertible {
     /// Always use this method to construct a `CFIndex` value. It performs bounds checking to
@@ -400,7 +399,7 @@ unsafe impl ToVoid<CFType> for CFTypeRef {
 mod tests {
     use super::*;
     use std::mem;
-    use boolean::CFBoolean;
+    use crate::boolean::CFBoolean;
 
     #[test]
     fn cftype_instance_of() {

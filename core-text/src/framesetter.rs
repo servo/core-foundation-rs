@@ -7,7 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use super::frame::{CTFrame, CTFrameRef};
+use crate::frame::{CTFrame, CTFrameRef};
+use core_foundation::{declare_TCFType, impl_TCFType, impl_CFTypeDescription};
 use core_foundation::attributed_string::CFAttributedStringRef;
 use core_foundation::base::{CFRange, CFTypeID, TCFType};
 use core_foundation::dictionary::CFDictionaryRef;

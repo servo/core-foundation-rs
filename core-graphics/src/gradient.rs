@@ -9,14 +9,13 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::CGFloat;
-use color::CGColor;
-use color_space::CGColorSpace;
-
+use crate::base::CGFloat;
+use crate::color::CGColor;
+use crate::color_space::CGColorSpace;
+use bitflags::bitflags;
 use core_foundation::array::{ CFArray, CFArrayRef };
 use core_foundation::base::{CFRelease, CFRetain, TCFType};
-use foreign_types::ForeignType;
-
+use foreign_types::{foreign_type, ForeignType};
 use libc::size_t;
 
 bitflags! {
@@ -29,11 +28,11 @@ bitflags! {
 
 foreign_type! {
     #[doc(hidden)]
-    type CType = ::sys::CGGradient;
-    fn drop = |p| CFRelease(p as *mut _);
-    fn clone = |p| CFRetain(p as *const _) as *mut _;
-    pub struct CGGradient;
-    pub struct CGGradientRef;
+    pub unsafe type CGGradient {
+        type CType = crate::sys::CGGradient;
+        fn drop = |p| CFRelease(p as *mut _);
+        fn clone = |p| CFRetain(p as *const _) as *mut _;
+    }
 }
 
 impl CGGradient {
@@ -56,7 +55,6 @@ impl CGGradient {
 
 #[link(name = "CoreGraphics", kind = "framework")]
 extern {
-    fn CGGradientCreateWithColorComponents(color_space: ::sys::CGColorSpaceRef, components: *const CGFloat, locations: *const CGFloat, count: size_t) -> ::sys::CGGradientRef;
-    fn CGGradientCreateWithColors(color_space: ::sys::CGColorSpaceRef, colors: CFArrayRef, locations: *const CGFloat) -> ::sys::CGGradientRef;
+    fn CGGradientCreateWithColorComponents(color_space: crate::sys::CGColorSpaceRef, components: *const CGFloat, locations: *const CGFloat, count: size_t) -> crate::sys::CGGradientRef;
+    fn CGGradientCreateWithColors(color_space: crate::sys::CGColorSpaceRef, colors: CFArrayRef, locations: *const CGFloat) -> crate::sys::CGGradientRef;
 }
-

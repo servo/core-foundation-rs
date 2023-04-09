@@ -9,12 +9,10 @@
 
 pub use core_foundation_sys::filedescriptor::*;
 
+use crate::base::TCFType;
+use crate::runloop::CFRunLoopSource;
 use core_foundation_sys::base::{Boolean, CFIndex};
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
-
-use base::TCFType;
-use runloop::CFRunLoopSource;
-
 use std::mem::MaybeUninit;
 use std::os::unix::io::{AsRawFd, RawFd};
 use std::ptr;
@@ -111,7 +109,7 @@ mod test {
     use core_foundation_sys::base::{CFOptionFlags};
     use core_foundation_sys::runloop::{kCFRunLoopDefaultMode};
     use libc::O_RDWR;
-    use runloop::{CFRunLoop};
+    use crate::runloop::{CFRunLoop};
 
     #[test]
     fn test_unconsumed() {

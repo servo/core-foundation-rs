@@ -9,17 +9,16 @@
 
 #![allow(non_upper_case_globals)]
 
+pub use crate::base::{CGError, boolean_t};
+pub use crate::geometry::{CGRect, CGPoint, CGSize};
+
+use crate::image::CGImage;
+use core_foundation::string::{CFString, CFStringRef};
+use core_foundation::base::{CFRetain, TCFType};
+use foreign_types::{foreign_type, ForeignType};
 use libc;
 use std::ptr;
 use std::ops::Deref;
-
-pub use base::{CGError, boolean_t};
-pub use geometry::{CGRect, CGPoint, CGSize};
-
-use core_foundation::string::{CFString, CFStringRef};
-use core_foundation::base::{CFRetain, TCFType};
-use image::CGImage;
-use foreign_types::ForeignType;
 
 pub type CGDirectDisplayID = u32;
 pub type CGWindowID        = u32;
@@ -116,11 +115,11 @@ pub struct CGDisplay {
 
 foreign_type! {
     #[doc(hidden)]
-    type CType = ::sys::CGDisplayMode;
-    fn drop = CGDisplayModeRelease;
-    fn clone = |p| CFRetain(p as *const _) as *mut _;
-    pub struct CGDisplayMode;
-    pub struct CGDisplayModeRef;
+    pub unsafe type CGDisplayMode {
+        type CType = crate::sys::CGDisplayMode;
+        fn drop = CGDisplayModeRelease;
+        fn clone = |p| CFRetain(p as *const _) as *mut _;
+    }
 }
 
 impl CGDisplay {
@@ -547,7 +546,7 @@ impl CGDisplayMode {
                 let vec: Vec<CGDisplayMode> = modes
                     .into_iter()
                     .map(|value0| {
-                        let x = *value0.deref() as *mut ::sys::CGDisplayMode;
+                        let x = *value0.deref() as *mut crate::sys::CGDisplayMode;
                         unsafe { CGDisplayMode::from_ptr(x) }
                     }).collect();
                 Some(vec)
@@ -633,8 +632,8 @@ extern "C" {
 
     pub static kCGDisplayShowDuplicateLowResolutionModes: CFStringRef;
 
-    pub fn CGDisplayModeRetain(mode: ::sys::CGDisplayModeRef);
-    pub fn CGDisplayModeRelease(mode: ::sys::CGDisplayModeRef);
+    pub fn CGDisplayModeRetain(mode: crate::sys::CGDisplayModeRef);
+    pub fn CGDisplayModeRelease(mode: crate::sys::CGDisplayModeRef);
 
     pub fn CGMainDisplayID() -> CGDirectDisplayID;
     pub fn CGDisplayIsActive(display: CGDirectDisplayID) -> boolean_t;
@@ -669,7 +668,7 @@ extern "C" {
     pub fn CGDisplayPixelsHigh(display: CGDirectDisplayID) -> libc::size_t;
     pub fn CGDisplayPixelsWide(display: CGDirectDisplayID) -> libc::size_t;
     pub fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
-    pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> ::sys::CGImageRef;
+    pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> crate::sys::CGImageRef;
 
     // Capturing and Releasing Displays
     pub fn CGDisplayCapture(display: CGDirectDisplayID) -> CGError;
@@ -686,7 +685,7 @@ extern "C" {
     pub fn CGConfigureDisplayWithDisplayMode(
         config: CGDisplayConfigRef,
         display: CGDirectDisplayID,
-        mode: ::sys::CGDisplayModeRef,
+        mode: crate::sys::CGDisplayModeRef,
         options: CFDictionaryRef,
     ) -> CGError;
     pub fn CGConfigureDisplayMirrorOfDisplay(
@@ -702,15 +701,15 @@ extern "C" {
     ) -> CGError;
     pub fn CGRestorePermanentDisplayConfiguration();
 
-    pub fn CGDisplayCopyDisplayMode(display: CGDirectDisplayID) -> ::sys::CGDisplayModeRef;
-    pub fn CGDisplayModeGetHeight(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
-    pub fn CGDisplayModeGetWidth(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
-    pub fn CGDisplayModeGetPixelHeight(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
-    pub fn CGDisplayModeGetPixelWidth(mode: ::sys::CGDisplayModeRef) -> libc::size_t;
-    pub fn CGDisplayModeGetRefreshRate(mode: ::sys::CGDisplayModeRef) -> libc::c_double;
-    pub fn CGDisplayModeGetIOFlags(mode: ::sys::CGDisplayModeRef) -> u32;
-    pub fn CGDisplayModeCopyPixelEncoding(mode: ::sys::CGDisplayModeRef) -> CFStringRef;
-    pub fn CGDisplayModeGetIODisplayModeID(mode: ::sys::CGDisplayModeRef) -> i32;
+    pub fn CGDisplayCopyDisplayMode(display: CGDirectDisplayID) -> crate::sys::CGDisplayModeRef;
+    pub fn CGDisplayModeGetHeight(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;
+    pub fn CGDisplayModeGetWidth(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;
+    pub fn CGDisplayModeGetPixelHeight(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;
+    pub fn CGDisplayModeGetPixelWidth(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;
+    pub fn CGDisplayModeGetRefreshRate(mode: crate::sys::CGDisplayModeRef) -> libc::c_double;
+    pub fn CGDisplayModeGetIOFlags(mode: crate::sys::CGDisplayModeRef) -> u32;
+    pub fn CGDisplayModeCopyPixelEncoding(mode: crate::sys::CGDisplayModeRef) -> CFStringRef;
+    pub fn CGDisplayModeGetIODisplayModeID(mode: crate::sys::CGDisplayModeRef) -> i32;
 
     pub fn CGDisplayCopyAllDisplayModes(
         display: CGDirectDisplayID,
@@ -718,7 +717,7 @@ extern "C" {
     ) -> CFArrayRef;
     pub fn CGDisplaySetDisplayMode(
         display: CGDirectDisplayID,
-        mode: ::sys::CGDisplayModeRef,
+        mode: crate::sys::CGDisplayModeRef,
         options: CFDictionaryRef,
     ) -> CGError;
 
@@ -765,10 +764,10 @@ extern "C" {
         listOptions: CGWindowListOption,
         windowId: CGWindowID,
         imageOptions: CGWindowImageOption,
-    ) -> ::sys::CGImageRef;
+    ) -> crate::sys::CGImageRef;
     pub fn CGWindowListCreateImageFromArray(
         screenBounds: CGRect,
         windowArray: CFArrayRef,
         imageOptions: CGWindowImageOption,
-    ) -> ::sys::CGImageRef;
+    ) -> crate::sys::CGImageRef;
 }

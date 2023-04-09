@@ -7,10 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFAllocatorRef, CFHashCode, CFIndex, CFTypeID, Boolean};
+use crate::string::CFStringRef;
 use std::os::raw::c_void;
-
-use base::{CFAllocatorRef, CFHashCode, CFIndex, CFTypeID, Boolean};
-use string::CFStringRef;
 
 pub type CFDictionaryApplierFunction = extern "C" fn(key: *const c_void, value: *const c_void, context: *mut c_void);
 

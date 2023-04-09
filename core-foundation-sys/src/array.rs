@@ -9,8 +9,8 @@
 
 use std::os::raw::c_void;
 
-use base::{CFRange, CFIndex, CFAllocatorRef, CFTypeID, Boolean, CFComparisonResult};
-use string::CFStringRef;
+use crate::base::{CFRange, CFIndex, CFAllocatorRef, CFTypeID, Boolean, CFComparisonResult};
+use crate::string::CFStringRef;
 
 pub type CFArrayRetainCallBack = extern "C" fn(allocator: CFAllocatorRef, value: *const c_void) -> *const c_void;
 pub type CFArrayReleaseCallBack = extern "C" fn(allocator: CFAllocatorRef, value: *const c_void);

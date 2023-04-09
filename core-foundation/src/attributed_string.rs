@@ -9,10 +9,10 @@
 
 pub use core_foundation_sys::attributed_string::*;
 
-use base::TCFType;
+use crate::base::TCFType;
+use crate::string::{CFString, CFStringRef};
 use core_foundation_sys::base::{CFIndex, CFRange, kCFAllocatorDefault};
 use std::ptr::null;
-use string::{CFString, CFStringRef};
 
 declare_TCFType!{
     CFAttributedString, CFAttributedStringRef

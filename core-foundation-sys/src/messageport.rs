@@ -7,13 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::base::{CFAllocatorRef, CFIndex, CFTypeID, Boolean};
+use crate::data::CFDataRef;
+use crate::date::CFTimeInterval;
+use crate::runloop::CFRunLoopSourceRef;
+use crate::string::CFStringRef;
 use std::os::raw::c_void;
-
-use base::{CFAllocatorRef, CFIndex, CFTypeID, Boolean};
-use data::CFDataRef;
-use date::CFTimeInterval;
-use runloop::CFRunLoopSourceRef;
-use string::CFStringRef;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

@@ -250,16 +250,16 @@ impl CFPropertyList {
 #[cfg(test)]
 pub mod test {
     use super::*;
-    use string::CFString;
-    use boolean::CFBoolean;
+    use crate::string::CFString;
+    use crate::boolean::CFBoolean;
 
     #[test]
     fn test_property_list_serialization() {
-        use base::{TCFType, CFEqual};
-        use boolean::CFBoolean;
-        use number::CFNumber;
-        use dictionary::CFDictionary;
-        use string::CFString;
+        use crate::base::{TCFType, CFEqual};
+        use crate::boolean::CFBoolean;
+        use crate::number::CFNumber;
+        use crate::dictionary::CFDictionary;
+        use crate::string::CFString;
         use super::*;
 
         let bar = CFString::from_static_string("Bar");

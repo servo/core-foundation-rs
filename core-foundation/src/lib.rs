@@ -15,7 +15,7 @@
 //! It also provides a framework for other crates to use when wrapping
 //! other frameworks that use the CoreFoundation framework.
 
-use base::TCFType;
+use crate::base::TCFType;
 
 pub unsafe trait ConcreteCFType: TCFType {}
 

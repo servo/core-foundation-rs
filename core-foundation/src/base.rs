@@ -399,7 +399,7 @@ unsafe impl ToVoid<CFType> for CFTypeRef {
 mod tests {
     use super::*;
     use std::mem;
-    use boolean::CFBoolean;
+    use crate::boolean::CFBoolean;
 
     #[test]
     fn cftype_instance_of() {

@@ -109,7 +109,7 @@ mod test {
     use core_foundation_sys::base::{CFOptionFlags};
     use core_foundation_sys::runloop::{kCFRunLoopDefaultMode};
     use libc::O_RDWR;
-    use runloop::{CFRunLoop};
+    use crate::runloop::{CFRunLoop};
 
     #[test]
     fn test_unconsumed() {

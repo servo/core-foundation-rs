@@ -299,10 +299,10 @@ impl<'a, K, V> From<&'a CFDictionary<K, V>> for CFMutableDictionary<K, V> {
 #[cfg(test)]
 pub mod test {
     use super::*;
-    use base::{CFType, TCFType};
-    use boolean::CFBoolean;
-    use number::CFNumber;
-    use string::CFString;
+    use crate::base::{CFType, TCFType};
+    use crate::boolean::CFBoolean;
+    use crate::number::CFNumber;
+    use crate::string::CFString;
 
 
     #[test]

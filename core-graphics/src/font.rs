@@ -22,15 +22,12 @@ pub use core_graphics_types::base::CGGlyph;
 
 foreign_type! {
     #[doc(hidden)]
-    pub unsafe type CGFont {
+    pub unsafe type CGFont: Send + Sync {
         type CType = crate::sys::CGFont;
         fn drop = |p| CFRelease(p as *mut _);
         fn clone = |p| CFRetain(p as *const _) as *mut _;
     }
 }
-
-unsafe impl Send for CGFont {}
-unsafe impl Sync for CGFont {}
 
 impl CGFont {
     pub fn type_id() -> CFTypeID {

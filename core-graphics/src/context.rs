@@ -626,14 +626,14 @@ impl CGContextRef {
 
 #[test]
 fn create_bitmap_context_test() {
-    use geometry::*;
+    use crate::geometry::*;
 
     let cs = CGColorSpace::create_device_rgb();
     let ctx = CGContext::create_bitmap_context(None,
                                 16, 8,
                                 8, 0,
                                 &cs,
-                                ::base::kCGImageAlphaPremultipliedLast);
+                                crate::base::kCGImageAlphaPremultipliedLast);
     ctx.set_rgb_fill_color(1.,0.,1.,1.);
     ctx.set_miter_limit(4.);
     ctx.fill_rect(CGRect::new(&CGPoint::new(0.,0.), &CGSize::new(8.,8.)));

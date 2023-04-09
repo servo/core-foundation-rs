@@ -6,7 +6,7 @@ use cocoa::base::{selector, nil, NO};
 
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
                         NSString};
-use cocoa::appkit::{NSApp, NSColor, NSColorSpace, NSApplication, NSApplicationActivationPolicyRegular, NSMenu, NSMenuItem, NSWindowStyleMask, NSBackingStoreType, NSWindow, NSView, NSVisualEffectMaterial, NSVisualEffectView, NSViewWidthSizable, NSViewHeightSizable, NSVisualEffectBlendingMode, NSVisualEffectState, NSWindowOrderingMode};
+use cocoa::appkit::{NSApp, NSColor, NSApplication, NSApplicationActivationPolicyRegular, NSMenu, NSMenuItem, NSWindowStyleMask, NSBackingStoreType, NSWindow, NSView, NSVisualEffectMaterial, NSVisualEffectView, NSViewWidthSizable, NSViewHeightSizable, NSVisualEffectBlendingMode, NSVisualEffectState, NSWindowOrderingMode};
 
 
 fn main() {

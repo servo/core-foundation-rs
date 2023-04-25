@@ -613,6 +613,7 @@ impl NSDictionary for id {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSEnumerationOptions: libc::c_ulonglong {
         const NSEnumerationConcurrent = 1 << 0;
         const NSEnumerationReverse = 1 << 1;
@@ -792,6 +793,7 @@ impl NSRunLoop for id {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSURLBookmarkCreationOptions: NSUInteger {
         const NSURLBookmarkCreationPreferFileIDResolution = 1 << 8;
         const NSURLBookmarkCreationMinimalBookmark = 1 << 9;
@@ -804,6 +806,7 @@ bitflags! {
 pub type NSURLBookmarkFileCreationOptions = NSURLBookmarkCreationOptions;
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSURLBookmarkResolutionOptions: NSUInteger {
         const NSURLBookmarkResolutionWithoutUI = 1 << 8;
         const NSURLBookmarkResolutionWithoutMounting = 1 << 9;
@@ -1590,6 +1593,7 @@ impl NSData for id {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSDataReadingOptions: libc::c_ulonglong {
        const NSDataReadingMappedIfSafe = 1 << 0;
        const NSDataReadingUncached = 1 << 1;
@@ -1598,6 +1602,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSDataBase64EncodingOptions: libc::c_ulonglong {
         const NSDataBase64Encoding64CharacterLineLength = 1 << 0;
         const NSDataBase64Encoding76CharacterLineLength = 1 << 1;
@@ -1607,12 +1612,14 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSDataBase64DecodingOptions: libc::c_ulonglong {
        const NSDataBase64DecodingIgnoreUnknownCharacters = 1 << 0;
     }
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSDataWritingOptions: libc::c_ulonglong {
         const NSDataWritingAtomic = 1 << 0;
         const NSDataWritingWithoutOverwriting = 1 << 1;
@@ -1620,6 +1627,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSDataSearchOptions: libc::c_ulonglong {
         const NSDataSearchBackwards = 1 << 0;
         const NSDataSearchAnchored = 1 << 1;

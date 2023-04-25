@@ -1176,6 +1176,7 @@ impl Filter {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct EdgeAntialiasingMask: u32 {
         const LEFT_EDGE     = 1 << 0;   // kCALayerLeftEdge
         const RIGHT_EDGE    = 1 << 1;   // kCALayerRightEdge
@@ -1185,6 +1186,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct CornerMask: NSUInteger {
         const MIN_X_MIN_Y_CORNER =  1 << 0; // kCALayerMinXMinYCorner
         const MAX_X_MIN_Y_CORNER =  1 << 1; // kCALayerMaxXMinYCorner
@@ -1194,6 +1196,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct AutoresizingMask: u32 {
         const NOT_SIZABLE       = 0;        // kCALayerNotSizable
         const MIN_X_MARGIN      = 1 << 0;   // kCALayerMinXMargin

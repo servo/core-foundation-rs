@@ -17,5 +17,5 @@ bitflags = "1.0"
 libc = "0.2"
 core-foundation = { path = "../core-foundation", version = "0.9" }
 core-graphics-types = { path = "../core-graphics-types", version = "0.1" }
-foreign-types = "0.3"
+foreign-types = "0.5"
 objc = "0.2.3"

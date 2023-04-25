@@ -116,11 +116,11 @@ pub struct CGDisplay {
 
 foreign_type! {
     #[doc(hidden)]
-    type CType = ::sys::CGDisplayMode;
-    fn drop = CGDisplayModeRelease;
-    fn clone = |p| CFRetain(p as *const _) as *mut _;
-    pub struct CGDisplayMode;
-    pub struct CGDisplayModeRef;
+    pub unsafe type CGDisplayMode {
+        type CType = ::sys::CGDisplayMode;
+        fn drop = CGDisplayModeRelease;
+        fn clone = |p| CFRetain(p as *const _) as *mut _;
+    }
 }
 
 impl CGDisplay {

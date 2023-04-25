@@ -10,7 +10,6 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 bitflags = "1.0"
 core-foundation = { path = "../core-foundation", version = "0.9" }
-foreign-types = "0.3.0"
 libc = "0.2"
 
 [package.metadata.docs.rs]

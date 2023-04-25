@@ -9,7 +9,7 @@ license = "MIT OR Apache-2.0"
 edition = "2018"
 
 [dependencies]
-bitflags = "1.0"
+bitflags = "2"
 core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
 libc = "0.2"
 

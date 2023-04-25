@@ -16,7 +16,7 @@ highsierra = []
 link = ["core-foundation/link", "core-graphics-types/link"]
 
 [dependencies]
-bitflags = "1.0"
+bitflags = "2"
 core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
 core-graphics-types = { default-features = false, path = "../core-graphics-types", version = "0.2" }
 foreign-types = "0.5.0"

@@ -261,6 +261,19 @@ impl CGDisplay {
         }
     }
 
+    /// Returns an image containing the contents of a portion of the specified display.
+    #[inline]
+    pub fn image_for_rect(&self, bounds: CGRect) -> Option<CGImage> {
+        unsafe {
+            let image_ref = CGDisplayCreateImageForRect(self.id, bounds);
+            if !image_ref.is_null() {
+                Some(CGImage::from_ptr(image_ref))
+            } else {
+                None
+            }
+        }
+    }
+
     /// Returns a composite image based on a dynamically generated list of
     /// windows.
     #[inline]
@@ -616,7 +629,7 @@ impl CGDisplayMode {
             16
         } else if pixel_encoding.eq_ignore_ascii_case(IO8BitIndexedPixels) {
             8
-        }else{
+        } else {
             0
         }
     }
@@ -670,6 +683,10 @@ extern "C" {
     pub fn CGDisplayPixelsWide(display: CGDirectDisplayID) -> libc::size_t;
     pub fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
     pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> ::sys::CGImageRef;
+    pub fn CGDisplayCreateImageForRect(
+        display: CGDirectDisplayID,
+        rect: CGRect,
+    ) -> ::sys::CGImageRef;
 
     // Capturing and Releasing Displays
     pub fn CGDisplayCapture(display: CGDirectDisplayID) -> CGError;

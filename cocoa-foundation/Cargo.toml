@@ -14,7 +14,7 @@ default-target = "x86_64-apple-darwin"
 
 [dependencies]
 block = "0.1"
-bitflags = "1.0"
+bitflags = "2.2.1"
 libc = "0.2"
 core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
 core-graphics-types = { default-features = false, path = "../core-graphics-types", version = "0.2" }

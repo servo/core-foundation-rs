@@ -18,6 +18,7 @@ bitflags! {
     ///
     /// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
     #[repr(C)]
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
     pub struct CGEventFlags: u64 {
         const CGEventFlagNull = 0;
 

@@ -69,7 +69,7 @@ extern {
     pub fn CFDictionaryGetKeysAndValues(theDict: CFDictionaryRef, keys: *mut *const c_void, values: *mut *const c_void);
     pub fn CFDictionaryGetValue(theDict: CFDictionaryRef, key: *const c_void) -> *const c_void;
     pub fn CFDictionaryGetValueIfPresent(theDict: CFDictionaryRef, key: *const c_void, value: *mut *const c_void) -> Boolean;
-    
+
     /* Applying a function to a dictionary */
     pub fn CFDictionaryApplyFunction(theDict: CFDictionaryRef, applier: CFDictionaryApplierFunction, context: *mut c_void);
 

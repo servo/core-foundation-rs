@@ -63,7 +63,7 @@ extern {
     /* Creating a Mutable Character Set */
     pub fn CFCharacterSetCreateMutable(alloc: CFAllocatorRef) -> CFMutableCharacterSetRef;
     pub fn CFCharacterSetCreateMutableCopy(alloc: CFAllocatorRef, theSet: CFCharacterSetRef) -> CFMutableCharacterSetRef;
-    
+
     /* Adding Characters */
     pub fn CFCharacterSetAddCharactersInRange(theSet: CFMutableCharacterSetRef, theRange: CFRange);
     pub fn CFCharacterSetAddCharactersInString(theSet: CFMutableCharacterSetRef,  theString: CFStringRef);

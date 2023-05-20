@@ -195,7 +195,7 @@ extern {
     pub fn CFRunLoopTimerInvalidate(timer: CFRunLoopTimerRef);
     pub fn CFRunLoopTimerIsValid(timer: CFRunLoopTimerRef) -> Boolean;
     pub fn CFRunLoopTimerSetNextFireDate(timer: CFRunLoopTimerRef, fireDate: CFAbsoluteTime);
-    
+
     pub fn CFRunLoopTimerGetTolerance(timer: CFRunLoopTimerRef) -> CFTimeInterval;
     pub fn CFRunLoopTimerSetTolerance(timer: CFRunLoopTimerRef, tolerance: CFTimeInterval);
 }

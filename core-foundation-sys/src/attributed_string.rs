@@ -36,7 +36,7 @@ extern {
     pub fn CFAttributedStringGetAttributes(aStr: CFAttributedStringRef, loc: CFIndex, effectiveRange: *mut CFRange) -> CFDictionaryRef;
     pub fn CFAttributedStringGetAttributeAndLongestEffectiveRange(aStr: CFAttributedStringRef, loc: CFIndex, attrName: CFStringRef, inRange: CFRange, longestEffectiveRange: *mut CFRange) -> CFTypeRef;
     pub fn CFAttributedStringGetAttributesAndLongestEffectiveRange(aStr: CFAttributedStringRef, loc: CFIndex, inRange: CFRange, longestEffectiveRange: *mut CFRange) -> CFDictionaryRef;
-    
+
     /* Getting Attributed String Properties */
     pub fn CFAttributedStringGetTypeID() -> CFTypeID;
 

@@ -39,7 +39,7 @@ extern {
     /*
      * CFArray.h
      */
-    
+
     pub static kCFTypeArrayCallBacks: CFArrayCallBacks;
 
     /* CFArray */

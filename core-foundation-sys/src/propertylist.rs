@@ -7,10 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeRef};
+use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeRef, Boolean};
 use data::CFDataRef;
 use error::CFErrorRef;
-use string::CFStringRef;
 
 pub type CFPropertyListRef = CFTypeRef;
 
@@ -28,7 +27,7 @@ extern "C" {
     /*
      * CFPropertyList.h
      */
-    
+
     /* Creating a Property List */
     pub fn CFPropertyListCreateWithData(allocator: CFAllocatorRef, data: CFDataRef, options: CFPropertyListMutabilityOptions, format: *mut CFPropertyListFormat, error: *mut CFErrorRef) -> CFPropertyListRef;
     //pub fn CFPropertyListCreateWithStream(allocator: CFAllocatorRef, stream: CFReadStreamRef, streamLength: CFIndex, options: CFOptionFlags, format: *mut CFPropertyListFormat, error: *mut CFErrorRef) -> CFPropertyListRef;

@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFTypeID, CFAllocatorRef, Boolean, SInt32, CFTypeRef, UInt32};
+use base::{CFTypeID, CFAllocatorRef, Boolean, CFTypeRef, UInt32};
 use std::os::raw::{c_uint, c_int};
 use url::CFURLRef;
 use dictionary::CFDictionaryRef;

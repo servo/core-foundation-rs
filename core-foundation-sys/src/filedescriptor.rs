@@ -27,7 +27,7 @@ pub const kCFFileDescriptorWriteCallBack: CFOptionFlags = 1 << 1;
 pub type CFFileDescriptorCallBack = extern "C" fn (f: CFFileDescriptorRef, callBackTypes: CFOptionFlags, info: *mut c_void);
 
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct CFFileDescriptorContext {
     pub version: CFIndex,
     pub info: *mut c_void,
@@ -40,19 +40,25 @@ extern {
     /*
      * CFFileDescriptor.h
      */
-    pub fn CFFileDescriptorGetTypeID() -> CFTypeID;
 
+    /* Creating a CFFileDescriptor */
     pub fn CFFileDescriptorCreate(allocator: CFAllocatorRef, fd: CFFileDescriptorNativeDescriptor, closeOnInvalidate: Boolean, callout: CFFileDescriptorCallBack, context: *const CFFileDescriptorContext) -> CFFileDescriptorRef;
 
+    /* Getting Information About a File Descriptor */
     pub fn CFFileDescriptorGetNativeDescriptor(f: CFFileDescriptorRef) -> CFFileDescriptorNativeDescriptor;
-
+    pub fn CFFileDescriptorIsValid(f: CFFileDescriptorRef) -> Boolean;
     pub fn CFFileDescriptorGetContext(f: CFFileDescriptorRef, context: *mut CFFileDescriptorContext);
 
+    /* Invalidating a File Descriptor */
+    pub fn CFFileDescriptorInvalidate(f: CFFileDescriptorRef);
+
+    /* Managing Callbacks */
     pub fn CFFileDescriptorEnableCallBacks(f: CFFileDescriptorRef, callBackTypes: CFOptionFlags);
     pub fn CFFileDescriptorDisableCallBacks(f: CFFileDescriptorRef, callBackTypes: CFOptionFlags);
 
-    pub fn CFFileDescriptorInvalidate(f: CFFileDescriptorRef);
-    pub fn CFFileDescriptorIsValid(f: CFFileDescriptorRef) -> Boolean;
-
+    /* Creating a Run Loop Source */
     pub fn CFFileDescriptorCreateRunLoopSource(allocator: CFAllocatorRef, f: CFFileDescriptorRef, order: CFIndex) -> CFRunLoopSourceRef;
+
+    /* Getting the CFFileDescriptor Type ID */
+    pub fn CFFileDescriptorGetTypeID() -> CFTypeID;
 }

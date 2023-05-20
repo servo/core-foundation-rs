@@ -10,6 +10,7 @@
 use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeRef};
 use data::CFDataRef;
 use error::CFErrorRef;
+use string::CFStringRef;
 
 pub type CFPropertyListRef = CFTypeRef;
 
@@ -24,23 +25,19 @@ pub const kCFPropertyListMutableContainers: CFPropertyListMutabilityOptions = 1;
 pub const kCFPropertyListMutableContainersAndLeaves: CFPropertyListMutabilityOptions = 2;
 
 extern "C" {
-    // CFPropertyList.h
-    //
+    /*
+     * CFPropertyList.h
+     */
+    
+    /* Creating a Property List */
+    pub fn CFPropertyListCreateWithData(allocator: CFAllocatorRef, data: CFDataRef, options: CFPropertyListMutabilityOptions, format: *mut CFPropertyListFormat, error: *mut CFErrorRef) -> CFPropertyListRef;
+    //pub fn CFPropertyListCreateWithStream(allocator: CFAllocatorRef, stream: CFReadStreamRef, streamLength: CFIndex, options: CFOptionFlags, format: *mut CFPropertyListFormat, error: *mut CFErrorRef) -> CFPropertyListRef;
+    pub fn CFPropertyListCreateDeepCopy(allocator: CFAllocatorRef, propertyList: CFPropertyListRef, mutabilityOption: CFOptionFlags) -> CFPropertyListRef;
 
-    // fn CFPropertyListCreateDeepCopy
-    // fn CFPropertyListIsValid
-    pub fn CFPropertyListCreateWithData(allocator: CFAllocatorRef,
-                                        data: CFDataRef,
-                                        options: CFPropertyListMutabilityOptions,
-                                        format: *mut CFPropertyListFormat,
-                                        error: *mut CFErrorRef)
-                                        -> CFPropertyListRef;
-    // fn CFPropertyListCreateWithStream
-    // fn CFPropertyListWrite
-    pub fn CFPropertyListCreateData(allocator: CFAllocatorRef,
-                                    propertyList: CFPropertyListRef,
-                                    format: CFPropertyListFormat,
-                                    options: CFOptionFlags,
-                                    error: *mut CFErrorRef)
-                                    -> CFDataRef;
+    /* Exporting a Property List */
+    pub fn CFPropertyListCreateData(allocator: CFAllocatorRef, propertyList: CFPropertyListRef, format: CFPropertyListFormat, options: CFOptionFlags, error: *mut CFErrorRef) -> CFDataRef;
+    //pub fn CFPropertyListWrite(propertyList: CFPropertyListRef, stream: CFWriteStreamRef, format: CFPropertyListFormat, options: CFOptionFlags, error: *mut CFErrorRef) -> CFIndex;
+
+    /* Validating a Property List */
+    pub fn CFPropertyListIsValid(plist: CFPropertyListRef, format: CFPropertyListFormat) -> Boolean;
 }

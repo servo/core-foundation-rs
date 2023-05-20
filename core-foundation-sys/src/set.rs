@@ -34,6 +34,7 @@ pub struct CFSetCallBacks {
 pub struct __CFSet(c_void);
 
 pub type CFSetRef = *const __CFSet;
+pub type CFMutableSetRef = *mut __CFSet;
 
 extern {
     /*
@@ -41,10 +42,11 @@ extern {
      */
 
     pub static kCFTypeSetCallBacks: CFSetCallBacks;
+    pub static kCFCopyStringSetCallBacks: CFSetCallBacks;
 
+    /* CFSet */
     /* Creating Sets */
-    pub fn CFSetCreate(allocator: CFAllocatorRef, values: *const *const c_void, numValues: CFIndex,
-                       callBacks: *const CFSetCallBacks) -> CFSetRef;
+    pub fn CFSetCreate(allocator: CFAllocatorRef, values: *const *const c_void, numValues: CFIndex, callBacks: *const CFSetCallBacks) -> CFSetRef;
     pub fn CFSetCreateCopy(allocator: CFAllocatorRef, theSet: CFSetRef) -> CFSetRef;
 
     /* Examining a Set */
@@ -56,11 +58,19 @@ extern {
     pub fn CFSetGetValues(theSet: CFSetRef, values: *mut *const c_void);
 
     /* Applying a Function to Set Members */
-    pub fn CFSetApplyFunction(theSet: CFSetRef,
-                              applier: CFSetApplierFunction,
-                              context: *const c_void);
+    pub fn CFSetApplyFunction(theSet: CFSetRef, applier: CFSetApplierFunction, context: *const c_void);
 
     /* Getting the CFSet Type ID */
     pub fn CFSetGetTypeID() -> CFTypeID;
+
+    /* CFMutableSet */
+    /* CFMutableSet Miscellaneous Functions */
+    pub fn CFSetAddValue(theSet: CFMutableSetRef, value: *const c_void);
+    pub fn CFSetCreateMutable(allocator: CFAllocatorRef, capacity: CFIndex, callBacks: *const CFSetCallBacks) -> CFMutableSetRef;
+    pub fn CFSetCreateMutableCopy(allocator: CFAllocatorRef, capacity: CFIndex, theSet: CFSetRef) -> CFMutableSetRef;
+    pub fn CFSetRemoveAllValues(theSet: CFMutableSetRef);
+    pub fn CFSetRemoveValue(theSet: CFMutableSetRef, value: *const c_void);
+    pub fn CFSetReplaceValue(theSet: CFMutableSetRef, value: *const c_void);
+    pub fn CFSetSetValue(theSet: CFMutableSetRef, value: *const c_void);
 }
 

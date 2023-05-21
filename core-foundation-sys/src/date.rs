@@ -23,12 +23,12 @@ extern {
     pub static kCFAbsoluteTimeIntervalSince1904: CFTimeInterval;
     pub static kCFAbsoluteTimeIntervalSince1970: CFTimeInterval;
 
-    pub fn CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime;
-
+    /* CFDate Miscellaneous Functions */
+    pub fn CFDateCompare(date: CFDateRef, other: CFDateRef, context: *mut c_void) -> CFComparisonResult;
     pub fn CFDateCreate(allocator: CFAllocatorRef, at: CFAbsoluteTime) -> CFDateRef;
     pub fn CFDateGetAbsoluteTime(date: CFDateRef) -> CFAbsoluteTime;
     pub fn CFDateGetTimeIntervalSinceDate(date: CFDateRef, other: CFDateRef) -> CFTimeInterval;
-    pub fn CFDateCompare(date: CFDateRef, other: CFDateRef, context: *mut c_void) -> CFComparisonResult;
-
     pub fn CFDateGetTypeID() -> CFTypeID;
+
+    pub fn CFAbsoluteTimeGetCurrent() -> CFAbsoluteTime;
 }

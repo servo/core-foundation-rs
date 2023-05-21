@@ -17,6 +17,7 @@ pub type CFAllocatorRef = *const c_void;
 pub type CFNullRef = *const c_void;
 pub type CFTypeRef = *const c_void;
 pub type OSStatus = i32;
+pub type UInt8 = c_uchar;
 pub type SInt32 = c_int;
 pub type UInt32 = c_uint;
 pub type CFTypeID = usize;

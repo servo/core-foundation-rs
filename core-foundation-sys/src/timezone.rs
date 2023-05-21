@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFTypeID, Boolean};
+use base::{CFAllocatorRef, CFTypeID, Boolean, CFIndex};
 use date::{CFTimeInterval, CFAbsoluteTime};
 use string::CFStringRef;
 use array::CFArrayRef;
@@ -20,6 +20,16 @@ use data::CFDataRef;
 pub struct __CFTimeZone(c_void);
 
 pub type CFTimeZoneRef = *const __CFTimeZone;
+
+pub type CFTimeZoneNameStyle = CFIndex;
+
+/* Constants to specify styles for time zone names */
+pub const kCFTimeZoneNameStyleStandard:CFTimeZoneNameStyle = 0;
+pub const kCFTimeZoneNameStyleShortStandard:CFTimeZoneNameStyle = 1;
+pub const kCFTimeZoneNameStyleDaylightSaving:CFTimeZoneNameStyle = 2;
+pub const kCFTimeZoneNameStyleShortDaylightSaving:CFTimeZoneNameStyle = 3;
+pub const kCFTimeZoneNameStyleGeneric:CFTimeZoneNameStyle = 4;
+pub const kCFTimeZoneNameStyleShortGeneric:CFTimeZoneNameStyle = 5;
 
 extern {
     //pub static kCFTimeZoneSystemTimeZoneDidChangeNotification: CFNotificationName;

@@ -16,7 +16,7 @@ use dictionary::CFDictionaryRef;
 pub struct __CFAttributedString(c_void);
 
 pub type CFAttributedStringRef = *const __CFAttributedString;
-pub type CFMutableAttributedStringRef = *const __CFAttributedString;
+pub type CFMutableAttributedStringRef = *mut __CFAttributedString;
 
 extern {
     /*

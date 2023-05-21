@@ -5,7 +5,7 @@ use std::os::raw::c_void;
 
 #[repr(C)]
 pub struct __CFMachPort(c_void);
-pub type CFMachPortRef = *const __CFMachPort;
+pub type CFMachPortRef = *mut __CFMachPort;
 
 pub type CFMachPortCallBack = extern "C" fn (port: CFMachPortRef, msg: *mut c_void, size: CFIndex, info: *mut c_void);
 pub type CFMachPortInvalidationCallBack = extern "C" fn (port: CFMachPortRef, info: *mut c_void);

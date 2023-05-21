@@ -35,7 +35,7 @@ pub static kCFCharacterSetNewline: CFCharacterSetPredefinedSet = 15;
 pub struct __CFCharacterSet(c_void);
 
 pub type CFCharacterSetRef = *const __CFCharacterSet;
-pub type CFMutableCharacterSetRef = *const __CFCharacterSet;
+pub type CFMutableCharacterSetRef = *mut __CFCharacterSet;
 
 extern {
     /* CFCharacterSet */

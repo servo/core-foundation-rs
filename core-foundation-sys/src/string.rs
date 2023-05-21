@@ -11,10 +11,17 @@ use std::os::raw::{c_char, c_void};
 
 use base::{Boolean, CFOptionFlags, CFIndex, CFAllocatorRef, CFRange, CFTypeID, UInt32, UniChar};
 
-
-// CFString.h
-
 pub type CFStringCompareFlags = CFOptionFlags;
+pub const kCFCompareCaseInsensitive: CFStringCompareFlags = 1;
+pub const kCFCompareBackwards: CFStringCompareFlags = 4;
+pub const kCFCompareAnchored: CFStringCompareFlags = 8;
+pub const kCFCompareNonliteral: CFStringCompareFlags = 16;
+pub const kCFCompareLocalized: CFStringCompareFlags = 32;
+pub const kCFCompareNumerically: CFStringCompareFlags = 64;
+pub const kCFCompareDiacriticInsensitive: CFStringCompareFlags = 128;
+pub const kCFCompareWidthInsensitive: CFStringCompareFlags = 256;
+pub const kCFCompareForcedOrdering: CFStringCompareFlags = 512;
+
 //static kCFCompareCaseInsensitive: CFStringCompareFlags = 1;
 //static kCFCompareBackwards: CFStringCompareFlags = 4;
 //static kCFCompareAnchored: CFStringCompareFlags = 8;

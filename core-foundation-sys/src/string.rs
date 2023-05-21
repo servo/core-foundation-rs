@@ -7,11 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_char, c_ushort, c_void};
+use std::os::raw::{c_char, c_void};
 
-use base::{Boolean, CFOptionFlags, CFIndex, CFAllocatorRef, CFRange, CFTypeID};
+use base::{Boolean, CFOptionFlags, CFIndex, CFAllocatorRef, CFRange, CFTypeID, UInt32, UniChar};
 
-pub type UniChar = c_ushort;
 
 // CFString.h
 

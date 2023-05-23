@@ -38,5 +38,7 @@ pub mod set;
 pub mod string;
 pub mod timezone;
 pub mod url;
+#[cfg(target_os = "macos")]
+pub mod user_notification;
 pub mod uuid;
 pub mod mach_port;

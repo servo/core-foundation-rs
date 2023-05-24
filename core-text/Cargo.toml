@@ -16,7 +16,7 @@ default = ["mountainlion"]
 mountainlion = []
 
 [dependencies]
-foreign-types = "0.3"
+foreign-types = "0.5"
 libc = "0.2"
 core-foundation = { path = "../core-foundation", version = "0.9" }
 core-graphics = { path = "../core-graphics", version = "0.22.0" }

@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use std::cmp::Ordering;
-use std::os::raw::{c_uint, c_void, c_int};
+use std::os::raw::{c_uint, c_void, c_int, c_short};
 use string::CFStringRef;
 
 pub type Boolean = u8;
@@ -17,11 +17,14 @@ pub type CFAllocatorRef = *const c_void;
 pub type CFNullRef = *const c_void;
 pub type CFTypeRef = *const c_void;
 pub type OSStatus = i32;
+pub type SInt16 = c_short;
 pub type SInt32 = c_int;
 pub type CFTypeID = usize;
 pub type CFOptionFlags = usize;
 pub type CFHashCode = usize;
 pub type CFIndex = isize;
+pub type LangCode = SInt16;
+pub type RegionCode = SInt16;
 
 #[repr(isize)]
 #[derive(Clone, Copy, Debug, PartialEq)]

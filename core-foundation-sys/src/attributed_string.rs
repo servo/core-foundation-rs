@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use std::os::raw::c_void;
-use base::{CFAllocatorRef, CFTypeRef, CFIndex, CFRange, CFTypeID};
+use base::{CFAllocatorRef, CFTypeRef, CFIndex, CFRange, CFTypeID, Boolean};
 use string::CFStringRef;
 use dictionary::CFDictionaryRef;
 
@@ -16,40 +16,42 @@ use dictionary::CFDictionaryRef;
 pub struct __CFAttributedString(c_void);
 
 pub type CFAttributedStringRef = *const __CFAttributedString;
-pub type CFMutableAttributedStringRef = *const __CFAttributedString;
+pub type CFMutableAttributedStringRef = *mut __CFAttributedString;
 
 extern {
+    /*
+     * CFAttributedString.h
+     */
+
     /* CFAttributedString */
-
-    pub fn CFAttributedStringCreate(
-        allocator: CFAllocatorRef,
-        str: CFStringRef,
-        attributes: CFDictionaryRef,
-    ) -> CFAttributedStringRef;
-
+    /* Creating a CFAttributedString */
+    pub fn CFAttributedStringCreate(allocator: CFAllocatorRef, str: CFStringRef, attributes: CFDictionaryRef) -> CFAttributedStringRef;
+    pub fn CFAttributedStringCreateCopy(alloc: CFAllocatorRef, aStr: CFAttributedStringRef) -> CFAttributedStringRef;
+    pub fn CFAttributedStringCreateWithSubstring(alloc: CFAllocatorRef, aStr: CFAttributedStringRef, range: CFRange) -> CFAttributedStringRef;
     pub fn CFAttributedStringGetLength(astr: CFAttributedStringRef) -> CFIndex;
+    pub fn CFAttributedStringGetString(aStr: CFAttributedStringRef) -> CFStringRef;
 
+    /* Accessing Attributes */
+    pub fn CFAttributedStringGetAttribute(aStr: CFAttributedStringRef, loc: CFIndex, attrName: CFStringRef, effectiveRange: *mut CFRange) -> CFTypeRef;
+    pub fn CFAttributedStringGetAttributes(aStr: CFAttributedStringRef, loc: CFIndex, effectiveRange: *mut CFRange) -> CFDictionaryRef;
+    pub fn CFAttributedStringGetAttributeAndLongestEffectiveRange(aStr: CFAttributedStringRef, loc: CFIndex, attrName: CFStringRef, inRange: CFRange, longestEffectiveRange: *mut CFRange) -> CFTypeRef;
+    pub fn CFAttributedStringGetAttributesAndLongestEffectiveRange(aStr: CFAttributedStringRef, loc: CFIndex, inRange: CFRange, longestEffectiveRange: *mut CFRange) -> CFDictionaryRef;
+
+    /* Getting Attributed String Properties */
     pub fn CFAttributedStringGetTypeID() -> CFTypeID;
 
     /* CFMutableAttributedString */
+    /* Creating a CFMutableAttributedString */
+    pub fn CFAttributedStringCreateMutable(allocator: CFAllocatorRef, max_length: CFIndex) -> CFMutableAttributedStringRef;
+    pub fn CFAttributedStringCreateMutableCopy(allocator: CFAllocatorRef, max_length: CFIndex, astr: CFAttributedStringRef) -> CFMutableAttributedStringRef;
 
-    pub fn CFAttributedStringCreateMutableCopy(
-        allocator: CFAllocatorRef, max_length: CFIndex, astr: CFAttributedStringRef
-    ) -> CFMutableAttributedStringRef;
-
-    pub fn CFAttributedStringCreateMutable(
-        allocator: CFAllocatorRef,
-        max_length: CFIndex,
-    ) -> CFMutableAttributedStringRef;
-
-    pub fn CFAttributedStringReplaceString(
-        astr: CFMutableAttributedStringRef, range: CFRange, replacement: CFStringRef);
-
-    pub fn CFAttributedStringSetAttribute(
-        astr: CFMutableAttributedStringRef,
-        range: CFRange,
-        attr_name: CFStringRef,
-        value: CFTypeRef,
-    );
-
+    /* Modifying a CFMutableAttributedString */
+    pub fn CFAttributedStringBeginEditing(aStr: CFMutableAttributedStringRef);
+    pub fn CFAttributedStringEndEditing(aStr: CFMutableAttributedStringRef);
+    // pub fn CFAttributedStringGetMutableString(aStr: CFMutableAttributedStringRef) -> CFMutableStringRef; //todo
+    pub fn CFAttributedStringRemoveAttribute(aStr: CFMutableAttributedStringRef, range: CFRange, attrName: CFStringRef);
+    pub fn CFAttributedStringReplaceString(aStr: CFMutableAttributedStringRef, range: CFRange, replacement: CFStringRef);
+    pub fn CFAttributedStringReplaceAttributedString(aStr: CFMutableAttributedStringRef, range: CFRange, replacement: CFAttributedStringRef);
+    pub fn CFAttributedStringSetAttribute(aStr: CFMutableAttributedStringRef, range: CFRange, attrName: CFStringRef, value: CFTypeRef);
+    pub fn CFAttributedStringSetAttributes(aStr: CFMutableAttributedStringRef, range: CFRange, replacement: CFDictionaryRef, clearOtherAttributes: Boolean);
 }

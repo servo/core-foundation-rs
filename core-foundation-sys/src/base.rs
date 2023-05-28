@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use std::cmp::Ordering;
-use std::os::raw::{c_uint, c_void, c_int, c_short};
+use std::os::raw::{c_uint, c_void, c_int, c_short, c_uchar, c_ushort};
 use string::CFStringRef;
 
 pub type Boolean = u8;
@@ -16,15 +16,24 @@ pub type mach_port_t = c_uint;
 pub type CFAllocatorRef = *const c_void;
 pub type CFNullRef = *const c_void;
 pub type CFTypeRef = *const c_void;
+pub type ConstStr255Param = *const c_uchar;
+pub type StringPtr = *mut c_uchar;
+pub type ConstStringPtr = *const c_uchar;
 pub type OSStatus = i32;
+pub type UInt8 = c_uchar;
 pub type SInt16 = c_short;
 pub type SInt32 = c_int;
+pub type UInt32 = c_uint;
 pub type CFTypeID = usize;
 pub type CFOptionFlags = usize;
 pub type CFHashCode = usize;
 pub type CFIndex = isize;
 pub type LangCode = SInt16;
 pub type RegionCode = SInt16;
+pub type UTF32Char = c_uint;
+pub type UTF16Char = c_ushort;
+pub type UTF8Char = c_uchar;
+pub type UniChar = c_ushort;
 
 #[repr(isize)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -45,7 +54,7 @@ impl Into<Ordering> for CFComparisonResult {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CFRange {
     pub location: CFIndex,
     pub length: CFIndex
@@ -70,7 +79,7 @@ pub type CFAllocatorDeallocateCallBack = extern "C" fn(ptr: *mut c_void, info: *
 pub type CFAllocatorPreferredSizeCallBack = extern "C" fn(size: CFIndex, hint: CFOptionFlags, info: *mut c_void) -> CFIndex;
 
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct CFAllocatorContext {
     pub version: CFIndex,
     pub info: *mut c_void,
@@ -141,10 +150,12 @@ extern {
 
     pub static kCFNull: CFNullRef;
 
+    pub fn CFNullGetTypeID() -> CFTypeID;
+
     /* CFType Reference */
 
-    //fn CFCopyTypeIDDescription
-    //fn CFGetAllocator
+    pub fn CFCopyTypeIDDescription(type_id: CFTypeID) -> CFStringRef;
+    pub fn CFGetAllocator(cf: CFTypeRef) -> CFAllocatorRef;
     pub fn CFCopyDescription(cf: CFTypeRef) -> CFStringRef;
     pub fn CFEqual(cf1: CFTypeRef, cf2: CFTypeRef) -> Boolean;
     pub fn CFGetRetainCount(cf: CFTypeRef) -> CFIndex;

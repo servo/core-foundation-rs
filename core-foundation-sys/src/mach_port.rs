@@ -1,4 +1,4 @@
-pub use base::{CFAllocatorRef, CFIndex, CFTypeID};
+use base::{CFAllocatorRef, CFIndex, CFTypeID};
 use runloop::CFRunLoopSourceRef;
 use std::os::raw::c_void;
 

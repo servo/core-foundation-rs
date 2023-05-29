@@ -14,6 +14,7 @@ use base::{CFAllocatorRef, CFTypeID, CFIndex, CFRange, CFOptionFlags};
 pub struct __CFData(c_void);
 
 pub type CFDataRef = *const __CFData;
+pub type CFMutableDataRef = *mut __CFData;
 pub type CFDataSearchFlags = CFOptionFlags;
 
 // typedef CF_OPTIONS(CFOptionFlags, CFDataSearchFlags)
@@ -25,6 +26,7 @@ extern {
      * CFData.h
      */
 
+    /* CFData */
     /* Creating a CFData Object */
     pub fn CFDataCreate(allocator: CFAllocatorRef, bytes: *const u8, length: CFIndex) -> CFDataRef;
     pub fn CFDataCreateCopy(allocator: CFAllocatorRef, theData: CFDataRef) -> CFDataRef;
@@ -38,4 +40,19 @@ extern {
 
     /* Getting the CFData Type ID */
     pub fn CFDataGetTypeID() -> CFTypeID;
+
+    /* CFMutableData */
+    /* Creating a Mutable Data Object */
+    pub fn CFDataCreateMutable(allocator: CFAllocatorRef, capacity: CFIndex) -> CFMutableDataRef;
+    pub fn CFDataCreateMutableCopy(allocator: CFAllocatorRef, capacity: CFIndex, theData: CFDataRef) -> CFMutableDataRef;
+
+    /* Accessing Data */
+    pub fn CFDataGetMutableBytePtr(theData: CFMutableDataRef) -> *mut u8;
+
+    /* Modifying a Mutable Data Object */
+    pub fn CFDataAppendBytes(theData: CFMutableDataRef, bytes: *const u8, length: CFIndex);
+    pub fn CFDataDeleteBytes(theData: CFMutableDataRef, range: CFRange);
+    pub fn CFDataReplaceBytes(theData: CFMutableDataRef, range: CFRange, newBytes: *const u8, newLength: CFIndex);
+    pub fn CFDataIncreaseLength(theData: CFMutableDataRef, extraLength: CFIndex);
+    pub fn CFDataSetLength(theData: CFMutableDataRef, length: CFIndex);
 }

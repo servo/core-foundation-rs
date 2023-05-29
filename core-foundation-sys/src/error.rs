@@ -32,6 +32,7 @@ extern "C" {
 
     /* Keys for the user info dictionary */
     pub static kCFErrorLocalizedDescriptionKey: CFStringRef;
+    // pub static kCFErrorLocalizedFailureKey: CFStringRef; // macos(10.13)+
     pub static kCFErrorLocalizedFailureReasonKey: CFStringRef;
     pub static kCFErrorLocalizedRecoverySuggestionKey: CFStringRef;
     pub static kCFErrorDescriptionKey: CFStringRef;

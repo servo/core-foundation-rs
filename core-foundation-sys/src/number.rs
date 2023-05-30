@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFTypeID, CFComparisonResult};
+use base::{CFAllocatorRef, CFTypeID, CFComparisonResult, Boolean, CFIndex};
 
 #[repr(C)]
 pub struct __CFBoolean(c_void);
@@ -49,17 +49,27 @@ extern {
      */
     pub static kCFBooleanTrue: CFBooleanRef;
     pub static kCFBooleanFalse: CFBooleanRef;
+    pub static kCFNumberPositiveInfinity: CFNumberRef;
+    pub static kCFNumberNegativeInfinity: CFNumberRef;
+    pub static kCFNumberNaN: CFNumberRef;
 
-    pub fn CFBooleanGetTypeID() -> CFTypeID;
-    pub fn CFBooleanGetValue(boolean: CFBooleanRef) -> bool;
+    /* Creating a Number */
+    pub fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *const c_void) -> CFNumberRef;
 
-    pub fn CFNumberCreate(allocator: CFAllocatorRef, theType: CFNumberType, valuePtr: *const c_void)
-                          -> CFNumberRef;
-    //fn CFNumberGetByteSize
-    pub fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *mut c_void) -> bool;
-    pub fn CFNumberCompare(date: CFNumberRef, other: CFNumberRef, context: *mut c_void) -> CFComparisonResult;
-    pub fn CFNumberGetTypeID() -> CFTypeID;
+    /* Getting Information About Numbers */
+    pub fn CFNumberGetByteSize(number: CFNumberRef) -> CFIndex;
     pub fn CFNumberGetType(number: CFNumberRef) -> CFNumberType;
+    pub fn CFNumberGetValue(number: CFNumberRef, theType: CFNumberType, valuePtr: *mut c_void) -> bool;
+    pub fn CFNumberIsFloatType(number: CFNumberRef) -> Boolean;
+
+    /* Comparing Numbers */
+    pub fn CFNumberCompare(date: CFNumberRef, other: CFNumberRef, context: *mut c_void) -> CFComparisonResult;
+
+    /* Getting the CFNumber Type ID */
+    pub fn CFNumberGetTypeID() -> CFTypeID;
+
+    pub fn CFBooleanGetValue(boolean: CFBooleanRef) -> bool;
+    pub fn CFBooleanGetTypeID() -> CFTypeID;
 }
 
 #[cfg(test)]

@@ -1,4 +1,4 @@
-use base::TCFType;
+use base::{TCFType, CFIndex};
 use core_foundation_sys::base::kCFAllocatorDefault;
 use runloop::CFRunLoopSource;
 pub use core_foundation_sys::mach_port::*;

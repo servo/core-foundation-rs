@@ -9,15 +9,15 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFIndex, CFTypeID, Boolean};
+use base::{CFAllocatorRef, CFIndex, CFTypeID, Boolean, CFHashCode};
+use string::CFStringRef;
 
-pub type CFSetApplierFunction = extern "C" fn (value: *const c_void,
-                                               context: *const c_void);
-pub type CFSetRetainCallBack = *const u8;
-pub type CFSetReleaseCallBack = *const u8;
-pub type CFSetCopyDescriptionCallBack = *const u8;
-pub type CFSetEqualCallBack = *const u8;
-pub type CFSetHashCallBack = *const u8;
+pub type CFSetApplierFunction = extern "C" fn (value: *const c_void, context: *const c_void);
+pub type CFSetRetainCallBack = extern "C" fn (allocator: CFAllocatorRef, value: *const c_void) -> *const c_void;
+pub type CFSetReleaseCallBack = extern "C" fn (allocator: CFAllocatorRef, value: *const c_void);
+pub type CFSetCopyDescriptionCallBack = extern "C" fn (value: *const c_void) -> CFStringRef;
+pub type CFSetEqualCallBack = extern "C" fn (value1: *const c_void, value2: *const c_void) -> Boolean;
+pub type CFSetHashCallBack = extern "C" fn (value: *const c_void) -> CFHashCode;
 
 #[repr(C)]
 #[derive(Clone, Copy)]

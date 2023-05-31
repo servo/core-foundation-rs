@@ -23,6 +23,12 @@ pub const kCFPropertyListImmutable: CFPropertyListMutabilityOptions = 0;
 pub const kCFPropertyListMutableContainers: CFPropertyListMutabilityOptions = 1;
 pub const kCFPropertyListMutableContainersAndLeaves: CFPropertyListMutabilityOptions = 2;
 
+/* Reading and Writing Error Codes */
+pub const kCFPropertyListReadCorruptError: CFIndex = 3840;
+pub const kCFPropertyListReadUnknownVersionError: CFIndex = 3841;
+pub const kCFPropertyListReadStreamError: CFIndex = 3842;
+pub const kCFPropertyListWriteStreamError: CFIndex = 3851;
+
 extern "C" {
     // CFPropertyList.h
     //

@@ -67,6 +67,15 @@ pub const kCFURLComponentParameterString: CFIndex= 10;
 pub const kCFURLComponentQuery: CFIndex = 11;
 pub const kCFURLComponentFragment: CFIndex = 12;
 
+/* Bookmark Data Resolution Options */
+pub const kCFURLBookmarkResolutionWithoutUIMask: CFURLBookmarkResolutionOptions = ( 1u32 << 8 ) as usize;
+pub const kCFURLBookmarkResolutionWithoutMountingMask: CFURLBookmarkResolutionOptions =  ( 1u32 << 9 ) as usize;
+#[cfg(target_os="macos")]
+pub const kCFURLBookmarkResolutionWithSecurityScope: CFURLBookmarkResolutionOptions = ( 1u32 << 10 ) as usize;
+pub const kCFURLBookmarkResolutionWithoutImplicitStartAccessing: CFURLBookmarkResolutionOptions = ( 1u32 << 15 ) as usize; // macos(11.2)+
+pub const kCFBookmarkResolutionWithoutUIMask: CFURLBookmarkResolutionOptions = ( 1u32 << 8 ) as usize;
+pub const kCFBookmarkResolutionWithoutMountingMask: CFURLBookmarkResolutionOptions = ( 1u32 << 9 ) as usize;
+
 extern {
     /*
      * CFURL.h

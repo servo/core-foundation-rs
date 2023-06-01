@@ -52,6 +52,20 @@ pub static kCFURLBookmarkCreationWithoutImplicitSecurityScope: CFURLBookmarkCrea
 pub static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
     (1u32 << 8) as usize; // deprecated
 
+/* The types of components in a URL. */
+pub type CFURLComponentType = CFIndex;
+pub const kCFURLComponentScheme: CFIndex = 1;
+pub const kCFURLComponentNetLocation: CFIndex = 2;
+pub const kCFURLComponentPath: CFIndex = 3;
+pub const kCFURLComponentResourceSpecifier: CFIndex = 4;
+pub const kCFURLComponentUser: CFIndex = 5;
+pub const kCFURLComponentPassword: CFIndex = 6;
+pub const kCFURLComponentUserInfo: CFIndex = 7;
+pub const kCFURLComponentHost: CFIndex = 8;
+pub const kCFURLComponentPort: CFIndex = 9;
+pub const kCFURLComponentParameterString: CFIndex= 10;
+pub const kCFURLComponentQuery: CFIndex = 11;
+pub const kCFURLComponentFragment: CFIndex = 12;
 
 extern {
     /*

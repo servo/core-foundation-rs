@@ -180,6 +180,11 @@ pub const kCFStringEncodingShiftJIS_X0213_00: CFStringEncoding = 0x0628; /* Depr
 
 pub const kCFStringEncodingInvalidId: u32 = 0xffffffff;
 
+pub type CFStringNormalizationForm = CFIndex;
+pub const kCFStringNormalizationFormD: CFStringNormalizationForm = 0;
+pub const kCFStringNormalizationFormKD: CFStringNormalizationForm = 1;
+pub const kCFStringNormalizationFormC: CFStringNormalizationForm = 2;
+pub const kCFStringNormalizationFormKC: CFStringNormalizationForm = 3;
 
 #[repr(C)]
 pub struct __CFString(c_void);

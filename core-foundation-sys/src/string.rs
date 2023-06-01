@@ -8,10 +8,7 @@
 // except according to those terms.
 
 use std::os::raw::{c_char, c_ushort, c_void};
-
-use base::{Boolean, CFOptionFlags, CFIndex, CFAllocatorRef, CFRange, CFTypeID};
-
-pub type UniChar = c_ushort;
+use base::{Boolean, CFOptionFlags, CFIndex, CFAllocatorRef, CFRange, CFTypeID, UniChar};
 
 // CFString.h
 

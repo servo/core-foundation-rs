@@ -32,18 +32,26 @@ pub const kCFURLPOSIXPathStyle: CFURLPathStyle   = 0;
 pub const kCFURLHFSPathStyle: CFURLPathStyle     = 1;
 pub const kCFURLWindowsPathStyle: CFURLPathStyle = 2;
 
-pub static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
-    (1u32 << 8) as usize;
+/* Bookmark Data Creation Options */
 pub static kCFURLBookmarkCreationMinimalBookmarkMask: CFURLBookmarkCreationOptions =
     (1u32 << 9) as usize;
 pub static kCFURLBookmarkCreationSuitableForBookmarkFile: CFURLBookmarkCreationOptions =
     (1u32 << 10) as usize;
+
+#[cfg(target_os="macos")]
 pub static kCFURLBookmarkCreationWithSecurityScope: CFURLBookmarkCreationOptions =
     (1u32 << 11) as usize;
+
+#[cfg(target_os="macos")]
 pub static kCFURLBookmarkCreationSecurityScopeAllowOnlyReadAccess: CFURLBookmarkCreationOptions =
     (1u32 << 12) as usize;
 
-// TODO: there are a lot of missing keys and constants. Add if you are bored or need them.
+pub static kCFURLBookmarkCreationWithoutImplicitSecurityScope: CFURLBookmarkCreationOptions =
+    (1u32 << 29) as usize;
+
+pub static kCFURLBookmarkCreationPreferFileIDResolutionMask: CFURLBookmarkCreationOptions =
+    (1u32 << 8) as usize; // deprecated
+
 
 extern {
     /*

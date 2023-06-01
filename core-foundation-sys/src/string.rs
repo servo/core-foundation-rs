@@ -16,15 +16,15 @@ pub type UniChar = c_ushort;
 // CFString.h
 
 pub type CFStringCompareFlags = CFOptionFlags;
-//static kCFCompareCaseInsensitive: CFStringCompareFlags = 1;
-//static kCFCompareBackwards: CFStringCompareFlags = 4;
-//static kCFCompareAnchored: CFStringCompareFlags = 8;
-//static kCFCompareNonliteral: CFStringCompareFlags = 16;
-//static kCFCompareLocalized: CFStringCompareFlags = 32;
-//static kCFCompareNumerically: CFStringCompareFlags = 64;
-//static kCFCompareDiacriticInsensitive: CFStringCompareFlags = 128;
-//static kCFCompareWidthInsensitive: CFStringCompareFlags = 256;
-//static kCFCompareForcedOrdering: CFStringCompareFlags = 512;
+pub const kCFCompareCaseInsensitive: CFStringCompareFlags = 1;
+pub const kCFCompareBackwards: CFStringCompareFlags = 4;
+pub const kCFCompareAnchored: CFStringCompareFlags = 8;
+pub const kCFCompareNonliteral: CFStringCompareFlags = 16;
+pub const kCFCompareLocalized: CFStringCompareFlags = 32;
+pub const kCFCompareNumerically: CFStringCompareFlags = 64;
+pub const kCFCompareDiacriticInsensitive: CFStringCompareFlags = 128;
+pub const kCFCompareWidthInsensitive: CFStringCompareFlags = 256;
+pub const kCFCompareForcedOrdering: CFStringCompareFlags = 512;
 
 pub type CFStringEncoding = u32;
 

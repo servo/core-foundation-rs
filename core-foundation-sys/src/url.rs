@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID, CFTypeRef, SInt32};
+use base::{CFOptionFlags, CFIndex, CFAllocatorRef, Boolean, CFTypeID, CFTypeRef, SInt32, CFRange};
 use data::CFDataRef;
 use array::CFArrayRef;
 use dictionary::CFDictionaryRef;
@@ -240,20 +240,19 @@ extern {
     pub fn CFURLCopyAbsoluteURL(anURL: CFURLRef) -> CFURLRef;
     pub fn CFURLCreateAbsoluteURLWithBytes(allocator: CFAllocatorRef, relativeURLBytes: *const u8, length: CFIndex, encoding: CFStringEncoding, baseURL: CFURLRef, useCompatibilityMode: Boolean) -> CFURLRef;
     pub fn CFURLCreateByResolvingBookmarkData(allocator: CFAllocatorRef, bookmark: CFDataRef, options: CFURLBookmarkResolutionOptions, relativeToURL: CFURLRef, resourcePropertiesToInclude: CFArrayRef, isStale: *mut Boolean, error: *mut CFErrorRef) -> CFURLRef;
-    //fn CFURLCreateCopyAppendingPathComponent
-    //fn CFURLCreateCopyAppendingPathExtension
-    //fn CFURLCreateCopyDeletingLastPathComponent
-    //fn CFURLCreateCopyDeletingPathExtension
+    pub fn CFURLCreateCopyAppendingPathComponent(allocator: CFAllocatorRef, url: CFURLRef, pathComponent: CFStringRef, isDirectory: Boolean) -> CFURLRef;
+    pub fn CFURLCreateCopyAppendingPathExtension(allocator: CFAllocatorRef, url: CFURLRef, extension: CFStringRef) -> CFURLRef;
+    pub fn CFURLCreateCopyDeletingLastPathComponent(allocator: CFAllocatorRef, url: CFURLRef) -> CFURLRef;
+    pub fn CFURLCreateCopyDeletingPathExtension(allocator: CFAllocatorRef, url: CFURLRef) -> CFURLRef;
     pub fn CFURLCreateFilePathURL(allocator: CFAllocatorRef, url: CFURLRef, error: *mut CFErrorRef) -> CFURLRef;
-    //fn CFURLCreateFileReferenceURL
+    pub fn CFURLCreateFileReferenceURL(allocator: CFAllocatorRef, url: CFURLRef, error: *mut CFErrorRef) -> CFURLRef;
     pub fn CFURLCreateFromFileSystemRepresentation(allocator: CFAllocatorRef, buffer: *const u8, bufLen: CFIndex, isDirectory: Boolean) -> CFURLRef;
-    //fn CFURLCreateFromFileSystemRepresentationRelativeToBase
-    //fn CFURLCreateFromFSRef
+    pub fn CFURLCreateFromFileSystemRepresentationRelativeToBase(allocator: CFAllocatorRef, buffer: *const u8, bufLen: CFIndex, isDirectory: Boolean, baseURL: CFURLRef) -> CFURLRef;
+    //pub fn CFURLCreateFromFSRef(allocator: CFAllocatorRef, fsRef: *const FSRef) -> CFURLRef
     pub fn CFURLCreateWithBytes(allocator: CFAllocatorRef, URLBytes: *const u8, length: CFIndex, encoding: CFStringEncoding, baseURL: CFURLRef) -> CFURLRef;
     pub fn CFURLCreateWithFileSystemPath(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean) -> CFURLRef;
     pub fn CFURLCreateWithFileSystemPathRelativeToBase(allocator: CFAllocatorRef, filePath: CFStringRef, pathStyle: CFURLPathStyle, isDirectory: Boolean, baseURL: CFURLRef) -> CFURLRef;
-    //fn CFURLCreateWithString(allocator: CFAllocatorRef, urlString: CFStringRef,
-    //                         baseURL: CFURLRef) -> CFURLRef;
+    pub fn CFURLCreateWithString(allocator: CFAllocatorRef, URLString: CFStringRef, baseURL: CFURLRef) -> CFURLRef;
 
     /* Accessing the Parts of a URL */
     pub fn CFURLCanBeDecomposed(anURL: CFURLRef) -> Boolean;
@@ -262,7 +261,7 @@ extern {
     pub fn CFURLCopyHostName(anURL: CFURLRef) -> CFStringRef;
     pub fn CFURLCopyLastPathComponent(anURL: CFURLRef) -> CFStringRef;
     pub fn CFURLCopyNetLocation(anURL: CFURLRef) -> CFStringRef;
-    pub fn CFURLCopyParameterString(anURL: CFURLRef, charactersToLeaveEscaped: CFStringRef) -> CFStringRef;
+    pub fn CFURLCopyParameterString(anURL: CFURLRef, charactersToLeaveEscaped: CFStringRef) -> CFStringRef; // deprecated
     pub fn CFURLCopyPassword(anURL: CFURLRef) -> CFStringRef;
     pub fn CFURLCopyPath(anURL: CFURLRef) -> CFStringRef;
     pub fn CFURLCopyPathExtension(anURL: CFURLRef) -> CFStringRef;
@@ -275,41 +274,43 @@ extern {
     pub fn CFURLHasDirectoryPath(anURL: CFURLRef) -> Boolean;
 
     /* Converting URLs to Other Representations */
-    //fn CFURLCreateData(allocator: CFAllocatorRef, url: CFURLRef,
-    //                   encoding: CFStringEncoding, escapeWhitespace: bool) -> CFDataRef;
-    //fn CFURLCreateStringByAddingPercentEscapes
-    //fn CFURLCreateStringByReplacingPercentEscapes
-    //fn CFURLCreateStringByReplacingPercentEscapesUsingEncoding
+    pub fn CFURLCreateData(allocator: CFAllocatorRef, url: CFURLRef, encoding: CFStringEncoding, escapeWhitespace: Boolean) -> CFDataRef;
+    pub fn CFURLCreateStringByAddingPercentEscapes(allocator: CFAllocatorRef, originalString: CFStringRef, charactersToLeaveUnescaped: CFStringRef, legalURLCharactersToBeEscaped: CFStringRef, encoding: CFStringEncoding) -> CFStringRef; // API_DEPRECATED("Use [NSString stringByAddingPercentEncodingWithAllowedCharacters:] instead, which always uses the recommended UTF-8 encoding, and which encodes for a specific URL component or subcomponent (since each URL component or subcomponent has different rules for what characters are valid).", macos(10.0,10.11), ios(2.0,9.0), watchos(2.0,2.0), tvos(9.0,9.0));
+    pub fn CFURLCreateStringByReplacingPercentEscapes(allocator: CFAllocatorRef, originalString: CFStringRef, charactersToLeaveEscaped: CFStringRef) -> CFStringRef;
+    pub fn CFURLCreateStringByReplacingPercentEscapesUsingEncoding(allocator: CFAllocatorRef, origString: CFStringRef, charsToLeaveEscaped: CFStringRef, encoding: CFStringEncoding) -> CFStringRef; // deprecated
     pub fn CFURLGetFileSystemRepresentation(anURL: CFURLRef, resolveAgainstBase: Boolean, buffer: *mut u8, maxBufLen: CFIndex) -> Boolean;
-
-    //fn CFURLGetFSRef
+    //pub fn CFURLIsFileReferenceURL(url: CFURLRef) -> Boolean; // macos(10.9)+
+    //pub fn CFURLGetFSRef(url: CFURLRef, fsRef: *mut FSRef) -> Boolean;
     pub fn CFURLGetString(anURL: CFURLRef) -> CFStringRef;
 
     /* Getting URL Properties */
-    //fn CFURLGetBaseURL(anURL: CFURLRef) -> CFURLRef;
+    pub fn CFURLGetBaseURL(anURL: CFURLRef) -> CFURLRef;
     pub fn CFURLGetBytes(anURL: CFURLRef, buffer: *mut u8, bufferLength: CFIndex) -> CFIndex;
-    //fn CFURLGetByteRangeForComponent
+    pub fn CFURLGetByteRangeForComponent(url: CFURLRef, component:CFURLComponentType, rangeIncludingSeparators: *mut CFRange) -> CFRange;
     pub fn CFURLGetTypeID() -> CFTypeID;
-    //fn CFURLResourceIsReachable
+    pub fn CFURLResourceIsReachable(url: CFURLRef, error: *mut CFErrorRef) -> Boolean;
 
     /* Getting and Setting File System Resource Properties */
     pub fn CFURLClearResourcePropertyCache(url: CFURLRef);
-    //fn CFURLClearResourcePropertyCacheForKey
-    //fn CFURLCopyResourcePropertiesForKeys
-    //fn CFURLCopyResourcePropertyForKey
+    pub fn CFURLClearResourcePropertyCacheForKey(url: CFURLRef, key: CFStringRef);
+    pub fn CFURLCopyResourcePropertiesForKeys(url: CFURLRef, keys: CFArrayRef, error: *mut CFErrorRef) -> CFDictionaryRef;
+    //pub fn CFURLCopyResourcePropertyForKey(url: CFURLRef, key: CFStringRef, propertyValueTypeRefPtr: *mut c_void, error: *mut CFErrorRef) -> Boolean
     pub fn CFURLCreateResourcePropertiesForKeysFromBookmarkData(allocator: CFAllocatorRef, resourcePropertiesToReturn: CFArrayRef, bookmark: CFDataRef) -> CFDictionaryRef;
     pub fn CFURLCreateResourcePropertyForKeyFromBookmarkData(allocator: CFAllocatorRef, resourcePropertyKey: CFStringRef, bookmark: CFDataRef) -> CFTypeRef;
-    //fn CFURLSetResourcePropertiesForKeys
+    pub fn CFURLSetResourcePropertiesForKeys(url: CFURLRef, keyedPropertyValues: CFDictionaryRef, error: *mut CFErrorRef) -> Boolean;
     pub fn CFURLSetResourcePropertyForKey(url: CFURLRef, key: CFStringRef, value: CFTypeRef, error: *mut CFErrorRef) -> Boolean;
-    //fn CFURLSetTemporaryResourcePropertyForKey
+    pub fn CFURLSetTemporaryResourcePropertyForKey(url: CFURLRef, key: CFStringRef, propertyValue: CFTypeRef);
 
     /* Working with Bookmark Data */
     pub fn CFURLCreateBookmarkData(allocator: CFAllocatorRef, url: CFURLRef, options: CFURLBookmarkCreationOptions, resourcePropertiesToInclude: CFArrayRef, relativeToURL: CFURLRef, error: *mut CFErrorRef) -> CFDataRef;
-    pub fn CFURLCreateBookmarkDataFromAliasRecord(allocator: CFAllocatorRef, aliasRecordDataRef: CFDataRef) -> CFDataRef;
+
+    #[cfg(target_os="macos")]
+    pub fn CFURLCreateBookmarkDataFromAliasRecord(allocator: CFAllocatorRef, aliasRecordDataRef: CFDataRef) -> CFDataRef; // deprecated
+
     pub fn CFURLCreateBookmarkDataFromFile(allocator: CFAllocatorRef, fileURL: CFURLRef, errorRef: *mut CFErrorRef) -> CFDataRef;
     pub fn CFURLWriteBookmarkDataToFile(bookmarkRef: CFDataRef, fileURL: CFURLRef, options: CFURLBookmarkFileCreationOptions, errorRef: *mut CFErrorRef) -> Boolean;
-    pub fn CFURLStartAccessingSecurityScopedResource(url: CFURLRef) -> Boolean;
-    pub fn CFURLStopAccessingSecurityScopedResource(url: CFURLRef);
+    // pub fn CFURLStartAccessingSecurityScopedResource(url: CFURLRef) -> Boolean; // ios(8.0)+
+    // pub fn CFURLStopAccessingSecurityScopedResource(url: CFURLRef); // ios(8.0)+
 }
 
 #[test]

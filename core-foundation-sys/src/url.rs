@@ -72,7 +72,7 @@ pub const kCFURLBookmarkResolutionWithoutUIMask: CFURLBookmarkResolutionOptions 
 pub const kCFURLBookmarkResolutionWithoutMountingMask: CFURLBookmarkResolutionOptions =  ( 1u32 << 9 ) as usize;
 #[cfg(target_os="macos")]
 pub const kCFURLBookmarkResolutionWithSecurityScope: CFURLBookmarkResolutionOptions = ( 1u32 << 10 ) as usize;
-pub const kCFURLBookmarkResolutionWithoutImplicitStartAccessing: CFURLBookmarkResolutionOptions = ( 1u32 << 15 ) as usize; // macos(11.2)+
+//pub const kCFURLBookmarkResolutionWithoutImplicitStartAccessing: CFURLBookmarkResolutionOptions = ( 1u32 << 15 ) as usize; // macos(11.2)+
 pub const kCFBookmarkResolutionWithoutUIMask: CFURLBookmarkResolutionOptions = ( 1u32 << 8 ) as usize;
 pub const kCFBookmarkResolutionWithoutMountingMask: CFURLBookmarkResolutionOptions = ( 1u32 << 9 ) as usize;
 
@@ -127,9 +127,14 @@ extern {
     pub static kCFURLIsWritableKey: CFStringRef;
     pub static kCFURLIsExecutableKey: CFStringRef;
     pub static kCFURLFileSecurityKey: CFStringRef;
-    // pub static kCFURLIsExcludedFromBackupKey: CFStringRef; // macos(10.8)+
+
+    #[cfg(feature="mac_os_10_8_features")]
+    #[cfg_attr(feature = "mac_os_10_7_support", linkage = "extern_weak")]
+    pub static kCFURLIsExcludedFromBackupKey: CFStringRef;
     // pub static kCFURLTagNamesKey: CFStringRef; //macos(10.9)+
-    // pub static kCFURLPathKey: CFStringRef;  // macos(10.8)+
+    #[cfg(feature="mac_os_10_8_features")]
+    #[cfg_attr(feature = "mac_os_10_7_support", linkage = "extern_weak")]
+    pub static kCFURLPathKey: CFStringRef;  // macos(10.8)+
     pub static kCFURLCanonicalPathKey: CFStringRef; // macos(10.12)+
 
     pub static kCFURLIsMountTriggerKey: CFStringRef;

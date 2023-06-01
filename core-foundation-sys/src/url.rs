@@ -82,40 +82,159 @@ extern {
      */
 
     /* Common File System Resource Keys */
-    pub static kCFURLAttributeModificationDateKey: CFStringRef;
-    pub static kCFURLContentAccessDateKey: CFStringRef;
-    pub static kCFURLContentModificationDateKey: CFStringRef;
-    pub static kCFURLCreationDateKey: CFStringRef;
-    pub static kCFURLFileResourceIdentifierKey: CFStringRef;
-    pub static kCFURLFileSecurityKey: CFStringRef;
-    pub static kCFURLHasHiddenExtensionKey: CFStringRef;
-    pub static kCFURLIsDirectoryKey: CFStringRef;
-    pub static kCFURLIsExecutableKey: CFStringRef;
-    pub static kCFURLIsHiddenKey: CFStringRef;
-    pub static kCFURLIsPackageKey: CFStringRef;
-    pub static kCFURLIsReadableKey: CFStringRef;
+    pub static kCFURLNameKey: CFStringRef;
+    pub static kCFURLLocalizedNameKey: CFStringRef;
     pub static kCFURLIsRegularFileKey: CFStringRef;
+    pub static kCFURLIsDirectoryKey: CFStringRef;
     pub static kCFURLIsSymbolicLinkKey: CFStringRef;
+    pub static kCFURLIsVolumeKey: CFStringRef;
+    pub static kCFURLIsPackageKey: CFStringRef;
+    pub static kCFURLIsApplicationKey: CFStringRef;
+    // pub static kCFURLApplicationIsScriptableKey: CFStringRef; //macos(10.11)+
+
     pub static kCFURLIsSystemImmutableKey: CFStringRef;
     pub static kCFURLIsUserImmutableKey: CFStringRef;
-    pub static kCFURLIsVolumeKey: CFStringRef;
-    pub static kCFURLIsWritableKey: CFStringRef;
-    pub static kCFURLLabelNumberKey: CFStringRef;
+    pub static kCFURLIsHiddenKey: CFStringRef;
+    pub static kCFURLHasHiddenExtensionKey: CFStringRef;
+    pub static kCFURLCreationDateKey: CFStringRef;
+    pub static kCFURLContentAccessDateKey: CFStringRef;
+    pub static kCFURLContentModificationDateKey: CFStringRef;
+    pub static kCFURLAttributeModificationDateKey: CFStringRef;
+    // pub static kCFURLFileIdentifierKey: CFStringRef; //macos(13.3)+
+    // pub static kCFURLFileContentIdentifierKey: CFStringRef; //macos(11.0)+
+    // pub static kCFURLMayShareFileContentKey: CFStringRef; //macos(11.0)+
+    // pub static kCFURLMayHaveExtendedAttributesKey: CFStringRef; //macos(11.0)+
+    // pub static kCFURLIsPurgeableKey: CFStringRef; //macos(11.0)+
+    // pub static kCFURLIsSparseKey: CFStringRef; //macos(11.0)+
+
     pub static kCFURLLinkCountKey: CFStringRef;
-    pub static kCFURLLocalizedLabelKey: CFStringRef;
-    pub static kCFURLLocalizedNameKey: CFStringRef;
-    pub static kCFURLLocalizedTypeDescriptionKey: CFStringRef;
-    pub static kCFURLNameKey: CFStringRef;
     pub static kCFURLParentDirectoryURLKey: CFStringRef;
-    pub static kCFURLPreferredIOBlockSizeKey: CFStringRef;
-    pub static kCFURLTypeIdentifierKey: CFStringRef;
-    pub static kCFURLVolumeIdentifierKey: CFStringRef;
     pub static kCFURLVolumeURLKey: CFStringRef;
 
-    #[cfg(feature="mac_os_10_8_features")]
-    #[cfg_attr(feature = "mac_os_10_7_support", linkage = "extern_weak")]
-    pub static kCFURLIsExcludedFromBackupKey: CFStringRef;
+    pub static kCFURLTypeIdentifierKey: CFStringRef; //deprecated
+
+    pub static kCFURLLocalizedTypeDescriptionKey: CFStringRef;
+    pub static kCFURLLabelNumberKey: CFStringRef;
+    pub static kCFURLLabelColorKey: CFStringRef; //deprecated
+    pub static kCFURLLocalizedLabelKey: CFStringRef;
+    pub static kCFURLEffectiveIconKey: CFStringRef; //deprecated
+    pub static kCFURLCustomIconKey: CFStringRef; //deprecated
+
+    pub static kCFURLFileResourceIdentifierKey: CFStringRef;
+    pub static kCFURLVolumeIdentifierKey: CFStringRef;
+    pub static kCFURLPreferredIOBlockSizeKey: CFStringRef;
+    pub static kCFURLIsReadableKey: CFStringRef;
+    pub static kCFURLIsWritableKey: CFStringRef;
+    pub static kCFURLIsExecutableKey: CFStringRef;
+    pub static kCFURLFileSecurityKey: CFStringRef;
+    // pub static kCFURLIsExcludedFromBackupKey: CFStringRef; // macos(10.8)+
+    // pub static kCFURLTagNamesKey: CFStringRef; //macos(10.9)+
+    // pub static kCFURLPathKey: CFStringRef;  // macos(10.8)+
+    pub static kCFURLCanonicalPathKey: CFStringRef; // macos(10.12)+
+
+    pub static kCFURLIsMountTriggerKey: CFStringRef;
+
+    // pub static kCFURLGenerationIdentifierKey: CFStringRef; // macos(10.10)+
+    // pub static kCFURLDocumentIdentifierKey: CFStringRef; // macos(10.10)+
+    // pub static kCFURLAddedToDirectoryDateKey: CFStringRef; // macos(10.10)+
+    // pub static kCFURLQuarantinePropertiesKey: CFStringRef; // macos(10.10)+
+
     pub static kCFURLFileResourceTypeKey: CFStringRef;
+
+    /* File Resource Types. The file system object type values returned for the kCFURLFileResourceTypeKey */
+    pub static kCFURLFileResourceTypeNamedPipe: CFStringRef;
+    pub static kCFURLFileResourceTypeCharacterSpecial: CFStringRef;
+    pub static kCFURLFileResourceTypeDirectory: CFStringRef;
+    pub static kCFURLFileResourceTypeBlockSpecial: CFStringRef;
+    pub static kCFURLFileResourceTypeRegular: CFStringRef;
+    pub static kCFURLFileResourceTypeSymbolicLink: CFStringRef;
+    pub static kCFURLFileResourceTypeSocket: CFStringRef;
+    pub static kCFURLFileResourceTypeUnknown: CFStringRef;
+
+    /* File Property Keys */
+    pub static kCFURLFileSizeKey: CFStringRef;
+    pub static kCFURLFileAllocatedSizeKey: CFStringRef;
+    pub static kCFURLTotalFileSizeKey: CFStringRef;
+    pub static kCFURLTotalFileAllocatedSizeKey: CFStringRef;
+    pub static kCFURLIsAliasFileKey: CFStringRef;
+
+    // pub static kCFURLFileProtectionKey: CFStringRef; // ios(9.0)+
+
+    /* The protection level values returned for the kCFURLFileProtectionKey */
+    // pub static kCFURLFileProtectionNone: CFStringRef; // ios(9.0)+
+    // pub static kCFURLFileProtectionComplete: CFStringRef; // ios(9.0)+
+    // pub static kCFURLFileProtectionCompleteUnlessOpen: CFStringRef; // ios(9.0)+
+    // pub static kCFURLFileProtectionCompleteUntilFirstUserAuthentication: CFStringRef; // ios(9.0)+
+
+    /* Volume Property Keys */
+    pub static kCFURLVolumeLocalizedFormatDescriptionKey: CFStringRef;
+    pub static kCFURLVolumeTotalCapacityKey: CFStringRef;
+    pub static kCFURLVolumeAvailableCapacityKey: CFStringRef;
+    //pub static kCFURLVolumeAvailableCapacityForImportantUsageKey: CFStringRef; //macos(10.13)+
+    //pub static kCFURLVolumeAvailableCapacityForOpportunisticUsageKey: CFStringRef; //macos(10.13)+
+
+    pub static kCFURLVolumeResourceCountKey: CFStringRef;
+    pub static kCFURLVolumeSupportsPersistentIDsKey: CFStringRef;
+    pub static kCFURLVolumeSupportsSymbolicLinksKey: CFStringRef;
+    pub static kCFURLVolumeSupportsHardLinksKey: CFStringRef;
+    pub static kCFURLVolumeSupportsJournalingKey: CFStringRef;
+    pub static kCFURLVolumeIsJournalingKey: CFStringRef;
+    pub static kCFURLVolumeSupportsSparseFilesKey: CFStringRef;
+    pub static kCFURLVolumeSupportsZeroRunsKey: CFStringRef;
+    pub static kCFURLVolumeSupportsCaseSensitiveNamesKey: CFStringRef;
+    pub static kCFURLVolumeSupportsCasePreservedNamesKey: CFStringRef;
+    pub static kCFURLVolumeSupportsRootDirectoryDatesKey: CFStringRef;
+    pub static kCFURLVolumeSupportsVolumeSizesKey: CFStringRef;
+    pub static kCFURLVolumeSupportsRenamingKey: CFStringRef;
+    pub static kCFURLVolumeSupportsAdvisoryFileLockingKey: CFStringRef;
+    pub static kCFURLVolumeSupportsExtendedSecurityKey: CFStringRef;
+    pub static kCFURLVolumeIsBrowsableKey: CFStringRef;
+    pub static kCFURLVolumeMaximumFileSizeKey: CFStringRef;
+    pub static kCFURLVolumeIsEjectableKey: CFStringRef;
+    pub static kCFURLVolumeIsRemovableKey: CFStringRef;
+    pub static kCFURLVolumeIsInternalKey: CFStringRef;
+    pub static kCFURLVolumeIsAutomountedKey: CFStringRef;
+    pub static kCFURLVolumeIsLocalKey: CFStringRef;
+    pub static kCFURLVolumeIsReadOnlyKey: CFStringRef;
+    pub static kCFURLVolumeCreationDateKey: CFStringRef;
+    pub static kCFURLVolumeURLForRemountingKey: CFStringRef;
+    pub static kCFURLVolumeUUIDStringKey: CFStringRef;
+    pub static kCFURLVolumeNameKey: CFStringRef;
+    pub static kCFURLVolumeLocalizedNameKey: CFStringRef;
+    // pub static kCFURLVolumeIsEncryptedKey: CFStringRef; //macos(10.12)+
+    // pub static kCFURLVolumeIsRootFileSystemKey: CFStringRef; //macos(10.12)+
+    // pub static kCFURLVolumeSupportsCompressionKey: CFStringRef; //macos(10.12)+
+    // pub static kCFURLVolumeSupportsFileCloningKey: CFStringRef; //macos(10.12)+
+    // pub static kCFURLVolumeSupportsSwapRenamingKey: CFStringRef; //macos(10.12)+
+    // pub static kCFURLVolumeSupportsExclusiveRenamingKey: CFStringRef; //macos(10.12)+
+    // pub static kCFURLVolumeSupportsImmutableFilesKey: CFStringRef; //macos(10.13)+
+    // pub static kCFURLVolumeSupportsAccessPermissionsKey: CFStringRef; //macos(10.13)+
+    // pub static kCFURLVolumeSupportsFileProtectionKey: CFStringRef;  //macos(11.0)+
+    // pub static kCFURLVolumeTypeNameKey: CFStringRef;  //macos(13.3)+
+    // pub static kCFURLVolumeSubtypeKey: CFStringRef; //macos(13.3)+
+    // pub static kCFURLVolumeMountFromLocationKey: CFStringRef; //macos(13.3)+
+
+    /* iCloud Constants */
+    pub static kCFURLIsUbiquitousItemKey: CFStringRef;
+    pub static kCFURLUbiquitousItemHasUnresolvedConflictsKey: CFStringRef;
+    pub static kCFURLUbiquitousItemIsDownloadedKey: CFStringRef; // deprecated
+    pub static kCFURLUbiquitousItemIsDownloadingKey: CFStringRef;
+    pub static kCFURLUbiquitousItemIsUploadedKey: CFStringRef;
+    pub static kCFURLUbiquitousItemIsUploadingKey: CFStringRef;
+    pub static kCFURLUbiquitousItemPercentDownloadedKey: CFStringRef; // deprecated
+    pub static kCFURLUbiquitousItemPercentUploadedKey: CFStringRef; // deprecated
+    // pub static kCFURLUbiquitousItemDownloadingStatusKey: CFStringRef; // macos(10.9)+
+    // pub static kCFURLUbiquitousItemDownloadingErrorKey: CFStringRef; // macos(10.9)+
+    // pub static kCFURLUbiquitousItemUploadingErrorKey: CFStringRef; // macos(10.9)+
+    // pub static kCFURLUbiquitousItemIsExcludedFromSyncKey: CFStringRef; // macos(11.3)+
+
+    /* The values returned for kCFURLUbiquitousItemDownloadingStatusKey */
+    // pub static kCFURLUbiquitousItemDownloadingStatusNotDownloaded: CFStringRef; // macos(10.9)+
+    // pub static kCFURLUbiquitousItemDownloadingStatusDownloaded: CFStringRef; // macos(10.9)+
+    // pub static kCFURLUbiquitousItemDownloadingStatusCurrent: CFStringRef; // macos(10.9)+
+
+    /* CFError userInfo Dictionary Keys */
+    pub static kCFURLKeysOfUnsetValuesKey: CFStringRef;
 
     /* Creating a CFURL */
     pub fn CFURLCopyAbsoluteURL(anURL: CFURLRef) -> CFURLRef;

@@ -71,9 +71,16 @@ pub struct CFRunLoopSourceContext1 {
     pub copyDescription: Option<extern "C" fn (info: *const c_void) -> CFStringRef>,
     pub equal: Option<extern "C" fn (info1: *const c_void, info2: *const c_void) -> Boolean>,
     pub hash: Option<extern "C" fn (info: *const c_void) -> CFHashCode>,
-    // note that the following two fields are platform dependent in the C header, the ones here are for macOS
+
+    #[cfg(any(target_os="macos", target_os="ios"))]
     pub getPort: extern "C" fn (info: *mut c_void) -> mach_port_t,
+    #[cfg(any(target_os="macos", target_os="ios"))]
     pub perform: extern "C" fn (msg: *mut c_void, size: CFIndex, allocator: CFAllocatorRef, info: *mut c_void) -> *mut c_void,
+
+    #[cfg(not(any(target_os="macos", target_os="ios")))]
+    pub getPort: extern "C" fn (info: *mut c_void) -> *mut c_void,
+    #[cfg(not(any(target_os="macos", target_os="ios")))]
+    pub perform: extern "C" fn (info: *mut c_void) -> *mut c_void,
 }
 
 #[repr(C)]

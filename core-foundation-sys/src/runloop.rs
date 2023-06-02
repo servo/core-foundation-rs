@@ -47,6 +47,7 @@ pub const kCFRunLoopExit: CFOptionFlags          = 1 << 7;
 pub const kCFRunLoopAllActivities: CFOptionFlags = 0x0FFFFFFF;
 
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct CFRunLoopSourceContext {
     pub version: CFIndex,
     pub info: *mut c_void,
@@ -61,6 +62,7 @@ pub struct CFRunLoopSourceContext {
 }
 
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct CFRunLoopSourceContext1 {
     pub version: CFIndex,
     pub info: *mut c_void,
@@ -75,6 +77,7 @@ pub struct CFRunLoopSourceContext1 {
 }
 
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct CFRunLoopObserverContext {
     pub version: CFIndex,
     pub info: *mut c_void,
@@ -86,6 +89,7 @@ pub struct CFRunLoopObserverContext {
 pub type CFRunLoopObserverCallBack = extern "C" fn (observer: CFRunLoopObserverRef, activity: CFRunLoopActivity, info: *mut c_void);
 
 #[repr(C)]
+#[derive(Clone, Copy, Debug)]
 pub struct CFRunLoopTimerContext {
     pub version: CFIndex,
     pub info: *mut c_void,

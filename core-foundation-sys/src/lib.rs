@@ -32,6 +32,7 @@ pub mod error;
 pub mod filedescriptor;
 pub mod locale;
 pub mod messageport;
+pub mod notification_center;
 pub mod number;
 pub mod propertylist;
 pub mod runloop;

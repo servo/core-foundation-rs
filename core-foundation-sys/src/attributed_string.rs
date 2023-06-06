@@ -11,6 +11,7 @@ use std::os::raw::c_void;
 use base::{CFAllocatorRef, CFTypeRef, CFIndex, CFRange, CFTypeID, Boolean};
 use string::CFStringRef;
 use dictionary::CFDictionaryRef;
+use string::CFMutableStringRef;
 
 #[repr(C)]
 pub struct __CFAttributedString(c_void);
@@ -48,7 +49,7 @@ extern {
     /* Modifying a CFMutableAttributedString */
     pub fn CFAttributedStringBeginEditing(aStr: CFMutableAttributedStringRef);
     pub fn CFAttributedStringEndEditing(aStr: CFMutableAttributedStringRef);
-    // pub fn CFAttributedStringGetMutableString(aStr: CFMutableAttributedStringRef) -> CFMutableStringRef; //todo
+    pub fn CFAttributedStringGetMutableString(aStr: CFMutableAttributedStringRef) -> CFMutableStringRef;
     pub fn CFAttributedStringRemoveAttribute(aStr: CFMutableAttributedStringRef, range: CFRange, attrName: CFStringRef);
     pub fn CFAttributedStringReplaceString(aStr: CFMutableAttributedStringRef, range: CFRange, replacement: CFStringRef);
     pub fn CFAttributedStringReplaceAttributedString(aStr: CFMutableAttributedStringRef, range: CFRange, replacement: CFAttributedStringRef);

@@ -12,6 +12,7 @@ use base::{CFIndex, CFAllocatorRef, CFTypeRef, LangCode, RegionCode, CFTypeID};
 use array::CFArrayRef;
 use string::CFStringRef;
 use dictionary::CFDictionaryRef;
+use notification_center::CFNotificationName;
 
 #[repr(C)]
 pub struct __CFLocale(c_void);
@@ -34,7 +35,7 @@ extern {
      */
 
     /* Locale Change Notification */
-    //pub static kCFLocaleCurrentLocaleDidChangeNotification: CFNotificationName;
+    pub static kCFLocaleCurrentLocaleDidChangeNotification: CFNotificationName;
 
     /* Locale Property Keys */
     pub static kCFLocaleIdentifier: CFLocaleKey;

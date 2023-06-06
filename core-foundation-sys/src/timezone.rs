@@ -16,6 +16,7 @@ use array::CFArrayRef;
 use dictionary::CFDictionaryRef;
 use data::CFDataRef;
 use locale::CFLocaleRef;
+use notification_center::CFNotificationName;
 
 #[repr(C)]
 pub struct __CFTimeZone(c_void);
@@ -36,7 +37,7 @@ extern {
      * CFTimeZone.h
      */
 
-    //pub static kCFTimeZoneSystemTimeZoneDidChangeNotification: CFNotificationName; // todo
+    pub static kCFTimeZoneSystemTimeZoneDidChangeNotification: CFNotificationName;
 
     /* Creating a Time Zone */
     pub fn CFTimeZoneCreate(allocator: CFAllocatorRef, name: CFStringRef, data: CFDataRef) -> CFTimeZoneRef;

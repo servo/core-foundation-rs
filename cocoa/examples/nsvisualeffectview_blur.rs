@@ -2,11 +2,11 @@ extern crate cocoa;
 extern crate objc;
 
 use objc::*;
-use cocoa::base::{selector, id, nil, NO};
+use cocoa::base::{selector, nil, NO};
 
 use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
                         NSString};
-use cocoa::appkit::{NSApp, NSColor, NSColorSpace, NSApplication, NSApplicationActivationPolicyRegular, NSMenu, NSMenuItem, NSWindowStyleMask, NSBackingStoreType, NSWindow, NSRunningApplication, NSApplicationActivateIgnoringOtherApps, NSView, NSVisualEffectMaterial, NSVisualEffectView, NSViewWidthSizable, NSViewHeightSizable, NSVisualEffectBlendingMode, NSVisualEffectState, NSWindowOrderingMode};
+use cocoa::appkit::{NSApp, NSColor, NSApplication, NSApplicationActivationPolicyRegular, NSMenu, NSMenuItem, NSWindowStyleMask, NSBackingStoreType, NSWindow, NSView, NSVisualEffectMaterial, NSVisualEffectView, NSViewWidthSizable, NSViewHeightSizable, NSVisualEffectBlendingMode, NSVisualEffectState, NSWindowOrderingMode};
 
 
 fn main() {

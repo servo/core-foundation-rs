@@ -34,6 +34,7 @@ pub mod locale;
 pub mod messageport;
 pub mod notification_center;
 pub mod number;
+pub mod plugin;
 pub mod propertylist;
 pub mod runloop;
 pub mod set;

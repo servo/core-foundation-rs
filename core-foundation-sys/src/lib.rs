@@ -38,6 +38,7 @@ pub mod plugin;
 pub mod propertylist;
 pub mod runloop;
 pub mod set;
+pub mod socket;
 pub mod stream;
 pub mod string;
 pub mod timezone;

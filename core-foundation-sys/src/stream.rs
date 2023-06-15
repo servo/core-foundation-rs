@@ -9,11 +9,12 @@
 
 use std::os::raw::{c_void, c_int};
 
-use base::{CFIndex, CFOptionFlags, SInt32, CFTypeID, CFAllocatorRef, UInt8, Boolean, CFTypeRef};
+use base::{CFIndex, CFOptionFlags, SInt32, CFTypeID, CFAllocatorRef, UInt8, Boolean, CFTypeRef, UInt32};
 use string::CFStringRef;
 use url::CFURLRef;
 use error::CFErrorRef;
 use runloop::CFRunLoopRef;
+use socket::{CFSocketNativeHandle, CFSocketSignature};
 
 #[repr(C)]
 pub struct __CFReadStream(c_void);
@@ -109,9 +110,9 @@ extern {
     pub static kCFStreamErrorDomainSSL: c_int;
 
     /* CFStream: Creating Streams */
-    //pub fn CFStreamCreatePairWithPeerSocketSignature(alloc: CFAllocatorRef, signature: *const CFSocketSignature,readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
-    //pub fn CFStreamCreatePairWithSocketToHost(alloc: CFAllocatorRef, host: CFStringRef, port: UInt32, readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
-    //pub fn CFStreamCreatePairWithSocket(alloc: CFAllocatorRef, sock: CFSocketNativeHandle, readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
+    pub fn CFStreamCreatePairWithPeerSocketSignature(alloc: CFAllocatorRef, signature: *const CFSocketSignature,readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
+    pub fn CFStreamCreatePairWithSocketToHost(alloc: CFAllocatorRef, host: CFStringRef, port: UInt32, readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
+    pub fn CFStreamCreatePairWithSocket(alloc: CFAllocatorRef, sock: CFSocketNativeHandle, readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
     pub fn CFStreamCreateBoundPair(alloc: CFAllocatorRef, readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef, transferBufferSize: CFIndex);
 
     //pub fn CFReadStreamSetDispatchQueue(stream: CFReadStreamRef, q: dispatch_queue_t); // macos(10.9)+

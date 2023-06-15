@@ -27,6 +27,7 @@ pub mod bundle;
 pub mod characterset;
 pub mod data;
 pub mod date;
+pub mod date_formatter;
 pub mod dictionary;
 pub mod error;
 pub mod filedescriptor;

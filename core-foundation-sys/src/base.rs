@@ -21,6 +21,7 @@ pub type StringPtr = *mut c_uchar;
 pub type ConstStringPtr = *const c_uchar;
 pub type OSStatus = i32;
 pub type UInt8 = c_uchar;
+pub type UInt16 = c_ushort;
 pub type SInt16 = c_short;
 pub type SInt32 = c_int;
 pub type UInt32 = c_uint;

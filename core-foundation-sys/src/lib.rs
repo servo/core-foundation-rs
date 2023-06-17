@@ -40,6 +40,7 @@ pub mod runloop;
 pub mod set;
 pub mod stream;
 pub mod string;
+pub mod string_tokenizer;
 pub mod timezone;
 pub mod url;
 #[cfg(target_os = "macos")]

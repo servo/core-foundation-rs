@@ -24,6 +24,7 @@ pub mod array;
 pub mod attributed_string;
 pub mod base;
 pub mod bundle;
+pub mod calendar;
 pub mod characterset;
 pub mod data;
 pub mod date;

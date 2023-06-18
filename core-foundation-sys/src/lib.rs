@@ -22,8 +22,10 @@ extern "C" {}
 
 pub mod array;
 pub mod attributed_string;
+pub mod bag;
 pub mod base;
 pub mod binary_heap;
+pub mod bit_vector;
 pub mod bundle;
 pub mod calendar;
 pub mod characterset;
@@ -51,6 +53,7 @@ pub mod string_tokenizer;
 pub mod tree;
 pub mod timezone;
 pub mod url;
+pub mod url_enumerator;
 #[cfg(target_os = "macos")]
 pub mod user_notification;
 pub mod uuid;

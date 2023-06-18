@@ -47,6 +47,7 @@ pub mod socket;
 pub mod stream;
 pub mod string;
 pub mod string_tokenizer;
+pub mod tree;
 pub mod timezone;
 pub mod url;
 #[cfg(target_os = "macos")]

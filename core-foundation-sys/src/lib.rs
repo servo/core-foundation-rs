@@ -23,6 +23,7 @@ extern "C" {}
 pub mod array;
 pub mod attributed_string;
 pub mod base;
+pub mod binary_heap;
 pub mod bundle;
 pub mod calendar;
 pub mod characterset;

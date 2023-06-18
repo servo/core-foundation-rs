@@ -38,6 +38,7 @@ pub mod notification_center;
 pub mod number;
 pub mod number_formatter;
 pub mod plugin;
+pub mod preferences;
 pub mod propertylist;
 pub mod runloop;
 pub mod set;

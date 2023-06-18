@@ -24,6 +24,7 @@ pub mod array;
 pub mod attributed_string;
 pub mod bag;
 pub mod base;
+pub mod bit_vector;
 pub mod bundle;
 pub mod calendar;
 pub mod characterset;

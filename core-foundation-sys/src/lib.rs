@@ -52,6 +52,7 @@ pub mod string_tokenizer;
 pub mod tree;
 pub mod timezone;
 pub mod url;
+pub mod url_enumerator;
 #[cfg(target_os = "macos")]
 pub mod user_notification;
 pub mod uuid;

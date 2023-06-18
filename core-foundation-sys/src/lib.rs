@@ -32,6 +32,7 @@ pub mod date_formatter;
 pub mod dictionary;
 pub mod error;
 pub mod filedescriptor;
+pub mod file_security;
 pub mod locale;
 pub mod messageport;
 pub mod notification_center;

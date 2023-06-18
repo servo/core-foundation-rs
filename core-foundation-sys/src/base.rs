@@ -44,6 +44,8 @@ pub enum CFComparisonResult {
     GreaterThan = 1,
 }
 
+pub type CFComparatorFunction = extern "C" fn(val1: *const c_void, val2: *const c_void, context: *mut c_void) -> CFComparisonResult;
+
 impl Into<Ordering> for CFComparisonResult {
     fn into(self) -> Ordering {
         match self {

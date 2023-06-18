@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFRange, CFIndex, CFAllocatorRef, CFTypeID, Boolean, CFComparisonResult};
+use base::{CFRange, CFIndex, CFAllocatorRef, CFTypeID, Boolean, CFComparatorFunction};
 use string::CFStringRef;
 
 pub type CFArrayRetainCallBack = extern "C" fn(allocator: CFAllocatorRef, value: *const c_void) -> *const c_void;
@@ -17,7 +17,6 @@ pub type CFArrayReleaseCallBack = extern "C" fn(allocator: CFAllocatorRef, value
 pub type CFArrayCopyDescriptionCallBack = extern "C" fn(value: *const c_void) -> CFStringRef;
 pub type CFArrayEqualCallBack = extern "C" fn(value1: *const c_void, value2: *const c_void) -> Boolean;
 pub type CFArrayApplierFunction = extern "C" fn(value: *const c_void, context: *mut c_void);
-pub type CFComparatorFunction = extern "C" fn(val1: *const c_void, val2: *const c_void) -> CFComparisonResult;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]

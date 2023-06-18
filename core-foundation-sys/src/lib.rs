@@ -22,6 +22,7 @@ extern "C" {}
 
 pub mod array;
 pub mod attributed_string;
+pub mod bag;
 pub mod base;
 pub mod bundle;
 pub mod calendar;

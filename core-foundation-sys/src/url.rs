@@ -314,8 +314,8 @@ extern {
 
     pub fn CFURLCreateBookmarkDataFromFile(allocator: CFAllocatorRef, fileURL: CFURLRef, errorRef: *mut CFErrorRef) -> CFDataRef;
     pub fn CFURLWriteBookmarkDataToFile(bookmarkRef: CFDataRef, fileURL: CFURLRef, options: CFURLBookmarkFileCreationOptions, errorRef: *mut CFErrorRef) -> Boolean;
-    // pub fn CFURLStartAccessingSecurityScopedResource(url: CFURLRef) -> Boolean; // ios(8.0)+
-    // pub fn CFURLStopAccessingSecurityScopedResource(url: CFURLRef); // ios(8.0)+
+    pub fn CFURLStartAccessingSecurityScopedResource(url: CFURLRef) -> Boolean;
+    pub fn CFURLStopAccessingSecurityScopedResource(url: CFURLRef);
 }
 
 #[test]

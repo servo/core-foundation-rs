@@ -281,7 +281,7 @@ pub mod test {
 
     #[test]
     fn to_propertylist_retain_count() {
-        let string = CFString::from_static_string("Bar");
+        let string = CFString::from_static_string("alongerstring");
         assert_eq!(string.retain_count(), 1);
 
         let propertylist = string.to_CFPropertyList();
@@ -308,7 +308,7 @@ pub mod test {
 
     #[test]
     fn downcast_into_fail() {
-        let string = CFString::from_static_string("Bar");
+        let string = CFString::from_static_string("alongerstring");
         let propertylist = string.to_CFPropertyList();
         assert_eq!(string.retain_count(), 2);
 
@@ -318,12 +318,12 @@ pub mod test {
 
     #[test]
     fn downcast_into() {
-        let string = CFString::from_static_string("Bar");
+        let string = CFString::from_static_string("alongerstring");
         let propertylist = string.to_CFPropertyList();
         assert_eq!(string.retain_count(), 2);
 
         let string2 = propertylist.downcast_into::<CFString>().unwrap();
-        assert_eq!(string2.to_string(), "Bar");
+        assert_eq!(string2.to_string(), "alongerstring");
         assert_eq!(string2.retain_count(), 2);
     }
 }

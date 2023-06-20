@@ -413,7 +413,7 @@ mod tests {
 
     #[test]
     fn as_cftype_retain_count() {
-        let string = CFString::from_static_string("bar");
+        let string = CFString::from_static_string("alongerstring");
         assert_eq!(string.retain_count(), 1);
         let cftype = string.as_CFType();
         assert_eq!(cftype.retain_count(), 2);
@@ -423,7 +423,7 @@ mod tests {
 
     #[test]
     fn into_cftype_retain_count() {
-        let string = CFString::from_static_string("bar");
+        let string = CFString::from_static_string("alongerstring");
         assert_eq!(string.retain_count(), 1);
         let cftype = string.into_CFType();
         assert_eq!(cftype.retain_count(), 1);
@@ -431,10 +431,10 @@ mod tests {
 
     #[test]
     fn as_cftype_and_downcast() {
-        let string = CFString::from_static_string("bar");
+        let string = CFString::from_static_string("alongerstring");
         let cftype = string.as_CFType();
         let string2 = cftype.downcast::<CFString>().unwrap();
-        assert_eq!(string2.to_string(), "bar");
+        assert_eq!(string2.to_string(), "alongerstring");
 
         assert_eq!(string.retain_count(), 3);
         assert_eq!(cftype.retain_count(), 3);
@@ -443,10 +443,10 @@ mod tests {
 
     #[test]
     fn into_cftype_and_downcast_into() {
-        let string = CFString::from_static_string("bar");
+        let string = CFString::from_static_string("alongerstring");
         let cftype = string.into_CFType();
         let string2 = cftype.downcast_into::<CFString>().unwrap();
-        assert_eq!(string2.to_string(), "bar");
+        assert_eq!(string2.to_string(), "alongerstring");
         assert_eq!(string2.retain_count(), 1);
     }
 }

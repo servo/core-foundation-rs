@@ -839,7 +839,7 @@ fn out_of_range_variations() {
     // attributes greater than max are dropped on macOS <= 11
     // on macOS 12 they seem to be preserved as is.
     let var_attrs = var_attrs.find(variation_attribute);
-    if macos_version() >= (12, 0, 0) {
+    if macos_version() >= (12, 0, 0) && macos_version() < (13, 0, 0) {
         let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
         assert!(!var_attrs.is_empty());
         let var_attrs: CFDictionary<CFType, CFType> = unsafe { std::mem::transmute(var_attrs) };

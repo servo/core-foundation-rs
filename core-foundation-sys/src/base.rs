@@ -34,7 +34,6 @@ pub type RegionCode = SInt16;
 pub type UTF32Char = c_uint;
 pub type UTF16Char = c_ushort;
 pub type UTF8Char = c_uchar;
-pub type UniChar = c_ushort;
 
 #[repr(isize)]
 #[derive(Clone, Copy, Debug, PartialEq)]

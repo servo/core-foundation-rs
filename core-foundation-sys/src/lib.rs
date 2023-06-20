@@ -37,6 +37,7 @@ pub mod error;
 pub mod filedescriptor;
 pub mod file_security;
 pub mod locale;
+pub mod mach_port;
 pub mod messageport;
 pub mod notification_center;
 pub mod number;
@@ -57,4 +58,7 @@ pub mod url_enumerator;
 #[cfg(target_os = "macos")]
 pub mod user_notification;
 pub mod uuid;
-pub mod mach_port;
+#[cfg(target_os = "macos")]
+pub mod xml_node;
+#[cfg(target_os = "macos")]
+pub mod xml_parser;

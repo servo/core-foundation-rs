@@ -14,7 +14,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-11.0]
+        os: [macos-11.0, macos-12, macos-13]
     steps:
     - uses: actions/checkout@v2
     - name: Build

@@ -10,6 +10,12 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  semver:
+    runs-on: macos-11.0
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check semver
+      uses: obi1kenobi/cargo-semver-checks-action@v2
   build:
     runs-on: ${{ matrix.os }}
     strategy:

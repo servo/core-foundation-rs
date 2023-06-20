@@ -8,9 +8,9 @@
 // except according to those terms.
 
 use std::os::raw::c_void;
-use base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, UTF32Char, UniChar};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, UTF32Char};
 use data::CFDataRef;
-use string::CFStringRef;
+use string::{CFStringRef, UniChar};
 
 pub type CFCharacterSetPredefinedSet = CFIndex;
 

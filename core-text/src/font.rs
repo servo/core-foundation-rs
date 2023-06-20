@@ -15,11 +15,11 @@ use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors
 use font_manager::create_font_descriptor;
 
 use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType, UniChar};
+use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
-use core_foundation::string::{CFString, CFStringRef};
+use core_foundation::string::{CFString, CFStringRef, UniChar};
 use core_foundation::url::{CFURL, CFURLRef};
 use core_graphics::base::CGFloat;
 use core_graphics::context::CGContext;

@@ -162,13 +162,15 @@ impl<'a, T: FromVoid> IntoIterator for &'a CFArray<T> {
 
 #[cfg(test)]
 mod tests {
+    use crate::number::CFNumber;
+
     use super::*;
     use std::mem;
     use base::CFType;
 
     #[test]
     fn to_untyped_correct_retain_count() {
-        let array = CFArray::<CFType>::from_CFTypes(&[]);
+        let array = CFArray::<CFType>::from_CFTypes(&[CFNumber::from(4).as_CFType()]);
         assert_eq!(array.retain_count(), 1);
 
         let untyped_array = array.to_untyped();
@@ -181,7 +183,7 @@ mod tests {
 
     #[test]
     fn into_untyped() {
-        let array = CFArray::<CFType>::from_CFTypes(&[]);
+        let array = CFArray::<CFType>::from_CFTypes(&[CFNumber::from(4).as_CFType()]);
         let array2 = array.to_untyped();
         assert_eq!(array.retain_count(), 2);
 
@@ -196,7 +198,7 @@ mod tests {
     fn borrow() {
         use string::CFString;
 
-        let string = CFString::from_static_string("bar");
+        let string = CFString::from_static_string("alongerstring");
         assert_eq!(string.retain_count(), 1);
         let x;
         {
@@ -208,7 +210,7 @@ mod tests {
             {
                 x = arr.get(0).unwrap().clone();
                 assert_eq!(x.retain_count(), 2);
-                assert_eq!(x.to_string(), "bar");
+                assert_eq!(x.to_string(), "alongerstring");
             }
         }
         assert_eq!(x.retain_count(), 1);
@@ -219,7 +221,7 @@ mod tests {
         use string::{CFString, CFStringRef};
         use base::TCFTypeRef;
 
-        let cf_string = CFString::from_static_string("bar");
+        let cf_string = CFString::from_static_string("alongerstring");
         let array: CFArray = CFArray::from_CFTypes(&[cf_string.clone()]).into_untyped();
 
         let cf_strings = array.iter().map(|ptr| {
@@ -227,7 +229,7 @@ mod tests {
         }).collect::<Vec<_>>();
         let strings = cf_strings.iter().map(|s| s.to_string()).collect::<Vec<_>>();
         assert_eq!(cf_string.retain_count(), 3);
-        assert_eq!(&strings[..], &["bar"]);
+        assert_eq!(&strings[..], &["alongerstring"]);
     }
 
     #[test]

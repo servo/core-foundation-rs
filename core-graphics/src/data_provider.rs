@@ -153,7 +153,7 @@ fn test_data_provider() {
     assert!(dropped.load(SeqCst))
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     fn CGDataProviderCopyData(provider: ::sys::CGDataProviderRef) -> CFDataRef;
     //fn CGDataProviderCreateDirect

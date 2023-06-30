@@ -53,7 +53,7 @@ impl CGColorSpace {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     /// The Display P3 color space, created by Apple.
     pub static kCGColorSpaceDisplayP3: CFStringRef;

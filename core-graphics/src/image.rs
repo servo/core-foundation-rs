@@ -125,7 +125,7 @@ impl CGImageRef {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     fn CGImageGetTypeID() -> CFTypeID;
     fn CGImageGetWidth(image: ::sys::CGImageRef) -> size_t;

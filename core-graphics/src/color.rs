@@ -28,7 +28,7 @@ impl CGColor {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     fn CGColorCreateGenericRGB(
         red: CGFloat,

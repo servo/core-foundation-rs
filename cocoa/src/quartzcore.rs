@@ -1572,7 +1572,7 @@ impl CATransform3D {
     }
 }
 
-#[link(name = "QuartzCore", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "QuartzCore", kind = "framework"))]
 extern "C" {
     static kCARendererColorSpace: CFStringRef;
     static kCARendererMetalCommandQueue: CFStringRef;

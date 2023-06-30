@@ -10,8 +10,11 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 
 [features]
+default = ["link"]
 mac_os_10_7_support = [] # backwards compatibility
 mac_os_10_8_features = [] # enables new features
+# Disable to manually link. Enabled by default.
+link = []
 
 [package.metadata.docs.rs]
 all-features = true

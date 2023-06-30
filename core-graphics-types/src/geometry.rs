@@ -166,7 +166,7 @@ mod ffi {
     use core_foundation::dictionary::CFDictionaryRef;
     use geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 
-    #[link(name = "CoreGraphics", kind = "framework")]
+    #[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
     extern "C" {
         pub fn CGRectInset(rect: CGRect, dx: CGFloat, dy: CGFloat) -> CGRect;
         pub fn CGRectMakeWithDictionaryRepresentation(

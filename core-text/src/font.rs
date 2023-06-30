@@ -594,7 +594,7 @@ pub fn cascade_list_for_languages(
     }
 }
 
-#[link(name = "CoreText", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreText", kind = "framework"))]
 extern "C" {
     /*
      * CTFont.h

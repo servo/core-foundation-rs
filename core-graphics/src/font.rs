@@ -138,7 +138,7 @@ impl CGFont {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     // TODO: basically nothing has bindings (even commented-out) besides what we use.
     fn CGFontCreateWithDataProvider(provider: ::sys::CGDataProviderRef) -> ::sys::CGFontRef;

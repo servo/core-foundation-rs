@@ -615,7 +615,7 @@ fn create_bitmap_context_test() {
     assert_eq!(255, data.bytes()[3]);
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     fn CGContextRetain(c: ::sys::CGContextRef) -> ::sys::CGContextRef;
     fn CGContextRelease(c: ::sys::CGContextRef);

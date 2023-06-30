@@ -15,6 +15,12 @@ default-target = "x86_64-apple-darwin"
 block = "0.1"
 bitflags = "1.0"
 libc = "0.2"
-core-foundation = { path = "../core-foundation", version = "0.9" }
-core-graphics-types = { path = "../core-graphics-types", version = "0.1" }
+core-foundation = { default-features = false, path = "../core-foundation", version = "0.9" }
+core-graphics-types = { default-features = false, path = "../core-graphics-types", version = "0.1" }
 objc = "0.2.3"
+
+[features]
+default = ["link"]
+# Disable to manually link. Enabled by default.
+link = ["core-foundation/link", "core-graphics-types/link"]
+

@@ -36,7 +36,7 @@ impl CGEventSource {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     /// Return the type identifier for the opaque type `CGEventSourceRef'.
     fn CGEventSourceGetTypeID() -> CFTypeID;

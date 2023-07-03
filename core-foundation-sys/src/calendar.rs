@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_void, c_char};
+use core::ffi::{c_void, c_char};
 
 use base::{CFAllocatorRef, CFTypeID, Boolean, CFIndex, CFOptionFlags, CFRange};
 use locale::{CFCalendarIdentifier, CFLocaleRef};

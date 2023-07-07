@@ -423,7 +423,6 @@ type CGEventTapCallBackInternal = unsafe extern "C" fn(
     user_info: *const c_void,
 ) -> ::sys::CGEventRef;
 
-#[no_mangle]
 unsafe extern "C" fn cg_event_tap_callback_internal(
     _proxy: CGEventTapProxy,
     _etype: CGEventType,

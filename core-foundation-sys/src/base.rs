@@ -169,5 +169,6 @@ extern {
     pub fn CFShow(obj: CFTypeRef);
 
     /* Base Utilities Reference */
+    pub fn CFRangeMake(loc: CFIndex, len: CFIndex) -> CFRange;
     // N.B. Some things missing here.
 }

@@ -7,6 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![cfg(any(target_os = "macos", target_os = "ios", target_os = "tvos", target_os = "watchos"))]
+
 extern crate libc;
 extern crate core_foundation;
 

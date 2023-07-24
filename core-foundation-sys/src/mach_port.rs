@@ -7,8 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{CFAllocatorRef, CFIndex, CFTypeID, Boolean, mach_port_t};
 use string::CFStringRef;
+pub use base::{CFAllocatorRef, CFIndex, CFTypeID};
+use base::{Boolean, mach_port_t};
 use runloop::CFRunLoopSourceRef;
 use std::os::raw::c_void;
 

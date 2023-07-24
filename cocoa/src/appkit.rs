@@ -183,6 +183,7 @@ pub enum NSApplicationTerminateReply {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSApplicationPresentationOptions : NSUInteger {
         const NSApplicationPresentationDefault = 0;
         const NSApplicationPresentationAutoHideDock = 1 << 0;
@@ -201,6 +202,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSWindowStyleMask: NSUInteger {
         const NSBorderlessWindowMask      = 0;
         const NSTitledWindowMask          = 1 << 0;
@@ -250,6 +252,7 @@ pub enum NSWindowToolbarStyle {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSWindowOrderingMode: NSInteger {
         const NSWindowAbove =  1;
         const NSWindowBelow = -1;
@@ -258,6 +261,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSAlignmentOptions: libc::c_ulonglong {
         const NSAlignMinXInward         = 1 << 0;
         const NSAlignMinYInward         = 1 << 1;
@@ -278,18 +282,18 @@ bitflags! {
         const NSAlignWidthNearest       = 1 << 20;
         const NSAlignHeightNearest      = 1 << 21;
         const NSAlignRectFlipped        = 1 << 63;
-        const NSAlignAllEdgesInward     = NSAlignmentOptions::NSAlignMinXInward.bits
-                                        | NSAlignmentOptions::NSAlignMaxXInward.bits
-                                        | NSAlignmentOptions::NSAlignMinYInward.bits
-                                        | NSAlignmentOptions::NSAlignMaxYInward.bits;
-        const NSAlignAllEdgesOutward    = NSAlignmentOptions::NSAlignMinXOutward.bits
-                                        | NSAlignmentOptions::NSAlignMaxXOutward.bits
-                                        | NSAlignmentOptions::NSAlignMinYOutward.bits
-                                        | NSAlignmentOptions::NSAlignMaxYOutward.bits;
-        const NSAlignAllEdgesNearest    = NSAlignmentOptions::NSAlignMinXNearest.bits
-                                        | NSAlignmentOptions::NSAlignMaxXNearest.bits
-                                        | NSAlignmentOptions::NSAlignMinYNearest.bits
-                                        | NSAlignmentOptions::NSAlignMaxYNearest.bits;
+        const NSAlignAllEdgesInward     = NSAlignmentOptions::NSAlignMinXInward.bits()
+                                        | NSAlignmentOptions::NSAlignMaxXInward.bits()
+                                        | NSAlignmentOptions::NSAlignMinYInward.bits()
+                                        | NSAlignmentOptions::NSAlignMaxYInward.bits();
+        const NSAlignAllEdgesOutward    = NSAlignmentOptions::NSAlignMinXOutward.bits()
+                                        | NSAlignmentOptions::NSAlignMaxXOutward.bits()
+                                        | NSAlignmentOptions::NSAlignMinYOutward.bits()
+                                        | NSAlignmentOptions::NSAlignMaxYOutward.bits();
+        const NSAlignAllEdgesNearest    = NSAlignmentOptions::NSAlignMinXNearest.bits()
+                                        | NSAlignmentOptions::NSAlignMaxXNearest.bits()
+                                        | NSAlignmentOptions::NSAlignMinYNearest.bits()
+                                        | NSAlignmentOptions::NSAlignMaxYNearest.bits();
     }
 }
 
@@ -575,7 +579,7 @@ impl NSApplication for id {
     }
 
     unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> BOOL {
-        msg_send![self, setPresentationOptions:options.bits]
+        msg_send![self, setPresentationOptions:options.bits()]
     }
 
     unsafe fn presentationOptions_(self) -> NSApplicationPresentationOptions {
@@ -1015,6 +1019,7 @@ impl NSMenuItem for id {
 pub type NSWindowDepth = libc::c_int;
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSWindowCollectionBehavior: NSUInteger {
         const NSWindowCollectionBehaviorDefault = 0;
         const NSWindowCollectionBehaviorCanJoinAllSpaces = 1 << 0;
@@ -1033,6 +1038,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSWindowOcclusionState: NSUInteger {
         const NSWindowOcclusionStateVisible = 1 << 1;
     }
@@ -1295,7 +1301,7 @@ impl NSWindow for id {
                                                            backing: NSBackingStoreType,
                                                            defer: BOOL) -> id {
         msg_send![self, initWithContentRect:rect
-                                  styleMask:style.bits
+                                  styleMask:style.bits()
                                     backing:backing as NSUInteger
                                       defer:defer]
     }
@@ -1307,7 +1313,7 @@ impl NSWindow for id {
                                                                   defer: BOOL,
                                                                   screen: id) -> id {
         msg_send![self, initWithContentRect:rect
-                                  styleMask:style.bits
+                                  styleMask:style.bits()
                                     backing:backing as NSUInteger
                                       defer:defer
                                      screen:screen]
@@ -1320,7 +1326,7 @@ impl NSWindow for id {
     }
 
     unsafe fn setStyleMask_(self, styleMask: NSWindowStyleMask) {
-        msg_send![self, setStyleMask:styleMask.bits]
+        msg_send![self, setStyleMask:styleMask.bits()]
     }
 
     unsafe fn toggleFullScreen_(self, sender: id) {
@@ -1443,15 +1449,15 @@ impl NSWindow for id {
     // Getting Layout Information
 
     unsafe fn contentRectForFrameRect_styleMask_(self, windowFrame: NSRect, windowStyle: NSWindowStyleMask) -> NSRect {
-        msg_send![self, contentRectForFrameRect:windowFrame styleMask:windowStyle.bits]
+        msg_send![self, contentRectForFrameRect:windowFrame styleMask:windowStyle.bits()]
     }
 
     unsafe fn frameRectForContentRect_styleMask_(self, windowContentRect: NSRect, windowStyle: NSWindowStyleMask) -> NSRect {
-        msg_send![self, frameRectForContentRect:windowContentRect styleMask:windowStyle.bits]
+        msg_send![self, frameRectForContentRect:windowContentRect styleMask:windowStyle.bits()]
     }
 
     unsafe fn minFrameWidthWithTitle_styleMask_(self, windowTitle: id, windowStyle: NSWindowStyleMask) -> CGFloat {
-        msg_send![self, minFrameWidthWithTitle:windowTitle styleMask:windowStyle.bits]
+        msg_send![self, minFrameWidthWithTitle:windowTitle styleMask:windowStyle.bits()]
     }
 
     unsafe fn contentRectForFrameRect_(self, windowFrame: NSRect) -> NSRect {
@@ -2406,6 +2412,7 @@ impl NSOpenGLContext for id {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSEventSwipeTrackingOptions: NSUInteger {
         const NSEventSwipeTrackingLockDirection         = 0x1 << 0;
         const NSEventSwipeTrackingClampGestureAmount    = 0x1 << 1;
@@ -2420,6 +2427,7 @@ pub enum NSEventGestureAxis {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSEventPhase: NSUInteger {
        const NSEventPhaseNone        = 0;
        const NSEventPhaseBegan       = 0x1 << 0;
@@ -2432,15 +2440,16 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSTouchPhase: NSUInteger {
         const NSTouchPhaseBegan         = 1 << 0;
         const NSTouchPhaseMoved         = 1 << 1;
         const NSTouchPhaseStationary    = 1 << 2;
         const NSTouchPhaseEnded         = 1 << 3;
         const NSTouchPhaseCancelled     = 1 << 4;
-        const NSTouchPhaseTouching      = NSTouchPhase::NSTouchPhaseBegan.bits
-                                        | NSTouchPhase::NSTouchPhaseMoved.bits
-                                        | NSTouchPhase::NSTouchPhaseStationary.bits;
+        const NSTouchPhaseTouching      = NSTouchPhase::NSTouchPhaseBegan.bits()
+                                        | NSTouchPhase::NSTouchPhaseMoved.bits()
+                                        | NSTouchPhase::NSTouchPhaseStationary.bits();
         const NSTouchPhaseAny           = !0; // NSUIntegerMax
     }
 }
@@ -2481,6 +2490,7 @@ pub enum NSEventType {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSEventMask: libc::c_ulonglong {
         const NSLeftMouseDownMask         = 1 << NSLeftMouseDown as libc::c_ulonglong;
         const NSLeftMouseUpMask           = 1 << NSLeftMouseUp as libc::c_ulonglong;
@@ -2517,11 +2527,12 @@ bitflags! {
 
 impl NSEventMask {
     pub fn from_type(ty: NSEventType) -> NSEventMask {
-        NSEventMask { bits: 1 << ty as libc::c_ulonglong }
+        NSEventMask::from_bits_truncate(1 << ty as libc::c_ulonglong)
     }
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
     pub struct NSEventModifierFlags: NSUInteger {
         const NSAlphaShiftKeyMask                     = 1 << 16;
         const NSShiftKeyMask                          = 1 << 17;

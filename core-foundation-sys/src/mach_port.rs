@@ -11,7 +11,7 @@ use string::CFStringRef;
 pub use base::{CFAllocatorRef, CFIndex, CFTypeID};
 use base::{Boolean, mach_port_t};
 use runloop::CFRunLoopSourceRef;
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 #[repr(C)]
 pub struct __CFMachPort(c_void);

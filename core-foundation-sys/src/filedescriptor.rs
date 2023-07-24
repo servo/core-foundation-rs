@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_int, c_void};
+use core::ffi::{c_int, c_void};
 
 use base::{Boolean, CFIndex, CFTypeID, CFOptionFlags, CFAllocatorRef};
 use string::CFStringRef;

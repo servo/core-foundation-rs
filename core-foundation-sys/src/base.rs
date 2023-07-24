@@ -7,8 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::cmp::Ordering;
-use std::os::raw::{c_uint, c_void, c_int, c_short, c_uchar, c_ushort};
+use core::cmp::Ordering;
+use core::ffi::{c_uint, c_void, c_int, c_short, c_uchar, c_ushort};
 use string::CFStringRef;
 
 pub type Boolean = u8;

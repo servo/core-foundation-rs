@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 use base::{CFIndex, CFOptionFlags, SInt32, CFTypeID, CFAllocatorRef, UInt16, Boolean};
 use data::CFDataRef;
@@ -25,9 +25,9 @@ pub type CFSocketError = CFIndex;
 pub type CFSocketCallBackType = CFOptionFlags;
 pub type CFSocketCallBack = extern "C" fn (s: CFSocketRef, _type: CFSocketCallBackType, address: CFDataRef, cdata: *const c_void, info: *mut c_void);
 #[cfg(not(target_os = "windows"))]
-pub type CFSocketNativeHandle = std::os::raw::c_int;
+pub type CFSocketNativeHandle = core::ffi::c_int;
 #[cfg(target_os = "windows")]
-pub type CFSocketNativeHandle = std::os::raw::c_ulong;
+pub type CFSocketNativeHandle = core::ffi::c_ulong;
 
 pub const kCFSocketSuccess: CFSocketError = 0;
 pub const kCFSocketError: CFSocketError = -1;

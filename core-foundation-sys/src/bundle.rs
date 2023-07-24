@@ -7,10 +7,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 use base::{CFTypeID, CFAllocatorRef, Boolean, CFTypeRef, UInt32, SInt32};
-use std::os::raw::{c_uint, c_int};
+use core::ffi::{c_uint, c_int};
 use url::CFURLRef;
 use dictionary::CFDictionaryRef;
 use string::CFStringRef;
@@ -27,7 +27,7 @@ pub type CFBundleRefNum = c_int;
 #[allow(unused)]
 #[inline(always)]
 pub unsafe fn CFCopyLocalizedString(key: CFStringRef, comment: CFStringRef) -> CFStringRef {
-    CFBundleCopyLocalizedString(CFBundleGetMainBundle(), key, key, std::ptr::null())
+    CFBundleCopyLocalizedString(CFBundleGetMainBundle(), key, key, core::ptr::null())
 }
 #[allow(unused)]
 #[inline(always)]

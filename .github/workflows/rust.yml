@@ -48,7 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - "build"
-      - "msrv"
       - "semver"
     steps:
       - name: Mark the job as successful

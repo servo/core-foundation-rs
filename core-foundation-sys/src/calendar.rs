@@ -7,12 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_void, c_char};
+use std::os::raw::{c_char, c_void};
 
-use base::{CFAllocatorRef, CFTypeID, Boolean, CFIndex, CFOptionFlags, CFRange};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID};
+use date::{CFAbsoluteTime, CFTimeInterval};
 use locale::{CFCalendarIdentifier, CFLocaleRef};
 use timezone::CFTimeZoneRef;
-use date::{CFAbsoluteTime, CFTimeInterval};
 
 #[repr(C)]
 pub struct __CFCalendar(c_void);
@@ -36,27 +36,75 @@ pub const kCFCalendarUnitYearForWeekOfYear: CFCalendarUnit = 1 << 14;
 
 pub const kCFCalendarComponentsWrap: CFOptionFlags = 1 << 0;
 
-extern {
+extern "C" {
     /*
      * CFCalendar.h
      */
 
     /* Creating a Calendar */
     pub fn CFCalendarCopyCurrent() -> CFCalendarRef;
-    pub fn CFCalendarCreateWithIdentifier(allocator: CFAllocatorRef, identifier: CFCalendarIdentifier) -> CFCalendarRef;
+    pub fn CFCalendarCreateWithIdentifier(
+        allocator: CFAllocatorRef,
+        identifier: CFCalendarIdentifier,
+    ) -> CFCalendarRef;
 
     /* Calendrical Calculations */
-    pub fn CFCalendarAddComponents(identifier: CFCalendarIdentifier, /* inout */  at: *mut CFAbsoluteTime, options: CFOptionFlags, componentDesc: *const char, ...) -> Boolean;
-    pub fn CFCalendarComposeAbsoluteTime(identifier: CFCalendarIdentifier, /* out */ at: *mut CFAbsoluteTime, componentDesc: *const c_char, ...) -> Boolean;
-    pub fn CFCalendarDecomposeAbsoluteTime(identifier: CFCalendarIdentifier, at: CFAbsoluteTime, componentDesc: *const c_char, ...) -> Boolean;
-    pub fn CFCalendarGetComponentDifference(identifier: CFCalendarIdentifier, startingAT: CFAbsoluteTime, resultAT: CFAbsoluteTime, options: CFOptionFlags, componentDesc: *const c_char, ...) -> Boolean;
+    pub fn CFCalendarAddComponents(
+        identifier: CFCalendarIdentifier,
+        /* inout */ at: *mut CFAbsoluteTime,
+        options: CFOptionFlags,
+        componentDesc: *const char,
+        ...
+    ) -> Boolean;
+    pub fn CFCalendarComposeAbsoluteTime(
+        identifier: CFCalendarIdentifier,
+        /* out */ at: *mut CFAbsoluteTime,
+        componentDesc: *const c_char,
+        ...
+    ) -> Boolean;
+    pub fn CFCalendarDecomposeAbsoluteTime(
+        identifier: CFCalendarIdentifier,
+        at: CFAbsoluteTime,
+        componentDesc: *const c_char,
+        ...
+    ) -> Boolean;
+    pub fn CFCalendarGetComponentDifference(
+        identifier: CFCalendarIdentifier,
+        startingAT: CFAbsoluteTime,
+        resultAT: CFAbsoluteTime,
+        options: CFOptionFlags,
+        componentDesc: *const c_char,
+        ...
+    ) -> Boolean;
 
     /* Getting Ranges of Units */
-    pub fn CFCalendarGetRangeOfUnit(identifier: CFCalendarIdentifier, smallerUnit: CFCalendarUnit, biggerUnit: CFCalendarUnit, at: CFAbsoluteTime) -> CFRange;
-    pub fn CFCalendarGetOrdinalityOfUnit(identifier: CFCalendarIdentifier, smallerUnit: CFCalendarUnit, biggerUnit: CFCalendarUnit, at: CFAbsoluteTime) -> CFIndex;
-    pub fn CFCalendarGetTimeRangeOfUnit(identifier: CFCalendarIdentifier, unit: CFCalendarUnit, at: CFAbsoluteTime, startp: *mut CFAbsoluteTime, tip: *mut CFTimeInterval) -> Boolean;
-    pub fn CFCalendarGetMaximumRangeOfUnit(identifier: CFCalendarIdentifier, unit: CFCalendarUnit) -> CFRange;
-    pub fn CFCalendarGetMinimumRangeOfUnit(identifier: CFCalendarIdentifier, unit: CFCalendarUnit) -> CFRange;
+    pub fn CFCalendarGetRangeOfUnit(
+        identifier: CFCalendarIdentifier,
+        smallerUnit: CFCalendarUnit,
+        biggerUnit: CFCalendarUnit,
+        at: CFAbsoluteTime,
+    ) -> CFRange;
+    pub fn CFCalendarGetOrdinalityOfUnit(
+        identifier: CFCalendarIdentifier,
+        smallerUnit: CFCalendarUnit,
+        biggerUnit: CFCalendarUnit,
+        at: CFAbsoluteTime,
+    ) -> CFIndex;
+    pub fn CFCalendarGetTimeRangeOfUnit(
+        identifier: CFCalendarIdentifier,
+        unit: CFCalendarUnit,
+        at: CFAbsoluteTime,
+        startp: *mut CFAbsoluteTime,
+        tip: *mut CFTimeInterval,
+    ) -> Boolean;
+    pub fn CFCalendarGetMaximumRangeOfUnit(
+        identifier: CFCalendarIdentifier,
+        unit: CFCalendarUnit,
+    ) -> CFRange;
+    pub fn CFCalendarGetMinimumRangeOfUnit(
+        identifier: CFCalendarIdentifier,
+        unit: CFCalendarUnit,
+    ) -> CFRange;
 
     /* Getting and Setting the Time Zone */
     pub fn CFCalendarCopyTimeZone(identifier: CFCalendarIdentifier) -> CFTimeZoneRef;

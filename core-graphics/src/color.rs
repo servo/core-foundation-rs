@@ -7,21 +7,21 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use core_foundation::base::{CFTypeID};
+use super::sys::CGColorRef;
 use base::CGFloat;
+use core_foundation::base::CFTypeID;
 use core_foundation::base::TCFType;
-use super::sys::{CGColorRef};
 
 pub use super::sys::CGColorRef as SysCGColorRef;
 
-declare_TCFType!{
+declare_TCFType! {
     CGColor, CGColorRef
 }
 impl_TCFType!(CGColor, CGColorRef, CGColorGetTypeID);
 
 impl CGColor {
     pub fn rgb(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) -> Self {
-        unsafe { 
+        unsafe {
             let ptr = CGColorCreateGenericRGB(red, green, blue, alpha);
             CGColor::wrap_under_create_rule(ptr)
         }
@@ -29,7 +29,12 @@ impl CGColor {
 }
 
 #[link(name = "CoreGraphics", kind = "framework")]
-extern {
-    fn CGColorCreateGenericRGB(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) -> ::sys::CGColorRef;
+extern "C" {
+    fn CGColorCreateGenericRGB(
+        red: CGFloat,
+        green: CGFloat,
+        blue: CGFloat,
+        alpha: CGFloat,
+    ) -> ::sys::CGColorRef;
     fn CGColorGetTypeID() -> CFTypeID;
 }

@@ -7,13 +7,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_char, c_void, c_ulong, c_double, c_ushort};
-use base::{Boolean, CFOptionFlags, CFIndex, CFAllocatorRef, ConstStr255Param, CFRange, CFTypeID, SInt32, UInt32, UInt8, CFComparisonResult, StringPtr, ConstStringPtr, UTF32Char};
 use array::CFArrayRef;
+use base::{
+    Boolean, CFAllocatorRef, CFComparisonResult, CFIndex, CFOptionFlags, CFRange, CFTypeID,
+    ConstStr255Param, ConstStringPtr, SInt32, StringPtr, UInt32, UInt8, UTF32Char,
+};
+use characterset::CFCharacterSetRef;
 use data::CFDataRef;
 use dictionary::CFDictionaryRef;
-use characterset::CFCharacterSetRef;
 use locale::CFLocaleRef;
+use std::os::raw::{c_char, c_double, c_ulong, c_ushort, c_void};
 
 pub type CFStringCompareFlags = CFOptionFlags;
 pub const kCFCompareCaseInsensitive: CFStringCompareFlags = 1;
@@ -203,7 +206,7 @@ pub fn CFStringInitInlineBuffer(str: CFStringRef, buf: *mut CFStringInlineBuffer
 pub fn CFStringGetCharacterFromInlineBuffer(buf: *mut CFStringInlineBuffer, idx: CFIndex) -> UniChar;
 */
 
-extern {
+extern "C" {
     /*
      * CFString.h
      */
@@ -213,52 +216,203 @@ extern {
     /* CFString */
     /* Creating a CFString */
     //fn CFSTR
-    pub fn CFStringCreateArrayBySeparatingStrings(alloc: CFAllocatorRef, theString: CFStringRef, separatorString: CFStringRef) -> CFArrayRef;
-    pub fn CFStringCreateByCombiningStrings(alloc: CFAllocatorRef, theArray: CFArrayRef, separatorString: CFStringRef) -> CFStringRef;
+    pub fn CFStringCreateArrayBySeparatingStrings(
+        alloc: CFAllocatorRef,
+        theString: CFStringRef,
+        separatorString: CFStringRef,
+    ) -> CFArrayRef;
+    pub fn CFStringCreateByCombiningStrings(
+        alloc: CFAllocatorRef,
+        theArray: CFArrayRef,
+        separatorString: CFStringRef,
+    ) -> CFStringRef;
     pub fn CFStringCreateCopy(alloc: CFAllocatorRef, theString: CFStringRef) -> CFStringRef;
-    pub fn CFStringCreateFromExternalRepresentation(alloc: CFAllocatorRef, data: CFDataRef, encoding: CFStringEncoding) -> CFStringRef;
-    pub fn CFStringCreateWithBytes(alloc: CFAllocatorRef, bytes: *const UInt8, numBytes: CFIndex, encoding: CFStringEncoding, isExternalRepresentation: Boolean) -> CFStringRef;
-    pub fn CFStringCreateWithBytesNoCopy(alloc: CFAllocatorRef, bytes: *const UInt8, numBytes: CFIndex, encoding: CFStringEncoding, isExternalRepresentation: Boolean, contentsDeallocator: CFAllocatorRef) -> CFStringRef;
-    pub fn CFStringCreateWithCharacters(alloc: CFAllocatorRef, chars: *const UniChar, numChars: CFIndex) -> CFStringRef;
-    pub fn CFStringCreateWithCharactersNoCopy(alloc: CFAllocatorRef, chars: *const UniChar, numChars: CFIndex, contentsDeallocator: CFAllocatorRef) -> CFStringRef;
-    pub fn CFStringCreateWithCString(alloc: CFAllocatorRef, cStr: *const c_char, encoding: CFStringEncoding) -> CFStringRef;
-    pub fn CFStringCreateWithCStringNoCopy(alloc: CFAllocatorRef, cStr: *const c_char, encoding: CFStringEncoding, contentsDeallocator: CFAllocatorRef) -> CFStringRef;
-    pub fn CFStringCreateWithFormat(alloc: CFAllocatorRef, formatOptions: CFDictionaryRef, format: CFStringRef, ...) -> CFStringRef;
+    pub fn CFStringCreateFromExternalRepresentation(
+        alloc: CFAllocatorRef,
+        data: CFDataRef,
+        encoding: CFStringEncoding,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithBytes(
+        alloc: CFAllocatorRef,
+        bytes: *const UInt8,
+        numBytes: CFIndex,
+        encoding: CFStringEncoding,
+        isExternalRepresentation: Boolean,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithBytesNoCopy(
+        alloc: CFAllocatorRef,
+        bytes: *const UInt8,
+        numBytes: CFIndex,
+        encoding: CFStringEncoding,
+        isExternalRepresentation: Boolean,
+        contentsDeallocator: CFAllocatorRef,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithCharacters(
+        alloc: CFAllocatorRef,
+        chars: *const UniChar,
+        numChars: CFIndex,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithCharactersNoCopy(
+        alloc: CFAllocatorRef,
+        chars: *const UniChar,
+        numChars: CFIndex,
+        contentsDeallocator: CFAllocatorRef,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithCString(
+        alloc: CFAllocatorRef,
+        cStr: *const c_char,
+        encoding: CFStringEncoding,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithCStringNoCopy(
+        alloc: CFAllocatorRef,
+        cStr: *const c_char,
+        encoding: CFStringEncoding,
+        contentsDeallocator: CFAllocatorRef,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithFormat(
+        alloc: CFAllocatorRef,
+        formatOptions: CFDictionaryRef,
+        format: CFStringRef,
+        ...
+    ) -> CFStringRef;
     //pub fn CFStringCreateWithFormatAndArguments(alloc: CFAllocatorRef, formatOptions: CFDictionaryRef, format: CFStringRef, arguments: va_list) -> CFStringRef;
-    pub fn CFStringCreateWithPascalString(alloc: CFAllocatorRef, pStr: ConstStr255Param, encoding: CFStringEncoding) -> CFStringRef;
-    pub fn CFStringCreateWithPascalStringNoCopy(alloc: CFAllocatorRef, pStr: ConstStr255Param, encoding: CFStringEncoding, contentsDeallocator: CFAllocatorRef) -> CFStringRef;
-    pub fn CFStringCreateWithSubstring(alloc: CFAllocatorRef, str: CFStringRef, range: CFRange) -> CFStringRef;
+    pub fn CFStringCreateWithPascalString(
+        alloc: CFAllocatorRef,
+        pStr: ConstStr255Param,
+        encoding: CFStringEncoding,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithPascalStringNoCopy(
+        alloc: CFAllocatorRef,
+        pStr: ConstStr255Param,
+        encoding: CFStringEncoding,
+        contentsDeallocator: CFAllocatorRef,
+    ) -> CFStringRef;
+    pub fn CFStringCreateWithSubstring(
+        alloc: CFAllocatorRef,
+        str: CFStringRef,
+        range: CFRange,
+    ) -> CFStringRef;
 
     /* Searching Strings */
-    pub fn CFStringCreateArrayWithFindResults(alloc: CFAllocatorRef, theString: CFStringRef, stringToFind: CFStringRef, rangeToSearch: CFRange, compareOptions: CFStringCompareFlags) -> CFArrayRef;
-    pub fn CFStringFind(theString: CFStringRef, stringToFind: CFStringRef, compareOptions: CFStringCompareFlags) -> CFRange;
-    pub fn CFStringFindCharacterFromSet(theString: CFStringRef, theSet: CFCharacterSetRef, rangeToSearch: CFRange, searchOptions: CFStringCompareFlags, result: *mut CFRange) -> Boolean;
-    pub fn CFStringFindWithOptions(theString: CFStringRef, stringToFind: CFStringRef, rangeToSearch: CFRange, searchOptions: CFStringCompareFlags, result: *mut CFRange) -> Boolean;
-    pub fn CFStringFindWithOptionsAndLocale(theString: CFStringRef, stringToFind: CFStringRef, rangeToSearch: CFRange, searchOptions: CFStringCompareFlags, locale: CFLocaleRef, result: *mut CFRange) -> Boolean;
-    pub fn CFStringGetLineBounds(theString: CFStringRef, range: CFRange, lineBeginIndex: *mut CFIndex, lineEndIndex: *mut CFIndex, contentsEndIndex: *mut CFIndex);
+    pub fn CFStringCreateArrayWithFindResults(
+        alloc: CFAllocatorRef,
+        theString: CFStringRef,
+        stringToFind: CFStringRef,
+        rangeToSearch: CFRange,
+        compareOptions: CFStringCompareFlags,
+    ) -> CFArrayRef;
+    pub fn CFStringFind(
+        theString: CFStringRef,
+        stringToFind: CFStringRef,
+        compareOptions: CFStringCompareFlags,
+    ) -> CFRange;
+    pub fn CFStringFindCharacterFromSet(
+        theString: CFStringRef,
+        theSet: CFCharacterSetRef,
+        rangeToSearch: CFRange,
+        searchOptions: CFStringCompareFlags,
+        result: *mut CFRange,
+    ) -> Boolean;
+    pub fn CFStringFindWithOptions(
+        theString: CFStringRef,
+        stringToFind: CFStringRef,
+        rangeToSearch: CFRange,
+        searchOptions: CFStringCompareFlags,
+        result: *mut CFRange,
+    ) -> Boolean;
+    pub fn CFStringFindWithOptionsAndLocale(
+        theString: CFStringRef,
+        stringToFind: CFStringRef,
+        rangeToSearch: CFRange,
+        searchOptions: CFStringCompareFlags,
+        locale: CFLocaleRef,
+        result: *mut CFRange,
+    ) -> Boolean;
+    pub fn CFStringGetLineBounds(
+        theString: CFStringRef,
+        range: CFRange,
+        lineBeginIndex: *mut CFIndex,
+        lineEndIndex: *mut CFIndex,
+        contentsEndIndex: *mut CFIndex,
+    );
 
     /* Comparing Strings */
-    pub fn CFStringCompare(theString1: CFStringRef, theString2: CFStringRef, compareOptions: CFStringCompareFlags) -> CFComparisonResult;
-    pub fn CFStringCompareWithOptions(theString1: CFStringRef, theString2: CFStringRef, rangeToCompare: CFRange, compareOptions: CFStringCompareFlags) -> CFComparisonResult;
-    pub fn CFStringCompareWithOptionsAndLocale(theString1: CFStringRef, theString2: CFStringRef, rangeToCompare: CFRange, compareOptions: CFStringCompareFlags, locale: CFLocaleRef) -> CFComparisonResult;
+    pub fn CFStringCompare(
+        theString1: CFStringRef,
+        theString2: CFStringRef,
+        compareOptions: CFStringCompareFlags,
+    ) -> CFComparisonResult;
+    pub fn CFStringCompareWithOptions(
+        theString1: CFStringRef,
+        theString2: CFStringRef,
+        rangeToCompare: CFRange,
+        compareOptions: CFStringCompareFlags,
+    ) -> CFComparisonResult;
+    pub fn CFStringCompareWithOptionsAndLocale(
+        theString1: CFStringRef,
+        theString2: CFStringRef,
+        rangeToCompare: CFRange,
+        compareOptions: CFStringCompareFlags,
+        locale: CFLocaleRef,
+    ) -> CFComparisonResult;
     pub fn CFStringHasPrefix(theString: CFStringRef, prefix: CFStringRef) -> Boolean;
     pub fn CFStringHasSuffix(theString: CFStringRef, suffix: CFStringRef) -> Boolean;
 
     /* Accessing Characters */
-    pub fn CFStringCreateExternalRepresentation(alloc: CFAllocatorRef, theString: CFStringRef, encoding: CFStringEncoding, lossByte: UInt8) -> CFDataRef;
-    pub fn CFStringGetBytes(theString: CFStringRef, range: CFRange, encoding: CFStringEncoding, lossByte: UInt8, isExternalRepresentation: Boolean, buffer: *mut UInt8, maxBufLen: CFIndex, usedBufLen: *mut CFIndex) -> CFIndex;
+    pub fn CFStringCreateExternalRepresentation(
+        alloc: CFAllocatorRef,
+        theString: CFStringRef,
+        encoding: CFStringEncoding,
+        lossByte: UInt8,
+    ) -> CFDataRef;
+    pub fn CFStringGetBytes(
+        theString: CFStringRef,
+        range: CFRange,
+        encoding: CFStringEncoding,
+        lossByte: UInt8,
+        isExternalRepresentation: Boolean,
+        buffer: *mut UInt8,
+        maxBufLen: CFIndex,
+        usedBufLen: *mut CFIndex,
+    ) -> CFIndex;
     pub fn CFStringGetCharacterAtIndex(theString: CFStringRef, idx: CFIndex) -> UniChar;
     pub fn CFStringGetCharacters(theString: CFStringRef, range: CFRange, buffer: *mut UniChar);
     pub fn CFStringGetCharactersPtr(theString: CFStringRef) -> *const UniChar;
-    pub fn CFStringGetCString(theString: CFStringRef, buffer: *mut c_char, bufferSize: CFIndex, encoding: CFStringEncoding) -> Boolean;
-    pub fn CFStringGetCStringPtr(theString: CFStringRef, encoding: CFStringEncoding) -> *const c_char;
+    pub fn CFStringGetCString(
+        theString: CFStringRef,
+        buffer: *mut c_char,
+        bufferSize: CFIndex,
+        encoding: CFStringEncoding,
+    ) -> Boolean;
+    pub fn CFStringGetCStringPtr(
+        theString: CFStringRef,
+        encoding: CFStringEncoding,
+    ) -> *const c_char;
     pub fn CFStringGetLength(theString: CFStringRef) -> CFIndex;
-    pub fn CFStringGetPascalString(theString: CFStringRef, buffer: StringPtr, bufferSize: CFIndex, encoding: CFStringEncoding) -> Boolean;
-    pub fn CFStringGetPascalStringPtr(theString: CFStringRef, encoding: CFStringEncoding) -> ConstStringPtr;
-    pub fn CFStringGetRangeOfComposedCharactersAtIndex(theString: CFStringRef, theIndex: CFIndex) -> CFRange;
+    pub fn CFStringGetPascalString(
+        theString: CFStringRef,
+        buffer: StringPtr,
+        bufferSize: CFIndex,
+        encoding: CFStringEncoding,
+    ) -> Boolean;
+    pub fn CFStringGetPascalStringPtr(
+        theString: CFStringRef,
+        encoding: CFStringEncoding,
+    ) -> ConstStringPtr;
+    pub fn CFStringGetRangeOfComposedCharactersAtIndex(
+        theString: CFStringRef,
+        theIndex: CFIndex,
+    ) -> CFRange;
 
     /* Working With Hyphenation */
-    pub fn CFStringGetHyphenationLocationBeforeIndex(string: CFStringRef, location: CFIndex, limitRange: CFRange, options: CFOptionFlags, locale: CFLocaleRef, character: *mut UTF32Char) -> CFIndex;
+    pub fn CFStringGetHyphenationLocationBeforeIndex(
+        string: CFStringRef,
+        location: CFIndex,
+        limitRange: CFRange,
+        options: CFOptionFlags,
+        locale: CFLocaleRef,
+        character: *mut UTF32Char,
+    ) -> CFIndex;
     pub fn CFStringIsHyphenationAvailableForLocale(locale: CFLocaleRef) -> Boolean;
 
     /* Working With Encodings */
@@ -270,8 +424,13 @@ extern {
     pub fn CFStringConvertWindowsCodepageToEncoding(codepage: UInt32) -> CFStringEncoding;
     pub fn CFStringGetFastestEncoding(theString: CFStringRef) -> CFStringEncoding;
     pub fn CFStringGetListOfAvailableEncodings() -> *const CFStringEncoding;
-    pub fn CFStringGetMaximumSizeForEncoding(length: CFIndex, encoding: CFStringEncoding) -> CFIndex;
-    pub fn CFStringGetMostCompatibleMacStringEncoding(encoding: CFStringEncoding) -> CFStringEncoding;
+    pub fn CFStringGetMaximumSizeForEncoding(
+        length: CFIndex,
+        encoding: CFStringEncoding,
+    ) -> CFIndex;
+    pub fn CFStringGetMostCompatibleMacStringEncoding(
+        encoding: CFStringEncoding,
+    ) -> CFStringEncoding;
     pub fn CFStringGetNameOfEncoding(encoding: CFStringEncoding) -> CFStringRef;
     pub fn CFStringGetSmallestEncoding(theString: CFStringRef) -> CFStringEncoding;
     pub fn CFStringGetSystemEncoding() -> CFStringEncoding;
@@ -286,36 +445,101 @@ extern {
     pub fn CFStringGetTypeID() -> CFTypeID;
 
     /* String File System Representations */
-    pub fn CFStringCreateWithFileSystemRepresentation(alloc: CFAllocatorRef, buffer: *const c_char) -> CFStringRef;
-    pub fn CFStringGetFileSystemRepresentation(string: CFStringRef, buffer: *mut c_char, maxBufLen: CFIndex) -> Boolean;
+    pub fn CFStringCreateWithFileSystemRepresentation(
+        alloc: CFAllocatorRef,
+        buffer: *const c_char,
+    ) -> CFStringRef;
+    pub fn CFStringGetFileSystemRepresentation(
+        string: CFStringRef,
+        buffer: *mut c_char,
+        maxBufLen: CFIndex,
+    ) -> Boolean;
     pub fn CFStringGetMaximumSizeOfFileSystemRepresentation(string: CFStringRef) -> CFIndex;
 
     /* Getting Paragraph Bounds */
-    pub fn CFStringGetParagraphBounds(string: CFStringRef, range: CFRange, parBeginIndex: *mut CFIndex, parEndIndex: *mut CFIndex, contentsEndIndex: *mut CFIndex);
+    pub fn CFStringGetParagraphBounds(
+        string: CFStringRef,
+        range: CFRange,
+        parBeginIndex: *mut CFIndex,
+        parEndIndex: *mut CFIndex,
+        contentsEndIndex: *mut CFIndex,
+    );
 
     /* CFMutableString */
     /* CFMutableString Miscellaneous Functions */
     pub fn CFStringAppend(theString: CFMutableStringRef, appendedString: CFStringRef);
-    pub fn CFStringAppendCharacters(theString: CFMutableStringRef, chars: *const UniChar, numChars: CFIndex);
-    pub fn CFStringAppendCString(theString: CFMutableStringRef, cStr: *const c_char, encoding: CFStringEncoding);
-    pub fn CFStringAppendFormat(theString: CFMutableStringRef, formatOptions: CFDictionaryRef, format: CFStringRef, ...);
+    pub fn CFStringAppendCharacters(
+        theString: CFMutableStringRef,
+        chars: *const UniChar,
+        numChars: CFIndex,
+    );
+    pub fn CFStringAppendCString(
+        theString: CFMutableStringRef,
+        cStr: *const c_char,
+        encoding: CFStringEncoding,
+    );
+    pub fn CFStringAppendFormat(
+        theString: CFMutableStringRef,
+        formatOptions: CFDictionaryRef,
+        format: CFStringRef,
+        ...
+    );
     //pub fn CFStringAppendFormatAndArguments(theString: CFMutableStringRef, formatOptions: CFDictionaryRef, format: CFStringRef, arguments: va_list);
-    pub fn CFStringAppendPascalString(theString: CFMutableStringRef, pStr: ConstStr255Param, encoding: CFStringEncoding);
+    pub fn CFStringAppendPascalString(
+        theString: CFMutableStringRef,
+        pStr: ConstStr255Param,
+        encoding: CFStringEncoding,
+    );
     pub fn CFStringCapitalize(theString: CFMutableStringRef, locale: CFLocaleRef);
     pub fn CFStringCreateMutable(alloc: CFAllocatorRef, maxLength: CFIndex) -> CFMutableStringRef;
-    pub fn CFStringCreateMutableCopy(alloc: CFAllocatorRef, maxLength: CFIndex, theString: CFStringRef) -> CFMutableStringRef;
-    pub fn CFStringCreateMutableWithExternalCharactersNoCopy(alloc: CFAllocatorRef, chars: *mut UniChar, numChars: CFIndex, capacity: CFIndex, externalCharactersAllocator: CFAllocatorRef) -> CFMutableStringRef;
+    pub fn CFStringCreateMutableCopy(
+        alloc: CFAllocatorRef,
+        maxLength: CFIndex,
+        theString: CFStringRef,
+    ) -> CFMutableStringRef;
+    pub fn CFStringCreateMutableWithExternalCharactersNoCopy(
+        alloc: CFAllocatorRef,
+        chars: *mut UniChar,
+        numChars: CFIndex,
+        capacity: CFIndex,
+        externalCharactersAllocator: CFAllocatorRef,
+    ) -> CFMutableStringRef;
     pub fn CFStringDelete(theString: CFMutableStringRef, range: CFRange);
-    pub fn CFStringFindAndReplace(theString: CFMutableStringRef, stringToFind: CFStringRef, replacementString: CFStringRef, rangeToSearch: CFRange, compareOptions: CFStringCompareFlags) -> CFIndex;
-    pub fn CFStringFold(theString: CFMutableStringRef, theFlags: CFStringCompareFlags, theLocale: CFLocaleRef);
+    pub fn CFStringFindAndReplace(
+        theString: CFMutableStringRef,
+        stringToFind: CFStringRef,
+        replacementString: CFStringRef,
+        rangeToSearch: CFRange,
+        compareOptions: CFStringCompareFlags,
+    ) -> CFIndex;
+    pub fn CFStringFold(
+        theString: CFMutableStringRef,
+        theFlags: CFStringCompareFlags,
+        theLocale: CFLocaleRef,
+    );
     pub fn CFStringInsert(str: CFMutableStringRef, idx: CFIndex, insertedStr: CFStringRef);
     pub fn CFStringLowercase(theString: CFMutableStringRef, locale: CFLocaleRef);
     pub fn CFStringNormalize(theString: CFMutableStringRef, theForm: CFStringNormalizationForm);
-    pub fn CFStringPad(theString: CFMutableStringRef, padString: CFStringRef, length: CFIndex, indexIntoPad: CFIndex);
+    pub fn CFStringPad(
+        theString: CFMutableStringRef,
+        padString: CFStringRef,
+        length: CFIndex,
+        indexIntoPad: CFIndex,
+    );
     pub fn CFStringReplace(theString: CFMutableStringRef, range: CFRange, replacement: CFStringRef);
     pub fn CFStringReplaceAll(theString: CFMutableStringRef, replacement: CFStringRef);
-    pub fn CFStringSetExternalCharactersNoCopy(theString: CFMutableStringRef, chars: *mut UniChar, length: CFIndex, capacity: CFIndex);
-    pub fn CFStringTransform(string: CFMutableStringRef, range: *mut CFRange, transform: CFStringRef, reverse: Boolean) -> Boolean;
+    pub fn CFStringSetExternalCharactersNoCopy(
+        theString: CFMutableStringRef,
+        chars: *mut UniChar,
+        length: CFIndex,
+        capacity: CFIndex,
+    );
+    pub fn CFStringTransform(
+        string: CFMutableStringRef,
+        range: *mut CFRange,
+        transform: CFStringRef,
+        reverse: Boolean,
+    ) -> Boolean;
     pub fn CFStringTrim(theString: CFMutableStringRef, trimString: CFStringRef);
     pub fn CFStringTrimWhitespace(theString: CFMutableStringRef);
     pub fn CFStringUppercase(theString: CFMutableStringRef, locale: CFLocaleRef);

@@ -1,13 +1,16 @@
 extern crate cocoa;
 extern crate objc;
 
+use cocoa::base::{nil, selector, NO};
 use objc::*;
-use cocoa::base::{selector, nil, NO};
 
-use cocoa::foundation::{NSRect, NSPoint, NSSize, NSAutoreleasePool, NSProcessInfo,
-                        NSString};
-use cocoa::appkit::{NSApp, NSColor, NSApplication, NSApplicationActivationPolicyRegular, NSMenu, NSMenuItem, NSWindowStyleMask, NSBackingStoreType, NSWindow, NSView, NSVisualEffectMaterial, NSVisualEffectView, NSViewWidthSizable, NSViewHeightSizable, NSVisualEffectBlendingMode, NSVisualEffectState, NSWindowOrderingMode};
-
+use cocoa::appkit::{
+    NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSBackingStoreType, NSColor,
+    NSMenu, NSMenuItem, NSView, NSViewHeightSizable, NSViewWidthSizable,
+    NSVisualEffectBlendingMode, NSVisualEffectMaterial, NSVisualEffectState, NSVisualEffectView,
+    NSWindow, NSWindowOrderingMode, NSWindowStyleMask,
+};
+use cocoa::foundation::{NSAutoreleasePool, NSPoint, NSProcessInfo, NSRect, NSSize, NSString};
 
 fn main() {
     unsafe {
@@ -36,21 +39,22 @@ fn main() {
         app_menu.addItem_(quit_item);
         app_menu_item.setSubmenu_(app_menu);
 
-
         // Create some colors
         let clear = NSColor::clearColor(nil);
 
         // Create windows with different color types.
-        let window = NSWindow::alloc(nil).initWithContentRect_styleMask_backing_defer_(
-            NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
-            NSWindowStyleMask::NSTitledWindowMask |
-                NSWindowStyleMask::NSClosableWindowMask |
-                NSWindowStyleMask::NSResizableWindowMask |
-                NSWindowStyleMask::NSMiniaturizableWindowMask |
-                NSWindowStyleMask::NSUnifiedTitleAndToolbarWindowMask,
-            NSBackingStoreType::NSBackingStoreBuffered,
-            NO
-        ).autorelease();
+        let window = NSWindow::alloc(nil)
+            .initWithContentRect_styleMask_backing_defer_(
+                NSRect::new(NSPoint::new(0., 0.), NSSize::new(200., 200.)),
+                NSWindowStyleMask::NSTitledWindowMask
+                    | NSWindowStyleMask::NSClosableWindowMask
+                    | NSWindowStyleMask::NSResizableWindowMask
+                    | NSWindowStyleMask::NSMiniaturizableWindowMask
+                    | NSWindowStyleMask::NSUnifiedTitleAndToolbarWindowMask,
+                NSBackingStoreType::NSBackingStoreBuffered,
+                NO,
+            )
+            .autorelease();
 
         window.cascadeTopLeftFromPoint_(NSPoint::new(20., 20.));
         window.setTitle_(NSString::alloc(nil).init_str("NSVisualEffectView_blur"));
@@ -60,7 +64,8 @@ fn main() {
         //NSVisualEffectView blur
         let ns_view = window.contentView();
         let bounds = NSView::bounds(ns_view);
-        let blurred_view = NSVisualEffectView::initWithFrame_(NSVisualEffectView::alloc(nil), bounds);
+        let blurred_view =
+            NSVisualEffectView::initWithFrame_(NSVisualEffectView::alloc(nil), bounds);
         blurred_view.autorelease();
 
         blurred_view.setMaterial_(NSVisualEffectMaterial::HudWindow);
@@ -73,4 +78,3 @@ fn main() {
         app.run();
     }
 }
-

@@ -7,12 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_void, c_double};
+use std::os::raw::{c_double, c_void};
 
-use base::{CFIndex, CFOptionFlags, CFAllocatorRef, CFTypeID, CFRange, Boolean, CFTypeRef};
-use string::CFStringRef;
+use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef};
 use locale::CFLocaleRef;
 use number::{CFNumberRef, CFNumberType};
+use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFNumberFormatter(c_void);
@@ -55,7 +55,7 @@ pub const kCFNumberFormatterPadAfterPrefix: CFNumberFormatterPadPosition = 1;
 pub const kCFNumberFormatterPadBeforeSuffix: CFNumberFormatterPadPosition = 2;
 pub const kCFNumberFormatterPadAfterSuffix: CFNumberFormatterPadPosition = 3;
 
-extern {
+extern "C" {
     /*
      * CFNumberFormatter.h
      */
@@ -65,8 +65,8 @@ extern {
     // The specific types for each key are specified above.
     pub static kCFNumberFormatterCurrencyCode: CFNumberFormatterKey; // CFString
     pub static kCFNumberFormatterDecimalSeparator: CFNumberFormatterKey; // CFString
-    pub static kCFNumberFormatterCurrencyDecimalSeparator: CFNumberFormatterKey;  // CFString
-    pub static kCFNumberFormatterAlwaysShowDecimalSeparator: CFNumberFormatterKey;  // CFBoolean
+    pub static kCFNumberFormatterCurrencyDecimalSeparator: CFNumberFormatterKey; // CFString
+    pub static kCFNumberFormatterAlwaysShowDecimalSeparator: CFNumberFormatterKey; // CFBoolean
     pub static kCFNumberFormatterGroupingSeparator: CFNumberFormatterKey; // CFString
     pub static kCFNumberFormatterUseGroupingSeparator: CFNumberFormatterKey; // CFBoolean
     pub static kCFNumberFormatterPercentSymbol: CFNumberFormatterKey; // CFString
@@ -95,29 +95,65 @@ extern {
     pub static kCFNumberFormatterNegativePrefix: CFNumberFormatterKey; // CFString
     pub static kCFNumberFormatterNegativeSuffix: CFNumberFormatterKey; // CFString
     pub static kCFNumberFormatterPerMillSymbol: CFNumberFormatterKey; // CFString
-    pub static kCFNumberFormatterInternationalCurrencySymbol: CFNumberFormatterKey;  // CFString
-    pub static kCFNumberFormatterCurrencyGroupingSeparator: CFNumberFormatterKey;  // CFString
+    pub static kCFNumberFormatterInternationalCurrencySymbol: CFNumberFormatterKey; // CFString
+    pub static kCFNumberFormatterCurrencyGroupingSeparator: CFNumberFormatterKey; // CFString
     pub static kCFNumberFormatterIsLenient: CFNumberFormatterKey; // CFBoolean
     pub static kCFNumberFormatterUseSignificantDigits: CFNumberFormatterKey; // CFBoolean
     pub static kCFNumberFormatterMinSignificantDigits: CFNumberFormatterKey; // CFNumber
     pub static kCFNumberFormatterMaxSignificantDigits: CFNumberFormatterKey; // CFNumber
 
     /* Creating a Number Formatter */
-    pub fn CFNumberFormatterCreate(allocator: CFAllocatorRef, locale: CFLocaleRef, style: CFNumberFormatterStyle) -> CFNumberFormatterRef;
+    pub fn CFNumberFormatterCreate(
+        allocator: CFAllocatorRef,
+        locale: CFLocaleRef,
+        style: CFNumberFormatterStyle,
+    ) -> CFNumberFormatterRef;
 
     /* Configuring a Number Formatter */
     pub fn CFNumberFormatterSetFormat(formatter: CFNumberFormatterRef, formatString: CFStringRef);
-    pub fn CFNumberFormatterSetProperty(formatter: CFNumberFormatterRef, key: CFNumberFormatterKey, value: CFTypeRef);
+    pub fn CFNumberFormatterSetProperty(
+        formatter: CFNumberFormatterRef,
+        key: CFNumberFormatterKey,
+        value: CFTypeRef,
+    );
 
     /* Formatting Values */
-    pub fn CFNumberFormatterCreateNumberFromString(allocator: CFAllocatorRef, formatter: CFNumberFormatterRef, string: CFStringRef, rangep: *mut CFRange, options: CFOptionFlags) -> CFNumberRef;
-    pub fn CFNumberFormatterCreateStringWithNumber(allocator: CFAllocatorRef, formatter: CFNumberFormatterRef, number: CFNumberRef) -> CFStringRef;
-    pub fn CFNumberFormatterCreateStringWithValue(allocator: CFAllocatorRef, formatter: CFNumberFormatterRef, numberType: CFNumberType, valuePtr: *const c_void) -> CFStringRef;
-    pub fn CFNumberFormatterGetDecimalInfoForCurrencyCode(currencyCode: CFStringRef, defaultFractionDigits: *mut i32, roundingIncrement: *mut c_double) -> Boolean;
-    pub fn CFNumberFormatterGetValueFromString(formatter: CFNumberFormatterRef, string: CFStringRef, rangep: *mut CFRange, numberType: CFNumberType, valuePtr: *mut c_void) -> Boolean;
+    pub fn CFNumberFormatterCreateNumberFromString(
+        allocator: CFAllocatorRef,
+        formatter: CFNumberFormatterRef,
+        string: CFStringRef,
+        rangep: *mut CFRange,
+        options: CFOptionFlags,
+    ) -> CFNumberRef;
+    pub fn CFNumberFormatterCreateStringWithNumber(
+        allocator: CFAllocatorRef,
+        formatter: CFNumberFormatterRef,
+        number: CFNumberRef,
+    ) -> CFStringRef;
+    pub fn CFNumberFormatterCreateStringWithValue(
+        allocator: CFAllocatorRef,
+        formatter: CFNumberFormatterRef,
+        numberType: CFNumberType,
+        valuePtr: *const c_void,
+    ) -> CFStringRef;
+    pub fn CFNumberFormatterGetDecimalInfoForCurrencyCode(
+        currencyCode: CFStringRef,
+        defaultFractionDigits: *mut i32,
+        roundingIncrement: *mut c_double,
+    ) -> Boolean;
+    pub fn CFNumberFormatterGetValueFromString(
+        formatter: CFNumberFormatterRef,
+        string: CFStringRef,
+        rangep: *mut CFRange,
+        numberType: CFNumberType,
+        valuePtr: *mut c_void,
+    ) -> Boolean;
 
     /* Examining a Number Formatter */
-    pub fn CFNumberFormatterCopyProperty(formatter: CFNumberFormatterRef, key: CFNumberFormatterKey) -> CFTypeRef;
+    pub fn CFNumberFormatterCopyProperty(
+        formatter: CFNumberFormatterRef,
+        key: CFNumberFormatterKey,
+    ) -> CFTypeRef;
     pub fn CFNumberFormatterGetFormat(formatter: CFNumberFormatterRef) -> CFStringRef;
     pub fn CFNumberFormatterGetLocale(formatter: CFNumberFormatterRef) -> CFLocaleRef;
     pub fn CFNumberFormatterGetStyle(formatter: CFNumberFormatterRef) -> CFNumberFormatterStyle;

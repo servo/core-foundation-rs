@@ -22,15 +22,17 @@ foreign_type! {
 
 impl CGColorSpace {
     pub fn type_id() -> CFTypeID {
-        unsafe {
-            CGColorSpaceGetTypeID()
-        }
+        unsafe { CGColorSpaceGetTypeID() }
     }
 
     pub fn create_with_name(name: CFStringRef) -> Option<CGColorSpace> {
         unsafe {
             let p = CGColorSpaceCreateWithName(name);
-            if !p.is_null() {Some(CGColorSpace::from_ptr(p))} else {None}
+            if !p.is_null() {
+                Some(CGColorSpace::from_ptr(p))
+            } else {
+                None
+            }
         }
     }
 
@@ -52,7 +54,7 @@ impl CGColorSpace {
 }
 
 #[link(name = "CoreGraphics", kind = "framework")]
-extern {
+extern "C" {
     /// The Display P3 color space, created by Apple.
     pub static kCGColorSpaceDisplayP3: CFStringRef;
     /// The Display P3 color space, using the HLG transfer function.
@@ -114,4 +116,3 @@ extern {
     fn CGColorSpaceCreateWithName(name: CFStringRef) -> ::sys::CGColorSpaceRef;
     fn CGColorSpaceGetTypeID() -> CFTypeID;
 }
-

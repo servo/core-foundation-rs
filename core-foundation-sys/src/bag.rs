@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, Boolean, CFHashCode, CFIndex, CFTypeID};
+use base::{Boolean, CFAllocatorRef, CFHashCode, CFIndex, CFTypeID};
 use string::CFStringRef;
 
 #[repr(C)]
@@ -18,10 +18,12 @@ pub struct __CFBag(c_void);
 pub type CFBagRef = *const __CFBag;
 pub type CFMutableBagRef = *mut __CFBag;
 
-pub type CFBagRetainCallBack = extern "C" fn(allocator: CFAllocatorRef, value: *const c_void) -> *const c_void;
+pub type CFBagRetainCallBack =
+    extern "C" fn(allocator: CFAllocatorRef, value: *const c_void) -> *const c_void;
 pub type CFBagReleaseCallBack = extern "C" fn(allocator: CFAllocatorRef, value: *const c_void);
 pub type CFBagCopyDescriptionCallBack = extern "C" fn(value: *const c_void) -> CFStringRef;
-pub type CFBagEqualCallBack = extern "C" fn(value1: *const c_void, value2: *const c_void) -> Boolean;
+pub type CFBagEqualCallBack =
+    extern "C" fn(value1: *const c_void, value2: *const c_void) -> Boolean;
 pub type CFBagHashCallBack = extern "C" fn(value: *const c_void) -> CFHashCode;
 
 #[repr(C)]
@@ -32,12 +34,12 @@ pub struct CFBagCallBacks {
     pub release: CFBagReleaseCallBack,
     pub copyDescription: CFBagCopyDescriptionCallBack,
     pub equal: CFBagEqualCallBack,
-    pub hash: CFBagHashCallBack
+    pub hash: CFBagHashCallBack,
 }
 
 pub type CFBagApplierFunction = extern "C" fn(value: *const c_void, context: *mut c_void);
 
-extern {
+extern "C" {
     /*
      * CFBag.h
      */
@@ -47,7 +49,12 @@ extern {
 
     /* CFBag */
     /* Creating a Bag */
-    pub fn CFBagCreate(allocator: CFAllocatorRef, values: *const *const c_void, numValues: CFIndex, callBacks: *const CFBagCallBacks) -> CFBagRef;
+    pub fn CFBagCreate(
+        allocator: CFAllocatorRef,
+        values: *const *const c_void,
+        numValues: CFIndex,
+        callBacks: *const CFBagCallBacks,
+    ) -> CFBagRef;
     pub fn CFBagCreateCopy(allocator: CFAllocatorRef, theBag: CFBagRef) -> CFBagRef;
 
     /* Examining a Bag */
@@ -55,19 +62,35 @@ extern {
     pub fn CFBagGetCount(theBag: CFBagRef) -> CFIndex;
     pub fn CFBagGetCountOfValue(theBag: CFBagRef, value: *const c_void) -> CFIndex;
     pub fn CFBagGetValue(theBag: CFBagRef, value: *const c_void) -> *const c_void;
-    pub fn CFBagGetValueIfPresent(theBag: CFBagRef, candidate: *const c_void, value: *const *const c_void) -> Boolean;
+    pub fn CFBagGetValueIfPresent(
+        theBag: CFBagRef,
+        candidate: *const c_void,
+        value: *const *const c_void,
+    ) -> Boolean;
     pub fn CFBagGetValues(theBag: CFBagRef, values: *const *const c_void);
 
     /* Applying a Function to the Contents of a Bag */
-    pub fn CFBagApplyFunction(theBag: CFBagRef, applier: CFBagApplierFunction, context: *mut c_void);
+    pub fn CFBagApplyFunction(
+        theBag: CFBagRef,
+        applier: CFBagApplierFunction,
+        context: *mut c_void,
+    );
 
     /* Getting the CFBag Type ID */
     pub fn CFBagGetTypeID() -> CFTypeID;
 
     /* CFMutableBag */
     /* Creating a Mutable Bag */
-    pub fn CFBagCreateMutable(allocator: CFAllocatorRef, capacity: CFIndex, callBacks: *const CFBagCallBacks) -> CFMutableBagRef;
-    pub fn CFBagCreateMutableCopy(allocator: CFAllocatorRef, capacity: CFIndex, theBag: CFBagRef) -> CFMutableBagRef;
+    pub fn CFBagCreateMutable(
+        allocator: CFAllocatorRef,
+        capacity: CFIndex,
+        callBacks: *const CFBagCallBacks,
+    ) -> CFMutableBagRef;
+    pub fn CFBagCreateMutableCopy(
+        allocator: CFAllocatorRef,
+        capacity: CFIndex,
+        theBag: CFBagRef,
+    ) -> CFMutableBagRef;
 
     /* Modifying a Mutable Bag */
     pub fn CFBagAddValue(theBag: CFMutableBagRef, value: *const c_void);

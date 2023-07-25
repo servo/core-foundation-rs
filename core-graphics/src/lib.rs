@@ -20,6 +20,8 @@ extern crate foreign_types;
 
 extern crate core_graphics_types;
 
+#[cfg(target_os = "macos")]
+pub mod access;
 pub mod base;
 pub mod color;
 pub mod color_space;
@@ -34,12 +36,10 @@ pub mod event_source;
 pub mod font;
 pub mod geometry;
 pub mod gradient;
-#[cfg(target_os = "macos")]
-pub mod window;
-#[cfg(target_os = "macos")]
-pub mod private;
 pub mod image;
 pub mod path;
+#[cfg(target_os = "macos")]
+pub mod private;
 pub mod sys;
 #[cfg(target_os = "macos")]
-pub mod access;
+pub mod window;

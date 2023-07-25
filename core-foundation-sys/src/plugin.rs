@@ -9,25 +9,30 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFTypeID, Boolean, CFIndex};
-use bundle::{CFPlugInRef, CFBundleRef};
-use uuid::CFUUIDRef;
+use array::CFArrayRef;
+use base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID};
+use bundle::{CFBundleRef, CFPlugInRef};
 use string::CFStringRef;
 use url::CFURLRef;
-use array::CFArrayRef;
+use uuid::CFUUIDRef;
 
 #[repr(C)]
 pub struct __CFPlugInInstance(c_void);
 pub type CFPlugInInstanceRef = *mut __CFPlugInInstance;
 
-pub type CFPlugInDynamicRegisterFunction = extern "C" fn (plugIn: CFPlugInRef);
-pub type CFPlugInUnloadFunction = extern "C" fn (plugIn: CFPlugInRef);
-pub type CFPlugInFactoryFunction = extern "C" fn (allocator: CFAllocatorRef, typeUUID: CFUUIDRef) -> *mut c_void;
+pub type CFPlugInDynamicRegisterFunction = extern "C" fn(plugIn: CFPlugInRef);
+pub type CFPlugInUnloadFunction = extern "C" fn(plugIn: CFPlugInRef);
+pub type CFPlugInFactoryFunction =
+    extern "C" fn(allocator: CFAllocatorRef, typeUUID: CFUUIDRef) -> *mut c_void;
 
-pub type CFPlugInInstanceGetInterfaceFunction = extern "C" fn (instance: CFPlugInInstanceRef, interfaceName: CFStringRef, ftbl: *mut *mut c_void) -> Boolean;
-pub type CFPlugInInstanceDeallocateInstanceDataFunction = extern "C" fn (instanceData: *mut c_void);
+pub type CFPlugInInstanceGetInterfaceFunction = extern "C" fn(
+    instance: CFPlugInInstanceRef,
+    interfaceName: CFStringRef,
+    ftbl: *mut *mut c_void,
+) -> Boolean;
+pub type CFPlugInInstanceDeallocateInstanceDataFunction = extern "C" fn(instanceData: *mut c_void);
 
-extern {
+extern "C" {
     /*
      * CFPlugIn.h
      */
@@ -42,11 +47,22 @@ extern {
 
     /* Creating Plug-ins */
     pub fn CFPlugInCreate(allocator: CFAllocatorRef, plugInURL: CFURLRef) -> CFPlugInRef;
-    pub fn CFPlugInInstanceCreate(allocator: CFAllocatorRef, factoryUUID: CFUUIDRef, typeUUID: CFUUIDRef) -> *mut c_void;
+    pub fn CFPlugInInstanceCreate(
+        allocator: CFAllocatorRef,
+        factoryUUID: CFUUIDRef,
+        typeUUID: CFUUIDRef,
+    ) -> *mut c_void;
 
     /* Registration */
-    pub fn CFPlugInRegisterFactoryFunction(factoryUUID: CFUUIDRef, func: CFPlugInFactoryFunction) -> Boolean;
-    pub fn CFPlugInRegisterFactoryFunctionByName(CfactoryUUID: CFUUIDRef, plugIn: CFPlugInRef, functionName: CFStringRef) -> Boolean;
+    pub fn CFPlugInRegisterFactoryFunction(
+        factoryUUID: CFUUIDRef,
+        func: CFPlugInFactoryFunction,
+    ) -> Boolean;
+    pub fn CFPlugInRegisterFactoryFunctionByName(
+        CfactoryUUID: CFUUIDRef,
+        plugIn: CFPlugInRef,
+        functionName: CFStringRef,
+    ) -> Boolean;
     pub fn CFPlugInRegisterPlugInType(factoryUUID: CFUUIDRef, typeUUID: CFUUIDRef) -> Boolean;
     pub fn CFPlugInUnregisterFactory(factoryUUID: CFUUIDRef) -> Boolean;
     pub fn CFPlugInUnregisterPlugInType(factoryUUID: CFUUIDRef, typeUUID: CFUUIDRef) -> Boolean;
@@ -54,7 +70,10 @@ extern {
     /* CFPlugIn Miscellaneous Functions */
     pub fn CFPlugInAddInstanceForFactory(factoryID: CFUUIDRef);
     pub fn CFPlugInFindFactoriesForPlugInType(typeUUID: CFUUIDRef) -> CFArrayRef;
-    pub fn CFPlugInFindFactoriesForPlugInTypeInPlugIn(typeUUID: CFUUIDRef, plugIn: CFPlugInRef) -> CFArrayRef;
+    pub fn CFPlugInFindFactoriesForPlugInTypeInPlugIn(
+        typeUUID: CFUUIDRef,
+        plugIn: CFPlugInRef,
+    ) -> CFArrayRef;
     pub fn CFPlugInGetBundle(plugIn: CFPlugInRef) -> CFBundleRef;
     pub fn CFPlugInGetTypeID() -> CFTypeID;
     pub fn CFPlugInIsLoadOnDemand(plugIn: CFPlugInRef) -> Boolean;
@@ -62,9 +81,19 @@ extern {
     pub fn CFPlugInSetLoadOnDemand(plugIn: CFPlugInRef, flag: Boolean);
 
     /* CFPlugInInstance: deprecated */
-    pub fn CFPlugInInstanceCreateWithInstanceDataSize(allocator: CFAllocatorRef, instanceDataSize: CFIndex, deallocateInstanceFunction: CFPlugInInstanceDeallocateInstanceDataFunction, factoryName: CFStringRef, getInterfaceFunction: CFPlugInInstanceGetInterfaceFunction) -> CFPlugInInstanceRef;
+    pub fn CFPlugInInstanceCreateWithInstanceDataSize(
+        allocator: CFAllocatorRef,
+        instanceDataSize: CFIndex,
+        deallocateInstanceFunction: CFPlugInInstanceDeallocateInstanceDataFunction,
+        factoryName: CFStringRef,
+        getInterfaceFunction: CFPlugInInstanceGetInterfaceFunction,
+    ) -> CFPlugInInstanceRef;
     pub fn CFPlugInInstanceGetFactoryName(instance: CFPlugInInstanceRef) -> CFStringRef;
     pub fn CFPlugInInstanceGetInstanceData(instance: CFPlugInInstanceRef) -> *mut c_void;
-    pub fn CFPlugInInstanceGetInterfaceFunctionTable(instance: CFPlugInInstanceRef, interfaceName: CFStringRef, ftbl: *mut *mut c_void) -> Boolean;
+    pub fn CFPlugInInstanceGetInterfaceFunctionTable(
+        instance: CFPlugInInstanceRef,
+        interfaceName: CFStringRef,
+        ftbl: *mut *mut c_void,
+    ) -> Boolean;
     pub fn CFPlugInInstanceGetTypeID() -> CFTypeID;
 }

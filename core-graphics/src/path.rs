@@ -40,18 +40,25 @@ impl CGPath {
     }
 
     pub fn type_id() -> CFTypeID {
-        unsafe {
-            CGPathGetTypeID()
-        }
+        unsafe { CGPathGetTypeID() }
     }
 
-    pub fn apply<'a, F>(&'a self, mut closure: &'a F) where F: FnMut(CGPathElementRef<'a>) {
+    pub fn apply<'a, F>(&'a self, mut closure: &'a F)
+    where
+        F: FnMut(CGPathElementRef<'a>),
+    {
         unsafe {
-            CGPathApply(self.as_ptr(), &mut closure as *mut _ as *mut c_void, do_apply::<F>);
+            CGPathApply(
+                self.as_ptr(),
+                &mut closure as *mut _ as *mut c_void,
+                do_apply::<F>,
+            );
         }
 
         unsafe extern "C" fn do_apply<'a, F>(info: *mut c_void, element: *const CGPathElement)
-                                             where F: FnMut(CGPathElementRef<'a>) {
+        where
+            F: FnMut(CGPathElementRef<'a>),
+        {
             let closure = info as *mut *mut F;
             (**closure)(CGPathElementRef::new(element))
         }
@@ -85,9 +92,7 @@ impl<'a> CGPathElementRef<'a> {
 impl<'a> Deref for CGPathElementRef<'a> {
     type Target = CGPathElement;
     fn deref(&self) -> &CGPathElement {
-        unsafe {
-            &*self.element
-        }
+        unsafe { &*self.element }
     }
 }
 
@@ -118,11 +123,10 @@ impl CGPathElement {
     }
 }
 
-type CGPathApplierFunction = unsafe extern "C" fn(info: *mut c_void,
-                                                  element: *const CGPathElement);
+type CGPathApplierFunction = unsafe extern "C" fn(info: *mut c_void, element: *const CGPathElement);
 
 #[link(name = "CoreGraphics", kind = "framework")]
-extern {
+extern "C" {
     fn CGPathCreateWithRect(rect: CGRect, transform: *const CGAffineTransform) -> ::sys::CGPathRef;
     fn CGPathApply(path: ::sys::CGPathRef, info: *mut c_void, function: CGPathApplierFunction);
     fn CGPathGetTypeID() -> CFTypeID;

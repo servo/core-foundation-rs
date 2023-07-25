@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use std::cmp::Ordering;
-use std::os::raw::{c_uint, c_void, c_int, c_short, c_uchar, c_ushort};
+use std::os::raw::{c_int, c_short, c_uchar, c_uint, c_ushort, c_void};
 use string::CFStringRef;
 
 pub type Boolean = u8;
@@ -43,14 +43,18 @@ pub enum CFComparisonResult {
     GreaterThan = 1,
 }
 
-pub type CFComparatorFunction = extern "C" fn(val1: *const c_void, val2: *const c_void, context: *mut c_void) -> CFComparisonResult;
+pub type CFComparatorFunction = extern "C" fn(
+    val1: *const c_void,
+    val2: *const c_void,
+    context: *mut c_void,
+) -> CFComparisonResult;
 
 impl Into<Ordering> for CFComparisonResult {
     fn into(self) -> Ordering {
         match self {
             CFComparisonResult::LessThan => Ordering::Less,
             CFComparisonResult::EqualTo => Ordering::Equal,
-            CFComparisonResult::GreaterThan => Ordering::Greater
+            CFComparisonResult::GreaterThan => Ordering::Greater,
         }
     }
 }
@@ -59,7 +63,7 @@ impl Into<Ordering> for CFComparisonResult {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CFRange {
     pub location: CFIndex,
-    pub length: CFIndex
+    pub length: CFIndex,
 }
 
 // for back-compat
@@ -75,10 +79,17 @@ impl CFRange {
 pub type CFAllocatorRetainCallBack = extern "C" fn(info: *mut c_void) -> *mut c_void;
 pub type CFAllocatorReleaseCallBack = extern "C" fn(info: *mut c_void);
 pub type CFAllocatorCopyDescriptionCallBack = extern "C" fn(info: *mut c_void) -> CFStringRef;
-pub type CFAllocatorAllocateCallBack = extern "C" fn(allocSize: CFIndex, hint: CFOptionFlags, info: *mut c_void) -> *mut c_void;
-pub type CFAllocatorReallocateCallBack = extern "C" fn(ptr: *mut c_void, newsize: CFIndex, hint: CFOptionFlags, info: *mut c_void) -> *mut c_void;
+pub type CFAllocatorAllocateCallBack =
+    extern "C" fn(allocSize: CFIndex, hint: CFOptionFlags, info: *mut c_void) -> *mut c_void;
+pub type CFAllocatorReallocateCallBack = extern "C" fn(
+    ptr: *mut c_void,
+    newsize: CFIndex,
+    hint: CFOptionFlags,
+    info: *mut c_void,
+) -> *mut c_void;
 pub type CFAllocatorDeallocateCallBack = extern "C" fn(ptr: *mut c_void, info: *mut c_void);
-pub type CFAllocatorPreferredSizeCallBack = extern "C" fn(size: CFIndex, hint: CFOptionFlags, info: *mut c_void) -> CFIndex;
+pub type CFAllocatorPreferredSizeCallBack =
+    extern "C" fn(size: CFIndex, hint: CFOptionFlags, info: *mut c_void) -> CFIndex;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
@@ -91,7 +102,7 @@ pub struct CFAllocatorContext {
     pub allocate: Option<CFAllocatorAllocateCallBack>,
     pub reallocate: Option<CFAllocatorReallocateCallBack>,
     pub deallocate: Option<CFAllocatorDeallocateCallBack>,
-    pub preferredSize: Option<CFAllocatorPreferredSizeCallBack>
+    pub preferredSize: Option<CFAllocatorPreferredSizeCallBack>,
 }
 
 /// Trait for all types which are Core Foundation reference types.
@@ -124,7 +135,7 @@ impl<T> TCFTypeRef for *mut T {
 /// Constant used by some functions to indicate failed searches.
 pub static kCFNotFound: CFIndex = -1;
 
-extern {
+extern "C" {
     /*
      * CFBase.h
      */
@@ -138,11 +149,27 @@ extern {
     pub static kCFAllocatorNull: CFAllocatorRef;
     pub static kCFAllocatorUseContext: CFAllocatorRef;
 
-    pub fn CFAllocatorCreate(allocator: CFAllocatorRef, context: *mut CFAllocatorContext) -> CFAllocatorRef;
-    pub fn CFAllocatorAllocate(allocator: CFAllocatorRef, size: CFIndex, hint: CFOptionFlags) -> *mut c_void;
+    pub fn CFAllocatorCreate(
+        allocator: CFAllocatorRef,
+        context: *mut CFAllocatorContext,
+    ) -> CFAllocatorRef;
+    pub fn CFAllocatorAllocate(
+        allocator: CFAllocatorRef,
+        size: CFIndex,
+        hint: CFOptionFlags,
+    ) -> *mut c_void;
     pub fn CFAllocatorDeallocate(allocator: CFAllocatorRef, ptr: *mut c_void);
-    pub fn CFAllocatorGetPreferredSizeForSize(allocator: CFAllocatorRef, size: CFIndex, hint: CFOptionFlags) -> CFIndex;
-    pub fn CFAllocatorReallocate(allocator: CFAllocatorRef, ptr: *mut c_void, newsize: CFIndex, hint: CFOptionFlags) -> *mut c_void;
+    pub fn CFAllocatorGetPreferredSizeForSize(
+        allocator: CFAllocatorRef,
+        size: CFIndex,
+        hint: CFOptionFlags,
+    ) -> CFIndex;
+    pub fn CFAllocatorReallocate(
+        allocator: CFAllocatorRef,
+        ptr: *mut c_void,
+        newsize: CFIndex,
+        hint: CFOptionFlags,
+    ) -> *mut c_void;
     pub fn CFAllocatorGetDefault() -> CFAllocatorRef;
     pub fn CFAllocatorSetDefault(allocator: CFAllocatorRef);
     pub fn CFAllocatorGetContext(allocator: CFAllocatorRef, context: *mut CFAllocatorContext);

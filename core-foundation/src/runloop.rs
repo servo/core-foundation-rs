@@ -9,18 +9,17 @@
 
 #![allow(non_upper_case_globals)]
 
-pub use core_foundation_sys::runloop::*;
 use core_foundation_sys::base::CFIndex;
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
+pub use core_foundation_sys::runloop::*;
 use core_foundation_sys::string::CFStringRef;
 
-use base::{TCFType};
+use base::TCFType;
 use date::{CFAbsoluteTime, CFTimeInterval};
 use filedescriptor::CFFileDescriptor;
-use string::{CFString};
+use string::CFString;
 
 pub type CFRunLoopMode = CFStringRef;
-
 
 declare_TCFType!(CFRunLoop, CFRunLoopRef);
 impl_TCFType!(CFRunLoop, CFRunLoopRef, CFRunLoopGetTypeID);
@@ -96,9 +95,7 @@ impl CFRunLoop {
     }
 
     pub fn contains_timer(&self, timer: &CFRunLoopTimer, mode: CFRunLoopMode) -> bool {
-        unsafe {
-            CFRunLoopContainsTimer(self.0, timer.0, mode) != 0
-        }
+        unsafe { CFRunLoopContainsTimer(self.0, timer.0, mode) != 0 }
     }
 
     pub fn add_timer(&self, timer: &CFRunLoopTimer, mode: CFRunLoopMode) {
@@ -114,9 +111,7 @@ impl CFRunLoop {
     }
 
     pub fn contains_source(&self, source: &CFRunLoopSource, mode: CFRunLoopMode) -> bool {
-        unsafe {
-            CFRunLoopContainsSource(self.0, source.0, mode) != 0
-        }
+        unsafe { CFRunLoopContainsSource(self.0, source.0, mode) != 0 }
     }
 
     pub fn add_source(&self, source: &CFRunLoopSource, mode: CFRunLoopMode) {
@@ -132,9 +127,7 @@ impl CFRunLoop {
     }
 
     pub fn contains_observer(&self, observer: &CFRunLoopObserver, mode: CFRunLoopMode) -> bool {
-        unsafe {
-            CFRunLoopContainsObserver(self.0, observer.0, mode) != 0
-        }
+        unsafe { CFRunLoopContainsObserver(self.0, observer.0, mode) != 0 }
     }
 
     pub fn add_observer(&self, observer: &CFRunLoopObserver, mode: CFRunLoopMode) {
@@ -148,25 +141,41 @@ impl CFRunLoop {
             CFRunLoopRemoveObserver(self.0, observer.0, mode);
         }
     }
-
 }
-
 
 declare_TCFType!(CFRunLoopTimer, CFRunLoopTimerRef);
 impl_TCFType!(CFRunLoopTimer, CFRunLoopTimerRef, CFRunLoopTimerGetTypeID);
 
 impl CFRunLoopTimer {
-    pub fn new(fireDate: CFAbsoluteTime, interval: CFTimeInterval, flags: CFOptionFlags, order: CFIndex, callout: CFRunLoopTimerCallBack, context: *mut CFRunLoopTimerContext) -> CFRunLoopTimer {
+    pub fn new(
+        fireDate: CFAbsoluteTime,
+        interval: CFTimeInterval,
+        flags: CFOptionFlags,
+        order: CFIndex,
+        callout: CFRunLoopTimerCallBack,
+        context: *mut CFRunLoopTimerContext,
+    ) -> CFRunLoopTimer {
         unsafe {
-            let timer_ref = CFRunLoopTimerCreate(kCFAllocatorDefault, fireDate, interval, flags, order, callout, context);
+            let timer_ref = CFRunLoopTimerCreate(
+                kCFAllocatorDefault,
+                fireDate,
+                interval,
+                flags,
+                order,
+                callout,
+                context,
+            );
             TCFType::wrap_under_create_rule(timer_ref)
         }
     }
 }
 
-
 declare_TCFType!(CFRunLoopSource, CFRunLoopSourceRef);
-impl_TCFType!(CFRunLoopSource, CFRunLoopSourceRef, CFRunLoopSourceGetTypeID);
+impl_TCFType!(
+    CFRunLoopSource,
+    CFRunLoopSourceRef,
+    CFRunLoopSourceGetTypeID
+);
 
 impl CFRunLoopSource {
     pub fn from_file_descriptor(fd: &CFFileDescriptor, order: CFIndex) -> Option<CFRunLoopSource> {
@@ -175,7 +184,11 @@ impl CFRunLoopSource {
 }
 
 declare_TCFType!(CFRunLoopObserver, CFRunLoopObserverRef);
-impl_TCFType!(CFRunLoopObserver, CFRunLoopObserverRef, CFRunLoopObserverGetTypeID);
+impl_TCFType!(
+    CFRunLoopObserver,
+    CFRunLoopObserverRef,
+    CFRunLoopObserverGetTypeID
+);
 
 #[cfg(test)]
 mod test {
@@ -207,7 +220,8 @@ mod test {
             copyDescription: None,
         };
 
-        let run_loop_timer = CFRunLoopTimer::new(now + 0.20f64, 0f64, 0, 0, timer_popped, &mut context);
+        let run_loop_timer =
+            CFRunLoopTimer::new(now + 0.20f64, 0f64, 0, 0, timer_popped, &mut context);
         unsafe {
             run_loop.add_timer(&run_loop_timer, kCFRunLoopDefaultMode);
         }

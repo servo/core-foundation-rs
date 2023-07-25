@@ -9,10 +9,10 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFTypeID, CFRange, CFIndex, CFOptionFlags, CFTypeRef};
-use string::CFStringRef;
-use locale::CFLocaleRef;
 use array::CFMutableArrayRef;
+use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef};
+use locale::CFLocaleRef;
+use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFStringTokenizer(c_void);
@@ -37,28 +37,54 @@ pub const kCFStringTokenizerUnitWordBoundary: CFOptionFlags = 4;
 pub const kCFStringTokenizerAttributeLatinTranscription: CFOptionFlags = 1 << 16;
 pub const kCFStringTokenizerAttributeLanguage: CFOptionFlags = 1 << 17;
 
-extern {
+extern "C" {
     /*
      * CFStringTokenizer.h
      */
 
     /* Creating a Tokenizer */
-    pub fn CFStringTokenizerCreate(alloc: CFAllocatorRef, string: CFStringRef, range: CFRange, options: CFOptionFlags, locale: CFLocaleRef) -> CFStringTokenizerRef;
+    pub fn CFStringTokenizerCreate(
+        alloc: CFAllocatorRef,
+        string: CFStringRef,
+        range: CFRange,
+        options: CFOptionFlags,
+        locale: CFLocaleRef,
+    ) -> CFStringTokenizerRef;
 
     /* Setting the String */
-    pub fn CFStringTokenizerSetString(tokenizer: CFStringTokenizerRef, string: CFStringRef, range: CFRange);
+    pub fn CFStringTokenizerSetString(
+        tokenizer: CFStringTokenizerRef,
+        string: CFStringRef,
+        range: CFRange,
+    );
 
     /* Changing the Location */
-    pub fn CFStringTokenizerAdvanceToNextToken(tokenizer: CFStringTokenizerRef) -> CFStringTokenizerTokenType;
-    pub fn CFStringTokenizerGoToTokenAtIndex(tokenizer: CFStringTokenizerRef, index: CFIndex) -> CFStringTokenizerTokenType;
+    pub fn CFStringTokenizerAdvanceToNextToken(
+        tokenizer: CFStringTokenizerRef,
+    ) -> CFStringTokenizerTokenType;
+    pub fn CFStringTokenizerGoToTokenAtIndex(
+        tokenizer: CFStringTokenizerRef,
+        index: CFIndex,
+    ) -> CFStringTokenizerTokenType;
 
     /* Getting Information About the Current Token */
-    pub fn CFStringTokenizerCopyCurrentTokenAttribute(tokenizer: CFStringTokenizerRef, attribute: CFOptionFlags) -> CFTypeRef;
+    pub fn CFStringTokenizerCopyCurrentTokenAttribute(
+        tokenizer: CFStringTokenizerRef,
+        attribute: CFOptionFlags,
+    ) -> CFTypeRef;
     pub fn CFStringTokenizerGetCurrentTokenRange(tokenizer: CFStringTokenizerRef) -> CFRange;
-    pub fn CFStringTokenizerGetCurrentSubTokens(tokenizer: CFStringTokenizerRef, ranges: *mut CFRange, maxRangeLength: CFIndex, derivedSubTokens: CFMutableArrayRef) -> CFIndex;
+    pub fn CFStringTokenizerGetCurrentSubTokens(
+        tokenizer: CFStringTokenizerRef,
+        ranges: *mut CFRange,
+        maxRangeLength: CFIndex,
+        derivedSubTokens: CFMutableArrayRef,
+    ) -> CFIndex;
 
     /* Identifying a Language */
-    pub fn CFStringTokenizerCopyBestStringLanguage(string: CFStringRef, range: CFRange) -> CFStringRef;
+    pub fn CFStringTokenizerCopyBestStringLanguage(
+        string: CFStringRef,
+        range: CFRange,
+    ) -> CFStringRef;
 
     /* Getting the CFStringTokenizer Type ID */
     pub fn CFStringTokenizerGetTypeID() -> CFTypeID;

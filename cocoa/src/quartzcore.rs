@@ -25,15 +25,13 @@ use std::ops::Mul;
 use std::ptr;
 
 use appkit::CGLContextObj;
-use base::{BOOL, id, nil, YES};
+use base::{id, nil, BOOL, YES};
 use foundation::NSUInteger;
 
 // CABase.h
 
 pub fn current_media_time() -> CFTimeInterval {
-    unsafe {
-        CACurrentMediaTime()
-    }
+    unsafe { CACurrentMediaTime() }
 }
 
 // CALayer.h
@@ -46,18 +44,14 @@ unsafe impl Sync for CALayer {}
 impl Clone for CALayer {
     #[inline]
     fn clone(&self) -> CALayer {
-        unsafe {
-            CALayer(msg_send![self.id(), retain])
-        }
+        unsafe { CALayer(msg_send![self.id(), retain]) }
     }
 }
 
 impl Drop for CALayer {
     #[inline]
     fn drop(&mut self) {
-        unsafe {
-            msg_send![self.id(), release]
-        }
+        unsafe { msg_send![self.id(), release] }
     }
 }
 
@@ -69,9 +63,7 @@ impl CALayer {
 
     #[inline]
     pub fn new() -> CALayer {
-        unsafe {
-            CALayer(msg_send![class!(CALayer), layer])
-        }
+        unsafe { CALayer(msg_send![class!(CALayer), layer]) }
     }
 
     #[inline]
@@ -84,23 +76,17 @@ impl CALayer {
 
     #[inline]
     pub fn presentation_layer(&self) -> CALayer {
-        unsafe {
-            CALayer(msg_send![self.id(), presentationLayer])
-        }
+        unsafe { CALayer(msg_send![self.id(), presentationLayer]) }
     }
 
     #[inline]
     pub fn model_layer(&self) -> CALayer {
-        unsafe {
-            CALayer(msg_send![self.id(), modelLayer])
-        }
+        unsafe { CALayer(msg_send![self.id(), modelLayer]) }
     }
 
     #[inline]
     pub fn default_value_for_key(key: &CFString) -> id {
-        unsafe {
-            msg_send![class!(CALayer), defaultValueForKey:(key.as_CFTypeRef())]
-        }
+        unsafe { msg_send![class!(CALayer), defaultValueForKey:(key.as_CFTypeRef())] }
     }
 
     #[inline]
@@ -114,121 +100,90 @@ impl CALayer {
     #[inline]
     pub fn should_archive_value_for_key(key: &CFString) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![class!(CALayer), shouldArchiveValueForKey:(key.as_CFTypeRef())];
+            let flag: BOOL =
+                msg_send![class!(CALayer), shouldArchiveValueForKey:(key.as_CFTypeRef())];
             flag == YES
         }
     }
 
     #[inline]
     pub fn bounds(&self) -> CGRect {
-        unsafe {
-            msg_send![self.id(), bounds]
-        }
+        unsafe { msg_send![self.id(), bounds] }
     }
 
     #[inline]
     pub fn set_bounds(&self, bounds: &CGRect) {
-        unsafe {
-            msg_send![self.id(), setBounds:*bounds]
-        }
+        unsafe { msg_send![self.id(), setBounds:*bounds] }
     }
 
     #[inline]
     pub fn position(&self) -> CGPoint {
-        unsafe {
-            msg_send![self.id(), position]
-        }
+        unsafe { msg_send![self.id(), position] }
     }
 
     #[inline]
     pub fn set_position(&self, position: &CGPoint) {
-        unsafe {
-            msg_send![self.id(), setPosition:*position]
-        }
+        unsafe { msg_send![self.id(), setPosition:*position] }
     }
 
     #[inline]
     pub fn z_position(&self) -> CGFloat {
-        unsafe {
-            msg_send![self.id(), zPosition]
-        }
+        unsafe { msg_send![self.id(), zPosition] }
     }
 
     #[inline]
     pub fn set_z_position(&self, z_position: CGFloat) {
-        unsafe {
-            msg_send![self.id(), setZPosition:z_position]
-        }
+        unsafe { msg_send![self.id(), setZPosition: z_position] }
     }
 
     #[inline]
     pub fn anchor_point(&self) -> CGPoint {
-        unsafe {
-            msg_send![self.id(), anchorPoint]
-        }
+        unsafe { msg_send![self.id(), anchorPoint] }
     }
 
     #[inline]
     pub fn set_anchor_point(&self, anchor_point: &CGPoint) {
-        unsafe {
-            msg_send![self.id(), setAnchorPoint:*anchor_point]
-        }
+        unsafe { msg_send![self.id(), setAnchorPoint:*anchor_point] }
     }
 
     #[inline]
     pub fn anchor_point_z(&self) -> CGFloat {
-        unsafe {
-            msg_send![self.id(), anchorPointZ]
-        }
+        unsafe { msg_send![self.id(), anchorPointZ] }
     }
 
     #[inline]
     pub fn set_anchor_point_z(&self, anchor_point_z: CGFloat) {
-        unsafe {
-            msg_send![self.id(), setAnchorPointZ:anchor_point_z]
-        }
+        unsafe { msg_send![self.id(), setAnchorPointZ: anchor_point_z] }
     }
 
     #[inline]
     pub fn transform(&self) -> CATransform3D {
-        unsafe {
-            msg_send![self.id(), transform]
-        }
+        unsafe { msg_send![self.id(), transform] }
     }
 
     #[inline]
     pub fn set_transform(&self, transform: &CATransform3D) {
-        unsafe {
-            msg_send![self.id(), setTransform:*transform]
-        }
+        unsafe { msg_send![self.id(), setTransform:*transform] }
     }
 
     #[inline]
     pub fn affine_transform(&self) -> CGAffineTransform {
-        unsafe {
-            msg_send![self.id(), affineTransform]
-        }
+        unsafe { msg_send![self.id(), affineTransform] }
     }
 
     #[inline]
     pub fn set_affine_transform(&self, affine_transform: &CGAffineTransform) {
-        unsafe {
-            msg_send![self.id(), setAffineTransform:*affine_transform]
-        }
+        unsafe { msg_send![self.id(), setAffineTransform:*affine_transform] }
     }
 
     #[inline]
     pub fn frame(&self) -> CGRect {
-        unsafe {
-            msg_send![self.id(), frame]
-        }
+        unsafe { msg_send![self.id(), frame] }
     }
 
     #[inline]
     pub fn set_frame(&self, frame: &CGRect) {
-        unsafe {
-            msg_send![self.id(), setFrame:*frame]
-        }
+        unsafe { msg_send![self.id(), setFrame:*frame] }
     }
 
     #[inline]
@@ -241,9 +196,7 @@ impl CALayer {
 
     #[inline]
     pub fn set_hidden(&self, hidden: bool) {
-        unsafe {
-            msg_send![self.id(), setHidden:hidden as BOOL]
-        }
+        unsafe { msg_send![self.id(), setHidden: hidden as BOOL] }
     }
 
     #[inline]
@@ -256,9 +209,7 @@ impl CALayer {
 
     #[inline]
     pub fn set_double_sided(&self, double_sided: bool) {
-        unsafe {
-            msg_send![self.id(), setDoubleSided:double_sided as BOOL]
-        }
+        unsafe { msg_send![self.id(), setDoubleSided: double_sided as BOOL] }
     }
 
     #[inline]
@@ -271,9 +222,7 @@ impl CALayer {
 
     #[inline]
     pub fn set_geometry_flipped(&self, geometry_flipped: bool) {
-        unsafe {
-            msg_send![self.id(), setGeometryFlipped:geometry_flipped as BOOL]
-        }
+        unsafe { msg_send![self.id(), setGeometryFlipped: geometry_flipped as BOOL] }
     }
 
     #[inline]
@@ -298,9 +247,7 @@ impl CALayer {
 
     #[inline]
     pub fn remove_from_superlayer(&self) {
-        unsafe {
-            msg_send![self.id(), removeFromSuperlayer]
-        }
+        unsafe { msg_send![self.id(), removeFromSuperlayer] }
     }
 
     #[inline]
@@ -313,51 +260,37 @@ impl CALayer {
 
     #[inline]
     pub fn add_sublayer(&self, sublayer: &CALayer) {
-        unsafe {
-            msg_send![self.id(), addSublayer:sublayer.id()]
-        }
+        unsafe { msg_send![self.id(), addSublayer:sublayer.id()] }
     }
 
     #[inline]
     pub fn insert_sublayer_at_index(&self, sublayer: &CALayer, index: u32) {
-        unsafe {
-            msg_send![self.id(), insertSublayer:sublayer.id() atIndex:index]
-        }
+        unsafe { msg_send![self.id(), insertSublayer:sublayer.id() atIndex:index] }
     }
 
     #[inline]
     pub fn insert_sublayer_below(&self, sublayer: &CALayer, sibling: &CALayer) {
-        unsafe {
-            msg_send![self.id(), insertSublayer:sublayer.id() below:sibling.id()]
-        }
+        unsafe { msg_send![self.id(), insertSublayer:sublayer.id() below:sibling.id()] }
     }
 
     #[inline]
     pub fn insert_sublayer_above(&self, sublayer: &CALayer, sibling: &CALayer) {
-        unsafe {
-            msg_send![self.id(), insertSublayer:sublayer.id() above:sibling.id()]
-        }
+        unsafe { msg_send![self.id(), insertSublayer:sublayer.id() above:sibling.id()] }
     }
 
     #[inline]
     pub fn replace_sublayer_with(&self, old_layer: &CALayer, new_layer: &CALayer) {
-        unsafe {
-            msg_send![self.id(), replaceSublayer:old_layer.id() with:new_layer.id()]
-        }
+        unsafe { msg_send![self.id(), replaceSublayer:old_layer.id() with:new_layer.id()] }
     }
 
     #[inline]
     pub fn sublayer_transform(&self) -> CATransform3D {
-        unsafe {
-            msg_send![self.id(), sublayerTransform]
-        }
+        unsafe { msg_send![self.id(), sublayerTransform] }
     }
 
     #[inline]
     pub fn set_sublayer_transform(&self, sublayer_transform: CATransform3D) {
-        unsafe {
-            msg_send![self.id(), setSublayerTransform:sublayer_transform]
-        }
+        unsafe { msg_send![self.id(), setSublayerTransform: sublayer_transform] }
     }
 
     #[inline]
@@ -376,7 +309,7 @@ impl CALayer {
     pub fn set_mask(&self, mask: Option<CALayer>) {
         unsafe {
             match mask {
-                None => msg_send![self.id(), setMask:nil],
+                None => msg_send![self.id(), setMask: nil],
                 Some(mask) => msg_send![self.id(), setMask:(mask.id())],
             }
         }
@@ -392,9 +325,7 @@ impl CALayer {
 
     #[inline]
     pub fn set_masks_to_bounds(&self, flag: bool) {
-        unsafe {
-            msg_send![self.id(), setMasksToBounds:flag as BOOL]
-        }
+        unsafe { msg_send![self.id(), setMasksToBounds: flag as BOOL] }
     }
 
     #[inline]
@@ -442,8 +373,11 @@ impl CALayer {
     }
 
     #[inline]
-    pub fn convert_time_from_layer(&self, time: CFTimeInterval, layer: Option<CALayer>)
-                                   -> CFTimeInterval {
+    pub fn convert_time_from_layer(
+        &self,
+        time: CFTimeInterval,
+        layer: Option<CALayer>,
+    ) -> CFTimeInterval {
         unsafe {
             let layer = match layer {
                 None => nil,
@@ -454,8 +388,11 @@ impl CALayer {
     }
 
     #[inline]
-    pub fn convert_time_to_layer(&self, time: CFTimeInterval, layer: Option<CALayer>)
-                                 -> CFTimeInterval {
+    pub fn convert_time_to_layer(
+        &self,
+        time: CFTimeInterval,
+        layer: Option<CALayer>,
+    ) -> CFTimeInterval {
         unsafe {
             let layer = match layer {
                 None => nil,
@@ -487,28 +424,22 @@ impl CALayer {
 
     #[inline]
     pub fn contents(&self) -> id {
-        unsafe {
-            msg_send![self.id(), contents]
-        }
+        unsafe { msg_send![self.id(), contents] }
     }
 
     #[inline]
     pub unsafe fn set_contents(&self, contents: id) {
-        msg_send![self.id(), setContents:contents]
+        msg_send![self.id(), setContents: contents]
     }
 
     #[inline]
     pub fn contents_rect(&self) -> CGRect {
-        unsafe {
-            msg_send![self.id(), contentsRect]
-        }
+        unsafe { msg_send![self.id(), contentsRect] }
     }
 
     #[inline]
     pub fn set_contents_rect(&self, contents_rect: &CGRect) {
-        unsafe {
-            msg_send![self.id(), setContentsRect:*contents_rect]
-        }
+        unsafe { msg_send![self.id(), setContentsRect:*contents_rect] }
     }
 
     #[inline]
@@ -529,30 +460,22 @@ impl CALayer {
 
     #[inline]
     pub fn contents_scale(&self) -> CGFloat {
-        unsafe {
-            msg_send![self.id(), contentsScale]
-        }
+        unsafe { msg_send![self.id(), contentsScale] }
     }
 
     #[inline]
     pub fn set_contents_scale(&self, new_contents_scale: CGFloat) {
-        unsafe {
-            msg_send![self.id(), setContentsScale:new_contents_scale]
-        }
+        unsafe { msg_send![self.id(), setContentsScale: new_contents_scale] }
     }
 
     #[inline]
     pub fn contents_center(&self) -> CGRect {
-        unsafe {
-            msg_send![self.id(), contentsCenter]
-        }
+        unsafe { msg_send![self.id(), contentsCenter] }
     }
 
     #[inline]
     pub fn set_contents_center(&self, new_rect: &CGRect) {
-        unsafe {
-            msg_send![self.id(), setContentsCenter:*new_rect]
-        }
+        unsafe { msg_send![self.id(), setContentsCenter:*new_rect] }
     }
 
     #[inline]
@@ -605,16 +528,12 @@ impl CALayer {
 
     #[inline]
     pub fn minification_filter_bias(&self) -> f32 {
-        unsafe {
-            msg_send![self.id(), minificationFilterBias]
-        }
+        unsafe { msg_send![self.id(), minificationFilterBias] }
     }
 
     #[inline]
     pub fn set_minification_filter_bias(&self, new_filter_bias: f32) {
-        unsafe {
-            msg_send![self.id(), setMinificationFilterBias:new_filter_bias]
-        }
+        unsafe { msg_send![self.id(), setMinificationFilterBias: new_filter_bias] }
     }
 
     #[inline]
@@ -627,30 +546,22 @@ impl CALayer {
 
     #[inline]
     pub fn set_opaque(&self, opaque: bool) {
-        unsafe {
-            msg_send![self.id(), setOpaque:opaque as BOOL]
-        }
+        unsafe { msg_send![self.id(), setOpaque: opaque as BOOL] }
     }
 
     #[inline]
     pub fn display(&self) {
-        unsafe {
-            msg_send![self.id(), display]
-        }
+        unsafe { msg_send![self.id(), display] }
     }
 
     #[inline]
     pub fn set_needs_display(&self) {
-        unsafe {
-            msg_send![self.id(), setNeedsDisplay]
-        }
+        unsafe { msg_send![self.id(), setNeedsDisplay] }
     }
 
     #[inline]
     pub fn set_needs_display_in_rect(&self, rect: &CGRect) {
-        unsafe {
-            msg_send![self.id(), setNeedsDisplayInRect:*rect]
-        }
+        unsafe { msg_send![self.id(), setNeedsDisplayInRect:*rect] }
     }
 
     #[inline]
@@ -663,9 +574,7 @@ impl CALayer {
 
     #[inline]
     pub fn display_if_needed(&self) {
-        unsafe {
-            msg_send![self.id(), displayIfNeeded]
-        }
+        unsafe { msg_send![self.id(), displayIfNeeded] }
     }
 
     #[inline]
@@ -678,9 +587,7 @@ impl CALayer {
 
     #[inline]
     pub fn set_needs_display_on_bounds_change(&self, flag: bool) {
-        unsafe {
-            msg_send![self.id(), setNeedsDisplayOnBoundsChange:flag as BOOL]
-        }
+        unsafe { msg_send![self.id(), setNeedsDisplayOnBoundsChange: flag as BOOL] }
     }
 
     #[inline]
@@ -693,23 +600,17 @@ impl CALayer {
 
     #[inline]
     pub fn set_draws_asynchronously(&self, flag: bool) {
-        unsafe {
-            msg_send![self.id(), setDrawsAsynchronously:flag as BOOL]
-        }
+        unsafe { msg_send![self.id(), setDrawsAsynchronously: flag as BOOL] }
     }
 
     #[inline]
     pub fn draw_in_context(&self, context: &CGContext) {
-        unsafe {
-            msg_send![self.id(), drawInContext:(*context).as_ptr()]
-        }
+        unsafe { msg_send![self.id(), drawInContext:(*context).as_ptr()] }
     }
 
     #[inline]
     pub fn render_in_context(&self, context: &CGContext) {
-        unsafe {
-            msg_send![self.id(), renderInContext:(*context).as_ptr()]
-        }
+        unsafe { msg_send![self.id(), renderInContext:(*context).as_ptr()] }
     }
 
     #[inline]
@@ -721,9 +622,7 @@ impl CALayer {
 
     #[inline]
     pub fn set_edge_antialiasing_mask(&self, mask: EdgeAntialiasingMask) {
-        unsafe {
-            msg_send![self.id(), setEdgeAntialiasingMask:mask.bits()]
-        }
+        unsafe { msg_send![self.id(), setEdgeAntialiasingMask:mask.bits()] }
     }
 
     #[inline]
@@ -745,50 +644,38 @@ impl CALayer {
                 None => ptr::null(),
                 Some(color) => color.as_CFTypeRef(),
             };
-            msg_send![self.id(), setBackgroundColor:color]
+            msg_send![self.id(), setBackgroundColor: color]
         }
     }
 
     #[inline]
     pub fn corner_radius(&self) -> CGFloat {
-        unsafe {
-            msg_send![self.id(), cornerRadius]
-        }
+        unsafe { msg_send![self.id(), cornerRadius] }
     }
 
     #[inline]
     pub fn set_corner_radius(&self, radius: CGFloat) {
-        unsafe {
-            msg_send![self.id(), setCornerRadius:radius]
-        }
+        unsafe { msg_send![self.id(), setCornerRadius: radius] }
     }
 
     #[inline]
     pub fn masked_corners(&self) -> CornerMask {
-        unsafe {
-            CornerMask::from_bits_truncate(msg_send![self.id(), maskedCorners])
-        }
+        unsafe { CornerMask::from_bits_truncate(msg_send![self.id(), maskedCorners]) }
     }
 
     #[inline]
     pub fn set_masked_corners(&self, mask: CornerMask) {
-        unsafe {
-            msg_send![self.id(), setCornerMask:mask.bits()]
-        }
+        unsafe { msg_send![self.id(), setCornerMask:mask.bits()] }
     }
 
     #[inline]
     pub fn border_width(&self) -> CGFloat {
-        unsafe {
-            msg_send![self.id(), borderWidth]
-        }
+        unsafe { msg_send![self.id(), borderWidth] }
     }
 
     #[inline]
     pub fn set_border_width(&self, border_width: CGFloat) {
-        unsafe {
-            msg_send![self.id(), setBorderWidth:border_width]
-        }
+        unsafe { msg_send![self.id(), setBorderWidth: border_width] }
     }
 
     #[inline]
@@ -810,34 +697,28 @@ impl CALayer {
                 None => ptr::null(),
                 Some(color) => color.as_CFTypeRef(),
             };
-            msg_send![self.id(), setBorderColor:color]
+            msg_send![self.id(), setBorderColor: color]
         }
     }
 
     #[inline]
     pub fn opacity(&self) -> f32 {
-        unsafe {
-            msg_send![self.id(), opacity]
-        }
+        unsafe { msg_send![self.id(), opacity] }
     }
 
     #[inline]
     pub fn set_opacity(&self, opacity: f32) {
-        unsafe {
-            msg_send![self.id(), setOpacity:opacity]
-        }
+        unsafe { msg_send![self.id(), setOpacity: opacity] }
     }
 
     #[inline]
     pub fn compositing_filter(&self) -> id {
-        unsafe {
-            msg_send![self.id(), compositingFilter]
-        }
+        unsafe { msg_send![self.id(), compositingFilter] }
     }
 
     #[inline]
     pub unsafe fn set_compositing_filter(&self, filter: id) {
-        msg_send![self.id(), setCompositingFilter:filter]
+        msg_send![self.id(), setCompositingFilter: filter]
     }
 
     #[inline]
@@ -856,7 +737,7 @@ impl CALayer {
             Some(ref filters) => filters.as_CFTypeRef(),
             None => ptr::null(),
         };
-        msg_send![self.id(), setFilters:filters]
+        msg_send![self.id(), setFilters: filters]
     }
 
     #[inline]
@@ -875,7 +756,7 @@ impl CALayer {
             Some(ref filters) => filters.as_CFTypeRef(),
             None => ptr::null(),
         };
-        msg_send![self.id(), setBackgroundFilters:filters]
+        msg_send![self.id(), setBackgroundFilters: filters]
     }
 
     #[inline]
@@ -888,23 +769,17 @@ impl CALayer {
 
     #[inline]
     pub fn set_should_rasterize(&self, flag: bool) {
-        unsafe {
-            msg_send![self.id(), setShouldRasterize:(flag as BOOL)]
-        }
+        unsafe { msg_send![self.id(), setShouldRasterize:(flag as BOOL)] }
     }
 
     #[inline]
     pub fn rasterization_scale(&self) -> CGFloat {
-        unsafe {
-            msg_send![self.id(), rasterizationScale]
-        }
+        unsafe { msg_send![self.id(), rasterizationScale] }
     }
 
     #[inline]
     pub fn set_rasterization_scale(&self, scale: CGFloat) {
-        unsafe {
-            msg_send![self.id(), setRasterizationScale:scale]
-        }
+        unsafe { msg_send![self.id(), setRasterizationScale: scale] }
     }
 
     // Shadow properties
@@ -928,50 +803,38 @@ impl CALayer {
                 None => ptr::null(),
                 Some(color) => color.as_CFTypeRef(),
             };
-            msg_send![self.id(), setShadowColor:color]
+            msg_send![self.id(), setShadowColor: color]
         }
     }
 
     #[inline]
     pub fn shadow_opacity(&self) -> f32 {
-        unsafe {
-            msg_send![self.id(), shadowOpacity]
-        }
+        unsafe { msg_send![self.id(), shadowOpacity] }
     }
 
     #[inline]
     pub fn set_shadow_opacity(&self, opacity: f32) {
-        unsafe {
-            msg_send![self.id(), setShadowOpacity:opacity]
-        }
+        unsafe { msg_send![self.id(), setShadowOpacity: opacity] }
     }
 
     #[inline]
     pub fn shadow_offset(&self) -> CGSize {
-        unsafe {
-            msg_send![self.id(), shadowOffset]
-        }
+        unsafe { msg_send![self.id(), shadowOffset] }
     }
 
     #[inline]
     pub fn set_shadow_offset(&self, offset: &CGSize) {
-        unsafe {
-            msg_send![self.id(), setShadowOffset:*offset]
-        }
+        unsafe { msg_send![self.id(), setShadowOffset:*offset] }
     }
 
     #[inline]
     pub fn shadow_radius(&self) -> CGFloat {
-        unsafe {
-            msg_send![self.id(), shadowRadius]
-        }
+        unsafe { msg_send![self.id(), shadowRadius] }
     }
 
     #[inline]
     pub fn set_shadow_radius(&self, radius: CGFloat) {
-        unsafe {
-            msg_send![self.id(), setShadowRadius:radius]
-        }
+        unsafe { msg_send![self.id(), setShadowRadius: radius] }
     }
 
     #[inline]
@@ -993,7 +856,7 @@ impl CALayer {
                 None => ptr::null(),
                 Some(path) => path.as_ptr(),
             };
-            msg_send![self.id(), setShadowPath:sys_path_ref]
+            msg_send![self.id(), setShadowPath: sys_path_ref]
         }
     }
 
@@ -1001,42 +864,32 @@ impl CALayer {
 
     #[inline]
     pub fn autoresizing_mask(&self) -> AutoresizingMask {
-        unsafe {
-            AutoresizingMask::from_bits_truncate(msg_send![self.id(), autoresizingMask])
-        }
+        unsafe { AutoresizingMask::from_bits_truncate(msg_send![self.id(), autoresizingMask]) }
     }
 
     #[inline]
     pub fn set_autoresizing_mask(&self, mask: AutoresizingMask) {
-        unsafe {
-            msg_send![self.id(), setAutoresizingMask:mask.bits()]
-        }
+        unsafe { msg_send![self.id(), setAutoresizingMask:mask.bits()] }
     }
 
     #[inline]
     pub fn layout_manager(&self) -> id {
-        unsafe {
-            msg_send![self.id(), layoutManager]
-        }
+        unsafe { msg_send![self.id(), layoutManager] }
     }
 
     #[inline]
     pub unsafe fn set_layout_manager(&self, manager: id) {
-        msg_send![self.id(), setLayoutManager:manager]
+        msg_send![self.id(), setLayoutManager: manager]
     }
 
     #[inline]
     pub fn preferred_frame_size(&self) -> CGSize {
-        unsafe {
-            msg_send![self.id(), preferredFrameSize]
-        }
+        unsafe { msg_send![self.id(), preferredFrameSize] }
     }
 
     #[inline]
     pub fn set_needs_layout(&self) {
-        unsafe {
-            msg_send![self.id(), setNeedsLayout]
-        }
+        unsafe { msg_send![self.id(), setNeedsLayout] }
     }
 
     #[inline]
@@ -1049,30 +902,22 @@ impl CALayer {
 
     #[inline]
     pub fn layout_if_needed(&self) {
-        unsafe {
-            msg_send![self.id(), layoutIfNeeded]
-        }
+        unsafe { msg_send![self.id(), layoutIfNeeded] }
     }
 
     #[inline]
     pub fn layout_sublayers(&self) {
-        unsafe {
-            msg_send![self.id(), layoutSublayers]
-        }
+        unsafe { msg_send![self.id(), layoutSublayers] }
     }
 
     #[inline]
     pub fn resize_sublayers_with_old_size(&self, size: &CGSize) {
-        unsafe {
-            msg_send![self.id(), resizeSublayersWithOldSize:*size]
-        }
+        unsafe { msg_send![self.id(), resizeSublayersWithOldSize:*size] }
     }
 
     #[inline]
     pub fn resize_with_old_superlayer_size(&self, size: &CGSize) {
-        unsafe {
-            msg_send![self.id(), resizeWithOldSuperlayerSize:*size]
-        }
+        unsafe { msg_send![self.id(), resizeWithOldSuperlayerSize:*size] }
     }
 
     // Action methods
@@ -1095,14 +940,12 @@ impl CALayer {
 
     #[inline]
     pub fn actions(&self) -> CFDictionary<CFStringRef, CFTypeRef> {
-        unsafe {
-            msg_send![self.id(), actions]
-        }
+        unsafe { msg_send![self.id(), actions] }
     }
 
     #[inline]
     pub unsafe fn set_actions(&self, actions: CFDictionary<CFStringRef, CFTypeRef>) {
-        msg_send![self.id(), setActions:actions]
+        msg_send![self.id(), setActions: actions]
     }
 
     // TODO(pcwalton): Wrap `CAAnimation`.
@@ -1118,9 +961,7 @@ impl CALayer {
 
     #[inline]
     pub fn remove_all_animation(&self) {
-        unsafe {
-            msg_send![self.id(), removeAllAnimations]
-        }
+        unsafe { msg_send![self.id(), removeAllAnimations] }
     }
 
     #[inline]
@@ -1136,9 +977,9 @@ impl CALayer {
         unsafe {
             let keys: CFArrayRef = msg_send![self.id(), animationKeys];
             let keys: CFArray = TCFType::wrap_under_create_rule(keys);
-            keys.into_iter().map(|string| {
-                CFString::wrap_under_get_rule(*string as CFStringRef).to_string()
-            }).collect()
+            keys.into_iter()
+                .map(|string| CFString::wrap_under_get_rule(*string as CFStringRef).to_string())
+                .collect()
         }
     }
 
@@ -1170,14 +1011,12 @@ impl CALayer {
 
     #[inline]
     pub fn delegate(&self) -> id {
-        unsafe {
-            msg_send![self.id(), delegate]
-        }
+        unsafe { msg_send![self.id(), delegate] }
     }
 
     #[inline]
     pub unsafe fn set_delegate(&self, delegate: id) {
-        msg_send![self.id(), setDelegate:delegate]
+        msg_send![self.id(), setDelegate: delegate]
     }
 
     #[inline]
@@ -1199,7 +1038,7 @@ impl CALayer {
                 None => ptr::null(),
                 Some(ref dictionary) => dictionary.as_CFTypeRef(),
             };
-            msg_send![self.id(), setStyle:dictionary]
+            msg_send![self.id(), setStyle: dictionary]
         }
     }
 
@@ -1215,9 +1054,7 @@ impl CALayer {
 
     #[inline]
     pub fn set_contents_opaque(&self, opaque: bool) {
-        unsafe {
-            msg_send![self.id(), setContentsOpaque:opaque as BOOL]
-        }
+        unsafe { msg_send![self.id(), setContentsOpaque: opaque as BOOL] }
     }
 }
 
@@ -1241,19 +1078,19 @@ pub enum ContentsGravity {
 impl ContentsGravity {
     fn into_CFString(self) -> CFString {
         let string = match self {
-            ContentsGravity::Center             => "center",
-            ContentsGravity::Top                => "top",
-            ContentsGravity::Bottom             => "bottom",
-            ContentsGravity::Left               => "left",
-            ContentsGravity::Right              => "right",
-            ContentsGravity::TopLeft            => "topLeft",
-            ContentsGravity::TopRight           => "topRight",
-            ContentsGravity::BottomLeft         => "bottomLeft",
-            ContentsGravity::BottomRight        => "bottomRight",
-            ContentsGravity::Resize             => "resize",
-            ContentsGravity::ResizeAspect       => "resizeAspect",
-            ContentsGravity::ResizeAspectFill   => "resizeAspectFill",
-            ContentsGravity::Other(other)       => return other,
+            ContentsGravity::Center => "center",
+            ContentsGravity::Top => "top",
+            ContentsGravity::Bottom => "bottom",
+            ContentsGravity::Left => "left",
+            ContentsGravity::Right => "right",
+            ContentsGravity::TopLeft => "topLeft",
+            ContentsGravity::TopRight => "topRight",
+            ContentsGravity::BottomLeft => "bottomLeft",
+            ContentsGravity::BottomRight => "bottomRight",
+            ContentsGravity::Resize => "resize",
+            ContentsGravity::ResizeAspect => "resizeAspect",
+            ContentsGravity::ResizeAspectFill => "resizeAspectFill",
+            ContentsGravity::Other(other) => return other,
         };
         CFString::from(string)
     }
@@ -1261,38 +1098,38 @@ impl ContentsGravity {
     // FIXME(pcwalton): Inefficient.
     fn from_CFString(string: CFString) -> ContentsGravity {
         match string.to_string() {
-            ref s if s == "center"              => ContentsGravity::Center,
-            ref s if s == "top"                 => ContentsGravity::Top,
-            ref s if s == "bottom"              => ContentsGravity::Bottom,
-            ref s if s == "left"                => ContentsGravity::Left,
-            ref s if s == "right"               => ContentsGravity::Right,
-            ref s if s == "topLeft"             => ContentsGravity::TopLeft,
-            ref s if s == "topRight"            => ContentsGravity::TopRight,
-            ref s if s == "bottomLeft"          => ContentsGravity::BottomLeft,
-            ref s if s == "bottomRight"         => ContentsGravity::BottomRight,
-            ref s if s == "resize"              => ContentsGravity::Resize,
-            ref s if s == "resizeAspect"        => ContentsGravity::ResizeAspect,
-            ref s if s == "resizeAspectFill"    => ContentsGravity::ResizeAspectFill,
-            _                                   => ContentsGravity::Other(string),
+            ref s if s == "center" => ContentsGravity::Center,
+            ref s if s == "top" => ContentsGravity::Top,
+            ref s if s == "bottom" => ContentsGravity::Bottom,
+            ref s if s == "left" => ContentsGravity::Left,
+            ref s if s == "right" => ContentsGravity::Right,
+            ref s if s == "topLeft" => ContentsGravity::TopLeft,
+            ref s if s == "topRight" => ContentsGravity::TopRight,
+            ref s if s == "bottomLeft" => ContentsGravity::BottomLeft,
+            ref s if s == "bottomRight" => ContentsGravity::BottomRight,
+            ref s if s == "resize" => ContentsGravity::Resize,
+            ref s if s == "resizeAspect" => ContentsGravity::ResizeAspect,
+            ref s if s == "resizeAspectFill" => ContentsGravity::ResizeAspectFill,
+            _ => ContentsGravity::Other(string),
         }
     }
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum ContentsFormat {
-    RGBA8Uint,      // kCAContentsFormatRGBA8Uint, "RGBA"
-    RGBA16Float,    // kCAContentsFormatRGBA16Float, "RGBAh"
-    Gray8Uint,      // kCAContentsFormatGray8Uint, "Gray8"
+    RGBA8Uint,   // kCAContentsFormatRGBA8Uint, "RGBA"
+    RGBA16Float, // kCAContentsFormatRGBA16Float, "RGBAh"
+    Gray8Uint,   // kCAContentsFormatGray8Uint, "Gray8"
     Other(CFString),
 }
 
 impl ContentsFormat {
     fn into_CFString(self) -> CFString {
         let string = match self {
-            ContentsFormat::RGBA8Uint       => "RGBA8",
-            ContentsFormat::RGBA16Float     => "RGBAh",
-            ContentsFormat::Gray8Uint       => "Gray8",
-            ContentsFormat::Other(other)    => return other,
+            ContentsFormat::RGBA8Uint => "RGBA8",
+            ContentsFormat::RGBA16Float => "RGBAh",
+            ContentsFormat::Gray8Uint => "Gray8",
+            ContentsFormat::Other(other) => return other,
         };
         CFString::from(string)
     }
@@ -1300,10 +1137,10 @@ impl ContentsFormat {
     // FIXME(pcwalton): Inefficient.
     fn from_CFString(string: CFString) -> ContentsFormat {
         match string.to_string() {
-            ref s if s == "RGBA8"   => ContentsFormat::RGBA8Uint,
-            ref s if s == "RGBAh"   => ContentsFormat::RGBA16Float,
-            ref s if s == "Gray8"   => ContentsFormat::Gray8Uint,
-            _                       => ContentsFormat::Other(string),
+            ref s if s == "RGBA8" => ContentsFormat::RGBA8Uint,
+            ref s if s == "RGBAh" => ContentsFormat::RGBA16Float,
+            ref s if s == "Gray8" => ContentsFormat::Gray8Uint,
+            _ => ContentsFormat::Other(string),
         }
     }
 }
@@ -1319,10 +1156,10 @@ pub enum Filter {
 impl Filter {
     fn into_CFString(self) -> CFString {
         let string = match self {
-            Filter::Nearest         => "nearest",
-            Filter::Linear          => "linear",
-            Filter::Trilinear       => "trilinear",
-            Filter::Other(other)    => return other,
+            Filter::Nearest => "nearest",
+            Filter::Linear => "linear",
+            Filter::Trilinear => "trilinear",
+            Filter::Other(other) => return other,
         };
         CFString::from(string)
     }
@@ -1330,10 +1167,10 @@ impl Filter {
     // FIXME(pcwalton): Inefficient.
     fn from_CFString(string: CFString) -> Filter {
         match string.to_string() {
-            ref s if s == "nearest"     => Filter::Nearest,
-            ref s if s == "linear"      => Filter::Linear,
-            ref s if s == "trilinear"   => Filter::Trilinear,
-            _                           => Filter::Other(string),
+            ref s if s == "nearest" => Filter::Nearest,
+            ref s if s == "linear" => Filter::Linear,
+            ref s if s == "trilinear" => Filter::Trilinear,
+            _ => Filter::Other(string),
         }
     }
 }
@@ -1378,18 +1215,14 @@ unsafe impl Sync for CARenderer {}
 impl Clone for CARenderer {
     #[inline]
     fn clone(&self) -> CARenderer {
-        unsafe {
-            CARenderer(msg_send![self.id(), retain])
-        }
+        unsafe { CARenderer(msg_send![self.id(), retain]) }
     }
 }
 
 impl Drop for CARenderer {
     #[inline]
     fn drop(&mut self) {
-        unsafe {
-            msg_send![self.id(), release]
-        }
+        unsafe { msg_send![self.id(), release] }
     }
 }
 
@@ -1400,41 +1233,46 @@ impl CARenderer {
     }
 
     #[inline]
-    pub unsafe fn from_cgl_context(context: CGLContextObj, color_space: Option<CGColorSpace>)
-                                   -> CARenderer {
+    pub unsafe fn from_cgl_context(
+        context: CGLContextObj,
+        color_space: Option<CGColorSpace>,
+    ) -> CARenderer {
         let mut pairs: Vec<(CFString, CFType)> = vec![];
         if let Some(color_space) = color_space {
-            pairs.push((CFString::wrap_under_get_rule(kCARendererColorSpace),
-                        CFType::wrap_under_get_rule(color_space.as_ptr() as *const _ as *const _)))
+            pairs.push((
+                CFString::wrap_under_get_rule(kCARendererColorSpace),
+                CFType::wrap_under_get_rule(color_space.as_ptr() as *const _ as *const _),
+            ))
         }
 
         let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
 
-        let renderer: id =
-            msg_send![class!(CARenderer), rendererWithCGLContext:context
+        let renderer: id = msg_send![class!(CARenderer), rendererWithCGLContext:context
                                                          options:options.as_CFTypeRef()];
         debug_assert!(renderer != nil);
         CARenderer(renderer)
     }
 
     #[inline]
-    pub unsafe fn from_metal_texture(metal_texture: id,
-                                     metal_command_queue: id,
-                                     color_space: Option<CGColorSpace>)
-                                     -> CARenderer {
-        let mut pairs: Vec<(CFString, CFType)> = vec![
-            (CFString::wrap_under_get_rule(kCARendererMetalCommandQueue),
-             CFType::wrap_under_get_rule(metal_command_queue as *const _ as *const _)),
-        ];
+    pub unsafe fn from_metal_texture(
+        metal_texture: id,
+        metal_command_queue: id,
+        color_space: Option<CGColorSpace>,
+    ) -> CARenderer {
+        let mut pairs: Vec<(CFString, CFType)> = vec![(
+            CFString::wrap_under_get_rule(kCARendererMetalCommandQueue),
+            CFType::wrap_under_get_rule(metal_command_queue as *const _ as *const _),
+        )];
         if let Some(color_space) = color_space {
-            pairs.push((CFString::wrap_under_get_rule(kCARendererColorSpace),
-                        CFType::wrap_under_get_rule(color_space.as_ptr() as *const _ as *const _)))
+            pairs.push((
+                CFString::wrap_under_get_rule(kCARendererColorSpace),
+                CFType::wrap_under_get_rule(color_space.as_ptr() as *const _ as *const _),
+            ))
         }
 
         let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
 
-        let renderer: id =
-            msg_send![class!(CARenderer), rendererWithMTLTexture:metal_texture
+        let renderer: id = msg_send![class!(CARenderer), rendererWithMTLTexture:metal_texture
                                                          options:options.as_CFTypeRef()];
         debug_assert!(renderer != nil);
         CARenderer(renderer)
@@ -1459,69 +1297,53 @@ impl CARenderer {
                 Some(ref layer) => layer.id(),
                 None => nil,
             };
-            msg_send![self.id(), setLayer:layer]
+            msg_send![self.id(), setLayer: layer]
         }
     }
 
     #[inline]
     pub fn bounds(&self) -> CGRect {
-        unsafe {
-            msg_send![self.id(), bounds]
-        }
+        unsafe { msg_send![self.id(), bounds] }
     }
 
     #[inline]
     pub fn set_bounds(&self, bounds: CGRect) {
-        unsafe {
-            msg_send![self.id(), setBounds:bounds]
-        }
+        unsafe { msg_send![self.id(), setBounds: bounds] }
     }
 
     #[inline]
     pub fn begin_frame_at(&self, time: CFTimeInterval, timestamp: Option<&CVTimeStamp>) {
-        unsafe {
-            msg_send![self.id(), beginFrameAtTime:time timeStamp:timestamp]
-        }
+        unsafe { msg_send![self.id(), beginFrameAtTime:time timeStamp:timestamp] }
     }
 
     #[inline]
     pub fn update_bounds(&self) -> CGRect {
-        unsafe {
-            msg_send![self.id(), updateBounds]
-        }
+        unsafe { msg_send![self.id(), updateBounds] }
     }
 
     #[inline]
     pub fn add_update_rect(&self, rect: CGRect) {
-        unsafe {
-            msg_send![self.id(), addUpdateRect:rect]
-        }
+        unsafe { msg_send![self.id(), addUpdateRect: rect] }
     }
 
     #[inline]
     pub fn render(&self) {
-        unsafe {
-            msg_send![self.id(), render]
-        }
+        unsafe { msg_send![self.id(), render] }
     }
 
     #[inline]
     pub fn next_frame_time(&self) -> CFTimeInterval {
-        unsafe {
-            msg_send![self.id(), nextFrameTime]
-        }
+        unsafe { msg_send![self.id(), nextFrameTime] }
     }
 
     #[inline]
     pub fn end_frame(&self) {
-        unsafe {
-            msg_send![self.id(), endFrame]
-        }
+        unsafe { msg_send![self.id(), endFrame] }
     }
 
     #[inline]
     pub unsafe fn set_destination(&self, metal_texture: id) {
-        msg_send![self.id(), setDestination:metal_texture]
+        msg_send![self.id(), setDestination: metal_texture]
     }
 }
 
@@ -1534,67 +1356,51 @@ pub mod transaction {
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
 
-    use base::{BOOL, YES, id};
+    use base::{id, BOOL, YES};
 
     #[inline]
     pub fn begin() {
-        unsafe {
-            msg_send![class!(CATransaction), begin]
-        }
+        unsafe { msg_send![class!(CATransaction), begin] }
     }
 
     #[inline]
     pub fn commit() {
-        unsafe {
-            msg_send![class!(CATransaction), commit]
-        }
+        unsafe { msg_send![class!(CATransaction), commit] }
     }
 
     #[inline]
     pub fn flush() {
-        unsafe {
-            msg_send![class!(CATransaction), flush]
-        }
+        unsafe { msg_send![class!(CATransaction), flush] }
     }
 
     #[inline]
     pub fn lock() {
-        unsafe {
-            msg_send![class!(CATransaction), lock]
-        }
+        unsafe { msg_send![class!(CATransaction), lock] }
     }
 
     #[inline]
     pub fn unlock() {
-        unsafe {
-            msg_send![class!(CATransaction), unlock]
-        }
+        unsafe { msg_send![class!(CATransaction), unlock] }
     }
 
     #[inline]
     pub fn animation_duration() -> CFTimeInterval {
-        unsafe {
-            msg_send![class!(CATransaction), animationDuration]
-        }
+        unsafe { msg_send![class!(CATransaction), animationDuration] }
     }
 
     #[inline]
     pub fn set_animation_duration(duration: CFTimeInterval) {
-        unsafe {
-            msg_send![class!(CATransaction), setAnimationDuration:duration]
-        }
+        unsafe { msg_send![class!(CATransaction), setAnimationDuration: duration] }
     }
 
     #[inline]
     pub fn animation_timing_function() -> id {
-        unsafe {
-            msg_send![class!(CATransaction), animationTimingFunction]
-        }
+        unsafe { msg_send![class!(CATransaction), animationTimingFunction] }
     }
 
     #[inline]
     pub unsafe fn set_animation_timing_function(function: id) {
-        msg_send![class!(CATransaction), setAnimationTimingFunction:function]
+        msg_send![class!(CATransaction), setAnimationTimingFunction: function]
     }
 
     #[inline]
@@ -1607,9 +1413,7 @@ pub mod transaction {
 
     #[inline]
     pub fn set_disable_actions(flag: bool) {
-        unsafe {
-            msg_send![class!(CATransaction), setDisableActions:flag as BOOL]
-        }
+        unsafe { msg_send![class!(CATransaction), setDisableActions: flag as BOOL] }
     }
 
     #[inline]
@@ -1627,7 +1431,9 @@ pub mod transaction {
 
     #[inline]
     pub fn set_completion_block<F>(block: ConcreteBlock<(), (), F>)
-                                   where F: 'static + IntoConcreteBlock<(), Ret = ()> {
+    where
+        F: 'static + IntoConcreteBlock<(), Ret = ()>,
+    {
         unsafe {
             let block = block.copy();
             msg_send![class!(CATransaction), setCompletionBlock:&*block]
@@ -1638,7 +1444,7 @@ pub mod transaction {
     pub fn value_for_key(key: &str) -> id {
         unsafe {
             let key: CFString = CFString::from(key);
-            msg_send![class!(CATransaction), valueForKey:key]
+            msg_send![class!(CATransaction), valueForKey: key]
         }
     }
 
@@ -1656,18 +1462,28 @@ pub mod transaction {
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct CATransform3D {
-    pub m11: CGFloat, pub m12: CGFloat, pub m13: CGFloat, pub m14: CGFloat,
-    pub m21: CGFloat, pub m22: CGFloat, pub m23: CGFloat, pub m24: CGFloat,
-    pub m31: CGFloat, pub m32: CGFloat, pub m33: CGFloat, pub m34: CGFloat,
-    pub m41: CGFloat, pub m42: CGFloat, pub m43: CGFloat, pub m44: CGFloat,
+    pub m11: CGFloat,
+    pub m12: CGFloat,
+    pub m13: CGFloat,
+    pub m14: CGFloat,
+    pub m21: CGFloat,
+    pub m22: CGFloat,
+    pub m23: CGFloat,
+    pub m24: CGFloat,
+    pub m31: CGFloat,
+    pub m32: CGFloat,
+    pub m33: CGFloat,
+    pub m34: CGFloat,
+    pub m41: CGFloat,
+    pub m42: CGFloat,
+    pub m43: CGFloat,
+    pub m44: CGFloat,
 }
 
 impl PartialEq for CATransform3D {
     #[inline]
     fn eq(&self, other: &CATransform3D) -> bool {
-        unsafe {
-            CATransform3DEqualToTransform(*self, *other)
-        }
+        unsafe { CATransform3DEqualToTransform(*self, *other) }
     }
 }
 
@@ -1676,100 +1492,88 @@ impl Mul<CATransform3D> for CATransform3D {
 
     #[inline]
     fn mul(self, other: CATransform3D) -> CATransform3D {
-        unsafe {
-            CATransform3DConcat(self, other)
-        }
+        unsafe { CATransform3DConcat(self, other) }
     }
 }
 
 impl CATransform3D {
     pub const IDENTITY: CATransform3D = CATransform3D {
-        m11: 1.0, m12: 0.0, m13: 0.0, m14: 0.0,
-        m21: 0.0, m22: 1.0, m23: 0.0, m24: 0.0,
-        m31: 0.0, m32: 0.0, m33: 1.0, m34: 0.0,
-        m41: 0.0, m42: 0.0, m43: 0.0, m44: 1.0,
+        m11: 1.0,
+        m12: 0.0,
+        m13: 0.0,
+        m14: 0.0,
+        m21: 0.0,
+        m22: 1.0,
+        m23: 0.0,
+        m24: 0.0,
+        m31: 0.0,
+        m32: 0.0,
+        m33: 1.0,
+        m34: 0.0,
+        m41: 0.0,
+        m42: 0.0,
+        m43: 0.0,
+        m44: 1.0,
     };
 
     #[inline]
     pub fn from_translation(tx: CGFloat, ty: CGFloat, tz: CGFloat) -> CATransform3D {
-        unsafe {
-            CATransform3DMakeTranslation(tx, ty, tz)
-        }
+        unsafe { CATransform3DMakeTranslation(tx, ty, tz) }
     }
 
     #[inline]
     pub fn from_scale(sx: CGFloat, sy: CGFloat, sz: CGFloat) -> CATransform3D {
-        unsafe {
-            CATransform3DMakeScale(sx, sy, sz)
-        }
+        unsafe { CATransform3DMakeScale(sx, sy, sz) }
     }
 
     #[inline]
     pub fn from_rotation(angle: CGFloat, x: CGFloat, y: CGFloat, z: CGFloat) -> CATransform3D {
-        unsafe {
-            CATransform3DMakeRotation(angle, x, y, z)
-        }
+        unsafe { CATransform3DMakeRotation(angle, x, y, z) }
     }
 
     #[inline]
     pub fn affine(affine_transform: CGAffineTransform) -> CATransform3D {
-        unsafe {
-            CATransform3DMakeAffineTransform(affine_transform)
-        }
+        unsafe { CATransform3DMakeAffineTransform(affine_transform) }
     }
 
     #[inline]
     pub fn is_identity(&self) -> bool {
-        unsafe {
-            CATransform3DIsIdentity(*self)
-        }
+        unsafe { CATransform3DIsIdentity(*self) }
     }
 
     #[inline]
     pub fn translate(&self, tx: CGFloat, ty: CGFloat, tz: CGFloat) -> CATransform3D {
-        unsafe {
-            CATransform3DTranslate(*self, tx, ty, tz)
-        }
+        unsafe { CATransform3DTranslate(*self, tx, ty, tz) }
     }
 
     #[inline]
     pub fn scale(&self, sx: CGFloat, sy: CGFloat, sz: CGFloat) -> CATransform3D {
-        unsafe {
-            CATransform3DScale(*self, sx, sy, sz)
-        }
+        unsafe { CATransform3DScale(*self, sx, sy, sz) }
     }
 
     #[inline]
     pub fn rotate(&self, angle: CGFloat, x: CGFloat, y: CGFloat, z: CGFloat) -> CATransform3D {
-        unsafe {
-            CATransform3DRotate(*self, angle, x, y, z)
-        }
+        unsafe { CATransform3DRotate(*self, angle, x, y, z) }
     }
 
     #[inline]
     pub fn invert(&self) -> CATransform3D {
-        unsafe {
-            CATransform3DInvert(*self)
-        }
+        unsafe { CATransform3DInvert(*self) }
     }
 
     #[inline]
     pub fn is_affine(&self) -> bool {
-        unsafe {
-            CATransform3DIsAffine(*self)
-        }
+        unsafe { CATransform3DIsAffine(*self) }
     }
 
     #[inline]
     pub fn to_affine(&self) -> CGAffineTransform {
-        unsafe {
-            CATransform3DGetAffineTransform(*self)
-        }
+        unsafe { CATransform3DGetAffineTransform(*self) }
     }
 }
 
 #[link(name = "QuartzCore", kind = "framework")]
-extern {
+extern "C" {
     static kCARendererColorSpace: CFStringRef;
     static kCARendererMetalCommandQueue: CFStringRef;
 
@@ -1779,14 +1583,27 @@ extern {
     fn CATransform3DEqualToTransform(a: CATransform3D, b: CATransform3D) -> bool;
     fn CATransform3DMakeTranslation(tx: CGFloat, ty: CGFloat, tz: CGFloat) -> CATransform3D;
     fn CATransform3DMakeScale(sx: CGFloat, sy: CGFloat, sz: CGFloat) -> CATransform3D;
-    fn CATransform3DMakeRotation(angle: CGFloat, x: CGFloat, y: CGFloat, z: CGFloat)
-                                 -> CATransform3D;
-    fn CATransform3DTranslate(t: CATransform3D, tx: CGFloat, ty: CGFloat, tz: CGFloat)
-                              -> CATransform3D;
+    fn CATransform3DMakeRotation(
+        angle: CGFloat,
+        x: CGFloat,
+        y: CGFloat,
+        z: CGFloat,
+    ) -> CATransform3D;
+    fn CATransform3DTranslate(
+        t: CATransform3D,
+        tx: CGFloat,
+        ty: CGFloat,
+        tz: CGFloat,
+    ) -> CATransform3D;
     fn CATransform3DScale(t: CATransform3D, sx: CGFloat, sy: CGFloat, sz: CGFloat)
-                          -> CATransform3D;
-    fn CATransform3DRotate(t: CATransform3D, angle: CGFloat, x: CGFloat, y: CGFloat, z: CGFloat)
-                           -> CATransform3D;
+        -> CATransform3D;
+    fn CATransform3DRotate(
+        t: CATransform3D,
+        angle: CGFloat,
+        x: CGFloat,
+        y: CGFloat,
+        z: CGFloat,
+    ) -> CATransform3D;
     fn CATransform3DConcat(a: CATransform3D, b: CATransform3D) -> CATransform3D;
     fn CATransform3DInvert(t: CATransform3D) -> CATransform3D;
     fn CATransform3DMakeAffineTransform(m: CGAffineTransform) -> CATransform3D;
@@ -1844,16 +1661,16 @@ pub struct CVSMPTETime {
 
 pub type CVSMPTETimeType = u32;
 
-pub const kCVSMPTETimeType24:       CVSMPTETimeType = 0;
-pub const kCVSMPTETimeType25:       CVSMPTETimeType = 1;
-pub const kCVSMPTETimeType30Drop:   CVSMPTETimeType = 2;
-pub const kCVSMPTETimeType30:       CVSMPTETimeType = 3;
-pub const kCVSMPTETimeType2997:     CVSMPTETimeType = 4;
+pub const kCVSMPTETimeType24: CVSMPTETimeType = 0;
+pub const kCVSMPTETimeType25: CVSMPTETimeType = 1;
+pub const kCVSMPTETimeType30Drop: CVSMPTETimeType = 2;
+pub const kCVSMPTETimeType30: CVSMPTETimeType = 3;
+pub const kCVSMPTETimeType2997: CVSMPTETimeType = 4;
 pub const kCVSMPTETimeType2997Drop: CVSMPTETimeType = 5;
-pub const kCVSMPTETimeType60:       CVSMPTETimeType = 6;
-pub const kCVSMPTETimeType5994:     CVSMPTETimeType = 7;
+pub const kCVSMPTETimeType60: CVSMPTETimeType = 6;
+pub const kCVSMPTETimeType5994: CVSMPTETimeType = 7;
 
 pub type CVSMPTETimeFlags = u32;
 
-pub const kCVSMPTETimeValid:    CVSMPTETimeFlags = 1 << 0;
-pub const kCVSMPTETimeRunning:  CVSMPTETimeFlags = 1 << 1;
+pub const kCVSMPTETimeValid: CVSMPTETimeFlags = 1 << 0;
+pub const kCVSMPTETimeRunning: CVSMPTETimeFlags = 1 << 1;

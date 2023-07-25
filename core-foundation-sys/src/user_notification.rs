@@ -9,17 +9,18 @@
 
 use std::os::raw::c_void;
 
-use base::{CFOptionFlags, CFIndex, CFAllocatorRef, CFTypeID, SInt32};
-use dictionary::CFDictionaryRef;
-use string::CFStringRef;
+use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID, SInt32};
 use date::CFTimeInterval;
+use dictionary::CFDictionaryRef;
 use runloop::CFRunLoopSourceRef;
+use string::CFStringRef;
 use url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFUserNotification(c_void);
 
-pub type CFUserNotificationCallBack = extern "C" fn (userNotification: CFUserNotificationRef, responseFlags: CFOptionFlags);
+pub type CFUserNotificationCallBack =
+    extern "C" fn(userNotification: CFUserNotificationRef, responseFlags: CFOptionFlags);
 pub type CFUserNotificationRef = *mut __CFUserNotification;
 
 /* Alert Levels */
@@ -53,8 +54,7 @@ pub fn CFUserNotificationPopUpSelection(n: CFIndex) -> CFOptionFlags {
     (n << 24) as CFOptionFlags
 }
 
-
-extern {
+extern "C" {
     /*
      * CFUserNotification.h
      */
@@ -79,13 +79,60 @@ extern {
 
     /* CFUserNotification Miscellaneous Functions */
     pub fn CFUserNotificationCancel(userNotification: CFUserNotificationRef) -> SInt32;
-    pub fn CFUserNotificationCreate(allocator: CFAllocatorRef, timeout: CFTimeInterval, flags: CFOptionFlags, error: *mut SInt32, dictionary: CFDictionaryRef) -> CFUserNotificationRef;
-    pub fn CFUserNotificationCreateRunLoopSource(allocator: CFAllocatorRef, userNotification: CFUserNotificationRef, callout: CFUserNotificationCallBack, order: CFIndex) -> CFRunLoopSourceRef;
-    pub fn CFUserNotificationDisplayAlert(timeout: CFTimeInterval, flags: CFOptionFlags, iconURL: CFURLRef, soundURL: CFURLRef, localizationURL: CFURLRef, alertHeader: CFStringRef, alertMessage: CFStringRef, defaultButtonTitle: CFStringRef, alternateButtonTitle: CFStringRef, otherButtonTitle: CFStringRef, responseFlags: *mut CFOptionFlags) -> SInt32;
-    pub fn CFUserNotificationDisplayNotice(timeout: CFTimeInterval, flags: CFOptionFlags, iconURL: CFURLRef, soundURL: CFURLRef, localizationURL: CFURLRef, alertHeader: CFStringRef, alertMessage: CFStringRef, defaultButtonTitle: CFStringRef) -> SInt32;
+    pub fn CFUserNotificationCreate(
+        allocator: CFAllocatorRef,
+        timeout: CFTimeInterval,
+        flags: CFOptionFlags,
+        error: *mut SInt32,
+        dictionary: CFDictionaryRef,
+    ) -> CFUserNotificationRef;
+    pub fn CFUserNotificationCreateRunLoopSource(
+        allocator: CFAllocatorRef,
+        userNotification: CFUserNotificationRef,
+        callout: CFUserNotificationCallBack,
+        order: CFIndex,
+    ) -> CFRunLoopSourceRef;
+    pub fn CFUserNotificationDisplayAlert(
+        timeout: CFTimeInterval,
+        flags: CFOptionFlags,
+        iconURL: CFURLRef,
+        soundURL: CFURLRef,
+        localizationURL: CFURLRef,
+        alertHeader: CFStringRef,
+        alertMessage: CFStringRef,
+        defaultButtonTitle: CFStringRef,
+        alternateButtonTitle: CFStringRef,
+        otherButtonTitle: CFStringRef,
+        responseFlags: *mut CFOptionFlags,
+    ) -> SInt32;
+    pub fn CFUserNotificationDisplayNotice(
+        timeout: CFTimeInterval,
+        flags: CFOptionFlags,
+        iconURL: CFURLRef,
+        soundURL: CFURLRef,
+        localizationURL: CFURLRef,
+        alertHeader: CFStringRef,
+        alertMessage: CFStringRef,
+        defaultButtonTitle: CFStringRef,
+    ) -> SInt32;
     pub fn CFUserNotificationGetTypeID() -> CFTypeID;
-    pub fn CFUserNotificationGetResponseDictionary(userNotification: CFUserNotificationRef) -> CFDictionaryRef;
-    pub fn CFUserNotificationGetResponseValue(userNotification: CFUserNotificationRef, key: CFStringRef, idx: CFIndex) -> CFStringRef;
-    pub fn CFUserNotificationReceiveResponse(userNotification: CFUserNotificationRef, timeout: CFTimeInterval, responseFlags: *mut CFOptionFlags) -> SInt32;
-    pub fn CFUserNotificationUpdate(userNotification: CFUserNotificationRef, timeout: CFTimeInterval, flags: CFOptionFlags, dictionary: CFDictionaryRef) -> SInt32;
+    pub fn CFUserNotificationGetResponseDictionary(
+        userNotification: CFUserNotificationRef,
+    ) -> CFDictionaryRef;
+    pub fn CFUserNotificationGetResponseValue(
+        userNotification: CFUserNotificationRef,
+        key: CFStringRef,
+        idx: CFIndex,
+    ) -> CFStringRef;
+    pub fn CFUserNotificationReceiveResponse(
+        userNotification: CFUserNotificationRef,
+        timeout: CFTimeInterval,
+        responseFlags: *mut CFOptionFlags,
+    ) -> SInt32;
+    pub fn CFUserNotificationUpdate(
+        userNotification: CFUserNotificationRef,
+        timeout: CFTimeInterval,
+        flags: CFOptionFlags,
+        dictionary: CFDictionaryRef,
+    ) -> SInt32;
 }

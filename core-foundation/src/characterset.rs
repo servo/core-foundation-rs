@@ -13,7 +13,7 @@ pub use core_foundation_sys::characterset::*;
 
 use base::TCFType;
 
-declare_TCFType!{
+declare_TCFType! {
     /// An immutable set of Unicde characters.
     CFCharacterSet, CFCharacterSetRef
 }

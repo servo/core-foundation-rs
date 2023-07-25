@@ -9,9 +9,9 @@
 
 use std::os::raw::c_void;
 
-use base::{CFTypeID, CFIndex, CFAllocatorRef};
-use string::CFStringRef;
+use base::{CFAllocatorRef, CFIndex, CFTypeID};
 use dictionary::CFDictionaryRef;
+use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFError(c_void);
@@ -41,7 +41,12 @@ extern "C" {
     pub static kCFErrorFilePathKey: CFStringRef;
 
     /* Creating a CFError */
-    pub fn CFErrorCreate(allocator: CFAllocatorRef, domain: CFErrorDomain, code: CFIndex, userInfo: CFDictionaryRef) -> CFErrorRef;
+    pub fn CFErrorCreate(
+        allocator: CFAllocatorRef,
+        domain: CFErrorDomain,
+        code: CFIndex,
+        userInfo: CFDictionaryRef,
+    ) -> CFErrorRef;
     //pub fn CFErrorCreateWithUserInfoKeysAndValues
 
     /* Getting Information About an Error */

@@ -9,13 +9,13 @@
 
 use std::os::raw::c_void;
 
-use base::{CFTypeID, CFAllocatorRef, Boolean, CFTypeRef, UInt32, SInt32};
-use std::os::raw::{c_uint, c_int};
-use url::CFURLRef;
-use dictionary::CFDictionaryRef;
-use string::CFStringRef;
 use array::CFArrayRef;
+use base::{Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, SInt32, UInt32};
+use dictionary::CFDictionaryRef;
 use error::CFErrorRef;
+use std::os::raw::{c_int, c_uint};
+use string::CFStringRef;
+use url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFBundle(c_void);
@@ -31,17 +31,32 @@ pub unsafe fn CFCopyLocalizedString(key: CFStringRef, comment: CFStringRef) -> C
 }
 #[allow(unused)]
 #[inline(always)]
-pub unsafe fn CFCopyLocalizedStringFromTable(key: CFStringRef, tbl: CFStringRef, comment: CFStringRef) -> CFStringRef {
+pub unsafe fn CFCopyLocalizedStringFromTable(
+    key: CFStringRef,
+    tbl: CFStringRef,
+    comment: CFStringRef,
+) -> CFStringRef {
     CFBundleCopyLocalizedString(CFBundleGetMainBundle(), key, key, tbl)
 }
 #[allow(unused)]
 #[inline(always)]
-pub unsafe fn CFCopyLocalizedStringFromTableInBundle(key: CFStringRef, tbl: CFStringRef, bundle: CFBundleRef, comment: CFStringRef) -> CFStringRef {
+pub unsafe fn CFCopyLocalizedStringFromTableInBundle(
+    key: CFStringRef,
+    tbl: CFStringRef,
+    bundle: CFBundleRef,
+    comment: CFStringRef,
+) -> CFStringRef {
     CFBundleCopyLocalizedString(bundle, key, key, tbl)
 }
 #[allow(unused)]
 #[inline(always)]
-pub unsafe fn CFCopyLocalizedStringWithDefaultValue(key: CFStringRef, tbl: CFStringRef, bundle: CFBundleRef, value: CFStringRef, comment: CFStringRef) -> CFStringRef {
+pub unsafe fn CFCopyLocalizedStringWithDefaultValue(
+    key: CFStringRef,
+    tbl: CFStringRef,
+    bundle: CFBundleRef,
+    value: CFStringRef,
+    comment: CFStringRef,
+) -> CFStringRef {
     CFBundleCopyLocalizedString(bundle, key, value, tbl)
 }
 
@@ -51,7 +66,7 @@ pub static kCFBundleExecutableArchitectureX86_64: c_uint = 0x01000007;
 pub static kCFBundleExecutableArchitecturePPC64: c_uint = 0x01000012;
 //pub static kCFBundleExecutableArchitectureARM64: c_uint = 0x0100000c; //macos(11.0)+
 
-extern {
+extern "C" {
     /*
      * CFBundle.h
      */
@@ -67,7 +82,11 @@ extern {
 
     /* Creating and Accessing Bundles */
     pub fn CFBundleCreate(allocator: CFAllocatorRef, bundleURL: CFURLRef) -> CFBundleRef;
-    pub fn CFBundleCreateBundlesFromDirectory(allocator: CFAllocatorRef, directoryURL: CFURLRef, bundleType: CFStringRef) -> CFArrayRef;
+    pub fn CFBundleCreateBundlesFromDirectory(
+        allocator: CFAllocatorRef,
+        directoryURL: CFURLRef,
+        bundleType: CFStringRef,
+    ) -> CFArrayRef;
     pub fn CFBundleGetAllBundles() -> CFArrayRef;
     pub fn CFBundleGetBundleWithIdentifier(bundleID: CFStringRef) -> CFBundleRef;
     pub fn CFBundleGetMainBundle() -> CFBundleRef;
@@ -76,11 +95,17 @@ extern {
     pub fn CFBundleIsExecutableLoaded(bundle: CFBundleRef) -> Boolean;
     pub fn CFBundlePreflightExecutable(bundle: CFBundleRef, error: *mut CFErrorRef) -> Boolean;
     pub fn CFBundleLoadExecutable(bundle: CFBundleRef) -> Boolean;
-    pub fn CFBundleLoadExecutableAndReturnError(bundle: CFBundleRef, error: *mut CFErrorRef) -> Boolean;
+    pub fn CFBundleLoadExecutableAndReturnError(
+        bundle: CFBundleRef,
+        error: *mut CFErrorRef,
+    ) -> Boolean;
     pub fn CFBundleUnloadExecutable(bundle: CFBundleRef);
 
     /* Finding Locations in a Bundle */
-    pub fn CFBundleCopyAuxiliaryExecutableURL(bundle: CFBundleRef, executableName: CFStringRef) -> CFURLRef;
+    pub fn CFBundleCopyAuxiliaryExecutableURL(
+        bundle: CFBundleRef,
+        executableName: CFStringRef,
+    ) -> CFURLRef;
     pub fn CFBundleCopyBuiltInPlugInsURL(bundle: CFBundleRef) -> CFURLRef;
     pub fn CFBundleCopyExecutableURL(bundle: CFBundleRef) -> CFURLRef;
     pub fn CFBundleCopyPrivateFrameworksURL(bundle: CFBundleRef) -> CFURLRef;
@@ -92,29 +117,84 @@ extern {
     /* Locating Bundle Resources */
     #[cfg(target_os = "macos")]
     pub fn CFBundleCloseBundleResourceMap(bundle: CFBundleRef, refNum: CFBundleRefNum); // DEPRECATED macosx(10.0, 10.15)
-    pub fn CFBundleCopyResourceURL(bundle: CFBundleRef, resourceName: CFStringRef, resourceType: CFStringRef, subDirName: CFStringRef) -> CFURLRef;
-    pub fn CFBundleCopyResourceURLInDirectory(bundleURL: CFURLRef, resourceName: CFStringRef, resourceType: CFStringRef, subDirName: CFStringRef) -> CFURLRef;
-    pub fn CFBundleCopyResourceURLsOfType(bundle: CFBundleRef, resourceType: CFStringRef, subDirName: CFStringRef) -> CFArrayRef;
-    pub fn CFBundleCopyResourceURLsOfTypeInDirectory(bundleURL: CFURLRef, resourceType: CFStringRef, subDirName: CFStringRef) -> CFArrayRef;
-    pub fn CFBundleCopyResourceURLForLocalization(bundle: CFBundleRef, resourceName: CFStringRef, resourceType: CFStringRef, subDirName: CFStringRef, localizationName: CFStringRef) -> CFURLRef;
-    pub fn CFBundleCopyResourceURLsOfTypeForLocalization(bundle: CFBundleRef, resourceType: CFStringRef, subDirName: CFStringRef, localizationName: CFStringRef) -> CFArrayRef;
+    pub fn CFBundleCopyResourceURL(
+        bundle: CFBundleRef,
+        resourceName: CFStringRef,
+        resourceType: CFStringRef,
+        subDirName: CFStringRef,
+    ) -> CFURLRef;
+    pub fn CFBundleCopyResourceURLInDirectory(
+        bundleURL: CFURLRef,
+        resourceName: CFStringRef,
+        resourceType: CFStringRef,
+        subDirName: CFStringRef,
+    ) -> CFURLRef;
+    pub fn CFBundleCopyResourceURLsOfType(
+        bundle: CFBundleRef,
+        resourceType: CFStringRef,
+        subDirName: CFStringRef,
+    ) -> CFArrayRef;
+    pub fn CFBundleCopyResourceURLsOfTypeInDirectory(
+        bundleURL: CFURLRef,
+        resourceType: CFStringRef,
+        subDirName: CFStringRef,
+    ) -> CFArrayRef;
+    pub fn CFBundleCopyResourceURLForLocalization(
+        bundle: CFBundleRef,
+        resourceName: CFStringRef,
+        resourceType: CFStringRef,
+        subDirName: CFStringRef,
+        localizationName: CFStringRef,
+    ) -> CFURLRef;
+    pub fn CFBundleCopyResourceURLsOfTypeForLocalization(
+        bundle: CFBundleRef,
+        resourceType: CFStringRef,
+        subDirName: CFStringRef,
+        localizationName: CFStringRef,
+    ) -> CFArrayRef;
     #[cfg(target_os = "macos")]
-    pub fn CFBundleOpenBundleResourceFiles(bundle: CFBundleRef, refNum: *mut CFBundleRefNum, localizedRefNum: *mut CFBundleRefNum) -> SInt32; // DEPRECATED macosx(10.0, 10.15)
+    pub fn CFBundleOpenBundleResourceFiles(
+        bundle: CFBundleRef,
+        refNum: *mut CFBundleRefNum,
+        localizedRefNum: *mut CFBundleRefNum,
+    ) -> SInt32; // DEPRECATED macosx(10.0, 10.15)
     #[cfg(target_os = "macos")]
     pub fn CFBundleOpenBundleResourceMap(bundle: CFBundleRef) -> CFBundleRefNum; // DEPRECATED macosx(10.0, 10.15)
 
     /* Managing Localizations */
     pub fn CFBundleCopyBundleLocalizations(bundle: CFBundleRef) -> CFArrayRef;
-    pub fn CFBundleCopyLocalizedString(bundle: CFBundleRef, key: CFStringRef, value: CFStringRef, tableName: CFStringRef) -> CFStringRef;
-    pub fn CFBundleCopyLocalizationsForPreferences(locArray: CFArrayRef, prefArray: CFArrayRef) -> CFArrayRef;
+    pub fn CFBundleCopyLocalizedString(
+        bundle: CFBundleRef,
+        key: CFStringRef,
+        value: CFStringRef,
+        tableName: CFStringRef,
+    ) -> CFStringRef;
+    pub fn CFBundleCopyLocalizationsForPreferences(
+        locArray: CFArrayRef,
+        prefArray: CFArrayRef,
+    ) -> CFArrayRef;
     pub fn CFBundleCopyLocalizationsForURL(url: CFURLRef) -> CFArrayRef;
     pub fn CFBundleCopyPreferredLocalizationsFromArray(locArray: CFArrayRef) -> CFArrayRef;
 
     /* Managing Executable Code */
-    pub fn CFBundleGetDataPointerForName(bundle: CFBundleRef, symbolName: CFStringRef) -> *mut c_void;
-    pub fn CFBundleGetDataPointersForNames(bundle: CFBundleRef, symbolNames: CFArrayRef, stbl: *mut [c_void]);
-    pub fn CFBundleGetFunctionPointerForName(bundle: CFBundleRef, function_name: CFStringRef) -> *const c_void;
-    pub fn CFBundleGetFunctionPointersForNames(bundle: CFBundleRef, functionNames: CFArrayRef, ftbl: *mut [c_void]);
+    pub fn CFBundleGetDataPointerForName(
+        bundle: CFBundleRef,
+        symbolName: CFStringRef,
+    ) -> *mut c_void;
+    pub fn CFBundleGetDataPointersForNames(
+        bundle: CFBundleRef,
+        symbolNames: CFArrayRef,
+        stbl: *mut [c_void],
+    );
+    pub fn CFBundleGetFunctionPointerForName(
+        bundle: CFBundleRef,
+        function_name: CFStringRef,
+    ) -> *const c_void;
+    pub fn CFBundleGetFunctionPointersForNames(
+        bundle: CFBundleRef,
+        functionNames: CFArrayRef,
+        ftbl: *mut [c_void],
+    );
     pub fn CFBundleGetPlugIn(bundle: CFBundleRef) -> CFPlugInRef;
 
     /* Getting Bundle Properties */
@@ -123,11 +203,20 @@ extern {
     pub fn CFBundleGetIdentifier(bundle: CFBundleRef) -> CFStringRef;
     pub fn CFBundleGetInfoDictionary(bundle: CFBundleRef) -> CFDictionaryRef;
     pub fn CFBundleGetLocalInfoDictionary(bundle: CFBundleRef) -> CFDictionaryRef;
-    pub fn CFBundleGetValueForInfoDictionaryKey(bundle: CFBundleRef, key: CFStringRef) -> CFTypeRef;
+    pub fn CFBundleGetValueForInfoDictionaryKey(bundle: CFBundleRef, key: CFStringRef)
+        -> CFTypeRef;
     pub fn CFBundleCopyInfoDictionaryInDirectory(bundleURL: CFURLRef) -> CFDictionaryRef;
     pub fn CFBundleCopyInfoDictionaryForURL(url: CFURLRef) -> CFDictionaryRef;
-    pub fn CFBundleGetPackageInfo(bundle: CFBundleRef, packageType: *mut UInt32, packageCreator: *mut UInt32);
-    pub fn CFBundleGetPackageInfoInDirectory(url: CFURLRef, packageType: *mut UInt32, packageCreator: *mut UInt32) -> Boolean;
+    pub fn CFBundleGetPackageInfo(
+        bundle: CFBundleRef,
+        packageType: *mut UInt32,
+        packageCreator: *mut UInt32,
+    );
+    pub fn CFBundleGetPackageInfoInDirectory(
+        url: CFURLRef,
+        packageType: *mut UInt32,
+        packageCreator: *mut UInt32,
+    ) -> Boolean;
     pub fn CFBundleCopyExecutableArchitectures(bundle: CFBundleRef) -> CFArrayRef;
     pub fn CFBundleCopyExecutableArchitecturesForURL(url: CFURLRef) -> CFArrayRef;
     pub fn CFBundleGetVersionNumber(bundle: CFBundleRef) -> UInt32;

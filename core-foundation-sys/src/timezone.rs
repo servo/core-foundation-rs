@@ -9,14 +9,14 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFTypeID, Boolean, CFIndex};
-use date::{CFTimeInterval, CFAbsoluteTime};
-use string::CFStringRef;
 use array::CFArrayRef;
-use dictionary::CFDictionaryRef;
+use base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID};
 use data::CFDataRef;
+use date::{CFAbsoluteTime, CFTimeInterval};
+use dictionary::CFDictionaryRef;
 use locale::CFLocaleRef;
 use notification_center::CFNotificationName;
+use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFTimeZone(c_void);
@@ -32,7 +32,7 @@ pub const kCFTimeZoneNameStyleShortDaylightSaving: CFTimeZoneNameStyle = 3;
 pub const kCFTimeZoneNameStyleGeneric: CFTimeZoneNameStyle = 4;
 pub const kCFTimeZoneNameStyleShortGeneric: CFTimeZoneNameStyle = 5;
 
-extern {
+extern "C" {
     /*
      * CFTimeZone.h
      */
@@ -40,9 +40,20 @@ extern {
     pub static kCFTimeZoneSystemTimeZoneDidChangeNotification: CFNotificationName;
 
     /* Creating a Time Zone */
-    pub fn CFTimeZoneCreate(allocator: CFAllocatorRef, name: CFStringRef, data: CFDataRef) -> CFTimeZoneRef;
-    pub fn CFTimeZoneCreateWithName(allocator: CFAllocatorRef, name: CFStringRef, tryAbbrev: Boolean) -> CFTimeZoneRef;
-    pub fn CFTimeZoneCreateWithTimeIntervalFromGMT(allocator: CFAllocatorRef, interval: CFTimeInterval) -> CFTimeZoneRef;
+    pub fn CFTimeZoneCreate(
+        allocator: CFAllocatorRef,
+        name: CFStringRef,
+        data: CFDataRef,
+    ) -> CFTimeZoneRef;
+    pub fn CFTimeZoneCreateWithName(
+        allocator: CFAllocatorRef,
+        name: CFStringRef,
+        tryAbbrev: Boolean,
+    ) -> CFTimeZoneRef;
+    pub fn CFTimeZoneCreateWithTimeIntervalFromGMT(
+        allocator: CFAllocatorRef,
+        interval: CFTimeInterval,
+    ) -> CFTimeZoneRef;
 
     /* System and Default Time Zones and Information */
     pub fn CFTimeZoneCopyAbbreviationDictionary() -> CFDictionaryRef;
@@ -56,14 +67,24 @@ extern {
 
     /* Getting Information About Time Zones */
     pub fn CFTimeZoneGetName(tz: CFTimeZoneRef) -> CFStringRef;
-    pub fn CFTimeZoneCopyLocalizedName(tz: CFTimeZoneRef, style: CFTimeZoneNameStyle, locale: CFLocaleRef) -> CFStringRef;
+    pub fn CFTimeZoneCopyLocalizedName(
+        tz: CFTimeZoneRef,
+        style: CFTimeZoneNameStyle,
+        locale: CFLocaleRef,
+    ) -> CFStringRef;
     pub fn CFTimeZoneGetSecondsFromGMT(tz: CFTimeZoneRef, time: CFAbsoluteTime) -> CFTimeInterval;
     pub fn CFTimeZoneGetData(tz: CFTimeZoneRef) -> CFDataRef;
 
     /* Getting Daylight Savings Time Information */
     pub fn CFTimeZoneIsDaylightSavingTime(tz: CFTimeZoneRef, at: CFAbsoluteTime) -> Boolean;
-    pub fn CFTimeZoneGetDaylightSavingTimeOffset(tz: CFTimeZoneRef, at: CFAbsoluteTime) -> CFTimeInterval;
-    pub fn CFTimeZoneGetNextDaylightSavingTimeTransition(tz: CFTimeZoneRef, at: CFAbsoluteTime) -> CFAbsoluteTime;
+    pub fn CFTimeZoneGetDaylightSavingTimeOffset(
+        tz: CFTimeZoneRef,
+        at: CFAbsoluteTime,
+    ) -> CFTimeInterval;
+    pub fn CFTimeZoneGetNextDaylightSavingTimeTransition(
+        tz: CFTimeZoneRef,
+        at: CFAbsoluteTime,
+    ) -> CFAbsoluteTime;
 
     /* Getting the CFTimeZone Type ID */
     pub fn CFTimeZoneGetTypeID() -> CFTypeID;

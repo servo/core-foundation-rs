@@ -7,13 +7,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{Boolean, CFIndex};
-use string::CFStringRef;
-use propertylist::CFPropertyListRef;
 use array::CFArrayRef;
+use base::{Boolean, CFIndex};
 use dictionary::CFDictionaryRef;
+use propertylist::CFPropertyListRef;
+use string::CFStringRef;
 
-extern {
+extern "C" {
     /*
      * CFPreferences.h
      */
@@ -26,27 +26,78 @@ extern {
     pub static kCFPreferencesCurrentUser: CFStringRef;
 
     /* Getting Preference Values */
-    pub fn CFPreferencesCopyAppValue(key: CFStringRef, applicationID: CFStringRef) -> CFPropertyListRef;
-    pub fn CFPreferencesCopyKeyList(applicationID: CFStringRef, userName: CFStringRef,  hostName: CFStringRef) -> CFArrayRef;
-    pub fn CFPreferencesCopyMultiple(keysToFetch: CFArrayRef, applicationID: CFStringRef, userName: CFStringRef,  hostName: CFStringRef) -> CFDictionaryRef;
-    pub fn CFPreferencesCopyValue(key: CFStringRef, applicationID: CFStringRef, userName: CFStringRef, hostName: CFStringRef) -> CFPropertyListRef;
-    pub fn CFPreferencesGetAppBooleanValue(key: CFStringRef, applicationID: CFStringRef, keyExistsAndHasValidFormat: *mut Boolean) -> Boolean;
-    pub fn CFPreferencesGetAppIntegerValue(key: CFStringRef, applicationID: CFStringRef, keyExistsAndHasValidFormat: *mut Boolean) -> CFIndex;
+    pub fn CFPreferencesCopyAppValue(
+        key: CFStringRef,
+        applicationID: CFStringRef,
+    ) -> CFPropertyListRef;
+    pub fn CFPreferencesCopyKeyList(
+        applicationID: CFStringRef,
+        userName: CFStringRef,
+        hostName: CFStringRef,
+    ) -> CFArrayRef;
+    pub fn CFPreferencesCopyMultiple(
+        keysToFetch: CFArrayRef,
+        applicationID: CFStringRef,
+        userName: CFStringRef,
+        hostName: CFStringRef,
+    ) -> CFDictionaryRef;
+    pub fn CFPreferencesCopyValue(
+        key: CFStringRef,
+        applicationID: CFStringRef,
+        userName: CFStringRef,
+        hostName: CFStringRef,
+    ) -> CFPropertyListRef;
+    pub fn CFPreferencesGetAppBooleanValue(
+        key: CFStringRef,
+        applicationID: CFStringRef,
+        keyExistsAndHasValidFormat: *mut Boolean,
+    ) -> Boolean;
+    pub fn CFPreferencesGetAppIntegerValue(
+        key: CFStringRef,
+        applicationID: CFStringRef,
+        keyExistsAndHasValidFormat: *mut Boolean,
+    ) -> CFIndex;
 
     /* Setting Preference Values */
-    pub fn CFPreferencesSetAppValue(key: CFStringRef, value: CFPropertyListRef, applicationID: CFStringRef);
-    pub fn CFPreferencesSetMultiple(keysToSet: CFDictionaryRef, keysToRemove: CFArrayRef, applicationID: CFStringRef, userName: CFStringRef,  hostName: CFStringRef);
-    pub fn CFPreferencesSetValue(key: CFStringRef, value: CFPropertyListRef, applicationID: CFStringRef, userName: CFStringRef,  hostName: CFStringRef);
+    pub fn CFPreferencesSetAppValue(
+        key: CFStringRef,
+        value: CFPropertyListRef,
+        applicationID: CFStringRef,
+    );
+    pub fn CFPreferencesSetMultiple(
+        keysToSet: CFDictionaryRef,
+        keysToRemove: CFArrayRef,
+        applicationID: CFStringRef,
+        userName: CFStringRef,
+        hostName: CFStringRef,
+    );
+    pub fn CFPreferencesSetValue(
+        key: CFStringRef,
+        value: CFPropertyListRef,
+        applicationID: CFStringRef,
+        userName: CFStringRef,
+        hostName: CFStringRef,
+    );
 
     /* Synchronizing Preferences */
     pub fn CFPreferencesAppSynchronize(applicationID: CFStringRef) -> Boolean;
-    pub fn CFPreferencesSynchronize(applicationID: CFStringRef, userName: CFStringRef, hostName: CFStringRef) -> Boolean;
+    pub fn CFPreferencesSynchronize(
+        applicationID: CFStringRef,
+        userName: CFStringRef,
+        hostName: CFStringRef,
+    ) -> Boolean;
 
     /* Adding and Removing Suite Preferences */
     pub fn CFPreferencesAddSuitePreferencesToApp(applicationID: CFStringRef, suiteID: CFStringRef);
-    pub fn CFPreferencesRemoveSuitePreferencesFromApp(applicationID: CFStringRef, suiteID: CFStringRef);
+    pub fn CFPreferencesRemoveSuitePreferencesFromApp(
+        applicationID: CFStringRef,
+        suiteID: CFStringRef,
+    );
 
     /* Miscellaneous Functions */
     pub fn CFPreferencesAppValueIsForced(key: CFStringRef, applicationID: CFStringRef) -> Boolean;
-    pub fn CFPreferencesCopyApplicationList(userName: CFStringRef,  hostName: CFStringRef) -> CFArrayRef; // deprecated since macos 10.9
+    pub fn CFPreferencesCopyApplicationList(
+        userName: CFStringRef,
+        hostName: CFStringRef,
+    ) -> CFArrayRef; // deprecated since macos 10.9
 }

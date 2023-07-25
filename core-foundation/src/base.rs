@@ -37,7 +37,7 @@ impl CFIndexConvertible for usize {
     }
 }
 
-declare_TCFType!{
+declare_TCFType! {
     /// Superclass of all Core Foundation objects.
     CFType, CFTypeRef
 }
@@ -111,13 +111,11 @@ impl CFType {
 }
 
 impl fmt::Debug for CFType {
-   /// Formats the value using [`CFCopyDescription`].
-   ///
-   /// [`CFCopyDescription`]: https://developer.apple.com/documentation/corefoundation/1521252-cfcopydescription?language=objc
+    /// Formats the value using [`CFCopyDescription`].
+    ///
+    /// [`CFCopyDescription`]: https://developer.apple.com/documentation/corefoundation/1521252-cfcopydescription?language=objc
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let desc = unsafe {
-            CFString::wrap_under_create_rule(CFCopyDescription(self.0))
-        };
+        let desc = unsafe { CFString::wrap_under_create_rule(CFCopyDescription(self.0)) };
         desc.fmt(f)
     }
 }
@@ -125,18 +123,14 @@ impl fmt::Debug for CFType {
 impl Clone for CFType {
     #[inline]
     fn clone(&self) -> CFType {
-        unsafe {
-            TCFType::wrap_under_get_rule(self.0)
-        }
+        unsafe { TCFType::wrap_under_get_rule(self.0) }
     }
 }
 
 impl PartialEq for CFType {
     #[inline]
     fn eq(&self, other: &CFType) -> bool {
-        unsafe {
-            CFEqual(self.as_CFTypeRef(), other.as_CFTypeRef()) != 0
-        }
+        unsafe { CFEqual(self.as_CFTypeRef(), other.as_CFTypeRef()) != 0 }
     }
 }
 
@@ -152,7 +146,6 @@ impl CFAllocator {
         }
     }
 }
-
 
 /// All Core Foundation types implement this trait. The associated type `Ref` specifies the
 /// associated Core Foundation type: e.g. for `CFType` this is `CFTypeRef`; for `CFArray` this is
@@ -178,9 +171,7 @@ pub trait TCFType {
     /// Returns the object as a wrapped `CFType`. The reference count is incremented by one.
     #[inline]
     fn as_CFType(&self) -> CFType {
-        unsafe {
-            TCFType::wrap_under_get_rule(self.as_CFTypeRef())
-        }
+        unsafe { TCFType::wrap_under_get_rule(self.as_CFTypeRef()) }
     }
 
     /// Returns the object as a wrapped `CFType`. Consumes self and avoids changing the reference
@@ -206,24 +197,18 @@ pub trait TCFType {
     /// whether the return value of this method is greater than zero.
     #[inline]
     fn retain_count(&self) -> CFIndex {
-        unsafe {
-            CFGetRetainCount(self.as_CFTypeRef())
-        }
+        unsafe { CFGetRetainCount(self.as_CFTypeRef()) }
     }
 
     /// Returns the type ID of this object.
     #[inline]
     fn type_of(&self) -> CFTypeID {
-        unsafe {
-            CFGetTypeID(self.as_CFTypeRef())
-        }
+        unsafe { CFGetTypeID(self.as_CFTypeRef()) }
     }
 
     /// Writes a debugging version of this object on standard error.
     fn show(&self) {
-        unsafe {
-            CFShow(self.as_CFTypeRef())
-        }
+        unsafe { CFShow(self.as_CFTypeRef()) }
     }
 
     /// Returns true if this value is an instance of another type.
@@ -320,7 +305,9 @@ impl<'a, T: PartialEq> PartialEq for ItemMutRef<'a, T> {
 
 /// A trait describing how to convert from the stored *mut c_void to the desired T
 pub unsafe trait FromMutVoid {
-    unsafe fn from_mut_void<'a>(x: *mut c_void) -> ItemMutRef<'a, Self> where Self: std::marker::Sized;
+    unsafe fn from_mut_void<'a>(x: *mut c_void) -> ItemMutRef<'a, Self>
+    where
+        Self: std::marker::Sized;
 }
 
 unsafe impl FromMutVoid for u32 {
@@ -337,13 +324,18 @@ unsafe impl FromMutVoid for *const c_void {
 
 unsafe impl<T: TCFType> FromMutVoid for T {
     unsafe fn from_mut_void<'a>(x: *mut c_void) -> ItemMutRef<'a, Self> {
-        ItemMutRef(ManuallyDrop::new(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x))), PhantomData)
+        ItemMutRef(
+            ManuallyDrop::new(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x))),
+            PhantomData,
+        )
     }
 }
 
 /// A trait describing how to convert from the stored *const c_void to the desired T
 pub unsafe trait FromVoid {
-    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> where Self: std::marker::Sized;
+    unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self>
+    where
+        Self: std::marker::Sized;
 }
 
 unsafe impl FromVoid for u32 {
@@ -362,7 +354,10 @@ unsafe impl FromVoid for *const c_void {
 
 unsafe impl<T: TCFType> FromVoid for T {
     unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self> {
-        ItemRef(ManuallyDrop::new(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x))), PhantomData)
+        ItemRef(
+            ManuallyDrop::new(TCFType::wrap_under_create_rule(T::Ref::from_void_ptr(x))),
+            PhantomData,
+        )
     }
 }
 
@@ -395,12 +390,11 @@ unsafe impl ToVoid<CFType> for CFTypeRef {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::mem;
     use boolean::CFBoolean;
+    use std::mem;
 
     #[test]
     fn cftype_instance_of() {

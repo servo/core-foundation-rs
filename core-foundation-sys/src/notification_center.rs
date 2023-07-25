@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFOptionFlags, CFIndex, CFTypeID, Boolean};
+use base::{Boolean, CFIndex, CFOptionFlags, CFTypeID};
 use dictionary::CFDictionaryRef;
 use string::CFStringRef;
 
@@ -19,7 +19,13 @@ pub struct __CFNotificationCenter(c_void);
 pub type CFNotificationCenterRef = *mut __CFNotificationCenter;
 
 pub type CFNotificationName = CFStringRef;
-pub type CFNotificationCallback = extern "C" fn (center: CFNotificationCenterRef, observer: *mut c_void, name: CFNotificationName, object: *const c_void, userInfo: CFDictionaryRef);
+pub type CFNotificationCallback = extern "C" fn(
+    center: CFNotificationCenterRef,
+    observer: *mut c_void,
+    name: CFNotificationName,
+    object: *const c_void,
+    userInfo: CFDictionaryRef,
+);
 pub type CFNotificationSuspensionBehavior = CFIndex;
 
 pub const CFNotificationSuspensionBehaviorDrop: CFNotificationSuspensionBehavior = 1;
@@ -31,25 +37,52 @@ pub const CFNotificationSuspensionBehaviorDeliverImmediately: CFNotificationSusp
 pub const kCFNotificationDeliverImmediately: CFOptionFlags = 1usize << 0;
 pub const kCFNotificationPostToAllSessions: CFOptionFlags = 1usize << 1;
 
-extern {
+extern "C" {
     /*
      *  CFNotificationCenter.h
      */
 
     /* Accessing a Notification Center */
     pub fn CFNotificationCenterGetDarwinNotifyCenter() -> CFNotificationCenterRef;
-    #[cfg(any(target_os="macos", target_os="windows"))]
+    #[cfg(any(target_os = "macos", target_os = "windows"))]
     pub fn CFNotificationCenterGetDistributedCenter() -> CFNotificationCenterRef;
     pub fn CFNotificationCenterGetLocalCenter() -> CFNotificationCenterRef;
 
     /* Posting a Notification */
-    pub fn CFNotificationCenterPostNotification(center: CFNotificationCenterRef, name: CFNotificationName, object: *const c_void, userInfo: CFDictionaryRef, deliverImmediately: Boolean);
-    pub fn CFNotificationCenterPostNotificationWithOptions(center: CFNotificationCenterRef, name: CFNotificationName, object: *const c_void, userInfo: CFDictionaryRef, options: CFOptionFlags);
+    pub fn CFNotificationCenterPostNotification(
+        center: CFNotificationCenterRef,
+        name: CFNotificationName,
+        object: *const c_void,
+        userInfo: CFDictionaryRef,
+        deliverImmediately: Boolean,
+    );
+    pub fn CFNotificationCenterPostNotificationWithOptions(
+        center: CFNotificationCenterRef,
+        name: CFNotificationName,
+        object: *const c_void,
+        userInfo: CFDictionaryRef,
+        options: CFOptionFlags,
+    );
 
     /* Adding and Removing Observers */
-    pub fn CFNotificationCenterAddObserver(center: CFNotificationCenterRef, observer: *const c_void, callBack: CFNotificationCallback, name: CFStringRef, object: *const c_void, suspensionBehavior: CFNotificationSuspensionBehavior);
-    pub fn CFNotificationCenterRemoveEveryObserver(center: CFNotificationCenterRef, observer: *const c_void);
-    pub fn CFNotificationCenterRemoveObserver(center: CFNotificationCenterRef, observer: *const c_void, name: CFNotificationName, object: *const c_void);
+    pub fn CFNotificationCenterAddObserver(
+        center: CFNotificationCenterRef,
+        observer: *const c_void,
+        callBack: CFNotificationCallback,
+        name: CFStringRef,
+        object: *const c_void,
+        suspensionBehavior: CFNotificationSuspensionBehavior,
+    );
+    pub fn CFNotificationCenterRemoveEveryObserver(
+        center: CFNotificationCenterRef,
+        observer: *const c_void,
+    );
+    pub fn CFNotificationCenterRemoveObserver(
+        center: CFNotificationCenterRef,
+        observer: *const c_void,
+        name: CFNotificationName,
+        object: *const c_void,
+    );
 
     /* Getting the CFNotificationCenter Type ID */
     pub fn CFNotificationCenterGetTypeID() -> CFTypeID;

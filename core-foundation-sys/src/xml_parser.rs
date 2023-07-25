@@ -9,12 +9,12 @@
 
 use std::os::raw::c_void;
 
-use base::{CFOptionFlags, CFIndex, Boolean, CFAllocatorRef, CFTypeID};
-use xml_node::{CFXMLNodeRef, CFXMLTreeRef, CFXMLExternalID};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID};
 use data::CFDataRef;
+use dictionary::CFDictionaryRef;
 use string::CFStringRef;
 use url::CFURLRef;
-use dictionary::CFDictionaryRef;
+use xml_node::{CFXMLExternalID, CFXMLNodeRef, CFXMLTreeRef};
 
 #[repr(C)]
 pub struct __CFXMLParser(c_void);
@@ -51,11 +51,26 @@ pub const kCFXMLErrorMalformedCharacterReference: CFIndex = 13;
 pub const kCFXMLErrorMalformedParsedCharacterData: CFIndex = 14;
 pub const kCFXMLErrorNoData: CFIndex = 15;
 
-pub type CFXMLParserCreateXMLStructureCallBack = extern "C" fn (parser: CFXMLParserRef, nodeDesc: CFXMLNodeRef, info: *mut c_void) -> *mut c_void;
-pub type CFXMLParserAddChildCallBack = extern "C" fn (parser: CFXMLParserRef, parent: *mut c_void, child: *mut c_void, info: *mut c_void);
-pub type CFXMLParserEndXMLStructureCallBack = extern "C" fn (parser: CFXMLParserRef, xmlType: *mut c_void, info: *mut c_void);
-pub type CFXMLParserResolveExternalEntityCallBack = extern "C" fn (parser: CFXMLParserRef, extID: *mut CFXMLExternalID, info: *mut c_void) -> CFDataRef;
-pub type CFXMLParserHandleErrorCallBack = extern "C" fn (parser: CFXMLParserRef, error: CFXMLParserStatusCode, info: *mut c_void) -> Boolean;
+pub type CFXMLParserCreateXMLStructureCallBack =
+    extern "C" fn(parser: CFXMLParserRef, nodeDesc: CFXMLNodeRef, info: *mut c_void) -> *mut c_void;
+pub type CFXMLParserAddChildCallBack = extern "C" fn(
+    parser: CFXMLParserRef,
+    parent: *mut c_void,
+    child: *mut c_void,
+    info: *mut c_void,
+);
+pub type CFXMLParserEndXMLStructureCallBack =
+    extern "C" fn(parser: CFXMLParserRef, xmlType: *mut c_void, info: *mut c_void);
+pub type CFXMLParserResolveExternalEntityCallBack = extern "C" fn(
+    parser: CFXMLParserRef,
+    extID: *mut CFXMLExternalID,
+    info: *mut c_void,
+) -> CFDataRef;
+pub type CFXMLParserHandleErrorCallBack = extern "C" fn(
+    parser: CFXMLParserRef,
+    error: CFXMLParserStatusCode,
+    info: *mut c_void,
+) -> Boolean;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -69,7 +84,7 @@ pub struct CFXMLParserCallBacks {
 }
 
 pub type CFXMLParserRetainCallBack = extern "C" fn(info: *const c_void) -> *const c_void;
-pub type CFXMLParserReleaseCallBack = extern "C" fn (info: *const c_void);
+pub type CFXMLParserReleaseCallBack = extern "C" fn(info: *const c_void);
 pub type CFXMLParserCopyDescriptionCallBack = extern "C" fn(info: *const c_void) -> CFStringRef;
 
 #[repr(C)]
@@ -79,10 +94,10 @@ pub struct CFXMLParserContext {
     pub info: *mut c_void,
     pub retain: CFXMLParserRetainCallBack,
     pub release: CFXMLParserReleaseCallBack,
-    pub copyDescription: CFXMLParserCopyDescriptionCallBack
+    pub copyDescription: CFXMLParserCopyDescriptionCallBack,
 }
 
-extern {
+extern "C" {
     /*
      * CFXMLParser.h
      */
@@ -93,8 +108,23 @@ extern {
     pub static kCFXMLTreeErrorStatusCode: CFStringRef;
 
     pub fn CFXMLParserGetTypeID() -> CFTypeID;
-    pub fn CFXMLParserCreate(allocator: CFAllocatorRef, xmlData: CFDataRef, dataSource: CFURLRef, parseOptions: CFOptionFlags, versionOfNodes: CFIndex, callBacks: *mut CFXMLParserCallBacks, context: *mut CFXMLParserContext) -> CFXMLParserRef;
-    pub fn CFXMLParserCreateWithDataFromURL(allocator: CFAllocatorRef, dataSource: CFURLRef, parseOptions: CFOptionFlags, versionOfNodes: CFIndex, callBacks: *mut CFXMLParserCallBacks, context: *mut CFXMLParserContext) -> CFXMLParserRef;
+    pub fn CFXMLParserCreate(
+        allocator: CFAllocatorRef,
+        xmlData: CFDataRef,
+        dataSource: CFURLRef,
+        parseOptions: CFOptionFlags,
+        versionOfNodes: CFIndex,
+        callBacks: *mut CFXMLParserCallBacks,
+        context: *mut CFXMLParserContext,
+    ) -> CFXMLParserRef;
+    pub fn CFXMLParserCreateWithDataFromURL(
+        allocator: CFAllocatorRef,
+        dataSource: CFURLRef,
+        parseOptions: CFOptionFlags,
+        versionOfNodes: CFIndex,
+        callBacks: *mut CFXMLParserCallBacks,
+        context: *mut CFXMLParserContext,
+    ) -> CFXMLParserRef;
     pub fn CFXMLParserGetContext(parser: CFXMLParserRef, context: *mut CFXMLParserContext);
     pub fn CFXMLParserGetCallBacks(parser: CFXMLParserRef, callBacks: *mut CFXMLParserCallBacks);
     pub fn CFXMLParserGetSourceURL(parser: CFXMLParserRef) -> CFURLRef;
@@ -103,12 +133,42 @@ extern {
     pub fn CFXMLParserGetDocument(parser: CFXMLParserRef) -> *mut c_void;
     pub fn CFXMLParserGetStatusCode(parser: CFXMLParserRef) -> CFXMLParserStatusCode;
     pub fn CFXMLParserCopyErrorDescription(parser: CFXMLParserRef) -> CFStringRef;
-    pub fn CFXMLParserAbort(parser: CFXMLParserRef, errorCode: CFXMLParserStatusCode, errorDescription: CFStringRef);
+    pub fn CFXMLParserAbort(
+        parser: CFXMLParserRef,
+        errorCode: CFXMLParserStatusCode,
+        errorDescription: CFStringRef,
+    );
     pub fn CFXMLParserParse(parser: CFXMLParserRef) -> Boolean;
-    pub fn CFXMLTreeCreateFromData(allocator: CFAllocatorRef, xmlData: CFDataRef, dataSource: CFURLRef, parseOptions: CFOptionFlags, versionOfNodes: CFIndex) -> CFXMLTreeRef;
-    pub fn CFXMLTreeCreateFromDataWithError(allocator: CFAllocatorRef, xmlData: CFDataRef, dataSource: CFURLRef, parseOptions: CFOptionFlags, versionOfNodes: CFIndex, errorDict: *mut CFDictionaryRef) -> CFXMLTreeRef;
-    pub fn CFXMLTreeCreateWithDataFromURL(allocator: CFAllocatorRef, dataSource: CFURLRef, parseOptions: CFOptionFlags, versionOfNodes: CFIndex) -> CFXMLTreeRef;
+    pub fn CFXMLTreeCreateFromData(
+        allocator: CFAllocatorRef,
+        xmlData: CFDataRef,
+        dataSource: CFURLRef,
+        parseOptions: CFOptionFlags,
+        versionOfNodes: CFIndex,
+    ) -> CFXMLTreeRef;
+    pub fn CFXMLTreeCreateFromDataWithError(
+        allocator: CFAllocatorRef,
+        xmlData: CFDataRef,
+        dataSource: CFURLRef,
+        parseOptions: CFOptionFlags,
+        versionOfNodes: CFIndex,
+        errorDict: *mut CFDictionaryRef,
+    ) -> CFXMLTreeRef;
+    pub fn CFXMLTreeCreateWithDataFromURL(
+        allocator: CFAllocatorRef,
+        dataSource: CFURLRef,
+        parseOptions: CFOptionFlags,
+        versionOfNodes: CFIndex,
+    ) -> CFXMLTreeRef;
     pub fn CFXMLTreeCreateXMLData(allocator: CFAllocatorRef, xmlTree: CFXMLTreeRef) -> CFDataRef;
-    pub fn CFXMLCreateStringByEscapingEntities(allocator: CFAllocatorRef, string: CFStringRef, entitiesDictionary: CFDictionaryRef) -> CFStringRef;
-    pub fn CFXMLCreateStringByUnescapingEntities(allocator: CFAllocatorRef, string: CFStringRef, entitiesDictionary: CFDictionaryRef) -> CFStringRef;
+    pub fn CFXMLCreateStringByEscapingEntities(
+        allocator: CFAllocatorRef,
+        string: CFStringRef,
+        entitiesDictionary: CFDictionaryRef,
+    ) -> CFStringRef;
+    pub fn CFXMLCreateStringByUnescapingEntities(
+        allocator: CFAllocatorRef,
+        string: CFStringRef,
+        entitiesDictionary: CFDictionaryRef,
+    ) -> CFStringRef;
 }

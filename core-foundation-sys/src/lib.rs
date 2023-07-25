@@ -6,9 +6,16 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-#![allow(non_snake_case, non_camel_case_types, non_upper_case_globals, improper_ctypes)]
-
-#![cfg_attr(all(feature="mac_os_10_7_support", feature="mac_os_10_8_features"), feature(linkage))] // back-compat requires weak linkage
+#![allow(
+    non_snake_case,
+    non_camel_case_types,
+    non_upper_case_globals,
+    improper_ctypes
+)]
+#![cfg_attr(
+    all(feature = "mac_os_10_7_support", feature = "mac_os_10_8_features"),
+    feature(linkage)
+)] // back-compat requires weak linkage
 
 // Link to CoreFoundation on any Apple device.
 //
@@ -34,8 +41,8 @@ pub mod date;
 pub mod date_formatter;
 pub mod dictionary;
 pub mod error;
-pub mod filedescriptor;
 pub mod file_security;
+pub mod filedescriptor;
 pub mod locale;
 pub mod mach_port;
 pub mod messageport;
@@ -51,8 +58,8 @@ pub mod socket;
 pub mod stream;
 pub mod string;
 pub mod string_tokenizer;
-pub mod tree;
 pub mod timezone;
+pub mod tree;
 pub mod url;
 pub mod url_enumerator;
 #[cfg(target_os = "macos")]

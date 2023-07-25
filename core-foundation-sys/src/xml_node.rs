@@ -7,13 +7,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_void, c_char};
+use std::os::raw::{c_char, c_void};
 
-use base::{Boolean, CFIndex, CFAllocatorRef, CFTypeID};
-use tree::CFTreeRef;
-use dictionary::CFDictionaryRef;
 use array::CFArrayRef;
-use string::{CFStringRef, CFStringEncoding};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID};
+use dictionary::CFDictionaryRef;
+use string::{CFStringEncoding, CFStringRef};
+use tree::CFTreeRef;
 use url::CFURLRef;
 
 #[repr(C)]
@@ -47,45 +47,45 @@ pub struct CFXMLElementInfo {
     pub attributes: CFDictionaryRef,
     pub attributeOrder: CFArrayRef,
     pub isEmpty: Boolean,
-    pub _reserved: [c_char; 3]
+    pub _reserved: [c_char; 3],
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFXMLProcessingInstructionInfo {
-    pub dataString: CFStringRef
+    pub dataString: CFStringRef,
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFXMLDocumentInfo {
     pub sourceURL: CFURLRef,
-    pub encoding: CFStringEncoding
+    pub encoding: CFStringEncoding,
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFXMLExternalID {
     pub systemID: CFURLRef,
-    pub publicID: CFStringRef
+    pub publicID: CFStringRef,
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFXMLDocumentTypeInfo {
-    pub externalID: CFXMLExternalID
+    pub externalID: CFXMLExternalID,
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFXMLNotationInfo {
-    pub externalID: CFXMLExternalID
+    pub externalID: CFXMLExternalID,
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFXMLElementTypeDeclarationInfo {
-    pub contentDescription: CFStringRef
+    pub contentDescription: CFStringRef,
 }
 
 #[repr(C)]
@@ -93,14 +93,14 @@ pub struct CFXMLElementTypeDeclarationInfo {
 pub struct CFXMLAttributeDeclarationInfo {
     pub attributeName: CFStringRef,
     pub typeString: CFStringRef,
-    pub defaultString: CFStringRef
+    pub defaultString: CFStringRef,
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFXMLAttributeListDeclarationInfo {
     pub numberOfAttributes: CFIndex,
-    pub attributes: *mut CFXMLAttributeDeclarationInfo
+    pub attributes: *mut CFXMLAttributeDeclarationInfo,
 }
 
 pub type CFXMLEntityTypeCode = CFIndex;
@@ -116,21 +116,27 @@ pub struct CFXMLEntityInfo {
     pub entityType: CFXMLEntityTypeCode,
     pub replacementText: CFStringRef,
     pub entityID: CFXMLExternalID,
-    pub notationName: CFStringRef
+    pub notationName: CFStringRef,
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFXMLEntityReferenceInfo {
-    pub entityType: CFXMLEntityTypeCode
+    pub entityType: CFXMLEntityTypeCode,
 }
 
-extern {
+extern "C" {
     /*
      * CFXMLNode.h
      */
     pub fn CFXMLNodeGetTypeID() -> CFTypeID;
-    pub fn CFXMLNodeCreate(alloc: CFAllocatorRef, xmlType: CFXMLNodeTypeCode, dataString: CFStringRef, additionalInfoPtr: *const c_void, version: CFIndex) -> CFXMLNodeRef;
+    pub fn CFXMLNodeCreate(
+        alloc: CFAllocatorRef,
+        xmlType: CFXMLNodeTypeCode,
+        dataString: CFStringRef,
+        additionalInfoPtr: *const c_void,
+        version: CFIndex,
+    ) -> CFXMLNodeRef;
     pub fn CFXMLNodeCreateCopy(alloc: CFAllocatorRef, origNode: CFXMLNodeRef) -> CFXMLNodeRef;
     pub fn CFXMLNodeGetTypeCode(node: CFXMLNodeRef) -> CFXMLNodeTypeCode;
     pub fn CFXMLNodeGetString(node: CFXMLNodeRef) -> CFStringRef;

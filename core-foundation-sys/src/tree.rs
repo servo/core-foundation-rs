@@ -9,17 +9,17 @@
 
 use std::os::raw::c_void;
 
-use base::{CFIndex, CFTypeID, CFAllocatorRef, CFComparatorFunction};
+use base::{CFAllocatorRef, CFComparatorFunction, CFIndex, CFTypeID};
 use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFTree(c_void);
 pub type CFTreeRef = *mut __CFTree;
 
-pub type CFTreeRetainCallBack = extern "C" fn (info: *const c_void) -> *const c_void;
-pub type CFTreeReleaseCallBack = extern "C" fn (info: *const c_void);
-pub type CFTreeCopyDescriptionCallBack = extern "C" fn (info: *const c_void) -> CFStringRef;
-pub type CFTreeApplierFunction = extern "C" fn (value: *const c_void, context: *mut c_void);
+pub type CFTreeRetainCallBack = extern "C" fn(info: *const c_void) -> *const c_void;
+pub type CFTreeReleaseCallBack = extern "C" fn(info: *const c_void);
+pub type CFTreeCopyDescriptionCallBack = extern "C" fn(info: *const c_void) -> CFStringRef;
+pub type CFTreeApplierFunction = extern "C" fn(value: *const c_void, context: *mut c_void);
 
 #[repr(C)]
 pub struct CFTreeContext {
@@ -27,10 +27,10 @@ pub struct CFTreeContext {
     pub info: *mut c_void,
     pub retain: CFTreeRetainCallBack,
     pub release: CFTreeReleaseCallBack,
-    pub copyDescription: CFTreeCopyDescriptionCallBack
+    pub copyDescription: CFTreeCopyDescriptionCallBack,
 }
 
-extern {
+extern "C" {
     /*
      * CFTree.h
      */
@@ -46,7 +46,11 @@ extern {
     pub fn CFTreeSetContext(tree: CFTreeRef, context: *const CFTreeContext);
 
     /* Sorting a Tree */
-    pub fn CFTreeSortChildren(tree: CFTreeRef, comparator: CFComparatorFunction, context: *mut c_void);
+    pub fn CFTreeSortChildren(
+        tree: CFTreeRef,
+        comparator: CFComparatorFunction,
+        context: *mut c_void,
+    );
 
     /* Examining a Tree */
     pub fn CFTreeFindRoot(tree: CFTreeRef) -> CFTreeRef;
@@ -59,7 +63,11 @@ extern {
     pub fn CFTreeGetParent(tree: CFTreeRef) -> CFTreeRef;
 
     /* Performing an Operation on Tree Elements */
-    pub fn CFTreeApplyFunctionToChildren(tree: CFTreeRef, applier: CFTreeApplierFunction, context: *mut c_void);
+    pub fn CFTreeApplyFunctionToChildren(
+        tree: CFTreeRef,
+        applier: CFTreeApplierFunction,
+        context: *mut c_void,
+    );
 
     /* Getting the Tree Type ID */
     pub fn CFTreeGetTypeID() -> CFTypeID;

@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, Boolean, UInt32, CFIndex, CFTypeID, CFRange, UInt8};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, UInt32, UInt8};
 
 #[repr(C)]
 pub struct __CFBitVector(c_void);
@@ -18,14 +18,18 @@ pub type CFBitVectorRef = *const __CFBitVector;
 pub type CFMutableBitVectorRef = *mut __CFBitVector;
 pub type CFBit = UInt32;
 
-extern {
+extern "C" {
     /*
-    * CFBitVector.h
-    */
+     * CFBitVector.h
+     */
 
     /* CFBitVector */
     /* Creating a Bit Vector */
-    pub fn CFBitVectorCreate(allocator: CFAllocatorRef, bytes: *const UInt8, numBits: CFIndex) -> CFBitVectorRef;
+    pub fn CFBitVectorCreate(
+        allocator: CFAllocatorRef,
+        bytes: *const UInt8,
+        numBits: CFIndex,
+    ) -> CFBitVectorRef;
     pub fn CFBitVectorCreateCopy(allocator: CFAllocatorRef, bv: CFBitVectorRef) -> CFBitVectorRef;
 
     /* Getting Information About a Bit Vector */
@@ -34,16 +38,31 @@ extern {
     pub fn CFBitVectorGetBits(bv: CFBitVectorRef, range: CFRange, bytes: *mut UInt8);
     pub fn CFBitVectorGetCount(bv: CFBitVectorRef) -> CFIndex;
     pub fn CFBitVectorGetCountOfBit(bv: CFBitVectorRef, range: CFRange, value: CFBit) -> CFIndex;
-    pub fn CFBitVectorGetFirstIndexOfBit(bv: CFBitVectorRef, range: CFRange, value: CFBit) -> CFIndex;
-    pub fn CFBitVectorGetLastIndexOfBit(bv: CFBitVectorRef, range: CFRange, value: CFBit) -> CFIndex;
+    pub fn CFBitVectorGetFirstIndexOfBit(
+        bv: CFBitVectorRef,
+        range: CFRange,
+        value: CFBit,
+    ) -> CFIndex;
+    pub fn CFBitVectorGetLastIndexOfBit(
+        bv: CFBitVectorRef,
+        range: CFRange,
+        value: CFBit,
+    ) -> CFIndex;
 
     /* Getting the CFBitVector Type ID */
     pub fn CFBitVectorGetTypeID() -> CFTypeID;
 
     /* CFMutableBitVector */
     /* Creating a CFMutableBitVector Object */
-    pub fn CFBitVectorCreateMutable(allocator: CFAllocatorRef, capacity: CFIndex) -> CFMutableBitVectorRef;
-    pub fn CFBitVectorCreateMutableCopy(allocator: CFAllocatorRef, capacity: CFIndex, bv: CFBitVectorRef) -> CFMutableBitVectorRef;
+    pub fn CFBitVectorCreateMutable(
+        allocator: CFAllocatorRef,
+        capacity: CFIndex,
+    ) -> CFMutableBitVectorRef;
+    pub fn CFBitVectorCreateMutableCopy(
+        allocator: CFAllocatorRef,
+        capacity: CFIndex,
+        bv: CFBitVectorRef,
+    ) -> CFMutableBitVectorRef;
 
     /* Modifying a Bit Vector */
     pub fn CFBitVectorFlipBitAtIndex(bv: CFMutableBitVectorRef, idx: CFIndex);

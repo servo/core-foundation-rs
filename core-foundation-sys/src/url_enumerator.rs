@@ -9,10 +9,10 @@
 
 use std::os::raw::c_void;
 
-use base::{CFOptionFlags, CFIndex, CFTypeID, CFAllocatorRef, Boolean};
-use url::CFURLRef;
-use error::CFErrorRef;
 use array::CFArrayRef;
+use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID};
+use error::CFErrorRef;
+use url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFURLEnumerator(c_void);
@@ -35,14 +35,27 @@ pub const kCFURLEnumeratorEnd: CFURLEnumeratorOptions = 2;
 pub const kCFURLEnumeratorError: CFURLEnumeratorOptions = 3;
 pub const kCFURLEnumeratorDirectoryPostOrderSuccess: CFURLEnumeratorOptions = 4;
 
-extern {
+extern "C" {
     /*
      * CFURLEnumerator.h
      */
     pub fn CFURLEnumeratorGetTypeID() -> CFTypeID;
-    pub fn CFURLEnumeratorCreateForDirectoryURL(alloc: CFAllocatorRef, directoryURL: CFURLRef, option: CFURLEnumeratorOptions, propertyKeys: CFArrayRef) -> CFURLEnumeratorRef;
-    pub fn CFURLEnumeratorCreateForMountedVolumes(alloc: CFAllocatorRef, option: CFURLEnumeratorOptions, propertyKeys: CFArrayRef) -> CFURLEnumeratorRef;
-    pub fn CFURLEnumeratorGetNextURL(enumerator: CFURLEnumeratorRef, url: *mut CFURLRef, error: *mut CFErrorRef) -> CFURLEnumeratorResult;
+    pub fn CFURLEnumeratorCreateForDirectoryURL(
+        alloc: CFAllocatorRef,
+        directoryURL: CFURLRef,
+        option: CFURLEnumeratorOptions,
+        propertyKeys: CFArrayRef,
+    ) -> CFURLEnumeratorRef;
+    pub fn CFURLEnumeratorCreateForMountedVolumes(
+        alloc: CFAllocatorRef,
+        option: CFURLEnumeratorOptions,
+        propertyKeys: CFArrayRef,
+    ) -> CFURLEnumeratorRef;
+    pub fn CFURLEnumeratorGetNextURL(
+        enumerator: CFURLEnumeratorRef,
+        url: *mut CFURLRef,
+        error: *mut CFErrorRef,
+    ) -> CFURLEnumeratorResult;
     pub fn CFURLEnumeratorSkipDescendents(enumerator: CFURLEnumeratorRef);
     pub fn CFURLEnumeratorGetDescendentLevel(enumerator: CFURLEnumeratorRef) -> CFIndex;
     pub fn CFURLEnumeratorGetSourceDidChange(enumerator: CFURLEnumeratorRef) -> Boolean; // deprecated since macos 10.7

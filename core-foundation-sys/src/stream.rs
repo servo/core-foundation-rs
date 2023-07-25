@@ -7,14 +7,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_void, c_int};
+use std::os::raw::{c_int, c_void};
 
-use base::{CFIndex, CFOptionFlags, SInt32, CFTypeID, CFAllocatorRef, UInt8, Boolean, CFTypeRef, UInt32};
-use string::CFStringRef;
-use url::CFURLRef;
+use base::{
+    Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID, CFTypeRef, SInt32, UInt32, UInt8,
+};
 use error::CFErrorRef;
 use runloop::CFRunLoopRef;
 use socket::{CFSocketNativeHandle, CFSocketSignature};
+use string::CFStringRef;
+use url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFReadStream(c_void);
@@ -33,7 +35,7 @@ pub type CFStreamErrorDomain = CFIndex;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CFStreamError {
     pub domain: CFIndex,
-    pub error: SInt32
+    pub error: SInt32,
 }
 
 /* CFStreamStatus: Constants that describe the status of a stream */
@@ -59,21 +61,28 @@ pub const kCFStreamEventCanAcceptBytes: CFStreamEventType = 4;
 pub const kCFStreamEventErrorOccurred: CFStreamEventType = 8;
 pub const kCFStreamEventEndEncountered: CFStreamEventType = 16;
 
-
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFStreamClientContext {
     pub version: CFIndex,
     pub info: *mut c_void,
-    pub retain: extern "C" fn (info: *const c_void) -> *const c_void,
-    pub release: extern "C" fn (info: *const c_void),
-    pub copyDescription: extern "C" fn (info: *const c_void) -> CFStringRef,
+    pub retain: extern "C" fn(info: *const c_void) -> *const c_void,
+    pub release: extern "C" fn(info: *const c_void),
+    pub copyDescription: extern "C" fn(info: *const c_void) -> CFStringRef,
 }
 
-pub type CFReadStreamClientCallBack = extern "C" fn (stream: CFReadStreamRef, _type: CFStreamEventType, clientCallBackInfo: *mut c_void);
-pub type CFWriteStreamClientCallBack = extern "C" fn (stream: CFWriteStreamRef, _type: CFStreamEventType, clientCallBackInfo: *mut c_void);
+pub type CFReadStreamClientCallBack = extern "C" fn(
+    stream: CFReadStreamRef,
+    _type: CFStreamEventType,
+    clientCallBackInfo: *mut c_void,
+);
+pub type CFWriteStreamClientCallBack = extern "C" fn(
+    stream: CFWriteStreamRef,
+    _type: CFStreamEventType,
+    clientCallBackInfo: *mut c_void,
+);
 
-extern {
+extern "C" {
     /*
      * CFStream.h
      */
@@ -110,10 +119,31 @@ extern {
     pub static kCFStreamErrorDomainSSL: c_int;
 
     /* CFStream: Creating Streams */
-    pub fn CFStreamCreatePairWithPeerSocketSignature(alloc: CFAllocatorRef, signature: *const CFSocketSignature,readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
-    pub fn CFStreamCreatePairWithSocketToHost(alloc: CFAllocatorRef, host: CFStringRef, port: UInt32, readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
-    pub fn CFStreamCreatePairWithSocket(alloc: CFAllocatorRef, sock: CFSocketNativeHandle, readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef); // deprecated
-    pub fn CFStreamCreateBoundPair(alloc: CFAllocatorRef, readStream: *mut CFReadStreamRef, writeStream: *mut CFWriteStreamRef, transferBufferSize: CFIndex);
+    pub fn CFStreamCreatePairWithPeerSocketSignature(
+        alloc: CFAllocatorRef,
+        signature: *const CFSocketSignature,
+        readStream: *mut CFReadStreamRef,
+        writeStream: *mut CFWriteStreamRef,
+    ); // deprecated
+    pub fn CFStreamCreatePairWithSocketToHost(
+        alloc: CFAllocatorRef,
+        host: CFStringRef,
+        port: UInt32,
+        readStream: *mut CFReadStreamRef,
+        writeStream: *mut CFWriteStreamRef,
+    ); // deprecated
+    pub fn CFStreamCreatePairWithSocket(
+        alloc: CFAllocatorRef,
+        sock: CFSocketNativeHandle,
+        readStream: *mut CFReadStreamRef,
+        writeStream: *mut CFWriteStreamRef,
+    ); // deprecated
+    pub fn CFStreamCreateBoundPair(
+        alloc: CFAllocatorRef,
+        readStream: *mut CFReadStreamRef,
+        writeStream: *mut CFWriteStreamRef,
+        transferBufferSize: CFIndex,
+    );
 
     //pub fn CFReadStreamSetDispatchQueue(stream: CFReadStreamRef, q: dispatch_queue_t); // macos(10.9)+
     //pub fn CFWriteStreamSetDispatchQueue(stream: CFWriteStreamRef, q: dispatch_queue_t); // macos(10.9)+
@@ -122,7 +152,12 @@ extern {
 
     /* CFReadStream */
     /* Creating a Read Stream */
-    pub fn CFReadStreamCreateWithBytesNoCopy(alloc: CFAllocatorRef, bytes: *const UInt8, length: CFIndex, bytesDeallocator: CFAllocatorRef) -> CFReadStreamRef;
+    pub fn CFReadStreamCreateWithBytesNoCopy(
+        alloc: CFAllocatorRef,
+        bytes: *const UInt8,
+        length: CFIndex,
+        bytesDeallocator: CFAllocatorRef,
+    ) -> CFReadStreamRef;
     pub fn CFReadStreamCreateWithFile(alloc: CFAllocatorRef, fileURL: CFURLRef) -> CFReadStreamRef;
 
     /* Opening and Closing a Read Stream */
@@ -130,54 +165,116 @@ extern {
     pub fn CFReadStreamOpen(stream: CFReadStreamRef) -> Boolean;
 
     /* Reading from a Stream */
-    pub fn CFReadStreamRead(stream: CFReadStreamRef, buffer: *mut UInt8, bufferLength: CFIndex) -> CFIndex;
+    pub fn CFReadStreamRead(
+        stream: CFReadStreamRef,
+        buffer: *mut UInt8,
+        bufferLength: CFIndex,
+    ) -> CFIndex;
 
     /* Scheduling a Read Stream */
-    pub fn CFReadStreamScheduleWithRunLoop(stream: CFReadStreamRef, runLoop: CFRunLoopRef, runLoopMode: CFStringRef);
-    pub fn CFReadStreamUnscheduleFromRunLoop(stream: CFReadStreamRef, runLoop: CFRunLoopRef, runLoopMode: CFStringRef);
+    pub fn CFReadStreamScheduleWithRunLoop(
+        stream: CFReadStreamRef,
+        runLoop: CFRunLoopRef,
+        runLoopMode: CFStringRef,
+    );
+    pub fn CFReadStreamUnscheduleFromRunLoop(
+        stream: CFReadStreamRef,
+        runLoop: CFRunLoopRef,
+        runLoopMode: CFStringRef,
+    );
 
     /* Examining Stream Properties */
-    pub fn CFReadStreamCopyProperty(stream: CFReadStreamRef, propertyName: CFStreamPropertyKey) -> CFTypeRef;
-    pub fn CFReadStreamGetBuffer(stream: CFReadStreamRef, maxBytesToRead: CFIndex, numBytesRead: *mut CFIndex) -> *const UInt8;
+    pub fn CFReadStreamCopyProperty(
+        stream: CFReadStreamRef,
+        propertyName: CFStreamPropertyKey,
+    ) -> CFTypeRef;
+    pub fn CFReadStreamGetBuffer(
+        stream: CFReadStreamRef,
+        maxBytesToRead: CFIndex,
+        numBytesRead: *mut CFIndex,
+    ) -> *const UInt8;
     pub fn CFReadStreamCopyError(stream: CFReadStreamRef) -> CFErrorRef;
     pub fn CFReadStreamGetError(stream: CFReadStreamRef) -> CFStreamError; // deprecated
     pub fn CFReadStreamGetStatus(stream: CFReadStreamRef) -> CFStreamStatus;
     pub fn CFReadStreamHasBytesAvailable(stream: CFReadStreamRef) -> Boolean;
 
     /* Setting Stream Properties */
-    pub fn CFReadStreamSetClient(stream: CFReadStreamRef, streamEvents: CFOptionFlags, clientCB: CFReadStreamClientCallBack, clientContext: *mut CFStreamClientContext) -> Boolean;
-    pub fn CFReadStreamSetProperty(stream: CFReadStreamRef, propertyName: CFStreamPropertyKey, propertyValue: CFTypeRef) -> Boolean;
+    pub fn CFReadStreamSetClient(
+        stream: CFReadStreamRef,
+        streamEvents: CFOptionFlags,
+        clientCB: CFReadStreamClientCallBack,
+        clientContext: *mut CFStreamClientContext,
+    ) -> Boolean;
+    pub fn CFReadStreamSetProperty(
+        stream: CFReadStreamRef,
+        propertyName: CFStreamPropertyKey,
+        propertyValue: CFTypeRef,
+    ) -> Boolean;
 
     /* Getting the CFReadStream Type ID */
     pub fn CFReadStreamGetTypeID() -> CFTypeID;
 
     /* CFWriteStream */
     /* Creating a Write Stream */
-    pub fn CFWriteStreamCreateWithAllocatedBuffers(alloc: CFAllocatorRef, bufferAllocator: CFAllocatorRef) -> CFWriteStreamRef;
-    pub fn CFWriteStreamCreateWithBuffer(alloc: CFAllocatorRef, buffer: *mut UInt8, bufferCapacity: CFIndex) -> CFWriteStreamRef;
-    pub fn CFWriteStreamCreateWithFile(alloc: CFAllocatorRef, fileURL: CFURLRef) -> CFWriteStreamRef;
+    pub fn CFWriteStreamCreateWithAllocatedBuffers(
+        alloc: CFAllocatorRef,
+        bufferAllocator: CFAllocatorRef,
+    ) -> CFWriteStreamRef;
+    pub fn CFWriteStreamCreateWithBuffer(
+        alloc: CFAllocatorRef,
+        buffer: *mut UInt8,
+        bufferCapacity: CFIndex,
+    ) -> CFWriteStreamRef;
+    pub fn CFWriteStreamCreateWithFile(
+        alloc: CFAllocatorRef,
+        fileURL: CFURLRef,
+    ) -> CFWriteStreamRef;
 
     /* Opening and Closing a Stream */
     pub fn CFWriteStreamClose(stream: CFWriteStreamRef);
     pub fn CFWriteStreamOpen(stream: CFWriteStreamRef) -> Boolean;
 
     /* Writing to a Stream */
-    pub fn CFWriteStreamWrite(stream: CFWriteStreamRef, buffer: *const UInt8, bufferLength: CFIndex) -> CFIndex;
+    pub fn CFWriteStreamWrite(
+        stream: CFWriteStreamRef,
+        buffer: *const UInt8,
+        bufferLength: CFIndex,
+    ) -> CFIndex;
 
     /* Scheduling a Write Stream */
-    pub fn CFWriteStreamScheduleWithRunLoop(stream: CFWriteStreamRef, runLoop: CFRunLoopRef, runLoopMode: CFStringRef);
-    pub fn CFWriteStreamUnscheduleFromRunLoop(stream: CFWriteStreamRef, runLoop: CFRunLoopRef, runLoopMode: CFStringRef);
+    pub fn CFWriteStreamScheduleWithRunLoop(
+        stream: CFWriteStreamRef,
+        runLoop: CFRunLoopRef,
+        runLoopMode: CFStringRef,
+    );
+    pub fn CFWriteStreamUnscheduleFromRunLoop(
+        stream: CFWriteStreamRef,
+        runLoop: CFRunLoopRef,
+        runLoopMode: CFStringRef,
+    );
 
     /* Examining Stream Properties */
     pub fn CFWriteStreamCanAcceptBytes(stream: CFWriteStreamRef) -> Boolean;
-    pub fn CFWriteStreamCopyProperty(stream: CFWriteStreamRef, propertyName: CFStreamPropertyKey) -> CFTypeRef;
+    pub fn CFWriteStreamCopyProperty(
+        stream: CFWriteStreamRef,
+        propertyName: CFStreamPropertyKey,
+    ) -> CFTypeRef;
     pub fn CFWriteStreamCopyError(stream: CFWriteStreamRef) -> CFErrorRef;
     pub fn CFWriteStreamGetError(stream: CFWriteStreamRef) -> CFStreamError; // deprecated
     pub fn CFWriteStreamGetStatus(stream: CFWriteStreamRef) -> CFStreamStatus;
 
     /* Setting Stream Properties */
-    pub fn CFWriteStreamSetClient(stream: CFWriteStreamRef, streamEvents: CFOptionFlags, clientCB: CFWriteStreamClientCallBack, clientContext: *mut CFStreamClientContext) -> Boolean;
-    pub fn CFWriteStreamSetProperty(stream: CFWriteStreamRef, propertyName: CFStreamPropertyKey, propertyValue: CFTypeRef) -> Boolean;
+    pub fn CFWriteStreamSetClient(
+        stream: CFWriteStreamRef,
+        streamEvents: CFOptionFlags,
+        clientCB: CFWriteStreamClientCallBack,
+        clientContext: *mut CFStreamClientContext,
+    ) -> Boolean;
+    pub fn CFWriteStreamSetProperty(
+        stream: CFWriteStreamRef,
+        propertyName: CFStreamPropertyKey,
+        propertyValue: CFTypeRef,
+    ) -> Boolean;
 
     /* Getting the CFWriteStream Type ID */
     pub fn CFWriteStreamGetTypeID() -> CFTypeID;

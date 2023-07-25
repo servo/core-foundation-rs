@@ -7,12 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::c_void;
-use base::{CFIndex, CFAllocatorRef, CFTypeRef, LangCode, RegionCode, CFTypeID};
 use array::CFArrayRef;
-use string::CFStringRef;
+use base::{CFAllocatorRef, CFIndex, CFTypeID, CFTypeRef, LangCode, RegionCode};
 use dictionary::CFDictionaryRef;
 use notification_center::CFNotificationName;
+use std::os::raw::c_void;
+use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFLocale(c_void);
@@ -29,7 +29,7 @@ pub const kCFLocaleLanguageDirectionRightToLeft: CFLocaleLanguageDirection = 2;
 pub const kCFLocaleLanguageDirectionTopToBottom: CFLocaleLanguageDirection = 3;
 pub const kCFLocaleLanguageDirectionBottomToTop: CFLocaleLanguageDirection = 4;
 
-extern {
+extern "C" {
     /*
      * CFLocale.h
      */
@@ -77,7 +77,10 @@ extern {
 
     /* Creating a Locale */
     pub fn CFLocaleCopyCurrent() -> CFLocaleRef;
-    pub fn CFLocaleCreate(allocator: CFAllocatorRef, localeIdentifier: CFLocaleIdentifier) -> CFLocaleRef;
+    pub fn CFLocaleCreate(
+        allocator: CFAllocatorRef,
+        localeIdentifier: CFLocaleIdentifier,
+    ) -> CFLocaleRef;
     pub fn CFLocaleCreateCopy(allocator: CFAllocatorRef, locale: CFLocaleRef) -> CFLocaleRef;
     pub fn CFLocaleGetSystem() -> CFLocaleRef;
 
@@ -94,21 +97,48 @@ extern {
     pub fn CFLocaleCopyPreferredLanguages() -> CFArrayRef;
 
     /* Getting Information About a Locale */
-    pub fn CFLocaleCopyDisplayNameForPropertyValue(displayLocale: CFLocaleRef, key: CFLocaleKey, value: CFStringRef) -> CFStringRef;
+    pub fn CFLocaleCopyDisplayNameForPropertyValue(
+        displayLocale: CFLocaleRef,
+        key: CFLocaleKey,
+        value: CFStringRef,
+    ) -> CFStringRef;
     pub fn CFLocaleGetValue(locale: CFLocaleRef, key: CFLocaleKey) -> CFTypeRef;
     pub fn CFLocaleGetIdentifier(locale: CFLocaleRef) -> CFLocaleIdentifier;
 
     /* Getting and Creating Locale Identifiers */
-    pub fn CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes(allocator: CFAllocatorRef, lcode: LangCode, rcode: RegionCode) -> CFLocaleIdentifier;
-    pub fn CFLocaleCreateCanonicalLanguageIdentifierFromString(allocator: CFAllocatorRef, localeIdentifier: CFStringRef) -> CFLocaleIdentifier;
-    pub fn CFLocaleCreateCanonicalLocaleIdentifierFromString(allocator: CFAllocatorRef, localeIdentifier: CFStringRef) -> CFLocaleIdentifier;
-    pub fn CFLocaleCreateComponentsFromLocaleIdentifier(allocator: CFAllocatorRef, localeID: CFLocaleIdentifier) -> CFDictionaryRef;
-    pub fn CFLocaleCreateLocaleIdentifierFromComponents(allocator: CFAllocatorRef, dictionary: CFDictionaryRef) -> CFLocaleIdentifier;
-    pub fn CFLocaleCreateLocaleIdentifierFromWindowsLocaleCode(allocator: CFAllocatorRef, lcid: u32) -> CFLocaleIdentifier;
-    pub fn CFLocaleGetWindowsLocaleCodeFromLocaleIdentifier(localeIdentifier: CFLocaleIdentifier) -> u32;
+    pub fn CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes(
+        allocator: CFAllocatorRef,
+        lcode: LangCode,
+        rcode: RegionCode,
+    ) -> CFLocaleIdentifier;
+    pub fn CFLocaleCreateCanonicalLanguageIdentifierFromString(
+        allocator: CFAllocatorRef,
+        localeIdentifier: CFStringRef,
+    ) -> CFLocaleIdentifier;
+    pub fn CFLocaleCreateCanonicalLocaleIdentifierFromString(
+        allocator: CFAllocatorRef,
+        localeIdentifier: CFStringRef,
+    ) -> CFLocaleIdentifier;
+    pub fn CFLocaleCreateComponentsFromLocaleIdentifier(
+        allocator: CFAllocatorRef,
+        localeID: CFLocaleIdentifier,
+    ) -> CFDictionaryRef;
+    pub fn CFLocaleCreateLocaleIdentifierFromComponents(
+        allocator: CFAllocatorRef,
+        dictionary: CFDictionaryRef,
+    ) -> CFLocaleIdentifier;
+    pub fn CFLocaleCreateLocaleIdentifierFromWindowsLocaleCode(
+        allocator: CFAllocatorRef,
+        lcid: u32,
+    ) -> CFLocaleIdentifier;
+    pub fn CFLocaleGetWindowsLocaleCodeFromLocaleIdentifier(
+        localeIdentifier: CFLocaleIdentifier,
+    ) -> u32;
 
     /* Getting Line and Character Direction for a Language */
-    pub fn CFLocaleGetLanguageCharacterDirection(isoLangCode: CFStringRef) -> CFLocaleLanguageDirection;
+    pub fn CFLocaleGetLanguageCharacterDirection(
+        isoLangCode: CFStringRef,
+    ) -> CFLocaleLanguageDirection;
     pub fn CFLocaleGetLanguageLineDirection(isoLangCode: CFStringRef) -> CFLocaleLanguageDirection;
 
     /* Getting the CFLocale Type ID */

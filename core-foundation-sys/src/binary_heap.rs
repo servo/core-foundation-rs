@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFTypeID, CFAllocatorRef, Boolean, CFIndex, CFComparisonResult};
+use base::{Boolean, CFAllocatorRef, CFComparisonResult, CFIndex, CFTypeID};
 use string::CFStringRef;
 
 #[repr(C)]
@@ -22,24 +22,28 @@ pub type CFBinaryHeapRef = *mut __CFBinaryHeap;
 pub struct CFBinaryHeapCompareContext {
     pub version: CFIndex,
     pub info: *mut c_void,
-    pub retain: extern "C" fn (info: *const c_void) -> *const c_void,
-    pub release: extern "C" fn (info: *const c_void),
-    pub copyDescription: extern "C" fn (info: *const c_void) -> CFStringRef,
+    pub retain: extern "C" fn(info: *const c_void) -> *const c_void,
+    pub release: extern "C" fn(info: *const c_void),
+    pub copyDescription: extern "C" fn(info: *const c_void) -> CFStringRef,
 }
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CFBinaryHeapCallBacks {
     pub version: CFIndex,
-    pub retain: extern "C" fn (allocator: CFAllocatorRef, ptr: *const c_void) -> *const c_void,
-    pub release: extern "C" fn (allocator: CFAllocatorRef, ptr: *const c_void),
-    pub copyDescription: extern "C" fn (ptr: *const c_void) -> CFStringRef,
-    pub compare: extern "C" fn (ptr1: *const c_void, ptr2: *const c_void, context: *mut c_void) -> CFComparisonResult
+    pub retain: extern "C" fn(allocator: CFAllocatorRef, ptr: *const c_void) -> *const c_void,
+    pub release: extern "C" fn(allocator: CFAllocatorRef, ptr: *const c_void),
+    pub copyDescription: extern "C" fn(ptr: *const c_void) -> CFStringRef,
+    pub compare: extern "C" fn(
+        ptr1: *const c_void,
+        ptr2: *const c_void,
+        context: *mut c_void,
+    ) -> CFComparisonResult,
 }
 
-pub type CFBinaryHeapApplierFunction = extern "C" fn (val: *const c_void, context: *const c_void);
+pub type CFBinaryHeapApplierFunction = extern "C" fn(val: *const c_void, context: *const c_void);
 
-extern {
+extern "C" {
     /*
      * CFBinaryHeap.h
      */
@@ -48,14 +52,30 @@ extern {
 
     /* CFBinaryHeap Miscellaneous Functions */
     pub fn CFBinaryHeapAddValue(heap: CFBinaryHeapRef, value: *const c_void);
-    pub fn CFBinaryHeapApplyFunction(heap: CFBinaryHeapRef, applier: CFBinaryHeapApplierFunction, context: *mut c_void);
+    pub fn CFBinaryHeapApplyFunction(
+        heap: CFBinaryHeapRef,
+        applier: CFBinaryHeapApplierFunction,
+        context: *mut c_void,
+    );
     pub fn CFBinaryHeapContainsValue(heap: CFBinaryHeapRef, value: *const c_void) -> Boolean;
-    pub fn CFBinaryHeapCreate(allocator: CFAllocatorRef, capacity: CFIndex, callBacks: *const CFBinaryHeapCallBacks, compareContext: *const CFBinaryHeapCompareContext) -> CFBinaryHeapRef;
-    pub fn CFBinaryHeapCreateCopy(allocator: CFAllocatorRef, capacity: CFIndex, heap: CFBinaryHeapRef) -> CFBinaryHeapRef;
+    pub fn CFBinaryHeapCreate(
+        allocator: CFAllocatorRef,
+        capacity: CFIndex,
+        callBacks: *const CFBinaryHeapCallBacks,
+        compareContext: *const CFBinaryHeapCompareContext,
+    ) -> CFBinaryHeapRef;
+    pub fn CFBinaryHeapCreateCopy(
+        allocator: CFAllocatorRef,
+        capacity: CFIndex,
+        heap: CFBinaryHeapRef,
+    ) -> CFBinaryHeapRef;
     pub fn CFBinaryHeapGetCount(heap: CFBinaryHeapRef) -> CFIndex;
     pub fn CFBinaryHeapGetCountOfValue(heap: CFBinaryHeapRef, value: *const c_void) -> CFIndex;
     pub fn CFBinaryHeapGetMinimum(heap: CFBinaryHeapRef) -> *const c_void;
-    pub fn CFBinaryHeapGetMinimumIfPresent(heap: CFBinaryHeapRef, value: *const *const c_void) -> Boolean;
+    pub fn CFBinaryHeapGetMinimumIfPresent(
+        heap: CFBinaryHeapRef,
+        value: *const *const c_void,
+    ) -> Boolean;
     pub fn CFBinaryHeapGetTypeID() -> CFTypeID;
     pub fn CFBinaryHeapGetValues(heap: CFBinaryHeapRef, values: *const *const c_void);
     pub fn CFBinaryHeapRemoveAllValues(heap: CFBinaryHeapRef);

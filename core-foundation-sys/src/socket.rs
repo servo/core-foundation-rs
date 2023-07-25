@@ -9,12 +9,12 @@
 
 use std::os::raw::c_void;
 
-use base::{CFIndex, CFOptionFlags, SInt32, CFTypeID, CFAllocatorRef, UInt16, Boolean};
+use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID, SInt32, UInt16};
 use data::CFDataRef;
-use string::CFStringRef;
 use date::CFTimeInterval;
-use runloop::CFRunLoopSourceRef;
 use propertylist::CFPropertyListRef;
+use runloop::CFRunLoopSourceRef;
+use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFSocket(c_void);
@@ -23,7 +23,13 @@ pub type CFSocketRef = *mut __CFSocket;
 
 pub type CFSocketError = CFIndex;
 pub type CFSocketCallBackType = CFOptionFlags;
-pub type CFSocketCallBack = extern "C" fn (s: CFSocketRef, _type: CFSocketCallBackType, address: CFDataRef, cdata: *const c_void, info: *mut c_void);
+pub type CFSocketCallBack = extern "C" fn(
+    s: CFSocketRef,
+    _type: CFSocketCallBackType,
+    address: CFDataRef,
+    cdata: *const c_void,
+    info: *mut c_void,
+);
 #[cfg(not(target_os = "windows"))]
 pub type CFSocketNativeHandle = std::os::raw::c_int;
 #[cfg(target_os = "windows")]
@@ -39,7 +45,7 @@ pub struct CFSocketSignature {
     pub protocolFamily: SInt32,
     pub socketType: SInt32,
     pub protocol: SInt32,
-    pub address: CFDataRef
+    pub address: CFDataRef,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -47,9 +53,9 @@ pub struct CFSocketSignature {
 pub struct CFSocketContext {
     pub version: CFIndex,
     pub info: *mut c_void,
-    pub retain: extern "C" fn (info: *const c_void) -> *const c_void,
-    pub release: extern "C" fn (info: *const c_void),
-    pub copyDescription: extern "C" fn (info: *const c_void) -> CFStringRef,
+    pub retain: extern "C" fn(info: *const c_void) -> *const c_void,
+    pub release: extern "C" fn(info: *const c_void),
+    pub copyDescription: extern "C" fn(info: *const c_void) -> CFStringRef,
 }
 
 pub const kCFSocketNoCallBack: CFSocketError = 0;
@@ -66,7 +72,7 @@ pub const kCFSocketAutomaticallyReenableWriteCallBack: CFOptionFlags = 8;
 pub const kCFSocketLeaveErrors: CFOptionFlags = 64;
 pub const kCFSocketCloseOnInvalidate: CFOptionFlags = 128;
 
-extern {
+extern "C" {
     /*
      * CFSocket.h
      */
@@ -81,10 +87,37 @@ extern {
     pub static kCFSocketRetrieveCommand: CFStringRef;
 
     /* Creating Sockets */
-    pub fn CFSocketCreate(allocator: CFAllocatorRef, protocolFamily: SInt32, socketType: SInt32, protocol: SInt32, callBackTypes: CFOptionFlags, callout: CFSocketCallBack, context: *const CFSocketContext) -> CFSocketRef;
-    pub fn CFSocketCreateConnectedToSocketSignature(allocator: CFAllocatorRef, signature: *const CFSocketSignature, callBackTypes: CFOptionFlags, callout: CFSocketCallBack, context: *const CFSocketContext, timeout: CFTimeInterval) -> CFSocketRef;
-    pub fn CFSocketCreateWithNative(allocator: CFAllocatorRef, sock: CFSocketNativeHandle, callBackTypes: CFOptionFlags, callout: CFSocketCallBack, context: *const CFSocketContext) -> CFSocketRef;
-    pub fn CFSocketCreateWithSocketSignature(allocator: CFAllocatorRef, signature: *const CFSocketSignature, callBackTypes: CFOptionFlags, callout: CFSocketCallBack, context: *const CFSocketContext) -> CFSocketRef;
+    pub fn CFSocketCreate(
+        allocator: CFAllocatorRef,
+        protocolFamily: SInt32,
+        socketType: SInt32,
+        protocol: SInt32,
+        callBackTypes: CFOptionFlags,
+        callout: CFSocketCallBack,
+        context: *const CFSocketContext,
+    ) -> CFSocketRef;
+    pub fn CFSocketCreateConnectedToSocketSignature(
+        allocator: CFAllocatorRef,
+        signature: *const CFSocketSignature,
+        callBackTypes: CFOptionFlags,
+        callout: CFSocketCallBack,
+        context: *const CFSocketContext,
+        timeout: CFTimeInterval,
+    ) -> CFSocketRef;
+    pub fn CFSocketCreateWithNative(
+        allocator: CFAllocatorRef,
+        sock: CFSocketNativeHandle,
+        callBackTypes: CFOptionFlags,
+        callout: CFSocketCallBack,
+        context: *const CFSocketContext,
+    ) -> CFSocketRef;
+    pub fn CFSocketCreateWithSocketSignature(
+        allocator: CFAllocatorRef,
+        signature: *const CFSocketSignature,
+        callBackTypes: CFOptionFlags,
+        callout: CFSocketCallBack,
+        context: *const CFSocketContext,
+    ) -> CFSocketRef;
 
     /* Configuring Sockets */
     pub fn CFSocketCopyAddress(s: CFSocketRef) -> CFDataRef;
@@ -98,19 +131,58 @@ extern {
     pub fn CFSocketSetSocketFlags(s: CFSocketRef, flags: CFOptionFlags);
 
     /* Using Sockets */
-    pub fn CFSocketConnectToAddress(s: CFSocketRef, address: CFDataRef, timeout: CFTimeInterval) -> CFSocketError;
-    pub fn CFSocketCreateRunLoopSource(allocator: CFAllocatorRef, s: CFSocketRef, order: CFIndex) -> CFRunLoopSourceRef;
+    pub fn CFSocketConnectToAddress(
+        s: CFSocketRef,
+        address: CFDataRef,
+        timeout: CFTimeInterval,
+    ) -> CFSocketError;
+    pub fn CFSocketCreateRunLoopSource(
+        allocator: CFAllocatorRef,
+        s: CFSocketRef,
+        order: CFIndex,
+    ) -> CFRunLoopSourceRef;
     pub fn CFSocketGetTypeID() -> CFTypeID;
     pub fn CFSocketInvalidate(s: CFSocketRef);
     pub fn CFSocketIsValid(s: CFSocketRef) -> Boolean;
-    pub fn CFSocketSendData(s: CFSocketRef, address: CFDataRef, data: CFDataRef, timeout: CFTimeInterval) -> CFSocketError;
+    pub fn CFSocketSendData(
+        s: CFSocketRef,
+        address: CFDataRef,
+        data: CFDataRef,
+        timeout: CFTimeInterval,
+    ) -> CFSocketError;
 
     /* Socket Name Server Utilities */
-    pub fn CFSocketCopyRegisteredSocketSignature(nameServerSignature: *const CFSocketSignature, timeout: CFTimeInterval, name: CFStringRef, signature: *mut CFSocketSignature, nameServerAddress: *mut CFDataRef) -> CFSocketError;
-    pub fn CFSocketCopyRegisteredValue(nameServerSignature: *const CFSocketSignature, timeout: CFTimeInterval, name: CFStringRef, value: *mut CFPropertyListRef, nameServerAddress: *mut CFDataRef) -> CFSocketError;
+    pub fn CFSocketCopyRegisteredSocketSignature(
+        nameServerSignature: *const CFSocketSignature,
+        timeout: CFTimeInterval,
+        name: CFStringRef,
+        signature: *mut CFSocketSignature,
+        nameServerAddress: *mut CFDataRef,
+    ) -> CFSocketError;
+    pub fn CFSocketCopyRegisteredValue(
+        nameServerSignature: *const CFSocketSignature,
+        timeout: CFTimeInterval,
+        name: CFStringRef,
+        value: *mut CFPropertyListRef,
+        nameServerAddress: *mut CFDataRef,
+    ) -> CFSocketError;
     pub fn CFSocketGetDefaultNameRegistryPortNumber() -> UInt16;
-    pub fn CFSocketRegisterSocketSignature(nameServerSignature: *const CFSocketSignature, timeout: CFTimeInterval, name: CFStringRef, signature: *const CFSocketSignature) -> CFSocketError;
-    pub fn CFSocketRegisterValue(nameServerSignature: *const CFSocketSignature, timeout: CFTimeInterval, name: CFStringRef, value: CFPropertyListRef) -> CFSocketError;
+    pub fn CFSocketRegisterSocketSignature(
+        nameServerSignature: *const CFSocketSignature,
+        timeout: CFTimeInterval,
+        name: CFStringRef,
+        signature: *const CFSocketSignature,
+    ) -> CFSocketError;
+    pub fn CFSocketRegisterValue(
+        nameServerSignature: *const CFSocketSignature,
+        timeout: CFTimeInterval,
+        name: CFStringRef,
+        value: CFPropertyListRef,
+    ) -> CFSocketError;
     pub fn CFSocketSetDefaultNameRegistryPortNumber(port: UInt16);
-    pub fn CFSocketUnregister(nameServerSignature: *const CFSocketSignature, timeout: CFTimeInterval, name: CFStringRef) -> CFSocketError;
+    pub fn CFSocketUnregister(
+        nameServerSignature: *const CFSocketSignature,
+        timeout: CFTimeInterval,
+        name: CFStringRef,
+    ) -> CFSocketError;
 }

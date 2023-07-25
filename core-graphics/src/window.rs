@@ -49,8 +49,10 @@ pub const kCGWindowImageNominalResolution: CGWindowImageOption = 1 << 4;
 
 pub const kCGNullWindowID: CGWindowID = 0;
 
-pub fn copy_window_info(option: CGWindowListOption, relative_to_window: CGWindowID)
-                        -> Option<CFArray> {
+pub fn copy_window_info(
+    option: CGWindowListOption,
+    relative_to_window: CGWindowID,
+) -> Option<CFArray> {
     unsafe {
         let array = CGWindowListCopyWindowInfo(option, relative_to_window);
         if array.is_null() {
@@ -61,8 +63,10 @@ pub fn copy_window_info(option: CGWindowListOption, relative_to_window: CGWindow
     }
 }
 
-pub fn create_window_list(option: CGWindowListOption, relative_to_window: CGWindowID)
-                          -> Option<CFArray<CGWindowID>> {
+pub fn create_window_list(
+    option: CGWindowListOption,
+    relative_to_window: CGWindowID,
+) -> Option<CFArray<CGWindowID>> {
     unsafe {
         let array = CGWindowListCreate(option, relative_to_window);
         if array.is_null() {
@@ -73,8 +77,9 @@ pub fn create_window_list(option: CGWindowListOption, relative_to_window: CGWind
     }
 }
 
-pub fn create_description_from_array(window_array: CFArray<CGWindowID>) ->
-                                     Option<CFArray<CFDictionary<CFString, CFType>>> {
+pub fn create_description_from_array(
+    window_array: CFArray<CGWindowID>,
+) -> Option<CFArray<CFDictionary<CFString, CFType>>> {
     unsafe {
         let array = CGWindowListCreateDescriptionFromArray(window_array.as_concrete_TypeRef());
         if array.is_null() {
@@ -85,11 +90,12 @@ pub fn create_description_from_array(window_array: CFArray<CGWindowID>) ->
     }
 }
 
-pub fn create_image(screen_bounds: CGRect,
-                    list_option: CGWindowListOption,
-                    window_id: CGWindowID,
-                    image_option: CGWindowImageOption)
-                    -> Option<CGImage> {
+pub fn create_image(
+    screen_bounds: CGRect,
+    list_option: CGWindowListOption,
+    window_id: CGWindowID,
+    image_option: CGWindowImageOption,
+) -> Option<CGImage> {
     unsafe {
         let image = CGWindowListCreateImage(screen_bounds, list_option, window_id, image_option);
         if image.is_null() {
@@ -100,14 +106,17 @@ pub fn create_image(screen_bounds: CGRect,
     }
 }
 
-pub fn create_image_from_array(screen_bounds: CGRect,
-                               window_array: CFArray,
-                               image_option: CGWindowImageOption)
-                               -> Option<CGImage> {
+pub fn create_image_from_array(
+    screen_bounds: CGRect,
+    window_array: CFArray,
+    image_option: CGWindowImageOption,
+) -> Option<CGImage> {
     unsafe {
-        let image = CGWindowListCreateImageFromArray(screen_bounds,
-                                                     window_array.as_concrete_TypeRef(),
-                                                     image_option);
+        let image = CGWindowListCreateImageFromArray(
+            screen_bounds,
+            window_array.as_concrete_TypeRef(),
+            image_option,
+        );
         if image.is_null() {
             None
         } else {
@@ -117,7 +126,7 @@ pub fn create_image_from_array(screen_bounds: CGRect,
 }
 
 #[link(name = "CoreGraphics", kind = "framework")]
-extern {
+extern "C" {
     pub static kCGWindowNumber: CFStringRef;
     pub static kCGWindowStoreType: CFStringRef;
     pub static kCGWindowLayer: CFStringRef;
@@ -132,18 +141,24 @@ extern {
     pub static kCGWindowIsOnscreen: CFStringRef;
     pub static kCGWindowBackingLocationVideoMemory: CFStringRef;
 
-    pub fn CGWindowListCopyWindowInfo(option: CGWindowListOption, relativeToWindow: CGWindowID)
-                                      -> CFArrayRef;
-    pub fn CGWindowListCreate(option: CGWindowListOption, relativeToWindow: CGWindowID)
-                              -> CFArrayRef;
+    pub fn CGWindowListCopyWindowInfo(
+        option: CGWindowListOption,
+        relativeToWindow: CGWindowID,
+    ) -> CFArrayRef;
+    pub fn CGWindowListCreate(
+        option: CGWindowListOption,
+        relativeToWindow: CGWindowID,
+    ) -> CFArrayRef;
     pub fn CGWindowListCreateDescriptionFromArray(windowArray: CFArrayRef) -> CFArrayRef;
-    pub fn CGWindowListCreateImage(screenBounds: CGRect,
-                                   listOption: CGWindowListOption,
-                                   windowID: CGWindowID,
-                                   imageOption: CGWindowImageOption)
-                                   -> *mut sys::CGImage;
-    pub fn CGWindowListCreateImageFromArray(screenBounds: CGRect,
-                                            windowArray: CFArrayRef,
-                                            imageOption: CGWindowImageOption)
-                                            -> *mut sys::CGImage;
+    pub fn CGWindowListCreateImage(
+        screenBounds: CGRect,
+        listOption: CGWindowListOption,
+        windowID: CGWindowID,
+        imageOption: CGWindowImageOption,
+    ) -> *mut sys::CGImage;
+    pub fn CGWindowListCreateImageFromArray(
+        screenBounds: CGRect,
+        windowArray: CFArrayRef,
+        imageOption: CGWindowImageOption,
+    ) -> *mut sys::CGImage;
 }

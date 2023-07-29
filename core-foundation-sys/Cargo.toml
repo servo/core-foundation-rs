@@ -3,7 +3,7 @@ name = "core-foundation-sys"
 description = "Bindings to Core Foundation for macOS"
 homepage = "https://github.com/servo/core-foundation-rs"
 repository = "https://github.com/servo/core-foundation-rs"
-version = "0.8.5"
+version = "0.8.6"
 authors = ["The Servo Project Developers"]
 license = "MIT OR Apache-2.0"
 

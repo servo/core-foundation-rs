@@ -14,4 +14,5 @@ mac_os_10_7_support = [] # backwards compatibility
 mac_os_10_8_features = [] # enables new features
 
 [package.metadata.docs.rs]
+all-features = true
 default-target = "x86_64-apple-darwin"

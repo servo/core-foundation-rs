@@ -583,7 +583,7 @@ impl NSApplication for id {
 
     unsafe fn presentationOptions_(self) -> NSApplicationPresentationOptions {
         let options = msg_send![self, presentationOptions];
-        return NSApplicationPresentationOptions::from_bits(options).unwrap();
+        NSApplicationPresentationOptions::from_bits(options).unwrap()
     }
 
     unsafe fn setMainMenu_(self, menu: id) {

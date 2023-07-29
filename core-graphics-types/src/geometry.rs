@@ -42,10 +42,7 @@ pub struct CGSize {
 impl CGSize {
     #[inline]
     pub fn new(width: CGFloat, height: CGFloat) -> CGSize {
-        CGSize {
-            width: width,
-            height: height,
-        }
+        CGSize { width, height }
     }
 
     #[inline]
@@ -64,7 +61,7 @@ pub struct CGPoint {
 impl CGPoint {
     #[inline]
     pub fn new(x: CGFloat, y: CGFloat) -> CGPoint {
-        CGPoint { x: x, y: y }
+        CGPoint { x, y }
     }
 
     #[inline]

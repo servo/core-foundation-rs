@@ -79,7 +79,7 @@ impl TCFType for IOSurface {
     #[inline]
     unsafe fn wrap_under_create_rule(obj: IOSurfaceRef) -> IOSurface {
         assert!(!obj.is_null(), "Attempted to create a NULL object.");
-        IOSurface { obj: obj }
+        IOSurface { obj }
     }
 
     #[inline]

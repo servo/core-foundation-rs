@@ -165,7 +165,7 @@ impl CGContext {
         unsafe {
             slice::from_raw_parts_mut(
                 CGBitmapContextGetData(self.as_ptr()) as *mut u8,
-                (self.height() * self.bytes_per_row()) as usize,
+                self.height() * self.bytes_per_row(),
             )
         }
     }

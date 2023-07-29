@@ -133,5 +133,5 @@ unsafe fn create_app() -> id {
     let current_app = NSRunningApplication::currentApplication(nil);
     current_app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps);
 
-    return app;
+    app
 }

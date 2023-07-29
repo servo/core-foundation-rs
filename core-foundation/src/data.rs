@@ -80,7 +80,7 @@ impl CFData {
     /// Returns a pointer to the underlying bytes in this data. Note that this byte buffer is
     /// read-only.
     #[inline]
-    pub fn bytes<'a>(&'a self) -> &'a [u8] {
+    pub fn bytes(&self) -> &[u8] {
         unsafe { slice::from_raw_parts(CFDataGetBytePtr(self.0), self.len() as usize) }
     }
 
@@ -88,6 +88,12 @@ impl CFData {
     #[inline]
     pub fn len(&self) -> CFIndex {
         unsafe { CFDataGetLength(self.0) }
+    }
+
+    /// Returns `true` if this byte buffer is empty.
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 

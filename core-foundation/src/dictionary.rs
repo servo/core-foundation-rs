@@ -47,7 +47,7 @@ impl<K, V> CFDictionary<K, V> {
     {
         let (keys, values): (Vec<CFTypeRef>, Vec<CFTypeRef>) = pairs
             .iter()
-            .map(|&(ref key, ref value)| (key.as_CFTypeRef(), value.as_CFTypeRef()))
+            .map(|(key, value)| (key.as_CFTypeRef(), value.as_CFTypeRef()))
             .unzip();
 
         unsafe {
@@ -103,7 +103,7 @@ impl<K, V> CFDictionary<K, V> {
     }
 
     #[inline]
-    pub fn find<'a, T: ToVoid<K>>(&'a self, key: T) -> Option<ItemRef<'a, V>>
+    pub fn find<T: ToVoid<K>>(&self, key: T) -> Option<ItemRef<'_, V>>
     where
         V: FromVoid,
         K: ToVoid<K>,
@@ -123,7 +123,7 @@ impl<K, V> CFDictionary<K, V> {
     /// Panics if the key is not present in the dictionary. Use `find` to get an `Option` instead
     /// of panicking.
     #[inline]
-    pub fn get<'a, T: ToVoid<K>>(&'a self, key: T) -> ItemRef<'a, V>
+    pub fn get<T: ToVoid<K>>(&self, key: T) -> ItemRef<'_, V>
     where
         V: FromVoid,
         K: ToVoid<K>,
@@ -195,7 +195,7 @@ impl<K, V> CFMutableDictionary<K, V> {
         V: ToVoid<V>,
     {
         let mut result = Self::with_capacity(pairs.len() as _);
-        for &(ref key, ref value) in pairs {
+        for (key, value) in pairs {
             result.add(key, value);
         }
         result
@@ -265,7 +265,7 @@ impl<K, V> CFMutableDictionary<K, V> {
         K: ToVoid<K>,
     {
         let ptr = key.to_void();
-        self.find(&key)
+        self.find(key)
             .unwrap_or_else(|| panic!("No entry found for key {:p}", ptr))
     }
 

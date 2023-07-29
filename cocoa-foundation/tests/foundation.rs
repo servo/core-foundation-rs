@@ -116,8 +116,8 @@ mod foundation {
 
         #[test]
         fn test_get() {
-            const KEY: &'static str = "The key";
-            const VALUE: &'static str = "Some value";
+            const KEY: &str = "The key";
+            const VALUE: &str = "Some value";
             unsafe {
                 let key = NSString::alloc(nil).init_str(KEY);
                 let value = NSString::alloc(nil).init_str(VALUE);

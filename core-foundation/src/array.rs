@@ -115,7 +115,7 @@ impl<T> CFArray<T> {
     /// Core Foundation objects (not always true), they need to be wrapped with
     /// `TCFType::wrap_under_get_rule()`.
     #[inline]
-    pub fn iter<'a>(&'a self) -> CFArrayIterator<'a, T> {
+    pub fn iter(&self) -> CFArrayIterator<'_, T> {
         CFArrayIterator {
             array: self,
             index: 0,
@@ -128,8 +128,14 @@ impl<T> CFArray<T> {
         unsafe { CFArrayGetCount(self.0) }
     }
 
+    /// Returns `true` if the array contains no elements.
     #[inline]
-    pub unsafe fn get_unchecked<'a>(&'a self, index: CFIndex) -> ItemRef<'a, T>
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    #[inline]
+    pub unsafe fn get_unchecked(&self, index: CFIndex) -> ItemRef<'_, T>
     where
         T: FromVoid,
     {
@@ -137,7 +143,7 @@ impl<T> CFArray<T> {
     }
 
     #[inline]
-    pub fn get<'a>(&'a self, index: CFIndex) -> Option<ItemRef<'a, T>>
+    pub fn get(&self, index: CFIndex) -> Option<ItemRef<'_, T>>
     where
         T: FromVoid,
     {

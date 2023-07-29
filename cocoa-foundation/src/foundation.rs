@@ -48,7 +48,7 @@ mod macos {
     impl NSPoint {
         #[inline]
         pub fn new(x: CGFloat, y: CGFloat) -> NSPoint {
-            NSPoint { x: x, y: y }
+            NSPoint { x, y }
         }
     }
 
@@ -73,10 +73,7 @@ mod macos {
     impl NSSize {
         #[inline]
         pub fn new(width: CGFloat, height: CGFloat) -> NSSize {
-            NSSize {
-                width: width,
-                height: height,
-            }
+            NSSize { width, height }
         }
     }
 
@@ -101,10 +98,7 @@ mod macos {
     impl NSRect {
         #[inline]
         pub fn new(origin: NSPoint, size: NSSize) -> NSRect {
-            NSRect {
-                origin: origin,
-                size: size,
-            }
+            NSRect { origin, size }
         }
 
         #[inline]
@@ -169,10 +163,7 @@ pub struct NSRange {
 impl NSRange {
     #[inline]
     pub fn new(location: NSUInteger, length: NSUInteger) -> NSRange {
-        NSRange {
-            location: location,
-            length: length,
-        }
+        NSRange { location, length }
     }
 }
 
@@ -216,9 +207,9 @@ impl NSOperatingSystemVersion {
         patchVersion: NSUInteger,
     ) -> NSOperatingSystemVersion {
         NSOperatingSystemVersion {
-            majorVersion: majorVersion,
-            minorVersion: minorVersion,
-            patchVersion: patchVersion,
+            majorVersion,
+            minorVersion,
+            patchVersion,
         }
     }
 }
@@ -663,10 +654,10 @@ impl NSString for id {
     }
 
     unsafe fn init_str(self, string: &str) -> id {
-        return msg_send![self,
-                         initWithBytes:string.as_ptr()
-                             length:string.len()
-                             encoding:UTF8_ENCODING as id];
+        msg_send![self,
+                  initWithBytes:string.as_ptr()
+                      length:string.len()
+                      encoding:UTF8_ENCODING as id]
     }
 
     unsafe fn len(self) -> usize {
@@ -734,7 +725,7 @@ impl Iterator for NSFastIterator {
         }
 
         if self.idx < self.len {
-            let object = unsafe { *self.state.items_ptr.offset(self.idx as isize) };
+            let object = unsafe { *self.state.items_ptr.add(self.idx) };
             self.mut_val = Some(new_mut);
             self.idx += 1;
             Some(object)

@@ -51,6 +51,10 @@ pub struct __CFDictionary(c_void);
 pub type CFDictionaryRef = *const __CFDictionary;
 pub type CFMutableDictionaryRef = *mut __CFDictionary;
 
+unsafe impl ::objc_encode::Encode for &__CFDictionary {
+    const ENCODING: ::objc_encode::Encoding<'static> = ::objc_encode::Encoding::Object;
+}
+
 extern "C" {
     /*
      * CFDictionary.h

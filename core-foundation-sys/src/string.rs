@@ -206,6 +206,10 @@ pub fn CFStringInitInlineBuffer(str: CFStringRef, buf: *mut CFStringInlineBuffer
 pub fn CFStringGetCharacterFromInlineBuffer(buf: *mut CFStringInlineBuffer, idx: CFIndex) -> UniChar;
 */
 
+unsafe impl ::objc_encode::Encode for &__CFString {
+    const ENCODING: ::objc_encode::Encoding<'static> = ::objc_encode::Encoding::Object;
+}
+
 extern "C" {
     /*
      * CFString.h

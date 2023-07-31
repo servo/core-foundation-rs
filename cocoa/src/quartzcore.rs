@@ -38,6 +38,8 @@ pub fn current_media_time() -> CFTimeInterval {
 
 pub struct CALayer(id);
 
+impl_Encode!(CALayer, id);
+
 unsafe impl Send for CALayer {}
 unsafe impl Sync for CALayer {}
 
@@ -1209,6 +1211,8 @@ bitflags! {
 
 pub struct CARenderer(id);
 
+impl_Encode!(CARenderer, id);
+
 unsafe impl Send for CARenderer {}
 unsafe impl Sync for CARenderer {}
 
@@ -1481,6 +1485,11 @@ pub struct CATransform3D {
     pub m44: CGFloat,
 }
 
+unsafe impl ::objc_encode::Encode for CATransform3D {
+    const ENCODING: ::objc_encode::Encoding<'static> =
+        ::objc_encode::Encoding::Array(16, &CGFloat::ENCODING);
+}
+
 impl PartialEq for CATransform3D {
     #[inline]
     fn eq(&self, other: &CATransform3D) -> bool {
@@ -1632,6 +1641,28 @@ pub struct CVTimeStamp {
     pub reserved: u64,
 }
 
+unsafe impl ::objc_encode::Encode for CVTimeStamp {
+    const ENCODING: ::objc_encode::Encoding<'static> = ::objc_encode::Encoding::Struct(
+        "CVTimeStamp",
+        &[
+            u32::ENCODING,
+            i32::ENCODING,
+            i64::ENCODING,
+            u64::ENCODING,
+            f64::ENCODING,
+            i64::ENCODING,
+            CVSMPTETime::ENCODING,
+            u64::ENCODING,
+            u64::ENCODING,
+        ],
+    );
+}
+
+unsafe impl ::objc_encode::Encode for &'_ CVTimeStamp {
+    const ENCODING: ::objc_encode::Encoding<'static> =
+        ::objc_encode::Encoding::Pointer(&<CVTimeStamp as ::objc_encode::Encode>::ENCODING);
+}
+
 pub type CVTimeStampFlags = u64;
 
 pub const kCVTimeStampVideoTimeValid: CVTimeStampFlags = 1 << 0;
@@ -1658,6 +1689,23 @@ pub struct CVSMPTETime {
     pub minutes: i16,
     pub seconds: i16,
     pub frames: i16,
+}
+
+unsafe impl ::objc_encode::Encode for CVSMPTETime {
+    const ENCODING: ::objc_encode::Encoding<'static> = ::objc_encode::Encoding::Struct(
+        "CVSMPTETime",
+        &[
+            i16::ENCODING,
+            i16::ENCODING,
+            u32::ENCODING,
+            u32::ENCODING,
+            u32::ENCODING,
+            i16::ENCODING,
+            i16::ENCODING,
+            i16::ENCODING,
+            i16::ENCODING,
+        ],
+    );
 }
 
 pub type CVSMPTETimeType = u32;

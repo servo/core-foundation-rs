@@ -12,6 +12,7 @@
 use base::{id, nil, BOOL, NO, SEL};
 use block::Block;
 use libc;
+use objc_encode::{Encode, Encoding};
 use std::os::raw::c_void;
 use std::ptr;
 
@@ -35,7 +36,7 @@ mod macos {
     use base::id;
     use core_graphics_types::base::CGFloat;
     use core_graphics_types::geometry::CGRect;
-    use objc;
+    use objc_encode::{Encode, Encoding};
     use std::mem;
 
     #[repr(C)]
@@ -52,15 +53,9 @@ mod macos {
         }
     }
 
-    unsafe impl objc::Encode for NSPoint {
-        fn encode() -> objc::Encoding {
-            let encoding = format!(
-                "{{CGPoint={}{}}}",
-                CGFloat::encode().as_str(),
-                CGFloat::encode().as_str()
-            );
-            unsafe { objc::Encoding::from_str(&encoding) }
-        }
+    unsafe impl Encode for NSPoint {
+        const ENCODING: Encoding<'static> =
+            Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
     }
 
     #[repr(C)]
@@ -80,15 +75,9 @@ mod macos {
         }
     }
 
-    unsafe impl objc::Encode for NSSize {
-        fn encode() -> objc::Encoding {
-            let encoding = format!(
-                "{{CGSize={}{}}}",
-                CGFloat::encode().as_str(),
-                CGFloat::encode().as_str()
-            );
-            unsafe { objc::Encoding::from_str(&encoding) }
-        }
+    unsafe impl Encode for NSSize {
+        const ENCODING: Encoding<'static> =
+            Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
     }
 
     #[repr(C)]
@@ -118,15 +107,9 @@ mod macos {
         }
     }
 
-    unsafe impl objc::Encode for NSRect {
-        fn encode() -> objc::Encoding {
-            let encoding = format!(
-                "{{CGRect={}{}}}",
-                NSPoint::encode().as_str(),
-                NSSize::encode().as_str()
-            );
-            unsafe { objc::Encoding::from_str(&encoding) }
-        }
+    unsafe impl Encode for NSRect {
+        const ENCODING: Encoding<'static> =
+            Encoding::Struct("CGRect", &[NSPoint::ENCODING, NSSize::ENCODING]);
     }
 
     // Same as CGRectEdge
@@ -137,6 +120,8 @@ mod macos {
         NSRectMaxXEdge,
         NSRectMaxYEdge,
     }
+
+    impl_Encode!(NSRectEdge, u32);
 
     #[link(name = "Foundation", kind = "framework")]
     extern "C" {
@@ -164,6 +149,11 @@ pub use self::macos::*;
 pub struct NSRange {
     pub location: NSUInteger,
     pub length: NSUInteger,
+}
+
+unsafe impl Encode for NSRange {
+    const ENCODING: Encoding<'static> =
+        Encoding::Struct("_NSRange", &[NSUInteger::ENCODING, NSUInteger::ENCODING]);
 }
 
 impl NSRange {
@@ -206,6 +196,17 @@ pub struct NSOperatingSystemVersion {
     pub majorVersion: NSUInteger,
     pub minorVersion: NSUInteger,
     pub patchVersion: NSUInteger,
+}
+
+unsafe impl Encode for NSOperatingSystemVersion {
+    const ENCODING: Encoding<'static> = Encoding::Struct(
+        "NSOperatingSystemVersion",
+        &[
+            NSUInteger::ENCODING,
+            NSUInteger::ENCODING,
+            NSUInteger::ENCODING,
+        ],
+    );
 }
 
 impl NSOperatingSystemVersion {
@@ -629,6 +630,8 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSEnumerationOptions, libc::c_ulonglong);
+
 pub type NSComparator = *mut Block<(id, id), NSComparisonResult>;
 
 #[repr(isize)]
@@ -638,6 +641,8 @@ pub enum NSComparisonResult {
     NSOrderedSame = 0,
     NSOrderedDescending = 1,
 }
+
+impl_Encode!(NSComparisonResult, isize);
 
 pub trait NSString: Sized {
     unsafe fn alloc(_: Self) -> id {
@@ -701,6 +706,22 @@ struct NSFastEnumerationState {
     pub items_ptr: *mut id,
     pub mutations_ptr: *mut libc::c_ulong,
     pub extra: [libc::c_ulong; 5],
+}
+
+unsafe impl Encode for NSFastEnumerationState {
+    const ENCODING: Encoding<'static> = Encoding::Struct(
+        "?",
+        &[
+            libc::c_ulong::ENCODING,
+            Encoding::Pointer(&Encoding::Object),
+            Encoding::Pointer(&libc::c_ulong::ENCODING),
+            Encoding::Array(5, &libc::c_ulong::ENCODING),
+        ],
+    );
+}
+
+unsafe impl Encode for &'_ NSFastEnumerationState {
+    const ENCODING: Encoding<'static> = Encoding::Pointer(&NSFastEnumerationState::ENCODING);
 }
 
 const NS_FAST_ENUM_BUF_SIZE: usize = 16;
@@ -811,6 +832,8 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSURLBookmarkCreationOptions, NSUInteger);
+
 pub type NSURLBookmarkFileCreationOptions = NSURLBookmarkCreationOptions;
 
 bitflags! {
@@ -820,6 +843,8 @@ bitflags! {
         const NSURLBookmarkResolutionWithSecurityScope = 1 << 10;
     }
 }
+
+impl_Encode!(NSURLBookmarkResolutionOptions, NSUInteger);
 
 pub trait NSURL: Sized {
     unsafe fn alloc(_: Self) -> id;
@@ -1607,6 +1632,8 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSDataReadingOptions, libc::c_ulonglong);
+
 bitflags! {
     pub struct NSDataBase64EncodingOptions: libc::c_ulonglong {
         const NSDataBase64Encoding64CharacterLineLength = 1 << 0;
@@ -1616,11 +1643,15 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSDataBase64EncodingOptions, libc::c_ulonglong);
+
 bitflags! {
     pub struct NSDataBase64DecodingOptions: libc::c_ulonglong {
        const NSDataBase64DecodingIgnoreUnknownCharacters = 1 << 0;
     }
 }
+
+impl_Encode!(NSDataBase64DecodingOptions, libc::c_ulonglong);
 
 bitflags! {
     pub struct NSDataWritingOptions: libc::c_ulonglong {
@@ -1629,12 +1660,16 @@ bitflags! {
     }
 }
 
+impl_Encode!(NSDataWritingOptions, libc::c_ulonglong);
+
 bitflags! {
     pub struct NSDataSearchOptions: libc::c_ulonglong {
         const NSDataSearchBackwards = 1 << 0;
         const NSDataSearchAnchored = 1 << 1;
     }
 }
+
+impl_Encode!(NSDataSearchOptions, libc::c_ulonglong);
 
 pub trait NSUserDefaults {
     unsafe fn standardUserDefaults() -> Self;

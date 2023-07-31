@@ -12,8 +12,6 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 
-use libc;
-
 #[cfg(any(target_arch = "x86", target_arch = "arm", target_arch = "aarch64"))]
 pub type boolean_t = libc::c_int;
 #[cfg(target_arch = "x86_64")]

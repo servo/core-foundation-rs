@@ -10,6 +10,7 @@
 use base::CGFloat;
 use core_foundation::base::TCFType;
 use core_foundation::dictionary::CFDictionary;
+use objc_encode::{Encode, Encoding};
 
 pub const CG_ZERO_POINT: CGPoint = CGPoint { x: 0.0, y: 0.0 };
 
@@ -39,6 +40,11 @@ pub struct CGSize {
     pub height: CGFloat,
 }
 
+unsafe impl Encode for CGSize {
+    const ENCODING: Encoding<'static> =
+        Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
+}
+
 impl CGSize {
     #[inline]
     pub fn new(width: CGFloat, height: CGFloat) -> CGSize {
@@ -61,6 +67,11 @@ pub struct CGPoint {
     pub y: CGFloat,
 }
 
+unsafe impl Encode for CGPoint {
+    const ENCODING: Encoding<'static> =
+        Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
+}
+
 impl CGPoint {
     #[inline]
     pub fn new(x: CGFloat, y: CGFloat) -> CGPoint {
@@ -78,6 +89,11 @@ impl CGPoint {
 pub struct CGRect {
     pub origin: CGPoint,
     pub size: CGSize,
+}
+
+unsafe impl Encode for CGRect {
+    const ENCODING: Encoding<'static> =
+        Encoding::Struct("CGRect", &[CGPoint::ENCODING, CGSize::ENCODING]);
 }
 
 impl CGRect {
@@ -143,6 +159,20 @@ pub struct CGAffineTransform {
     pub d: CGFloat,
     pub tx: CGFloat,
     pub ty: CGFloat,
+}
+
+unsafe impl Encode for CGAffineTransform {
+    const ENCODING: Encoding<'static> = Encoding::Struct(
+        "CGAffineTransform",
+        &[
+            CGFloat::ENCODING,
+            CGFloat::ENCODING,
+            CGFloat::ENCODING,
+            CGFloat::ENCODING,
+            CGFloat::ENCODING,
+            CGFloat::ENCODING,
+        ],
+    );
 }
 
 impl CGAffineTransform {

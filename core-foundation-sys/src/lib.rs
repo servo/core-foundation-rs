@@ -17,6 +17,8 @@
     feature(linkage)
 )] // back-compat requires weak linkage
 
+extern crate objc_encode;
+
 // Link to CoreFoundation on any Apple device.
 //
 // We don't use `target_vendor` since that is going to be deprecated:

@@ -51,8 +51,8 @@ pub struct __CFDictionary(c_void);
 pub type CFDictionaryRef = *const __CFDictionary;
 pub type CFMutableDictionaryRef = *mut __CFDictionary;
 
-unsafe impl ::objc2_encode::RefEncode for __CFDictionary {
-    const ENCODING_REF: ::objc2_encode::Encoding = ::objc2_encode::Encoding::Object;
+unsafe impl ::objc2::encode::RefEncode for __CFDictionary {
+    const ENCODING_REF: ::objc2::encode::Encoding = ::objc2::encode::Encoding::Object;
 }
 
 extern "C" {

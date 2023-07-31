@@ -8,7 +8,7 @@
 // except according to those terms.
 
 extern crate core_foundation;
-extern crate objc2_encode;
+extern crate objc2;
 
 pub mod base;
 pub mod geometry;

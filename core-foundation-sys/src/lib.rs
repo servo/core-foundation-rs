@@ -17,7 +17,7 @@
     feature(linkage)
 )] // back-compat requires weak linkage
 
-extern crate objc2_encode;
+extern crate objc2;
 
 // Link to CoreFoundation on any Apple device.
 //

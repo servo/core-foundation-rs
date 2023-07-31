@@ -8,6 +8,7 @@
 // except according to those terms.
 
 extern crate core_foundation;
+#[cfg(feature = "objc2")]
 extern crate objc2;
 
 pub mod base;

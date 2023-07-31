@@ -10,6 +10,7 @@
 use base::CGFloat;
 use core_foundation::base::TCFType;
 use core_foundation::dictionary::CFDictionary;
+#[cfg(feature = "objc2")]
 use objc2::encode::{Encode, Encoding};
 
 pub const CG_ZERO_POINT: CGPoint = CGPoint { x: 0.0, y: 0.0 };
@@ -40,6 +41,7 @@ pub struct CGSize {
     pub height: CGFloat,
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl Encode for CGSize {
     const ENCODING: Encoding = Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
@@ -66,6 +68,7 @@ pub struct CGPoint {
     pub y: CGFloat,
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl Encode for CGPoint {
     const ENCODING: Encoding = Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
@@ -89,6 +92,7 @@ pub struct CGRect {
     pub size: CGSize,
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl Encode for CGRect {
     const ENCODING: Encoding = Encoding::Struct("CGRect", &[CGPoint::ENCODING, CGSize::ENCODING]);
 }
@@ -158,6 +162,7 @@ pub struct CGAffineTransform {
     pub ty: CGFloat,
 }
 
+#[cfg(feature = "objc2")]
 unsafe impl Encode for CGAffineTransform {
     const ENCODING: Encoding = Encoding::Struct(
         "CGAffineTransform",

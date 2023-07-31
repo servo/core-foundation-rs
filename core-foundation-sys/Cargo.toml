@@ -8,7 +8,7 @@ authors = ["The Servo Project Developers"]
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-objc2 = "=0.3.0-beta.5"
+objc2 = "0.4.0"
 
 [features]
 mac_os_10_7_support = [] # backwards compatibility

@@ -1,8 +1,8 @@
 extern crate cocoa;
-extern crate objc;
+extern crate objc2;
 
 use cocoa::base::{nil, selector, NO};
-use objc::*;
+use objc2::*;
 
 use cocoa::appkit::{
     NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSBackingStoreType, NSColor,

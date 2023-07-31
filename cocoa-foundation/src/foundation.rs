@@ -12,7 +12,7 @@
 use base::{id, nil, BOOL, NO, SEL};
 use block::Block;
 use libc;
-use objc_encode::{Encode, Encoding};
+use objc_encode::{Encode, Encoding, RefEncode};
 use std::os::raw::c_void;
 use std::ptr;
 
@@ -720,8 +720,8 @@ unsafe impl Encode for NSFastEnumerationState {
     );
 }
 
-unsafe impl Encode for &'_ NSFastEnumerationState {
-    const ENCODING: Encoding<'static> = Encoding::Pointer(&NSFastEnumerationState::ENCODING);
+unsafe impl RefEncode for NSFastEnumerationState {
+    const ENCODING_REF: Encoding<'static> = Encoding::Pointer(&Self::ENCODING);
 }
 
 const NS_FAST_ENUM_BUF_SIZE: usize = 16;

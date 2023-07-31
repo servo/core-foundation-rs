@@ -7,9 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use objc::runtime;
+use objc2::runtime;
 
-pub use objc::runtime::{BOOL, NO, YES};
+pub use objc2::runtime::{BOOL, NO, YES};
 
 pub type Class = *mut runtime::Class;
 #[allow(non_camel_case_types)]

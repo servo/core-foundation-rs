@@ -22,7 +22,7 @@ extern crate foreign_types;
 extern crate libc;
 extern crate objc_encode;
 #[macro_use]
-extern crate objc;
+extern crate objc2;
 
 #[cfg(target_os = "macos")]
 pub mod appkit;

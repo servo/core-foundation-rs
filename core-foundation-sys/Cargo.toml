@@ -8,7 +8,7 @@ authors = ["The Servo Project Developers"]
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-objc-encode = "1.1.0"
+objc-encode = { version = "=2.0.0-pre.1", package = "objc2-encode" }
 
 [features]
 mac_os_10_7_support = [] # backwards compatibility

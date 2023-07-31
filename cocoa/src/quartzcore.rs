@@ -1658,9 +1658,9 @@ unsafe impl ::objc_encode::Encode for CVTimeStamp {
     );
 }
 
-unsafe impl ::objc_encode::Encode for &'_ CVTimeStamp {
-    const ENCODING: ::objc_encode::Encoding<'static> =
-        ::objc_encode::Encoding::Pointer(&<CVTimeStamp as ::objc_encode::Encode>::ENCODING);
+unsafe impl ::objc_encode::RefEncode for CVTimeStamp {
+    const ENCODING_REF: ::objc_encode::Encoding<'static> =
+        ::objc_encode::Encoding::Pointer(&<Self as ::objc_encode::Encode>::ENCODING);
 }
 
 pub type CVTimeStampFlags = u64;

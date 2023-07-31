@@ -15,7 +15,6 @@ use foundation::{
     NSInteger, NSPoint, NSRange, NSRect, NSRectEdge, NSSize, NSTimeInterval, NSUInteger,
 };
 use libc;
-use objc2::encode::{Encode, Encoding};
 
 pub use core_graphics::base::CGFloat;
 pub use core_graphics::geometry::CGPoint;
@@ -4581,13 +4580,6 @@ pub trait NSColorSpace: Sized {
     unsafe fn localizedName(self) -> id;
 }
 
-#[repr(transparent)]
-struct CGColorSpaceRef(*const c_void);
-
-unsafe impl Encode for CGColorSpaceRef {
-    const ENCODING: Encoding = Encoding::Pointer(&Encoding::Struct("CGColorSpace", &[]));
-}
-
 impl NSColorSpace for id {
     unsafe fn deviceRGBColorSpace(_: Self) -> id {
         msg_send![class!(NSColorSpace), deviceRGBColorSpace]
@@ -4630,12 +4622,14 @@ impl NSColorSpace for id {
         msg_send![class!(NSColorSpace), alloc]
     }
 
-    unsafe fn initWithCGColorSpace_(self, cg_color_space: *const c_void) -> id {
-        msg_send![self, initWithCGColorSpace: CGColorSpaceRef(cg_color_space)]
+    unsafe fn initWithCGColorSpace_(
+        self,
+        cg_color_space: *const c_void, /* (CGColorSpaceRef) */
+    ) -> id {
+        msg_send![self, initWithCGColorSpace: cg_color_space]
     }
-    unsafe fn CGColorSpace(self) -> *const c_void {
-        let res: CGColorSpaceRef = msg_send![self, CGColorSpace];
-        res.0
+    unsafe fn CGColorSpace(self) -> *const c_void /* (CGColorSpaceRef) */ {
+        msg_send![self, CGColorSpace]
     }
     unsafe fn localizedName(self) -> id {
         msg_send![self, localizedName]

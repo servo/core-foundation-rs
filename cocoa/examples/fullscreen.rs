@@ -16,7 +16,7 @@ use cocoa::foundation::{
 use core_graphics::display::CGDisplay;
 
 use objc2::declare::ClassBuilder;
-use objc2::runtime::{Object, Sel};
+use objc2::runtime::{AnyObject, Sel};
 use objc2::{class, msg_send, sel};
 
 fn main() {
@@ -50,7 +50,7 @@ fn main() {
         let mut decl = ClassBuilder::new("MyWindowDelegate", superclass).unwrap();
 
         extern "C" fn will_use_fillscreen_presentation_options(
-            _: &Object,
+            _: &AnyObject,
             _: Sel,
             _: id,
             _: NSUInteger,
@@ -63,7 +63,7 @@ fn main() {
             options.bits()
         }
 
-        extern "C" fn window_entering_fullscreen(_: &Object, _: Sel, _: id) {
+        extern "C" fn window_entering_fullscreen(_: &AnyObject, _: Sel, _: id) {
             // Reset HideDock and HideMenuBar settings during/after we entered fullscreen.
             let options = NSApplicationPresentationOptions::NSApplicationPresentationHideDock
                 | NSApplicationPresentationOptions::NSApplicationPresentationHideMenuBar;

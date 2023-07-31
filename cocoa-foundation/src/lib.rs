@@ -8,6 +8,7 @@
 // except according to those terms.
 
 #![allow(non_snake_case)]
+#![allow(deprecated)] // TODO(madsmtm): Remove this
 
 extern crate block2;
 #[macro_use]

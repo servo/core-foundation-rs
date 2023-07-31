@@ -9,7 +9,9 @@
 
 use objc2::runtime;
 
-pub use objc2::runtime::{BOOL, NO, YES};
+pub type BOOL = runtime::BOOL;
+pub const NO: BOOL = runtime::NO;
+pub const YES: BOOL = runtime::YES;
 
 pub type Class = *mut runtime::Class;
 #[allow(non_camel_case_types)]

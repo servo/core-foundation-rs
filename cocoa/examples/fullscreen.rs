@@ -1,7 +1,5 @@
 extern crate cocoa;
 extern crate core_graphics;
-
-#[macro_use]
 extern crate objc2;
 
 use cocoa::appkit::{
@@ -17,8 +15,9 @@ use cocoa::foundation::{
 
 use core_graphics::display::CGDisplay;
 
-use objc2::declare::ClassDecl;
+use objc2::declare::ClassBuilder;
 use objc2::runtime::{Object, Sel};
+use objc2::{class, msg_send, sel};
 
 fn main() {
     unsafe {
@@ -48,7 +47,7 @@ fn main() {
 
         // Create NSWindowDelegate
         let superclass = class!(NSObject);
-        let mut decl = ClassDecl::new("MyWindowDelegate", superclass).unwrap();
+        let mut decl = ClassBuilder::new("MyWindowDelegate", superclass).unwrap();
 
         extern "C" fn will_use_fillscreen_presentation_options(
             _: &Object,

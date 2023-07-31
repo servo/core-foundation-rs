@@ -2,7 +2,7 @@ extern crate cocoa;
 extern crate objc2;
 
 use cocoa::base::{nil, selector, NO};
-use objc2::*;
+use objc2::msg_send;
 
 use cocoa::appkit::{
     NSApp, NSApplication, NSApplicationActivationPolicyRegular, NSBackingStoreType, NSColor,

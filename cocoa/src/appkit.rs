@@ -2378,7 +2378,7 @@ impl NSOpenGLPixelFormat for id {
     // Creating an NSOpenGLPixelFormat Object
 
     unsafe fn initWithAttributes_(self, attributes: &[u32]) -> id {
-        msg_send![self, initWithAttributes: attributes]
+        msg_send![self, initWithAttributes:attributes.as_ptr()]
     }
 
     // Managing the Pixel Format

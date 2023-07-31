@@ -244,7 +244,7 @@ pub fn new_ui_font_for_language(
     unsafe {
         let font_ref = CTFontCreateUIFontForLanguage(
             ui_type,
-            size,
+            size as CGFloat,
             language
                 .as_ref()
                 .map(|x| x.as_concrete_TypeRef())

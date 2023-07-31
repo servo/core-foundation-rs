@@ -240,7 +240,8 @@ impl NSProcessInfo for id {
     }
 
     unsafe fn isOperatingSystemAtLeastVersion(self, version: NSOperatingSystemVersion) -> bool {
-        msg_send![self, isOperatingSystemAtLeastVersion: version]
+        let res: BOOL = msg_send![self, isOperatingSystemAtLeastVersion: version];
+        res != NO
     }
 }
 
@@ -657,9 +658,9 @@ impl NSString for id {
 
     unsafe fn init_str(self, string: &str) -> id {
         msg_send![self,
-                  initWithBytes:string.as_ptr()
+                  initWithBytes:string.as_ptr() as *const c_void
                       length:string.len()
-                      encoding:UTF8_ENCODING as id]
+                      encoding:UTF8_ENCODING]
     }
 
     unsafe fn len(self) -> usize {

@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate objc2;
-extern crate block;
+extern crate block2;
 extern crate cocoa_foundation;
 
 #[cfg(test)]
@@ -108,7 +108,7 @@ mod foundation {
     }
 
     mod nsdictionary {
-        use block::ConcreteBlock;
+        use block2::ConcreteBlock;
         use cocoa_foundation::base::{id, nil};
         use cocoa_foundation::foundation::{
             NSArray, NSComparisonResult, NSDictionary, NSFastEnumeration, NSString,

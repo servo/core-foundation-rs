@@ -10,7 +10,7 @@
 #![allow(non_upper_case_globals)]
 
 use base::{id, BOOL, SEL};
-use block::Block;
+use block2::Block;
 use foundation::{
     NSInteger, NSPoint, NSRange, NSRect, NSRectEdge, NSSize, NSTimeInterval, NSUInteger,
 };

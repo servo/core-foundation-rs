@@ -9,7 +9,7 @@
 
 #![allow(non_snake_case)]
 
-extern crate block;
+extern crate block2;
 #[macro_use]
 extern crate bitflags;
 extern crate core_foundation;

@@ -12,7 +12,7 @@ license = "MIT OR Apache-2.0"
 default-target = "x86_64-apple-darwin"
 
 [dependencies]
-block = { version = "=0.2.0-alpha.8", package = "block2" }
+block2 = "=0.2.0-alpha.8"
 bitflags = "1.0"
 libc = "0.2"
 core-foundation = { path = "../core-foundation", version = "0.9" }

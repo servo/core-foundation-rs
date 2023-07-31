@@ -1357,7 +1357,7 @@ impl CARenderer {
 // You can't actually construct any `CATransaction` objects, so that class is
 // really just a module.
 pub mod transaction {
-    use block::{Block, ConcreteBlock, IntoConcreteBlock, RcBlock};
+    use block2::{Block, ConcreteBlock, IntoConcreteBlock, RcBlock};
     use core_foundation::base::TCFType;
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;

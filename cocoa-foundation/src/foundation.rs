@@ -10,7 +10,7 @@
 #![allow(non_upper_case_globals)]
 
 use base::{id, nil, BOOL, NO, SEL};
-use block::Block;
+use block2::Block;
 use libc;
 use objc2::encode::{Encode, Encoding, RefEncode};
 use std::os::raw::c_void;

@@ -73,7 +73,7 @@ fn main() {
         blurred_view.setState_(NSVisualEffectState::FollowsWindowActiveState);
         blurred_view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable);
 
-        let _: () = msg_send![ns_view, addSubview: blurred_view positioned: NSWindowOrderingMode::NSWindowBelow relativeTo: 0];
+        let _: () = msg_send![ns_view, addSubview: blurred_view positioned: NSWindowOrderingMode::NSWindowBelow relativeTo: nil];
 
         app.run();
     }

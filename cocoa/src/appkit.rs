@@ -14,6 +14,7 @@ use block2::Block;
 use foundation::{
     NSInteger, NSPoint, NSRange, NSRect, NSRectEdge, NSSize, NSTimeInterval, NSUInteger,
 };
+use objc2::encode::{Encode, Encoding};
 use libc;
 
 pub use core_graphics::base::CGFloat;
@@ -426,18 +427,18 @@ impl_Encode!(NSBezelStyle, u64);
 
 // https://developer.apple.com/documentation/appkit/nsvisualeffectview/blendingmode
 #[allow(dead_code)]
-#[repr(u64)]
+#[repr(isize)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSVisualEffectBlendingMode {
     BehindWindow = 0,
     WithinWindow = 1,
 }
 
-impl_Encode!(NSVisualEffectBlendingMode, u64);
+impl_Encode!(NSVisualEffectBlendingMode, isize);
 
 // https://developer.apple.com/documentation/appkit/nsvisualeffectview/state
 #[allow(dead_code)]
-#[repr(u64)]
+#[repr(isize)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSVisualEffectState {
     FollowsWindowActiveState = 0,
@@ -445,10 +446,10 @@ pub enum NSVisualEffectState {
     Inactive = 2,
 }
 
-impl_Encode!(NSVisualEffectState, u64);
+impl_Encode!(NSVisualEffectState, isize);
 
 /// <https://developer.apple.com/documentation/appkit/nsvisualeffectview/material>
-#[repr(u64)]
+#[repr(isize)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum NSVisualEffectMaterial {
     /// A default material for the view's effectiveAppearance.
@@ -484,7 +485,7 @@ pub enum NSVisualEffectMaterial {
     UnderPageBackground = 22,
 }
 
-impl_Encode!(NSVisualEffectMaterial, u64);
+impl_Encode!(NSVisualEffectMaterial, isize);
 
 // macOS 10.10+ - https://developer.apple.com/documentation/appkit/nsvisualeffectview
 #[allow(non_snake_case)]
@@ -587,7 +588,7 @@ pub trait NSApplication: Sized {
 
     unsafe fn mainMenu(self) -> id;
     unsafe fn setActivationPolicy_(self, policy: NSApplicationActivationPolicy) -> BOOL;
-    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> BOOL;
+    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions);
     unsafe fn presentationOptions_(self) -> NSApplicationPresentationOptions;
     unsafe fn setMainMenu_(self, menu: id);
     unsafe fn setServicesMenu_(self, menu: id);
@@ -618,7 +619,7 @@ impl NSApplication for id {
         msg_send![self, setActivationPolicy: policy as NSInteger]
     }
 
-    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) -> BOOL {
+    unsafe fn setPresentationOptions_(self, options: NSApplicationPresentationOptions) {
         msg_send![self, setPresentationOptions:options.bits]
     }
 
@@ -4580,6 +4581,13 @@ pub trait NSColorSpace: Sized {
     unsafe fn localizedName(self) -> id;
 }
 
+#[repr(transparent)]
+struct CGColorSpaceRef(*const c_void);
+
+unsafe impl Encode for CGColorSpaceRef {
+    const ENCODING: Encoding = Encoding::Pointer(&Encoding::Struct("CGColorSpace", &[]));
+}
+
 impl NSColorSpace for id {
     unsafe fn deviceRGBColorSpace(_: Self) -> id {
         msg_send![class!(NSColorSpace), deviceRGBColorSpace]
@@ -4624,12 +4632,13 @@ impl NSColorSpace for id {
 
     unsafe fn initWithCGColorSpace_(
         self,
-        cg_color_space: *const c_void, /* (CGColorSpaceRef) */
+        cg_color_space: *const c_void,
     ) -> id {
-        msg_send![self, initWithCGColorSpace: cg_color_space]
+        msg_send![self, initWithCGColorSpace: CGColorSpaceRef(cg_color_space)]
     }
-    unsafe fn CGColorSpace(self) -> *const c_void /* (CGColorSpaceRef) */ {
-        msg_send![self, CGColorSpace]
+    unsafe fn CGColorSpace(self) -> *const c_void {
+        let res: CGColorSpaceRef = msg_send![self, CGColorSpace];
+        res.0
     }
     unsafe fn localizedName(self) -> id {
         msg_send![self, localizedName]

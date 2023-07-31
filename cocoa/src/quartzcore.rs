@@ -29,6 +29,38 @@ use appkit::CGLContextObj;
 use base::{id, nil, BOOL, YES};
 use foundation::NSUInteger;
 
+// Helper utilities for non-Encode types
+
+trait AsId {
+    fn as_id(&self) -> id;
+}
+
+impl<T: ?Sized + TCFType> AsId for T {
+    fn as_id(&self) -> id {
+        self.as_CFTypeRef() as *mut _
+    }
+}
+
+fn array_ref(obj: id) -> CFArrayRef {
+    obj.cast()
+}
+
+fn dictionary_ref(obj: id) -> CFDictionaryRef {
+    obj.cast()
+}
+
+fn string_ref(obj: id) -> CFStringRef {
+    obj.cast()
+}
+
+fn color_ref(obj: id) -> SysCGColorRef {
+    obj.cast()
+}
+
+fn path_ref(obj: id) -> SysCGPathRef {
+    obj.cast()
+}
+
 // CABase.h
 
 pub fn current_media_time() -> CFTimeInterval {
@@ -89,13 +121,13 @@ impl CALayer {
 
     #[inline]
     pub fn default_value_for_key(key: &CFString) -> id {
-        unsafe { msg_send![class!(CALayer), defaultValueForKey:(key.as_CFTypeRef())] }
+        unsafe { msg_send![class!(CALayer), defaultValueForKey: key.as_id()] }
     }
 
     #[inline]
     pub fn needs_display_for_key(key: &CFString) -> bool {
         unsafe {
-            let flag: BOOL = msg_send![class!(CALayer), needsDisplayForKey:(key.as_CFTypeRef())];
+            let flag: BOOL = msg_send![class!(CALayer), needsDisplayForKey: key.as_id()];
             flag == YES
         }
     }
@@ -103,8 +135,7 @@ impl CALayer {
     #[inline]
     pub fn should_archive_value_for_key(key: &CFString) -> bool {
         unsafe {
-            let flag: BOOL =
-                msg_send![class!(CALayer), shouldArchiveValueForKey:(key.as_CFTypeRef())];
+            let flag: BOOL = msg_send![class!(CALayer), shouldArchiveValueForKey: key.as_id()];
             flag == YES
         }
     }
@@ -256,7 +287,7 @@ impl CALayer {
     #[inline]
     pub fn sublayers(&self) -> CFArray<CALayer> {
         unsafe {
-            let sublayers: CFArrayRef = msg_send![self.id(), sublayers];
+            let sublayers = array_ref(msg_send![self.id(), sublayers]);
             TCFType::wrap_under_create_rule(sublayers)
         }
     }
@@ -448,7 +479,7 @@ impl CALayer {
     #[inline]
     pub fn contents_gravity(&self) -> ContentsGravity {
         unsafe {
-            let string: CFStringRef = msg_send![self.id(), contentsGravity];
+            let string = string_ref(msg_send![self.id(), contentsGravity]);
             ContentsGravity::from_CFString(TCFType::wrap_under_create_rule(string))
         }
     }
@@ -457,7 +488,7 @@ impl CALayer {
     pub fn set_contents_gravity(&self, new_contents_gravity: ContentsGravity) {
         unsafe {
             let contents_gravity: CFString = new_contents_gravity.into_CFString();
-            msg_send![self.id(), setContentsGravity:contents_gravity.as_CFTypeRef()]
+            msg_send![self.id(), setContentsGravity: contents_gravity.as_id()]
         }
     }
 
@@ -484,7 +515,7 @@ impl CALayer {
     #[inline]
     pub fn contents_format(&self) -> ContentsFormat {
         unsafe {
-            let string: CFStringRef = msg_send![self.id(), contentsFormat];
+            let string = string_ref(msg_send![self.id(), contentsFormat]);
             ContentsFormat::from_CFString(TCFType::wrap_under_create_rule(string))
         }
     }
@@ -493,14 +524,14 @@ impl CALayer {
     pub fn set_contents_format(&self, new_contents_format: ContentsFormat) {
         unsafe {
             let contents_format: CFString = new_contents_format.into_CFString();
-            msg_send![self.id(), setContentsFormat:contents_format.as_CFTypeRef()]
+            msg_send![self.id(), setContentsFormat: contents_format.as_id()]
         }
     }
 
     #[inline]
     pub fn minification_filter(&self) -> Filter {
         unsafe {
-            let string: CFStringRef = msg_send![self.id(), minificationFilter];
+            let string = string_ref(msg_send![self.id(), minificationFilter]);
             Filter::from_CFString(TCFType::wrap_under_create_rule(string))
         }
     }
@@ -509,14 +540,14 @@ impl CALayer {
     pub fn set_minification_filter(&self, new_filter: Filter) {
         unsafe {
             let filter: CFString = new_filter.into_CFString();
-            msg_send![self.id(), setMinificationFilter:filter.as_CFTypeRef()]
+            msg_send![self.id(), setMinificationFilter: filter.as_id()]
         }
     }
 
     #[inline]
     pub fn magnification_filter(&self) -> Filter {
         unsafe {
-            let string: CFStringRef = msg_send![self.id(), magnificationFilter];
+            let string = string_ref(msg_send![self.id(), magnificationFilter]);
             Filter::from_CFString(TCFType::wrap_under_create_rule(string))
         }
     }
@@ -525,7 +556,7 @@ impl CALayer {
     pub fn set_magnification_filter(&self, new_filter: Filter) {
         unsafe {
             let filter: CFString = new_filter.into_CFString();
-            msg_send![self.id(), setMagnificationFilter:filter.as_CFTypeRef()]
+            msg_send![self.id(), setMagnificationFilter: filter.as_id()]
         }
     }
 
@@ -608,12 +639,14 @@ impl CALayer {
 
     #[inline]
     pub fn draw_in_context(&self, context: &CGContext) {
-        unsafe { msg_send![self.id(), drawInContext:(*context).as_ptr()] }
+        let context: id = (*context).as_ptr().cast();
+        unsafe { msg_send![self.id(), drawInContext: context] }
     }
 
     #[inline]
     pub fn render_in_context(&self, context: &CGContext) {
-        unsafe { msg_send![self.id(), renderInContext:(*context).as_ptr()] }
+        let context: id = (*context).as_ptr().cast();
+        unsafe { msg_send![self.id(), renderInContext: context] }
     }
 
     #[inline]
@@ -631,7 +664,7 @@ impl CALayer {
     #[inline]
     pub fn background_color(&self) -> Option<CGColor> {
         unsafe {
-            let color: SysCGColorRef = msg_send![self.id(), backgroundColor];
+            let color = color_ref(msg_send![self.id(), backgroundColor]);
             if color.is_null() {
                 None
             } else {
@@ -644,8 +677,8 @@ impl CALayer {
     pub fn set_background_color(&self, color: Option<CGColor>) {
         unsafe {
             let color = match color {
-                None => ptr::null(),
-                Some(color) => color.as_CFTypeRef(),
+                None => ptr::null_mut(),
+                Some(color) => color.as_id(),
             };
             msg_send![self.id(), setBackgroundColor: color]
         }
@@ -684,7 +717,7 @@ impl CALayer {
     #[inline]
     pub fn border_color(&self) -> Option<CGColor> {
         unsafe {
-            let color: SysCGColorRef = msg_send![self.id(), borderColor];
+            let color = color_ref(msg_send![self.id(), borderColor]);
             if color.is_null() {
                 None
             } else {
@@ -697,8 +730,8 @@ impl CALayer {
     pub fn set_border_color(&self, color: Option<CGColor>) {
         unsafe {
             let color = match color {
-                None => ptr::null(),
-                Some(color) => color.as_CFTypeRef(),
+                None => ptr::null_mut(),
+                Some(color) => color.as_id(),
             };
             msg_send![self.id(), setBorderColor: color]
         }
@@ -726,7 +759,7 @@ impl CALayer {
 
     #[inline]
     pub unsafe fn filters(&self) -> Option<CFArray> {
-        let filters: CFArrayRef = msg_send![self.id(), filters];
+        let filters = array_ref(msg_send![self.id(), filters]);
         if filters.is_null() {
             None
         } else {
@@ -736,16 +769,16 @@ impl CALayer {
 
     #[inline]
     pub unsafe fn set_filters(&self, filters: Option<CFArray>) {
-        let filters: CFTypeRef = match filters {
-            Some(ref filters) => filters.as_CFTypeRef(),
-            None => ptr::null(),
+        let filters = match filters {
+            Some(ref filters) => filters.as_id(),
+            None => ptr::null_mut(),
         };
         msg_send![self.id(), setFilters: filters]
     }
 
     #[inline]
     pub unsafe fn background_filters(&self) -> Option<CFArray> {
-        let filters: CFArrayRef = msg_send![self.id(), backgroundFilters];
+        let filters = array_ref(msg_send![self.id(), backgroundFilters]);
         if filters.is_null() {
             None
         } else {
@@ -755,9 +788,9 @@ impl CALayer {
 
     #[inline]
     pub unsafe fn set_background_filters(&self, filters: Option<CFArray>) {
-        let filters: CFTypeRef = match filters {
-            Some(ref filters) => filters.as_CFTypeRef(),
-            None => ptr::null(),
+        let filters = match filters {
+            Some(ref filters) => filters.as_id(),
+            None => ptr::null_mut(),
         };
         msg_send![self.id(), setBackgroundFilters: filters]
     }
@@ -790,7 +823,7 @@ impl CALayer {
     #[inline]
     pub fn shadow_color(&self) -> Option<CGColor> {
         unsafe {
-            let color: SysCGColorRef = msg_send![self.id(), shadowColor];
+            let color = color_ref(msg_send![self.id(), shadowColor]);
             if color.is_null() {
                 None
             } else {
@@ -803,8 +836,8 @@ impl CALayer {
     pub fn set_shadow_color(&self, color: Option<CGColor>) {
         unsafe {
             let color = match color {
-                None => ptr::null(),
-                Some(color) => color.as_CFTypeRef(),
+                None => ptr::null_mut(),
+                Some(color) => color.as_id(),
             };
             msg_send![self.id(), setShadowColor: color]
         }
@@ -843,7 +876,7 @@ impl CALayer {
     #[inline]
     pub fn shadow_path(&self) -> Option<CGPath> {
         unsafe {
-            let path: SysCGPathRef = msg_send![self.id(), shadowPath];
+            let path = path_ref(msg_send![self.id(), shadowPath]);
             if path.is_null() {
                 None
             } else {
@@ -855,9 +888,9 @@ impl CALayer {
     #[inline]
     pub fn set_shadow_path(&self, path: Option<CGPath>) {
         unsafe {
-            let sys_path_ref = match path {
-                None => ptr::null(),
-                Some(path) => path.as_ptr(),
+            let sys_path_ref: id = match path {
+                None => ptr::null_mut(),
+                Some(path) => path.as_ptr().cast(),
             };
             msg_send![self.id(), setShadowPath: sys_path_ref]
         }
@@ -929,7 +962,7 @@ impl CALayer {
     pub fn default_action_for_key(event: &str) -> id {
         unsafe {
             let event: CFString = CFString::from(event);
-            msg_send![class!(CALayer), defaultActionForKey:event.as_CFTypeRef()]
+            msg_send![class!(CALayer), defaultActionForKey: event.as_id()]
         }
     }
 
@@ -937,29 +970,29 @@ impl CALayer {
     pub fn action_for_key(&self, event: &str) -> id {
         unsafe {
             let event: CFString = CFString::from(event);
-            msg_send![self.id(), actionForKey:event.as_CFTypeRef()]
+            msg_send![self.id(), actionForKey: event.as_id()]
         }
     }
 
     #[inline]
     pub fn actions(&self) -> CFDictionary<CFStringRef, CFTypeRef> {
-        unsafe { CFDictionary::wrap_under_get_rule(msg_send![self.id(), actions]) }
+        unsafe { CFDictionary::wrap_under_get_rule(dictionary_ref(msg_send![self.id(), actions])) }
     }
 
     #[inline]
     pub unsafe fn set_actions(&self, actions: CFDictionary<CFStringRef, CFTypeRef>) {
-        msg_send![self.id(), setActions: actions.as_concrete_TypeRef()]
+        msg_send![self.id(), setActions: actions.as_id()]
     }
 
     // TODO(pcwalton): Wrap `CAAnimation`.
     #[inline]
     pub unsafe fn add_animation_for_key(&self, animation: id, for_key: Option<&str>) {
         let for_key: Option<CFString> = for_key.map(CFString::from);
-        let for_key: CFTypeRef = match for_key {
-            Some(ref for_key) => for_key.as_CFTypeRef(),
-            None => ptr::null(),
+        let for_key = match for_key {
+            Some(ref for_key) => for_key.as_id(),
+            None => ptr::null_mut(),
         };
-        msg_send![self.id(), addAnimation:animation forKey:for_key]
+        msg_send![self.id(), addAnimation: animation forKey: for_key]
     }
 
     #[inline]
@@ -971,14 +1004,14 @@ impl CALayer {
     pub fn remove_animation_for_key(&self, key: &str) {
         unsafe {
             let key = CFString::from(key);
-            msg_send![self.id(), removeAnimationForKey:key.as_CFTypeRef()]
+            msg_send![self.id(), removeAnimationForKey: key.as_id()]
         }
     }
 
     #[inline]
     pub fn animation_keys(&self) -> Vec<String> {
         unsafe {
-            let keys: CFArrayRef = msg_send![self.id(), animationKeys];
+            let keys = array_ref(msg_send![self.id(), animationKeys]);
             let keys: CFArray = TCFType::wrap_under_create_rule(keys);
             keys.into_iter()
                 .map(|string| CFString::wrap_under_get_rule(*string as CFStringRef).to_string())
@@ -990,7 +1023,7 @@ impl CALayer {
     pub fn animation_for_key(&self, key: &str) -> id {
         unsafe {
             let key = CFString::from(key);
-            msg_send![self.id(), animationForKey:key.as_CFTypeRef()]
+            msg_send![self.id(), animationForKey: key.as_id()]
         }
     }
 
@@ -999,7 +1032,7 @@ impl CALayer {
     #[inline]
     pub fn name(&self) -> String {
         unsafe {
-            let name: CFStringRef = msg_send![self.id(), name];
+            let name = string_ref(msg_send![self.id(), name]);
             CFString::wrap_under_get_rule(name).to_string()
         }
     }
@@ -1008,7 +1041,7 @@ impl CALayer {
     pub fn set_name(&self, name: &str) {
         unsafe {
             let name = CFString::from(name);
-            msg_send![self.id(), setName:name.as_CFTypeRef()]
+            msg_send![self.id(), setName: name.as_id()]
         }
     }
 
@@ -1025,7 +1058,7 @@ impl CALayer {
     #[inline]
     pub fn style(&self) -> Option<CFDictionary> {
         unsafe {
-            let dictionary: CFDictionaryRef = msg_send![self.id(), style];
+            let dictionary = dictionary_ref(msg_send![self.id(), style]);
             if dictionary.is_null() {
                 None
             } else {
@@ -1038,8 +1071,8 @@ impl CALayer {
     pub fn set_style(&self, dictionary: Option<CFDictionary>) {
         unsafe {
             let dictionary = match dictionary {
-                None => ptr::null(),
-                Some(ref dictionary) => dictionary.as_CFTypeRef(),
+                None => ptr::null_mut(),
+                Some(ref dictionary) => dictionary.as_id(),
             };
             msg_send![self.id(), setStyle: dictionary]
         }
@@ -1051,7 +1084,7 @@ impl CALayer {
     pub fn reload_value_for_key_path(&self, key: &str) {
         unsafe {
             let key = CFString::from(key);
-            msg_send![self.id(), reloadValueForKeyPath:key.as_CFTypeRef()]
+            msg_send![self.id(), reloadValueForKeyPath: key.as_id()]
         }
     }
 
@@ -1252,8 +1285,8 @@ impl CARenderer {
 
         let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
 
-        let renderer: id = msg_send![class!(CARenderer), rendererWithCGLContext:context
-                                                         options:options.as_CFTypeRef()];
+        let renderer: id = msg_send![class!(CARenderer), rendererWithCGLContext: context
+                                                         options: options.as_id()];
         debug_assert!(renderer != nil);
         CARenderer(renderer)
     }
@@ -1277,8 +1310,8 @@ impl CARenderer {
 
         let options: CFDictionary<CFString, CFType> = CFDictionary::from_CFType_pairs(&pairs);
 
-        let renderer: id = msg_send![class!(CARenderer), rendererWithMTLTexture:metal_texture
-                                                         options:options.as_CFTypeRef()];
+        let renderer: id = msg_send![class!(CARenderer), rendererWithMTLTexture: metal_texture
+                                                         options: options.as_id()];
         debug_assert!(renderer != nil);
         CARenderer(renderer)
     }
@@ -1358,10 +1391,10 @@ impl CARenderer {
 // really just a module.
 pub mod transaction {
     use block2::{Block, ConcreteBlock, IntoConcreteBlock, RcBlock};
-    use core_foundation::base::TCFType;
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
 
+    use super::AsId;
     use base::{id, BOOL, YES};
 
     #[inline]
@@ -1450,7 +1483,7 @@ pub mod transaction {
     pub fn value_for_key(key: &str) -> id {
         unsafe {
             let key: CFString = CFString::from(key);
-            msg_send![class!(CATransaction), valueForKey: key.as_concrete_TypeRef()]
+            msg_send![class!(CATransaction), valueForKey: key.as_id()]
         }
     }
 
@@ -1458,7 +1491,7 @@ pub mod transaction {
     pub fn set_value_for_key(value: id, key: &str) {
         unsafe {
             let key: CFString = CFString::from(key);
-            msg_send![class!(CATransaction), setValue: value forKey: key.as_concrete_TypeRef()]
+            msg_send![class!(CATransaction), setValue: value forKey: key.as_id()]
         }
     }
 }

@@ -19,10 +19,6 @@ pub struct __CFAttributedString(c_void);
 pub type CFAttributedStringRef = *const __CFAttributedString;
 pub type CFMutableAttributedStringRef = *mut __CFAttributedString;
 
-unsafe impl ::objc2::encode::RefEncode for __CFAttributedString {
-    const ENCODING_REF: ::objc2::encode::Encoding = ::objc2::encode::Encoding::Object;
-}
-
 extern "C" {
     /*
      * CFAttributedString.h

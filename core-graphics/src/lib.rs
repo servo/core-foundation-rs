@@ -8,7 +8,6 @@
 // except according to those terms.
 
 extern crate libc;
-extern crate objc2;
 
 #[macro_use]
 extern crate core_foundation;

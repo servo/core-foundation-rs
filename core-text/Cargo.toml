@@ -7,6 +7,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/servo/core-foundation-rs"
 
 [package.metadata.docs.rs]
+all-features = true
 default-target = "x86_64-apple-darwin"
 
 [features]

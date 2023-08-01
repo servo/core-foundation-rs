@@ -10,17 +10,19 @@
 #![crate_name = "cocoa"]
 #![crate_type = "rlib"]
 #![allow(non_snake_case)]
+#![allow(deprecated)] // TODO(madsmtm): Remove this
 
-extern crate block;
+extern crate block2;
 #[macro_use]
 extern crate bitflags;
+#[macro_use]
 extern crate cocoa_foundation;
 extern crate core_foundation;
 extern crate core_graphics;
 extern crate foreign_types;
 extern crate libc;
 #[macro_use]
-extern crate objc;
+extern crate objc2;
 
 #[cfg(target_os = "macos")]
 pub mod appkit;

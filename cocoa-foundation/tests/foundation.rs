@@ -1,6 +1,6 @@
 #[macro_use]
-extern crate objc;
-extern crate block;
+extern crate objc2;
+extern crate block2;
 extern crate cocoa_foundation;
 
 #[cfg(test)]
@@ -108,7 +108,7 @@ mod foundation {
     }
 
     mod nsdictionary {
-        use block::ConcreteBlock;
+        use block2::ConcreteBlock;
         use cocoa_foundation::base::{id, nil};
         use cocoa_foundation::foundation::{
             NSArray, NSComparisonResult, NSDictionary, NSFastEnumeration, NSString,
@@ -164,16 +164,18 @@ mod foundation {
                 }
 
                 // First test cocoa sorting...
-                let mut comparator =
+                let comparator =
                     ConcreteBlock::new(|s0: id, s1: id| match compare_function(&s0, &s1) {
                         Ordering::Less => NSComparisonResult::NSOrderedAscending,
                         Ordering::Equal => NSComparisonResult::NSOrderedSame,
                         Ordering::Greater => NSComparisonResult::NSOrderedDescending,
                     });
+                let comparator_ptr: *const _ = &*comparator;
+                let comparator_ptr = comparator_ptr as *mut _;
 
                 let associated_iter = keys.iter().zip(objects.iter());
                 for (k_id, (k, v)) in dict
-                    .keysSortedByValueUsingComparator_(&mut *comparator)
+                    .keysSortedByValueUsingComparator_(comparator_ptr)
                     .iter()
                     .zip(associated_iter)
                 {

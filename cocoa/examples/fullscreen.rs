@@ -1,8 +1,6 @@
 extern crate cocoa;
 extern crate core_graphics;
-
-#[macro_use]
-extern crate objc;
+extern crate objc2;
 
 use cocoa::appkit::{
     NSApp, NSApplication, NSApplicationActivateIgnoringOtherApps,
@@ -17,8 +15,9 @@ use cocoa::foundation::{
 
 use core_graphics::display::CGDisplay;
 
-use objc::declare::ClassDecl;
-use objc::runtime::{Object, Sel};
+use objc2::declare::ClassBuilder;
+use objc2::runtime::{AnyObject, Sel};
+use objc2::{class, msg_send, sel};
 
 fn main() {
     unsafe {
@@ -48,10 +47,10 @@ fn main() {
 
         // Create NSWindowDelegate
         let superclass = class!(NSObject);
-        let mut decl = ClassDecl::new("MyWindowDelegate", superclass).unwrap();
+        let mut decl = ClassBuilder::new("MyWindowDelegate", superclass).unwrap();
 
         extern "C" fn will_use_fillscreen_presentation_options(
-            _: &Object,
+            _: &AnyObject,
             _: Sel,
             _: id,
             _: NSUInteger,
@@ -64,7 +63,7 @@ fn main() {
             options.bits()
         }
 
-        extern "C" fn window_entering_fullscreen(_: &Object, _: Sel, _: id) {
+        extern "C" fn window_entering_fullscreen(_: &AnyObject, _: Sel, _: id) {
             // Reset HideDock and HideMenuBar settings during/after we entered fullscreen.
             let options = NSApplicationPresentationOptions::NSApplicationPresentationHideDock
                 | NSApplicationPresentationOptions::NSApplicationPresentationHideMenuBar;
@@ -75,16 +74,15 @@ fn main() {
 
         decl.add_method(
             sel!(window:willUseFullScreenPresentationOptions:),
-            will_use_fillscreen_presentation_options
-                as extern "C" fn(&Object, Sel, id, NSUInteger) -> NSUInteger,
+            will_use_fillscreen_presentation_options as extern "C" fn(_, _, _, _) -> _,
         );
         decl.add_method(
             sel!(windowWillEnterFullScreen:),
-            window_entering_fullscreen as extern "C" fn(&Object, Sel, id),
+            window_entering_fullscreen as extern "C" fn(_, _, _),
         );
         decl.add_method(
             sel!(windowDidEnterFullScreen:),
-            window_entering_fullscreen as extern "C" fn(&Object, Sel, id),
+            window_entering_fullscreen as extern "C" fn(_, _, _),
         );
 
         let delegate_class = decl.register();

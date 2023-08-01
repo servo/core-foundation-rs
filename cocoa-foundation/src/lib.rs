@@ -8,15 +8,25 @@
 // except according to those terms.
 
 #![allow(non_snake_case)]
+#![allow(deprecated)] // TODO(madsmtm): Remove this
 
-extern crate block;
+extern crate block2;
 #[macro_use]
 extern crate bitflags;
 extern crate core_foundation;
 extern crate core_graphics_types;
 extern crate libc;
 #[macro_use]
-extern crate objc;
+pub extern crate objc2;
+
+#[macro_export]
+macro_rules! impl_Encode {
+    ($t:ty, $delegation:ty) => {
+        unsafe impl $crate::objc2::encode::Encode for $t {
+            const ENCODING: $crate::objc2::encode::Encoding = <$delegation>::ENCODING;
+        }
+    };
+}
 
 pub mod base;
 pub mod foundation;

@@ -7,8 +7,6 @@ version = "0.8.6"
 authors = ["The Servo Project Developers"]
 license = "MIT OR Apache-2.0"
 
-[dependencies]
-
 [features]
 mac_os_10_7_support = [] # backwards compatibility
 mac_os_10_8_features = [] # enables new features

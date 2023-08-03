@@ -99,10 +99,10 @@ pub enum CTFontNameSpecifier {
     PostScriptCID,
 }
 
-impl Into<CFStringRef> for CTFontNameSpecifier {
-    fn into(self) -> CFStringRef {
+impl From<CTFontNameSpecifier> for CFStringRef {
+    fn from(val: CTFontNameSpecifier) -> Self {
         unsafe {
-            match self {
+            match val {
                 CTFontNameSpecifier::Copyright => kCTFontCopyrightNameKey,
                 CTFontNameSpecifier::Family => kCTFontFamilyNameKey,
                 CTFontNameSpecifier::SubFamily => kCTFontSubFamilyNameKey,
@@ -803,7 +803,7 @@ fn macos_version() -> (i32, i32, i32) {
         .to_string();
 
     match version
-        .split(".")
+        .split('.')
         .map(|x| x.parse().unwrap())
         .collect::<Vec<_>>()[..]
     {
@@ -1007,21 +1007,19 @@ fn equal_descriptor_different_font() {
                     from_font_desc.attributes().to_untyped(),
                     resized_font_desc.attributes().to_untyped()
                 );
+            } else if macos_version() >= (10, 13, 0) {
+                // this is unsurprising
+                assert_ne!(from_font_desc, resized_font_desc);
+                assert_ne!(
+                    from_font_desc.attributes().to_untyped(),
+                    resized_font_desc.attributes().to_untyped()
+                );
             } else {
-                if macos_version() >= (10, 13, 0) {
-                    // this is unsurprising
-                    assert_ne!(from_font_desc, resized_font_desc);
-                    assert_ne!(
-                        from_font_desc.attributes().to_untyped(),
-                        resized_font_desc.attributes().to_untyped()
-                    );
-                } else {
-                    assert_ne!(from_font_desc, resized_font_desc);
-                    assert_eq!(
-                        from_font_desc.attributes().to_untyped(),
-                        resized_font_desc.attributes().to_untyped()
-                    );
-                }
+                assert_ne!(from_font_desc, resized_font_desc);
+                assert_eq!(
+                    from_font_desc.attributes().to_untyped(),
+                    resized_font_desc.attributes().to_untyped()
+                );
             }
         }
 

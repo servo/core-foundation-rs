@@ -127,7 +127,7 @@ foreign_type! {
 impl CGDisplay {
     #[inline]
     pub fn new(id: CGDirectDisplayID) -> CGDisplay {
-        CGDisplay { id: id }
+        CGDisplay { id }
     }
 
     /// Returns the the main display.
@@ -462,8 +462,7 @@ impl CGDisplay {
     pub fn active_displays() -> Result<Vec<CGDirectDisplayID>, CGError> {
         let count = CGDisplay::active_display_count()?;
         let mut buf: Vec<CGDirectDisplayID> = vec![0; count as usize];
-        let result =
-            unsafe { CGGetActiveDisplayList(count as u32, buf.as_mut_ptr(), ptr::null_mut()) };
+        let result = unsafe { CGGetActiveDisplayList(count, buf.as_mut_ptr(), ptr::null_mut()) };
         if result == 0 {
             Ok(buf)
         } else {
@@ -477,7 +476,7 @@ impl CGDisplay {
         let mut count: u32 = 0;
         let result = unsafe { CGGetActiveDisplayList(0, ptr::null_mut(), &mut count) };
         if result == 0 {
-            Ok(count as u32)
+            Ok(count)
         } else {
             Err(result)
         }
@@ -603,7 +602,7 @@ impl CGDisplayMode {
     /// Returns the I/O Kit flags of the specified display mode.
     #[inline]
     pub fn io_flags(&self) -> u32 {
-        unsafe { CGDisplayModeGetIOFlags(self.as_ptr()) as u32 }
+        unsafe { CGDisplayModeGetIOFlags(self.as_ptr()) }
     }
 
     /// Returns the pixel encoding of the specified display mode.

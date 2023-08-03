@@ -83,7 +83,7 @@ pub struct CGPathElementRef<'a> {
 impl<'a> CGPathElementRef<'a> {
     fn new<'b>(element: *const CGPathElement) -> CGPathElementRef<'b> {
         CGPathElementRef {
-            element: element,
+            element,
             phantom: PhantomData,
         }
     }

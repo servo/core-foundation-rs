@@ -31,7 +31,7 @@ impl CGSRegion {
         unsafe {
             let mut region = ptr::null_mut();
             assert!(ffi::CGSNewRegionWithRect(rect, &mut region) == 0);
-            CGSRegion { region: region }
+            CGSRegion { region }
         }
     }
 
@@ -43,7 +43,7 @@ impl CGSRegion {
                 ffi::CGSNewRegionWithRectList(rects.as_ptr(), rects.len() as c_uint, &mut region)
                     == 0
             );
-            CGSRegion { region: region }
+            CGSRegion { region }
         }
     }
 }
@@ -59,9 +59,9 @@ impl CGSSurface {
     #[inline]
     pub fn from_ids(context_id: c_uint, window_number: c_int, surface_id: c_uint) -> CGSSurface {
         CGSSurface {
-            context_id: context_id,
-            window_number: window_number,
-            surface_id: surface_id,
+            context_id,
+            window_number,
+            surface_id,
         }
     }
 

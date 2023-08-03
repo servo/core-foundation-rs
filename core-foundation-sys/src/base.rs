@@ -49,9 +49,9 @@ pub type CFComparatorFunction = extern "C" fn(
     context: *mut c_void,
 ) -> CFComparisonResult;
 
-impl Into<Ordering> for CFComparisonResult {
-    fn into(self) -> Ordering {
-        match self {
+impl From<CFComparisonResult> for Ordering {
+    fn from(val: CFComparisonResult) -> Self {
+        match val {
             CFComparisonResult::LessThan => Ordering::Less,
             CFComparisonResult::EqualTo => Ordering::Equal,
             CFComparisonResult::GreaterThan => Ordering::Greater,
@@ -69,10 +69,7 @@ pub struct CFRange {
 // for back-compat
 impl CFRange {
     pub fn init(location: CFIndex, length: CFIndex) -> CFRange {
-        CFRange {
-            location: location,
-            length: length,
-        }
+        CFRange { location, length }
     }
 }
 

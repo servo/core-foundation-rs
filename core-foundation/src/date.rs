@@ -79,7 +79,7 @@ mod test {
 
         let same_sign = a.is_sign_positive() == b.is_sign_positive();
         let equal = ((a - b).abs() / f64::min(a.abs() + b.abs(), f64::MAX)) < f64::EPSILON;
-        (same_sign && equal)
+        same_sign && equal
     }
 
     #[test]

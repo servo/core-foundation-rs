@@ -182,9 +182,12 @@ impl TraitAccessors for CTFontTraits {
 * CTFontDescriptor.h
 */
 pub type CTFontOrientation = u32;
-pub const kCTFontDefaultOrientation: CTFontOrientation = 0;
-pub const kCTFontHorizontalOrientation: CTFontOrientation = 1;
-pub const kCTFontVerticalOrientation: CTFontOrientation = 2;
+pub const kCTFontDefaultOrientation: CTFontOrientation = 0; // deprecated since macOS 10.11, iOS 9
+pub const kCTFontOrientationDefault: CTFontOrientation = 0; // introduced in macOS 10.8, iOS 6
+pub const kCTFontHorizontalOrientation: CTFontOrientation = 1; // deprecated since macOS 10.11, iOS 9
+pub const kCTFontOrientationHorizontal: CTFontOrientation = 1; // introduced in macOS 10.8, iOS 6
+pub const kCTFontVerticalOrientation: CTFontOrientation = 2; // deprecated since macOS 10.11, iOS 9
+pub const kCTFontOrientationVertical: CTFontOrientation = 2; // introduced in macOS 10.8, iOS 6
 
 pub type CTFontPriority = u32;
 pub const kCTFontPrioritySystem: CTFontPriority = 10000;

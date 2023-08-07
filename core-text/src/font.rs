@@ -387,7 +387,7 @@ impl CTFont {
         advances: *mut CGSize,
         count: CFIndex,
     ) -> f64 {
-        CTFontGetAdvancesForGlyphs(self.0, orientation, glyphs, advances, count) as f64
+        CTFontGetAdvancesForGlyphs(self.0, orientation, glyphs, advances, count)
     }
 
     pub unsafe fn get_vertical_translations_for_glyphs(
@@ -980,8 +980,8 @@ fn equal_descriptor_different_font() {
 
     // but we can still construct the CGFont by name
     let create_vars = |desc| {
-        let mut vals: Vec<(CFNumber, CFNumber)> = Vec::new();
-        vals.push((CFNumber::from(0x6f70737a), CFNumber::from(17.)));
+        let vals: Vec<(CFNumber, CFNumber)> =
+            vec![(CFNumber::from(0x6f70737a), CFNumber::from(17.))];
         let vals_dict = CFDictionary::from_CFType_pairs(&vals);
         let attrs_dict =
             CFDictionary::from_CFType_pairs(&[(variation_attribute.clone(), vals_dict)]);
@@ -1081,8 +1081,8 @@ fn system_font_variation() {
     let cgfont = new_from_CGFont(&cgfont, 0.);
     let desc = cgfont.copy_descriptor();
 
-    let mut vals: Vec<(CFNumber, CFNumber)> = Vec::new();
-    vals.push((CFNumber::from(0x6f70737a /* opsz */), CFNumber::from(17.)));
+    let vals: Vec<(CFNumber, CFNumber)> =
+        vec![(CFNumber::from(0x6f70737a /* opsz */), CFNumber::from(17.))];
     let vals_dict = CFDictionary::from_CFType_pairs(&vals);
     let variation_attribute =
         unsafe { CFString::wrap_under_get_rule(font_descriptor::kCTFontVariationAttribute) };

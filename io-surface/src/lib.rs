@@ -155,7 +155,7 @@ impl IOSurface {
 
             let height = IOSurfaceGetHeight(surface);
             let stride = IOSurfaceGetBytesPerRow(surface);
-            let size = (height * stride) as usize;
+            let size = height * stride;
             let address = IOSurfaceGetBaseAddress(surface) as *mut u8;
             let dest: &mut [u8] = slice::from_raw_parts_mut(address, size);
             dest.clone_from_slice(data);

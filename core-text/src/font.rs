@@ -180,7 +180,11 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
     }
 }
 
-pub fn new_from_descriptor_and_options(desc: &CTFontDescriptor, pt_size: f64, options: CTFontOptions) -> CTFont {
+pub fn new_from_descriptor_and_options(
+    desc: &CTFontDescriptor,
+    pt_size: f64,
+    options: CTFontOptions,
+) -> CTFont {
     unsafe {
         let font_ref = CTFontCreateWithFontDescriptorAndOptions(
             desc.as_concrete_TypeRef(),
@@ -210,11 +214,19 @@ pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {
     }
 }
 
-pub fn new_from_name_and_options(name: &str, pt_size: f64, options: CTFontOptions) -> Result<CTFont, ()> {
+pub fn new_from_name_and_options(
+    name: &str,
+    pt_size: f64,
+    options: CTFontOptions,
+) -> Result<CTFont, ()> {
     unsafe {
         let name: CFString = name.parse().unwrap();
-        let font_ref =
-            CTFontCreateWithNameAndOptions(name.as_concrete_TypeRef(), pt_size as CGFloat, ptr::null(), options);
+        let font_ref = CTFontCreateWithNameAndOptions(
+            name.as_concrete_TypeRef(),
+            pt_size as CGFloat,
+            ptr::null(),
+            options,
+        );
         if font_ref.is_null() {
             Err(())
         } else {

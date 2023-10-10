@@ -177,7 +177,7 @@ impl EventField {
     pub const MOUSE_EVENT_INSTANT_MOUSER: CGEventField = 6;
 
     /// Key to access an integer field that encodes the mouse event subtype as
-    /// a `kCFNumberIntType'.
+    /// a `kCFNumberIntType`.
     pub const MOUSE_EVENT_SUB_TYPE: CGEventField = 7;
 
     /// Key to access an integer field, non-zero when this is an autorepeat of
@@ -208,7 +208,7 @@ impl EventField {
     /// since the last scrolling event from a Mighty Mouse scroller or a
     /// single-wheel mouse scroller. The scrolling data uses a fixed-point
     /// 16.16 signed integer format. If this key is passed to
-    /// `CGEventGetDoubleValueField', the fixed-point value is converted to a
+    /// `CGEventGetDoubleValueField`, the fixed-point value is converted to a
     /// double value.
     pub const SCROLL_WHEEL_EVENT_FIXED_POINT_DELTA_AXIS_1: CGEventField = 93;
 
@@ -216,7 +216,7 @@ impl EventField {
     /// represents a line-based or pixel-based change in horizontal position
     /// since the last scrolling event from a Mighty Mouse scroller. The
     /// scrolling data uses a fixed-point 16.16 signed integer format. If this
-    /// key is passed to `CGEventGetDoubleValueField', the fixed-point value is
+    /// key is passed to `CGEventGetDoubleValueField`, the fixed-point value is
     /// converted to a double value.
     pub const SCROLL_WHEEL_EVENT_FIXED_POINT_DELTA_AXIS_2: CGEventField = 94;
 

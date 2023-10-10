@@ -10,7 +10,7 @@
 /// Creates a Cocoa delegate to use e.g. with `NSWindow.setDelegate_`.
 /// Adds instance variables and methods to the definition.
 ///
-/// # Example with NSWindowDelegate
+/// # Example with `NSWindowDelegate`
 /// ``` no_run
 /// #[macro_use] extern crate cocoa;
 /// #[macro_use] extern crate objc;

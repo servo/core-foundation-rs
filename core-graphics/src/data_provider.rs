@@ -106,10 +106,10 @@ impl CGDataProviderRef {
 /// Encapsulates custom data that can be wrapped.
 pub trait CustomData {
     /// Returns a pointer to the start of the custom data. This pointer *must not change* during
-    /// the lifespan of this CustomData.
+    /// the lifespan of this `CustomData`.
     unsafe fn ptr(&self) -> *const u8;
     /// Returns the length of this custom data. This value must not change during the lifespan of
-    /// this CustomData.
+    /// this `CustomData`.
     unsafe fn len(&self) -> usize;
 }
 

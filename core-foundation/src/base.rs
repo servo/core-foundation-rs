@@ -158,7 +158,7 @@ pub trait TCFType {
     /// The reference type wrapped inside this type.
     type Ref: TCFTypeRef;
 
-    /// Returns the object as its concrete TypeRef.
+    /// Returns the object as its concrete `TypeRef`.
     fn as_concrete_TypeRef(&self) -> Self::Ref;
 
     /// Returns an instance of the object, wrapping the underlying `CFTypeRef` subclass. Use this
@@ -211,7 +211,7 @@ pub trait TCFType {
         unsafe { CFShow(self.as_CFTypeRef()) }
     }
 
-    /// Returns true if this value is an instance of another type.
+    /// Returns `true` if this value is an instance of another type.
     #[inline]
     fn instance_of<OtherCFType: TCFType>(&self) -> bool {
         self.type_of() == OtherCFType::type_id()
@@ -303,7 +303,7 @@ impl<'a, T: PartialEq> PartialEq for ItemMutRef<'a, T> {
     }
 }
 
-/// A trait describing how to convert from the stored *mut c_void to the desired T
+/// A trait describing how to convert from the stored `*mut c_void` to the desired `T`
 pub unsafe trait FromMutVoid {
     unsafe fn from_mut_void<'a>(x: *mut c_void) -> ItemMutRef<'a, Self>
     where
@@ -331,7 +331,7 @@ unsafe impl<T: TCFType> FromMutVoid for T {
     }
 }
 
-/// A trait describing how to convert from the stored *const c_void to the desired T
+/// A trait describing how to convert from the stored `*const c_void` to the desired `T`
 pub unsafe trait FromVoid {
     unsafe fn from_void<'a>(x: *const c_void) -> ItemRef<'a, Self>
     where
@@ -361,7 +361,7 @@ unsafe impl<T: TCFType> FromVoid for T {
     }
 }
 
-/// A trait describing how to convert from the stored *const c_void to the desired T
+/// A trait describing how to convert from the stored `*const c_void` to the desired `T`
 pub unsafe trait ToVoid<T> {
     fn to_void(&self) -> *const c_void;
 }

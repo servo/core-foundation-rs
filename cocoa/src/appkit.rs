@@ -31,7 +31,7 @@ pub type CGLContextObj = *mut c_void;
 
 pub type GLint = i32;
 
-#[link(name = "AppKit", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "AppKit", kind = "framework"))]
 extern "C" {
     pub static NSAppKitVersionNumber: f64;
 
@@ -3836,7 +3836,7 @@ impl NSImage for id {
     }
 }
 
-#[link(name = "AppKit", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "AppKit", kind = "framework"))]
 extern "C" {
     // Image hints (NSString* const)
     pub static NSImageHintCTM: id;

@@ -91,7 +91,7 @@ impl CTLine {
     }
 }
 
-#[link(name = "CoreText", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreText", kind = "framework"))]
 extern "C" {
     fn CTLineGetTypeID() -> CFTypeID;
     fn CTLineGetGlyphRuns(line: CTLineRef) -> CFArrayRef;

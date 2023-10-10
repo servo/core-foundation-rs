@@ -96,7 +96,7 @@ mod ffi {
     pub type CGSRegionRef = *mut CGSRegionObject;
     pub type OSStatus = i32;
 
-    #[link(name = "CoreGraphics", kind = "framework")]
+    #[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
     extern "C" {
         pub fn CGSRegionRelease(region: CGSRegionRef);
         pub fn CGSNewRegionWithRect(rect: *const CGRect, outRegion: *mut CGSRegionRef) -> CGError;

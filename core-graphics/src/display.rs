@@ -640,7 +640,7 @@ impl CGDisplayMode {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     pub static CGRectNull: CGRect;
     pub static CGRectInfinite: CGRect;

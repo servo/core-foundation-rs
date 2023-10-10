@@ -18,7 +18,7 @@ impl ScreenCaptureAccess {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     // Screen Capture Access
     fn CGRequestScreenCaptureAccess() -> boolean_t;

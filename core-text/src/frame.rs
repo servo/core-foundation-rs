@@ -84,7 +84,7 @@ impl CTFrame {
     }
 }
 
-#[link(name = "CoreText", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreText", kind = "framework"))]
 extern "C" {
     fn CTFrameGetTypeID() -> CFTypeID;
     fn CTFrameGetLines(frame: CTFrameRef) -> CFArrayRef;

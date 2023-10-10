@@ -72,7 +72,7 @@ impl CGGradient {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     fn CGGradientCreateWithColorComponents(
         color_space: ::sys::CGColorSpaceRef,

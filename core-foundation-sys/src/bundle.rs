@@ -10,7 +10,9 @@
 use std::os::raw::c_void;
 
 use array::CFArrayRef;
-use base::{Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, SInt32, UInt32};
+#[cfg(target_os = "macos")]
+use base::SInt32;
+use base::{Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, UInt32};
 use dictionary::CFDictionaryRef;
 use error::CFErrorRef;
 use std::os::raw::{c_int, c_uint};

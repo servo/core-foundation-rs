@@ -163,8 +163,8 @@ impl CFPropertyList {
         unsafe { CFGetRetainCount(self.as_CFTypeRef()) }
     }
 
-    /// Returns the type ID of this object. Will be one of CFData, CFString, CFArray, CFDictionary,
-    /// CFDate, CFBoolean, or CFNumber.
+    /// Returns the type ID of this object. Will be one of `CFData`, `CFString`, `CFArray`,
+    /// `CFDictionary`, `CFDate`, `CFBoolean`, or `CFNumber`.
     #[inline]
     pub fn type_of(&self) -> CFTypeID {
         unsafe { CFGetTypeID(self.as_CFTypeRef()) }
@@ -175,7 +175,7 @@ impl CFPropertyList {
         unsafe { CFShow(self.as_CFTypeRef()) }
     }
 
-    /// Returns true if this value is an instance of another type.
+    /// Returns `true` if this value is an instance of another type.
     #[inline]
     pub fn instance_of<OtherCFType: TCFType>(&self) -> bool {
         self.type_of() == OtherCFType::type_id()

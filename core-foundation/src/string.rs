@@ -11,7 +11,7 @@
 
 pub use core_foundation_sys::string::*;
 
-use base::{CFIndexConvertible, TCFType};
+use crate::base::{CFIndexConvertible, TCFType};
 
 use core_foundation_sys::base::{kCFAllocatorDefault, kCFAllocatorNull};
 use core_foundation_sys::base::{Boolean, CFIndex, CFRange};

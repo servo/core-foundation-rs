@@ -9,8 +9,8 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFComparatorFunction, CFIndex, CFTypeID};
-use string::CFStringRef;
+use crate::base::{CFAllocatorRef, CFComparatorFunction, CFIndex, CFTypeID};
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFTree(c_void);

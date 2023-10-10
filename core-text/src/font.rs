@@ -9,10 +9,12 @@
 
 #![allow(non_upper_case_globals)]
 
-use font_descriptor;
-use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
-use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
-use font_manager::create_font_descriptor;
+use crate::font_descriptor;
+use crate::font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
+use crate::font_descriptor::{
+    CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors,
+};
+use crate::font_manager::create_font_descriptor;
 
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType};

@@ -15,9 +15,9 @@ use core_foundation::dictionary::CFDictionary;
 use core_foundation::string::{CFString, CFStringRef};
 use foreign_types::ForeignType;
 
-use geometry::CGRect;
-use image::CGImage;
-use sys;
+use crate::geometry::CGRect;
+use crate::image::CGImage;
+use crate::sys;
 
 pub type CGWindowID = u32;
 

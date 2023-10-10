@@ -7,11 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use array::CFArrayRef;
-use base::{Boolean, CFIndex};
-use dictionary::CFDictionaryRef;
-use propertylist::CFPropertyListRef;
-use string::CFStringRef;
+use crate::array::CFArrayRef;
+use crate::base::{Boolean, CFIndex};
+use crate::dictionary::CFDictionaryRef;
+use crate::propertylist::CFPropertyListRef;
+use crate::string::CFStringRef;
 
 extern "C" {
     /*

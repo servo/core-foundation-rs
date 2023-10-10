@@ -7,11 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeRef};
-use data::CFDataRef;
-use error::CFErrorRef;
-use stream::{CFReadStreamRef, CFWriteStreamRef};
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeRef};
+use crate::data::CFDataRef;
+use crate::error::CFErrorRef;
+use crate::stream::{CFReadStreamRef, CFWriteStreamRef};
+use crate::string::CFStringRef;
 
 pub type CFPropertyListRef = CFTypeRef;
 

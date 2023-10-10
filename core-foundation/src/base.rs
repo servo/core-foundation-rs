@@ -17,8 +17,8 @@ use std::os::raw::c_void;
 
 pub use core_foundation_sys::base::*;
 
-use string::CFString;
-use ConcreteCFType;
+use crate::string::CFString;
+use crate::ConcreteCFType;
 
 pub trait CFIndexConvertible {
     /// Always use this method to construct a `CFIndex` value. It performs bounds checking to
@@ -393,7 +393,7 @@ unsafe impl ToVoid<CFType> for CFTypeRef {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use boolean::CFBoolean;
+    use crate::boolean::CFBoolean;
     use std::mem;
 
     #[test]

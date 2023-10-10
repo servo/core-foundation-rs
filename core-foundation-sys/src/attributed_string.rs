@@ -7,11 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, CFTypeRef};
-use dictionary::CFDictionaryRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, CFTypeRef};
+use crate::dictionary::CFDictionaryRef;
+use crate::string::CFMutableStringRef;
+use crate::string::CFStringRef;
 use std::os::raw::c_void;
-use string::CFMutableStringRef;
-use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFAttributedString(c_void);

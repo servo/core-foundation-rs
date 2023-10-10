@@ -7,9 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use font_descriptor;
-use font_descriptor::{CTFontDescriptor, CTFontDescriptorCreateMatchingFontDescriptors};
-use font_manager::{
+use crate::font_descriptor;
+use crate::font_descriptor::{CTFontDescriptor, CTFontDescriptorCreateMatchingFontDescriptors};
+use crate::font_manager::{
     CTFontManagerCopyAvailableFontFamilyNames, CTFontManagerCopyAvailablePostScriptNames,
 };
 
@@ -78,7 +78,7 @@ pub fn create_for_all_families() -> CTFontCollection {
 }
 
 pub fn create_for_family(family: &str) -> Option<CTFontCollection> {
-    use font_descriptor::kCTFontFamilyNameAttribute;
+    use crate::font_descriptor::kCTFontFamilyNameAttribute;
 
     unsafe {
         let family_attr = CFString::wrap_under_get_rule(kCTFontFamilyNameAttribute);

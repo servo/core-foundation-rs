@@ -7,11 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{mach_port_t, Boolean};
-pub use base::{CFAllocatorRef, CFIndex, CFTypeID};
-use runloop::CFRunLoopSourceRef;
+use crate::base::{mach_port_t, Boolean};
+pub use crate::base::{CFAllocatorRef, CFIndex, CFTypeID};
+use crate::runloop::CFRunLoopSourceRef;
+use crate::string::CFStringRef;
 use std::os::raw::c_void;
-use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFMachPort(c_void);

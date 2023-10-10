@@ -14,10 +14,10 @@ use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 pub use core_foundation_sys::runloop::*;
 use core_foundation_sys::string::CFStringRef;
 
-use base::TCFType;
-use date::{CFAbsoluteTime, CFTimeInterval};
-use filedescriptor::CFFileDescriptor;
-use string::CFString;
+use crate::base::TCFType;
+use crate::date::{CFAbsoluteTime, CFTimeInterval};
+use crate::filedescriptor::CFFileDescriptor;
+use crate::string::CFString;
 
 pub type CFRunLoopMode = CFStringRef;
 
@@ -193,8 +193,8 @@ impl_TCFType!(
 #[cfg(test)]
 mod test {
     use super::*;
-    use base::Boolean;
-    use date::{CFAbsoluteTime, CFDate};
+    use crate::base::Boolean;
+    use crate::date::{CFAbsoluteTime, CFDate};
     use std::mem;
     use std::os::raw::c_void;
     use std::ptr::null_mut;

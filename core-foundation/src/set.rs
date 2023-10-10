@@ -12,7 +12,7 @@
 use core_foundation_sys::base::{kCFAllocatorDefault, CFRelease, CFTypeRef};
 pub use core_foundation_sys::set::*;
 
-use base::{CFIndexConvertible, TCFType};
+use crate::base::{CFIndexConvertible, TCFType};
 
 use std::marker::PhantomData;
 use std::os::raw::c_void;

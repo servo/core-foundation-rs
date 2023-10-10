@@ -9,9 +9,9 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFIndex, CFOptionFlags, CFTypeID};
-use dictionary::CFDictionaryRef;
-use string::CFStringRef;
+use crate::base::{Boolean, CFIndex, CFOptionFlags, CFTypeID};
+use crate::dictionary::CFDictionaryRef;
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFNotificationCenter(c_void);

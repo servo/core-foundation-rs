@@ -9,11 +9,11 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID, SInt32};
-use data::CFDataRef;
-use date::CFTimeInterval;
-use runloop::CFRunLoopSourceRef;
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID, SInt32};
+use crate::data::CFDataRef;
+use crate::date::CFTimeInterval;
+use crate::runloop::CFRunLoopSourceRef;
+use crate::string::CFStringRef;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug)]

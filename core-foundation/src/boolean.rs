@@ -13,7 +13,7 @@ pub use core_foundation_sys::number::{
     kCFBooleanFalse, kCFBooleanTrue, CFBooleanGetTypeID, CFBooleanRef,
 };
 
-use base::TCFType;
+use crate::base::TCFType;
 
 declare_TCFType! {
     /// A Boolean type.

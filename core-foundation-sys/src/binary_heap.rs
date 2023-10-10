@@ -9,8 +9,8 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFComparisonResult, CFIndex, CFTypeID};
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFComparisonResult, CFIndex, CFTypeID};
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFBinaryHeap(c_void);

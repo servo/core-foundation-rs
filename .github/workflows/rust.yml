@@ -15,7 +15,7 @@ jobs:
   rustfmt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
@@ -24,7 +24,7 @@ jobs:
   semver:
     runs-on: macos-11.0
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Check semver
       uses: obi1kenobi/cargo-semver-checks-action@v2
   build:
@@ -34,7 +34,7 @@ jobs:
         os: [macos-11.0, macos-12, macos-13]
         toolchain: [stable, 1.56.1]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install toolchain
       uses: dtolnay/rust-toolchain@master
       with:

@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFComparisonResult, CFIndex, CFTypeID};
+use crate::base::{Boolean, CFAllocatorRef, CFComparisonResult, CFIndex, CFTypeID};
 
 #[repr(C)]
 pub struct __CFBoolean(c_void);

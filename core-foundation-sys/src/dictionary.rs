@@ -9,8 +9,8 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFHashCode, CFIndex, CFTypeID};
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFHashCode, CFIndex, CFTypeID};
+use crate::string::CFStringRef;
 
 pub type CFDictionaryApplierFunction =
     extern "C" fn(key: *const c_void, value: *const c_void, context: *mut c_void);

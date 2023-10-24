@@ -14,11 +14,11 @@ pub use core_foundation_sys::bundle::*;
 use core_foundation_sys::url::kCFURLPOSIXPathStyle;
 use std::path::PathBuf;
 
-use base::{CFType, TCFType};
-use dictionary::CFDictionary;
+use crate::base::{CFType, TCFType};
+use crate::dictionary::CFDictionary;
+use crate::string::CFString;
+use crate::url::CFURL;
 use std::os::raw::c_void;
-use string::CFString;
-use url::CFURL;
 
 declare_TCFType! {
     /// A Bundle type.
@@ -148,8 +148,8 @@ impl CFBundle {
 
 #[test]
 fn safari_executable_url() {
-    use string::CFString;
-    use url::{kCFURLPOSIXPathStyle, CFURL};
+    use crate::string::CFString;
+    use crate::url::{kCFURLPOSIXPathStyle, CFURL};
 
     let cfstr_path = CFString::from_static_string("/Applications/Safari.app");
     let cfurl_path = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
@@ -169,8 +169,8 @@ fn safari_executable_url() {
 
 #[test]
 fn safari_private_frameworks_url() {
-    use string::CFString;
-    use url::{kCFURLPOSIXPathStyle, CFURL};
+    use crate::string::CFString;
+    use crate::url::{kCFURLPOSIXPathStyle, CFURL};
 
     let cfstr_path = CFString::from_static_string("/Applications/Safari.app");
     let cfurl_path = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);
@@ -190,8 +190,8 @@ fn safari_private_frameworks_url() {
 
 #[test]
 fn non_existant_bundle() {
-    use string::CFString;
-    use url::{kCFURLPOSIXPathStyle, CFURL};
+    use crate::string::CFString;
+    use crate::url::{kCFURLPOSIXPathStyle, CFURL};
 
     let cfstr_path = CFString::from_static_string("/usr/local/foo");
     let cfurl_path = CFURL::from_file_system_path(cfstr_path, kCFURLPOSIXPathStyle, true);

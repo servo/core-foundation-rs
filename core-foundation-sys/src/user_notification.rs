@@ -9,12 +9,12 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID, SInt32};
-use date::CFTimeInterval;
-use dictionary::CFDictionaryRef;
-use runloop::CFRunLoopSourceRef;
-use string::CFStringRef;
-use url::CFURLRef;
+use crate::base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID, SInt32};
+use crate::date::CFTimeInterval;
+use crate::dictionary::CFDictionaryRef;
+use crate::runloop::CFRunLoopSourceRef;
+use crate::string::CFStringRef;
+use crate::url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFUserNotification(c_void);

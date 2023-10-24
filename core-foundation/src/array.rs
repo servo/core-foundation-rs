@@ -9,6 +9,7 @@
 
 //! Heterogeneous immutable arrays.
 
+use crate::ConcreteCFType;
 pub use core_foundation_sys::array::*;
 pub use core_foundation_sys::base::CFIndex;
 use core_foundation_sys::base::{kCFAllocatorDefault, CFRelease, CFTypeRef};
@@ -16,10 +17,9 @@ use std::marker::PhantomData;
 use std::mem;
 use std::os::raw::c_void;
 use std::ptr;
-use ConcreteCFType;
 
-use base::{CFIndexConvertible, CFRange, TCFType};
-use base::{FromVoid, ItemRef};
+use crate::base::{CFIndexConvertible, CFRange, TCFType};
+use crate::base::{FromVoid, ItemRef};
 
 /// A heterogeneous immutable array.
 pub struct CFArray<T = *const c_void>(CFArrayRef, PhantomData<T>);
@@ -185,7 +185,7 @@ mod tests {
     use crate::number::CFNumber;
 
     use super::*;
-    use base::CFType;
+    use crate::base::CFType;
     use std::mem;
 
     #[test]
@@ -216,7 +216,7 @@ mod tests {
 
     #[test]
     fn borrow() {
-        use string::CFString;
+        use crate::string::CFString;
 
         let string = CFString::from_static_string("alongerstring");
         assert_eq!(string.retain_count(), 1);
@@ -238,8 +238,8 @@ mod tests {
 
     #[test]
     fn iter_untyped_array() {
-        use base::TCFTypeRef;
-        use string::{CFString, CFStringRef};
+        use crate::base::TCFTypeRef;
+        use crate::string::{CFString, CFStringRef};
 
         let cf_string = CFString::from_static_string("alongerstring");
         let array: CFArray = CFArray::from_CFTypes(&[cf_string.clone()]).into_untyped();
@@ -255,7 +255,7 @@ mod tests {
 
     #[test]
     fn should_box_and_unbox() {
-        use number::CFNumber;
+        use crate::number::CFNumber;
 
         let n0 = CFNumber::from(0);
         let n1 = CFNumber::from(1);

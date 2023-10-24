@@ -6,6 +6,7 @@ repository = "https://github.com/servo/core-foundation-rs"
 version = "0.15.1"
 authors = ["The Servo Project Developers"]
 license = "MIT OR Apache-2.0"
+edition = "2018"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

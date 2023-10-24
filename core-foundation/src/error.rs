@@ -14,8 +14,8 @@ pub use core_foundation_sys::error::*;
 use std::error::Error;
 use std::fmt;
 
-use base::{CFIndex, TCFType};
-use string::CFString;
+use crate::base::{CFIndex, TCFType};
+use crate::string::CFString;
 
 declare_TCFType! {
     /// An error value.

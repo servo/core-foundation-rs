@@ -12,7 +12,7 @@
 use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::date::*;
 
-use base::TCFType;
+use crate::base::TCFType;
 
 #[cfg(feature = "with-chrono")]
 use chrono::NaiveDateTime;

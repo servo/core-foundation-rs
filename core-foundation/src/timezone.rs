@@ -12,9 +12,9 @@
 use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::timezone::*;
 
-use base::TCFType;
-use date::{CFDate, CFTimeInterval};
-use string::CFString;
+use crate::base::TCFType;
+use crate::date::{CFDate, CFTimeInterval};
+use crate::string::CFString;
 
 #[cfg(feature = "with-chrono")]
 use chrono::{FixedOffset, NaiveDateTime};

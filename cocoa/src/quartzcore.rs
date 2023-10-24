@@ -24,9 +24,9 @@ use foreign_types::ForeignType;
 use std::ops::Mul;
 use std::ptr;
 
-use appkit::CGLContextObj;
-use base::{id, nil, BOOL, YES};
-use foundation::NSUInteger;
+use crate::appkit::CGLContextObj;
+use crate::base::{id, nil, BOOL, YES};
+use crate::foundation::NSUInteger;
 
 // CABase.h
 
@@ -1356,7 +1356,7 @@ pub mod transaction {
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
 
-    use base::{id, BOOL, YES};
+    use crate::base::{id, BOOL, YES};
 
     #[inline]
     pub fn begin() {

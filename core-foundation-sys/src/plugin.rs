@@ -9,12 +9,12 @@
 
 use std::os::raw::c_void;
 
-use array::CFArrayRef;
-use base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID};
-use bundle::{CFBundleRef, CFPlugInRef};
-use string::CFStringRef;
-use url::CFURLRef;
-use uuid::CFUUIDRef;
+use crate::array::CFArrayRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID};
+use crate::bundle::{CFBundleRef, CFPlugInRef};
+use crate::string::CFStringRef;
+use crate::url::CFURLRef;
+use crate::uuid::CFUUIDRef;
 
 #[repr(C)]
 pub struct __CFPlugInInstance(c_void);

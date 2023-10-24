@@ -9,10 +9,10 @@
 
 use std::os::raw::c_void;
 
-use array::CFMutableArrayRef;
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef};
-use locale::CFLocaleRef;
-use string::CFStringRef;
+use crate::array::CFMutableArrayRef;
+use crate::base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef};
+use crate::locale::CFLocaleRef;
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFStringTokenizer(c_void);

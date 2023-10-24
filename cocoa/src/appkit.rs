@@ -9,11 +9,11 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, BOOL, SEL};
-use block::Block;
-use foundation::{
+use crate::base::{id, BOOL, SEL};
+use crate::foundation::{
     NSInteger, NSPoint, NSRange, NSRect, NSRectEdge, NSSize, NSTimeInterval, NSUInteger,
 };
+use block::Block;
 use libc;
 
 pub use core_graphics::base::CGFloat;

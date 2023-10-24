@@ -40,7 +40,7 @@ pub type CGDataProviderGetBytesAtPositionCallback =
 foreign_type! {
     #[doc(hidden)]
     pub unsafe type CGDataProvider {
-        type CType = ::sys::CGDataProvider;
+        type CType = crate::sys::CGDataProvider;
         fn drop = |cs| CFRelease(cs as *mut _);
         fn clone = |p| CFRetain(p as *const _) as *mut _;
     }
@@ -155,7 +155,7 @@ fn test_data_provider() {
 
 #[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
-    fn CGDataProviderCopyData(provider: ::sys::CGDataProviderRef) -> CFDataRef;
+    fn CGDataProviderCopyData(provider: crate::sys::CGDataProviderRef) -> CFDataRef;
     //fn CGDataProviderCreateDirect
     //fn CGDataProviderCreateSequential
     //fn CGDataProviderCreateWithCFData
@@ -164,7 +164,7 @@ extern "C" {
         data: *const c_void,
         size: size_t,
         releaseData: CGDataProviderReleaseDataCallback,
-    ) -> ::sys::CGDataProviderRef;
+    ) -> crate::sys::CGDataProviderRef;
     //fn CGDataProviderCreateWithFilename(filename: *c_char) -> CGDataProviderRef;
     //fn CGDataProviderCreateWithURL
     fn CGDataProviderGetTypeID() -> CFTypeID;

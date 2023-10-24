@@ -9,8 +9,8 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFHashCode, CFIndex, CFTypeID};
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFHashCode, CFIndex, CFTypeID};
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFBag(c_void);

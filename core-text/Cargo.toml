@@ -5,6 +5,7 @@ authors = ["The Servo Project Developers"]
 description = "Bindings to the Core Text framework."
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/servo/core-foundation-rs"
+edition = "2018"
 
 [package.metadata.docs.rs]
 all-features = true

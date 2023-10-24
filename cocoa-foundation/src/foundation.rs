@@ -9,7 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
-use base::{id, nil, BOOL, NO, SEL};
+use crate::base::{id, nil, BOOL, NO, SEL};
 use block::Block;
 use libc;
 use std::os::raw::c_void;
@@ -32,7 +32,7 @@ const UTF8_ENCODING: usize = 4;
 
 #[cfg(target_os = "macos")]
 mod macos {
-    use base::id;
+    use crate::base::id;
     use core_graphics_types::base::CGFloat;
     use core_graphics_types::geometry::CGRect;
     use objc;

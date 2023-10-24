@@ -13,9 +13,9 @@ use std::mem;
 use std::os::raw::c_void;
 use std::ptr;
 
-use base::{CFType, TCFType, TCFTypeRef};
-use data::CFData;
-use error::CFError;
+use crate::base::{CFType, TCFType, TCFTypeRef};
+use crate::data::CFData;
+use crate::error::CFError;
 
 use core_foundation_sys::base::{
     kCFAllocatorDefault, CFGetRetainCount, CFGetTypeID, CFIndex, CFRetain, CFShow, CFTypeID,
@@ -87,13 +87,13 @@ pub trait CFPropertyListSubClass: TCFType {
     }
 }
 
-impl CFPropertyListSubClass for ::data::CFData {}
-impl CFPropertyListSubClass for ::string::CFString {}
-impl CFPropertyListSubClass for ::array::CFArray {}
-impl CFPropertyListSubClass for ::dictionary::CFDictionary {}
-impl CFPropertyListSubClass for ::date::CFDate {}
-impl CFPropertyListSubClass for ::boolean::CFBoolean {}
-impl CFPropertyListSubClass for ::number::CFNumber {}
+impl CFPropertyListSubClass for crate::data::CFData {}
+impl CFPropertyListSubClass for crate::string::CFString {}
+impl CFPropertyListSubClass for crate::array::CFArray {}
+impl CFPropertyListSubClass for crate::dictionary::CFDictionary {}
+impl CFPropertyListSubClass for crate::date::CFDate {}
+impl CFPropertyListSubClass for crate::boolean::CFBoolean {}
+impl CFPropertyListSubClass for crate::number::CFNumber {}
 
 declare_TCFType! {
     /// A CFPropertyList struct. This is superclass to [`CFData`], [`CFString`], [`CFArray`],
@@ -249,17 +249,17 @@ impl CFPropertyList {
 #[cfg(test)]
 pub mod test {
     use super::*;
-    use boolean::CFBoolean;
-    use string::CFString;
+    use crate::boolean::CFBoolean;
+    use crate::string::CFString;
 
     #[test]
     fn test_property_list_serialization() {
         use super::*;
-        use base::{CFEqual, TCFType};
-        use boolean::CFBoolean;
-        use dictionary::CFDictionary;
-        use number::CFNumber;
-        use string::CFString;
+        use crate::base::{CFEqual, TCFType};
+        use crate::boolean::CFBoolean;
+        use crate::dictionary::CFDictionary;
+        use crate::number::CFNumber;
+        use crate::string::CFString;
 
         let bar = CFString::from_static_string("Bar");
         let baz = CFString::from_static_string("Baz");

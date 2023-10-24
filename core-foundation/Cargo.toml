@@ -8,6 +8,7 @@ authors = ["The Servo Project Developers"]
 license = "MIT OR Apache-2.0"
 categories = ["os::macos-apis"]
 keywords = ["macos", "framework", "objc"]
+edition = "2018"
 
 [dependencies.core-foundation-sys]
 path = "../core-foundation-sys"

@@ -9,15 +9,15 @@
 
 use std::os::raw::c_void;
 
-use array::CFArrayRef;
+use crate::array::CFArrayRef;
 #[cfg(target_os = "macos")]
-use base::SInt32;
-use base::{Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, UInt32};
-use dictionary::CFDictionaryRef;
-use error::CFErrorRef;
+use crate::base::SInt32;
+use crate::base::{Boolean, CFAllocatorRef, CFTypeID, CFTypeRef, UInt32};
+use crate::dictionary::CFDictionaryRef;
+use crate::error::CFErrorRef;
+use crate::string::CFStringRef;
+use crate::url::CFURLRef;
 use std::os::raw::{c_int, c_uint};
-use string::CFStringRef;
-use url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFBundle(c_void);

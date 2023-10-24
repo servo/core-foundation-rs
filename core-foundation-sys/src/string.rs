@@ -7,15 +7,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use array::CFArrayRef;
-use base::{
+use crate::array::CFArrayRef;
+use crate::base::{
     Boolean, CFAllocatorRef, CFComparisonResult, CFIndex, CFOptionFlags, CFRange, CFTypeID,
     ConstStr255Param, ConstStringPtr, SInt32, StringPtr, UInt32, UInt8, UTF32Char,
 };
-use characterset::CFCharacterSetRef;
-use data::CFDataRef;
-use dictionary::CFDictionaryRef;
-use locale::CFLocaleRef;
+use crate::characterset::CFCharacterSetRef;
+use crate::data::CFDataRef;
+use crate::dictionary::CFDictionaryRef;
+use crate::locale::CFLocaleRef;
 use std::os::raw::{c_char, c_double, c_ulong, c_ushort, c_void};
 
 pub type CFStringCompareFlags = CFOptionFlags;

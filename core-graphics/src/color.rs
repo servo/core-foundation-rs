@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use super::sys::CGColorRef;
-use base::CGFloat;
+use crate::base::CGFloat;
 use core_foundation::base::CFTypeID;
 use core_foundation::base::TCFType;
 
@@ -35,6 +35,6 @@ extern "C" {
         green: CGFloat,
         blue: CGFloat,
         alpha: CGFloat,
-    ) -> ::sys::CGColorRef;
+    ) -> crate::sys::CGColorRef;
     fn CGColorGetTypeID() -> CFTypeID;
 }

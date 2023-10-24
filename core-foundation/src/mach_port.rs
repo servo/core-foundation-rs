@@ -1,7 +1,7 @@
-use base::TCFType;
+use crate::base::TCFType;
+use crate::runloop::CFRunLoopSource;
 use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::mach_port::*;
-use runloop::CFRunLoopSource;
 
 declare_TCFType! {
     /// An immutable numeric value.

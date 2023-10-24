@@ -7,12 +7,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use array::CFArrayRef;
-use base::{CFAllocatorRef, CFIndex, CFTypeID, CFTypeRef, LangCode, RegionCode};
-use dictionary::CFDictionaryRef;
-use notification_center::CFNotificationName;
+use crate::array::CFArrayRef;
+use crate::base::{CFAllocatorRef, CFIndex, CFTypeID, CFTypeRef, LangCode, RegionCode};
+use crate::dictionary::CFDictionaryRef;
+use crate::notification_center::CFNotificationName;
+use crate::string::CFStringRef;
 use std::os::raw::c_void;
-use string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFLocale(c_void);

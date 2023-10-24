@@ -9,10 +9,10 @@
 
 use std::os::raw::{c_double, c_void};
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef};
-use locale::CFLocaleRef;
-use number::{CFNumberRef, CFNumberType};
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef};
+use crate::locale::CFLocaleRef;
+use crate::number::{CFNumberRef, CFNumberType};
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFNumberFormatter(c_void);

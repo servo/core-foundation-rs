@@ -16,7 +16,7 @@ use std::ops::Deref;
 use std::slice;
 use std::sync::Arc;
 
-use base::{CFIndexConvertible, TCFType};
+use crate::base::{CFIndexConvertible, TCFType};
 
 declare_TCFType! {
     /// A byte buffer.

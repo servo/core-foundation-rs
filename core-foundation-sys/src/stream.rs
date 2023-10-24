@@ -9,14 +9,14 @@
 
 use std::os::raw::{c_int, c_void};
 
-use base::{
+use crate::base::{
     Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID, CFTypeRef, SInt32, UInt32, UInt8,
 };
-use error::CFErrorRef;
-use runloop::CFRunLoopRef;
-use socket::{CFSocketNativeHandle, CFSocketSignature};
-use string::CFStringRef;
-use url::CFURLRef;
+use crate::error::CFErrorRef;
+use crate::runloop::CFRunLoopRef;
+use crate::socket::{CFSocketNativeHandle, CFSocketSignature};
+use crate::string::CFStringRef;
+use crate::url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFReadStream(c_void);

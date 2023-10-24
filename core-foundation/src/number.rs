@@ -13,7 +13,7 @@ use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::number::*;
 use std::os::raw::c_void;
 
-use base::TCFType;
+use crate::base::TCFType;
 
 declare_TCFType! {
     /// An immutable numeric value.

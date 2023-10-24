@@ -17,9 +17,9 @@ use std::mem;
 use std::os::raw::c_void;
 use std::ptr;
 
-use base::{CFIndexConvertible, TCFType};
-use base::{FromVoid, ItemRef, ToVoid};
-use ConcreteCFType;
+use crate::base::{CFIndexConvertible, TCFType};
+use crate::base::{FromVoid, ItemRef, ToVoid};
+use crate::ConcreteCFType;
 
 // consume the type parameters with PhantomDatas
 pub struct CFDictionary<K = *const c_void, V = *const c_void>(
@@ -350,10 +350,10 @@ impl<'a, K, V> From<&'a CFDictionary<K, V>> for CFMutableDictionary<K, V> {
 #[cfg(test)]
 pub mod test {
     use super::*;
-    use base::{CFType, TCFType};
-    use boolean::CFBoolean;
-    use number::CFNumber;
-    use string::CFString;
+    use crate::base::{CFType, TCFType};
+    use crate::boolean::CFBoolean;
+    use crate::number::CFNumber;
+    use crate::string::CFString;
 
     #[test]
     fn dictionary() {

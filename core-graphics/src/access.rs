@@ -1,4 +1,4 @@
-pub use base::boolean_t;
+pub use crate::base::boolean_t;
 
 #[derive(Default)]
 pub struct ScreenCaptureAccess;

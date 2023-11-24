@@ -3333,6 +3333,8 @@ pub trait NSScreen: Sized {
     unsafe fn visibleFrame(self) -> NSRect;
     unsafe fn colorSpace(self) -> id /* (NSColorSpace *) */;
     unsafe fn screensHaveSeparateSpaces(_: Self) -> BOOL;
+    unsafe fn maximumRefreshInterval(self) -> NSTimeInterval;
+    unsafe fn minimumRefreshInterval(self) -> NSTimeInterval;
 
     // Screen Backing Coordinate Conversion
     unsafe fn backingAlignedRect_options_(
@@ -3388,6 +3390,14 @@ impl NSScreen for id {
 
     unsafe fn screensHaveSeparateSpaces(_: Self) -> BOOL {
         msg_send![class!(NSScreen), screensHaveSeparateSpaces]
+    }
+
+    unsafe fn maximumRefreshInterval(self) -> NSTimeInterval {
+        msg_send![self, maximumRefreshInterval]
+    }
+
+    unsafe fn minimumRefreshInterval(self) -> NSTimeInterval {
+        msg_send![self, minimumRefreshInterval]
     }
 
     // Screen Backing Coordinate Conversion

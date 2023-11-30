@@ -10,7 +10,7 @@ edition = "2018"
 
 [dependencies]
 bitflags = "1.0"
-core-foundation = { default-features = false, path = "../core-foundation", version = "0.9" }
+core-foundation = { default-features = false, path = "../core-foundation", version = "0.9.4" }
 libc = "0.2"
 
 [features]

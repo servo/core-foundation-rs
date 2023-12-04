@@ -100,9 +100,8 @@ mod test {
     extern crate libc;
 
     use super::*;
-    use crate::runloop::CFRunLoop;
+    use crate::runloop::{CFRunLoop, CFRunLoopMode};
     use core_foundation_sys::base::CFOptionFlags;
-    use core_foundation_sys::runloop::kCFRunLoopDefaultMode;
     use libc::O_RDWR;
     use std::ffi::CString;
     use std::os::raw::c_void;
@@ -157,9 +156,7 @@ mod test {
         let run_loop = CFRunLoop::get_current();
         let source = CFRunLoopSource::from_file_descriptor(&cf_fd, 0);
         assert!(source.is_some());
-        unsafe {
-            run_loop.add_source(&source.unwrap(), kCFRunLoopDefaultMode);
-        }
+        run_loop.add_source(&source.unwrap(), CFRunLoopMode::default());
 
         info.value = 0;
         cf_fd.enable_callbacks(kCFFileDescriptorReadCallBack);

@@ -98,10 +98,9 @@ impl AsRawFd for CFFileDescriptor {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::runloop::CFRunLoop;
+    use crate::runloop::{CFRunLoop, CFRunLoopMode};
     use core::ffi::c_void;
     use core_foundation_sys::base::CFOptionFlags;
-    use core_foundation_sys::runloop::kCFRunLoopDefaultMode;
     use libc::O_RDWR;
     use std::ffi::CString;
 
@@ -155,9 +154,7 @@ mod test {
         let run_loop = CFRunLoop::get_current();
         let source = CFRunLoopSource::from_file_descriptor(&cf_fd, 0);
         assert!(source.is_some());
-        unsafe {
-            run_loop.add_source(&source.unwrap(), kCFRunLoopDefaultMode);
-        }
+        run_loop.add_source(&source.unwrap(), CFRunLoopMode::default());
 
         info.value = 0;
         cf_fd.enable_callbacks(kCFFileDescriptorReadCallBack);

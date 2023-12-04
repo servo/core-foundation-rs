@@ -443,7 +443,7 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 }
 
 /// ```no_run
-///use core_foundation::runloop::{kCFRunLoopCommonModes, CFRunLoop};
+///use core_foundation::runloop::{CFRunLoop, CFRunLoopMode};
 ///use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType};
 ///let current = CFRunLoop::get_current();
 ///match CGEventTap::new(
@@ -461,7 +461,7 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 ///             .mach_port
 ///             .create_runloop_source(0)
 ///             .expect("Somethings is bad ");
-///         current.add_source(&loop_source, kCFRunLoopCommonModes);
+///         current.add_source(&loop_source, CFRunLoopMode::common());
 ///         tap.enable();
 ///         CFRunLoop::run_current();
 ///     },

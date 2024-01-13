@@ -31,13 +31,14 @@ pub const kCGWindowBackingStoreRetained: CGWindowBackingType = 0;
 pub const kCGWindowBackingStoreNonretained: CGWindowBackingType = 1;
 pub const kCGWindowBackingStoreBuffered: CGWindowBackingType = 2;
 
+// https://developer.apple.com/documentation/coregraphics/quartz_window_services/window_list_option_constants?language=objc
 pub type CGWindowListOption = u32;
-pub const kCGWindowListOptionAll: CGWindowListOption = 1 << 0;
-pub const kCGWindowListOptionOnScreenOnly: CGWindowListOption = 1 << 1;
-pub const kCGWindowListOptionOnScreenAboveWindow: CGWindowListOption = 1 << 2;
-pub const kCGWindowListOptionOnScreenBelowWindow: CGWindowListOption = 1 << 3;
-pub const kCGWindowListOptionIncludingWindow: CGWindowListOption = 1 << 4;
-pub const kCGWindowListOptionExcludeDesktopElements: CGWindowListOption = 1 << 5;
+pub const kCGWindowListOptionAll: CGWindowListOption = 0;
+pub const kCGWindowListOptionOnScreenOnly: CGWindowListOption = 1 << 0;
+pub const kCGWindowListOptionOnScreenAboveWindow: CGWindowListOption = 1 << 1;
+pub const kCGWindowListOptionOnScreenBelowWindow: CGWindowListOption = 1 << 2;
+pub const kCGWindowListOptionIncludingWindow: CGWindowListOption = 1 << 3;
+pub const kCGWindowListExcludeDesktopElements: CGWindowListOption = 1 << 4;
 
 pub type CGWindowImageOption = u32;
 pub const kCGWindowImageDefault: CGWindowImageOption = 0;

@@ -63,7 +63,11 @@ impl CALayer {
 
     #[inline]
     pub fn new() -> CALayer {
-        unsafe { CALayer(msg_send![class!(CALayer), layer]) }
+        unsafe {
+            let id: id = msg_send![class!(CALayer), layer];
+            let _: id = msg_send![id, retain];
+            CALayer(id)
+        }
     }
 
     #[inline]
@@ -1674,3 +1678,13 @@ pub type CVSMPTETimeFlags = u32;
 
 pub const kCVSMPTETimeValid: CVSMPTETimeFlags = 1 << 0;
 pub const kCVSMPTETimeRunning: CVSMPTETimeFlags = 1 << 1;
+
+#[cfg(test)]
+mod test {
+    use super::CALayer;
+
+    #[test]
+    fn create_calayer() {
+        let _ = CALayer::new();
+    }
+}

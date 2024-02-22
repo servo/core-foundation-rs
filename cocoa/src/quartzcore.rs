@@ -36,6 +36,7 @@ pub fn current_media_time() -> CFTimeInterval {
 
 // CALayer.h
 
+#[repr(transparent)]
 pub struct CALayer(id);
 
 unsafe impl Send for CALayer {}
@@ -64,6 +65,11 @@ impl CALayer {
     #[inline]
     pub fn new() -> CALayer {
         unsafe { CALayer(msg_send![class!(CALayer), layer]) }
+    }
+
+    #[inline]
+    pub unsafe fn from_raw(raw: id) -> Self {
+        Self(raw)
     }
 
     #[inline]

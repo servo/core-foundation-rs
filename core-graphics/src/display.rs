@@ -177,6 +177,86 @@ impl CGDisplay {
         CGDisplay::new(kCGNullDirectDisplayID)
     }
 
+    /// Return the number of online displays with bounds that include the
+    /// specified point.
+    pub fn display_count_with_point(point: CGPoint) -> Result<u32, CGError> {
+        let mut matching_display_count: u32 = 0;
+        let result = unsafe {
+            CGGetDisplaysWithPoint(point, 0, ptr::null_mut(), &mut matching_display_count)
+        };
+        if result == 0 {
+            Ok(matching_display_count)
+        } else {
+            Err(result)
+        }
+    }
+
+    /// Return a list of online displays with bounds that include the specified
+    /// point.
+    pub fn displays_with_point(
+        point: CGPoint,
+        max_displays: u32,
+    ) -> Result<(Vec<CGDirectDisplayID>, u32), CGError> {
+        let count = CGDisplay::display_count_with_point(point)?;
+        let count = u32::max(u32::min(count, max_displays), 1);
+
+        let mut matching_display_count: u32 = 0;
+        let mut displays: Vec<CGDirectDisplayID> = vec![0; count as usize];
+        let result = unsafe {
+            CGGetDisplaysWithPoint(
+                point,
+                max_displays,
+                displays.as_mut_ptr(),
+                &mut matching_display_count,
+            )
+        };
+
+        if result == 0 {
+            Ok((displays, matching_display_count))
+        } else {
+            Err(result)
+        }
+    }
+
+    /// Return the number of online displays with bounds that intersect the
+    /// specified rectangle.
+    pub fn display_count_with_rect(rect: CGRect) -> Result<u32, CGError> {
+        let mut matching_display_count: u32 = 0;
+        let result =
+            unsafe { CGGetDisplaysWithRect(rect, 0, ptr::null_mut(), &mut matching_display_count) };
+        if result == 0 {
+            Ok(matching_display_count)
+        } else {
+            Err(result)
+        }
+    }
+
+    /// Return a list of online displays with bounds that intersect the specified rectangle.
+    pub fn displays_with_rect(
+        rect: CGRect,
+        max_displays: u32,
+    ) -> Result<(Vec<CGDirectDisplayID>, u32), CGError> {
+        let count = CGDisplay::display_count_with_rect(rect)?;
+        let count = u32::max(u32::min(count, max_displays), 1);
+
+        let mut matching_display_count: u32 = 0;
+        let mut displays: Vec<CGDirectDisplayID> = vec![0; count as usize];
+        let result = unsafe {
+            CGGetDisplaysWithRect(
+                rect,
+                max_displays,
+                displays.as_mut_ptr(),
+                &mut matching_display_count,
+            )
+        };
+
+        if result == 0 {
+            Ok((displays, matching_display_count))
+        } else {
+            Err(result)
+        }
+    }
+
     /// Returns the bounds of a display in the global display coordinate space.
     #[inline]
     pub fn bounds(&self) -> CGRect {
@@ -713,6 +793,12 @@ extern "C" {
         max_displays: u32,
         active_displays: *mut CGDirectDisplayID,
         display_count: *mut u32,
+    ) -> CGError;
+    pub fn CGGetDisplaysWithPoint(
+        point: CGPoint,
+        max_displays: u32,
+        displays: *mut CGDirectDisplayID,
+        matching_display_count: *mut u32,
     ) -> CGError;
     pub fn CGGetDisplaysWithRect(
         rect: CGRect,

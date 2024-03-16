@@ -179,6 +179,7 @@ impl CGDisplay {
 
     /// Return the number of online displays with bounds that include the
     /// specified point.
+    #[inline]
     pub fn display_count_with_point(point: CGPoint) -> Result<u32, CGError> {
         let mut matching_display_count: u32 = 0;
         let result = unsafe {
@@ -193,6 +194,7 @@ impl CGDisplay {
 
     /// Return a list of online displays with bounds that include the specified
     /// point.
+    #[inline]
     pub fn displays_with_point(
         point: CGPoint,
         max_displays: u32,
@@ -220,6 +222,7 @@ impl CGDisplay {
 
     /// Return the number of online displays with bounds that intersect the
     /// specified rectangle.
+    #[inline]
     pub fn display_count_with_rect(rect: CGRect) -> Result<u32, CGError> {
         let mut matching_display_count: u32 = 0;
         let result =
@@ -232,6 +235,7 @@ impl CGDisplay {
     }
 
     /// Return a list of online displays with bounds that intersect the specified rectangle.
+    #[inline]
     pub fn displays_with_rect(
         rect: CGRect,
         max_displays: u32,

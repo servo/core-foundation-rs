@@ -20,7 +20,11 @@ use crate::image::CGImage;
 use crate::sys;
 
 pub type CGWindowID = u32;
+pub type CGWindowLevel = i32;
 
+pub const kCGNullWindowID: CGWindowID = 0;
+
+// https://developer.apple.com/documentation/coregraphics/cgwindowsharingtype?language=objc
 pub type CGWindowSharingType = u32;
 pub const kCGWindowSharingNone: CGWindowSharingType = 0;
 pub const kCGWindowSharingReadOnly: CGWindowSharingType = 1;
@@ -47,8 +51,6 @@ pub const kCGWindowImageShouldBeOpaque: CGWindowImageOption = 1 << 1;
 pub const kCGWindowImageOnlyShadows: CGWindowImageOption = 1 << 2;
 pub const kCGWindowImageBestResolution: CGWindowImageOption = 1 << 3;
 pub const kCGWindowImageNominalResolution: CGWindowImageOption = 1 << 4;
-
-pub const kCGNullWindowID: CGWindowID = 0;
 
 pub fn copy_window_info(
     option: CGWindowListOption,

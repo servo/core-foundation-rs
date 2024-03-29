@@ -17,7 +17,9 @@ pub use crate::base::{boolean_t, CGError};
 pub use crate::geometry::{CGPoint, CGRect, CGSize};
 
 use crate::image::CGImage;
-use crate::window::{kCGNullWindowID, CGWindowID, CGWindowImageOption, CGWindowLevel, CGWindowListOption};
+use crate::window::{
+    kCGNullWindowID, CGWindowID, CGWindowImageOption, CGWindowLevel, CGWindowListOption,
+};
 use core_foundation::base::{CFRetain, TCFType};
 use core_foundation::string::{CFString, CFStringRef};
 use foreign_types::ForeignType;

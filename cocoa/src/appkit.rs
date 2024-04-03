@@ -5391,4 +5391,108 @@ mod test {
             let _nsApp = NSApp();
         }
     }
+
+    #[test]
+    pub fn test_nscolor_appkit_colors() {
+        use crate::base::nil;
+        unsafe {
+            // Check all colors are defined
+
+            // Label Colors
+            let _ = NSColor::labelColor(nil);
+            let _ = NSColor::secondaryLabelColor(nil);
+            let _ = NSColor::tertiaryLabelColor(nil);
+            let _ = NSColor::quaternaryLabelColor(nil);
+
+            // Text Colors
+            let _ = NSColor::textColor(nil);
+            let _ = NSColor::placeholderTextColor(nil);
+            let _ = NSColor::selectedTextColor(nil);
+            let _ = NSColor::textBackgroundColor(nil);
+            let _ = NSColor::selectedTextBackgroundColor(nil);
+            let _ = NSColor::keyboardFocusIndicatorColor(nil);
+            let _ = NSColor::unemphasizedSelectedTextColor(nil);
+            let _ = NSColor::unemphasizedSelectedTextBackgroundColor(nil);
+
+            // Content Colors
+            let _ = NSColor::linkColor(nil);
+            let _ = NSColor::separatorColor(nil);
+            let _ = NSColor::selectedContentBackgroundColor(nil);
+            let _ = NSColor::unemphasizedSelectedContentBackgroundColor(nil);
+
+            // Menu Colors
+            let _ = NSColor::selectedMenuItemTextColor(nil);
+
+            // Table Colors
+            let _ = NSColor::gridColor(nil);
+            let _ = NSColor::headerTextColor(nil);
+            let _ = NSColor::alternatingContentBackgroundColors(nil);
+
+            // Control Colors
+            let _ = NSColor::controlAccentColor(nil);
+            let _ = NSColor::controlColor(nil);
+            let _ = NSColor::controlBackgroundColor(nil);
+            let _ = NSColor::controlTextColor(nil);
+            let _ = NSColor::disabledControlTextColor(nil);
+            let _ = NSColor::currentControlTint(nil);
+            let _ = NSColor::selectedControlColor(nil);
+            let _ = NSColor::selectedControlTextColor(nil);
+            let _ = NSColor::alternateSelectedControlTextColor(nil);
+            let _ = NSColor::scrubberTexturedBackgroundColor(nil);
+
+            // Window Colors
+            let _ = NSColor::windowBackgroundColor(nil);
+            let _ = NSColor::windowFrameTextColor(nil);
+            let _ = NSColor::underPageBackgroundColor(nil);
+
+            // Highlights and Shadows
+            let _ = NSColor::findHighlightColor(nil);
+            let _ = NSColor::highlightColor(nil);
+            let _ = NSColor::shadowColor(nil);
+
+            // Fill Colors
+            let _ = NSColor::quaternarySystemFillColor(nil);
+            let _ = NSColor::quinaryLabelColor(nil);
+            let _ = NSColor::quinarySystemFillColor(nil);
+            let _ = NSColor::secondarySystemFillColor(nil);
+            let _ = NSColor::systemFillColor(nil);
+            let _ = NSColor::tertiarySystemFillColor(nil);
+            let _ = NSColor::textInsertionPointColor(nil);
+
+
+            // Adaptable System Colors
+            let _ = NSColor::systemBlueColor(nil);
+            let _ = NSColor::systemBrownColor(nil);
+            let _ = NSColor::systemCyanColor(nil);
+            let _ = NSColor::systemGrayColor(nil);
+            let _ = NSColor::systemGreenColor(nil);
+            let _ = NSColor::systemIndigoColor(nil);
+            let _ = NSColor::systemMintColor(nil);
+            let _ = NSColor::systemOrangeColor(nil);
+            let _ = NSColor::systemPinkColor(nil);
+            let _ = NSColor::systemPurpleColor(nil);
+            let _ = NSColor::systemRedColor(nil);
+            let _ = NSColor::systemTealColor(nil);
+            let _ = NSColor::systemYellowColor(nil);
+
+            // Transparent Color
+            let _ = NSColor::clearColor(nil);
+
+            // Fixed Colors
+            let _ = NSColor::blackColor(nil);
+            let _ = NSColor::blueColor(nil);
+            let _ = NSColor::brownColor(nil);
+            let _ = NSColor::cyanColor(nil);
+            let _ = NSColor::darkGrayColor(nil);
+            let _ = NSColor::grayColor(nil);
+            let _ = NSColor::greenColor(nil);
+            let _ = NSColor::lightGrayColor(nil);
+            let _ = NSColor::magentaColor(nil);
+            let _ = NSColor::orangeColor(nil);
+            let _ = NSColor::purpleColor(nil);
+            let _ = NSColor::redColor(nil);
+            let _ = NSColor::whiteColor(nil);
+            let _ = NSColor::yellowColor(nil);
+        }
+    }
 }

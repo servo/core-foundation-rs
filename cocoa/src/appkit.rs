@@ -4587,7 +4587,6 @@ impl NSColorSpace for id {
 }
 
 pub trait NSColor: Sized {
-    unsafe fn clearColor(_: Self) -> id;
     unsafe fn colorWithRed_green_blue_alpha_(
         _: Self,
         r: CGFloat,
@@ -4626,6 +4625,171 @@ pub trait NSColor: Sized {
 
     unsafe fn colorUsingColorSpace_(self, color_space: id) -> id;
 
+    // UI Element Colors
+    // https://developer.apple.com/documentation/appkit/nscolor/ui_element_colors?language=objc
+
+    // Label Colors
+    /// The primary color to use for text labels.
+    unsafe fn labelColor(_: Self) -> id;
+    /// The secondary color to use for text labels.
+    unsafe fn secondaryLabelColor(_: Self) -> id;
+    /// The tertiary color to use for text labels.
+    unsafe fn tertiaryLabelColor(_: Self) -> id;
+    /// The quaternary color to use for text labels and separators.
+    unsafe fn quaternaryLabelColor(_: Self) -> id;
+
+    // Text Colors
+    /// The color to use for text.
+    unsafe fn textColor(_: Self) -> id;
+    /// The color to use for placeholder text in controls or text views.
+    unsafe fn placeholderTextColor(_: Self) -> id;
+    /// The color to use for selected text.
+    unsafe fn selectedTextColor(_: Self) -> id;
+    /// The color to use for the background area behind text.
+    unsafe fn textBackgroundColor(_: Self) -> id;
+    /// The color to use for the background of selected text.
+    unsafe fn selectedTextBackgroundColor(_: Self) -> id;
+    /// The color to use for the keyboard focus ring around controls.
+    unsafe fn keyboardFocusIndicatorColor(_: Self) -> id;
+    /// The color to use for selected text in an unemphasized context.
+    unsafe fn unemphasizedSelectedTextColor(_: Self) -> id;
+    /// The color to use for the text background in an unemphasized context.
+    unsafe fn unemphasizedSelectedTextBackgroundColor(_: Self) -> id;
+
+    // Content Colors
+    /// The color to use for links.
+    unsafe fn linkColor(_: Self) -> id;
+    /// The color to use for separators between different sections of content.
+    unsafe fn separatorColor(_: Self) -> id;
+    /// The color to use for the background of selected and emphasized content.
+    unsafe fn selectedContentBackgroundColor(_: Self) -> id;
+    /// The color to use for selected and unemphasized content.
+    unsafe fn unemphasizedSelectedContentBackgroundColor(_: Self) -> id;
+
+    // Menu Colors
+    /// The color to use for the text in menu items.
+    unsafe fn selectedMenuItemTextColor(_: Self) -> id;
+
+    // Table Colors
+    /// The color to use for the optional gridlines, such as those in a table view.
+    unsafe fn gridColor(_: Self) -> id;
+    /// The color to use for text in header cells in table views and outline views.
+    unsafe fn headerTextColor(_: Self) -> id;
+    /// The colors to use for alternating content, typically found in table views and collection views.
+    unsafe fn alternatingContentBackgroundColors(_: Self) -> id;
+
+    // Control Colors
+    /// The user's current accent color preference.
+    unsafe fn controlAccentColor(_: Self) -> id;
+    /// The color to use for the flat surfaces of a control.
+    unsafe fn controlColor(_: Self) -> id;
+    /// The color to use for the background of large controls, such as scroll views or table views.
+    unsafe fn controlBackgroundColor(_: Self) -> id;
+    /// The color to use for text on enabled controls.
+    unsafe fn controlTextColor(_: Self) -> id;
+    /// The color to use for text on disabled controls.
+    unsafe fn disabledControlTextColor(_: Self) -> id;
+    /// The current system control tint color.
+    unsafe fn currentControlTint(_: Self) -> id;
+    /// The color to use for the face of a selected control—that is, a control that has been clicked or is being dragged.
+    unsafe fn selectedControlColor(_: Self) -> id;
+    /// The color to use for text in a selected control—that is, a control being clicked or dragged.
+    unsafe fn selectedControlTextColor(_: Self) -> id;
+    /// The color to use for text in a selected control.
+    unsafe fn alternateSelectedControlTextColor(_: Self) -> id;
+    /// The patterned color to use for the background of a scrubber control.
+    unsafe fn scrubberTexturedBackgroundColor(_: Self) -> id;
+
+    // Window Colors
+    /// The color to use for the window background.
+    unsafe fn windowBackgroundColor(_: Self) -> id;
+    /// The color to use for text in a window's frame.
+    unsafe fn windowFrameTextColor(_: Self) -> id;
+    /// The color to use in the area beneath your window's views.
+    unsafe fn underPageBackgroundColor(_: Self) -> id;
+
+    // Highlights and Shadows
+    /// The highlight color to use for the bubble that shows inline search result values.
+    unsafe fn findHighlightColor(_: Self) -> id;
+    /// The color to use as a virtual light source on the screen.
+    unsafe fn highlightColor(_: Self) -> id;
+    /// The color to use for virtual shadows cast by raised objects on the screen.
+    unsafe fn shadowColor(_: Self) -> id;
+
+    // Fill Colors
+    unsafe fn quaternarySystemFillColor(_: Self) -> id;
+    unsafe fn quinaryLabelColor(_: Self) -> id;
+    unsafe fn quinarySystemFillColor(_: Self) -> id;
+    unsafe fn secondarySystemFillColor(_: Self) -> id;
+    unsafe fn systemFillColor(_: Self) -> id;
+    unsafe fn tertiarySystemFillColor(_: Self) -> id;
+    unsafe fn textInsertionPointColor(_: Self) -> id;
+
+    // Standard Colors
+    // https://developer.apple.com/documentation/appkit/nscolor/standard_colors?language=objc
+
+    // Adaptable System Colors
+    /// Returns a color object for blue that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemBlueColor(_: Self) -> id;
+    /// Returns a color object for brown that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemBrownColor(_: Self) -> id;
+    /// Returns a color object for cyan that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemCyanColor(_: Self) -> id;
+    /// Returns a color object for gray that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemGrayColor(_: Self) -> id;
+    /// Returns a color object for green that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemGreenColor(_: Self) -> id;
+    /// Returns a color object for indigo that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemIndigoColor(_: Self) -> id;
+    /// Returns a color object for mint that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemMintColor(_: Self) -> id;
+    /// Returns a color object for orange that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemOrangeColor(_: Self) -> id;
+    /// Returns a color object for pink that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemPinkColor(_: Self) -> id;
+    /// Returns a color object for purple that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemPurpleColor(_: Self) -> id;
+    /// Returns a color object for red that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemRedColor(_: Self) -> id;
+    /// Returns a color object for teal that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemTealColor(_: Self) -> id;
+    /// Returns a color object for yellow that automatically adapts to vibrancy and accessibility settings.
+    unsafe fn systemYellowColor(_: Self) -> id;
+
+    // Transparent Color
+    /// Returns a color object whose grayscale and alpha values are both 0.0.
+    unsafe fn clearColor(_: Self) -> id;
+
+    // Fixed Colors
+    /// Returns a color object whose grayscale value is 0.0 and whose alpha value is 1.0.
+    unsafe fn blackColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 0.0, 0.0, 1.0 and whose alpha value is 1.0.
+    unsafe fn blueColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 0.6, 0.4, 0.2 and whose alpha value is 1.0.
+    unsafe fn brownColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 0.0, 1.0, 1.0 and whose alpha value is 1.0.
+    unsafe fn cyanColor(_: Self) -> id;
+    /// Returns a color object whose grayscale value is 1/3 and whose alpha value is 1.0.
+    unsafe fn darkGrayColor(_: Self) -> id;
+    /// Returns a color object whose grayscale value is 0.5 and whose alpha value is 1.0.
+    unsafe fn grayColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 0.0, 1.0, 0.0 and whose alpha value is 1.0.
+    unsafe fn greenColor(_: Self) -> id;
+    /// Returns a color object whose grayscale value is 2/3 and whose alpha value is 1.0.
+    unsafe fn lightGrayColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 1.0, 0.0, 1.0 and whose alpha value is 1.0.
+    unsafe fn magentaColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 1.0, 0.5, 0.0 and whose alpha value is 1.0.
+    unsafe fn orangeColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 0.5, 0.0, 0.5 and whose alpha value is 1.0.
+    unsafe fn purpleColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 1.0, 0.0, 0.0 and whose alpha value is 1.0.
+    unsafe fn redColor(_: Self) -> id;
+    /// Returns a color object whose grayscale and alpha values are both 1.0.
+    unsafe fn whiteColor(_: Self) -> id;
+    /// Returns a color object whose RGB value is 1.0, 1.0, 0.0 and whose alpha value is 1.0.
+    unsafe fn yellowColor(_: Self) -> id;
+
     unsafe fn alphaComponent(self) -> CGFloat;
     unsafe fn whiteComponent(self) -> CGFloat;
     unsafe fn redComponent(self) -> CGFloat;
@@ -4641,9 +4805,6 @@ pub trait NSColor: Sized {
 }
 
 impl NSColor for id {
-    unsafe fn clearColor(_: Self) -> id {
-        msg_send![class!(NSColor), clearColor]
-    }
     unsafe fn colorWithRed_green_blue_alpha_(
         _: Self,
         r: CGFloat,
@@ -4692,6 +4853,245 @@ impl NSColor for id {
 
     unsafe fn colorUsingColorSpace_(self, color_space: id) -> id {
         msg_send![self, colorUsingColorSpace: color_space]
+    }
+
+    unsafe fn labelColor(_: Self) -> id {
+        msg_send![class!(NSColor), labelColor]
+    }
+    unsafe fn secondaryLabelColor(_: Self) -> id {
+        msg_send![class!(NSColor), secondaryLabelColor]
+    }
+    unsafe fn tertiaryLabelColor(_: Self) -> id {
+        msg_send![class!(NSColor), tertiaryLabelColor]
+    }
+    unsafe fn quaternaryLabelColor(_: Self) -> id {
+        msg_send![class!(NSColor), quaternaryLabelColor]
+    }
+
+    // Text Colors
+    unsafe fn textColor(_: Self) -> id {
+        msg_send![class!(NSColor), textColor]
+    }
+    unsafe fn placeholderTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), placeholderTextColor]
+    }
+    unsafe fn selectedTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), selectedTextColor]
+    }
+    unsafe fn textBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), textBackgroundColor]
+    }
+    unsafe fn selectedTextBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), selectedTextBackgroundColor]
+    }
+    unsafe fn keyboardFocusIndicatorColor(_: Self) -> id {
+        msg_send![class!(NSColor), keyboardFocusIndicatorColor]
+    }
+    unsafe fn unemphasizedSelectedTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), unemphasizedSelectedTextColor]
+    }
+    unsafe fn unemphasizedSelectedTextBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), unemphasizedSelectedTextBackgroundColor]
+    }
+
+    // Content Colors
+    unsafe fn linkColor(_: Self) -> id {
+        msg_send![class!(NSColor), linkColor]
+    }
+    unsafe fn separatorColor(_: Self) -> id {
+        msg_send![class!(NSColor), separatorColor]
+    }
+    unsafe fn selectedContentBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), selectedContentBackgroundColor]
+    }
+    unsafe fn unemphasizedSelectedContentBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), unemphasizedSelectedContentBackgroundColor]
+    }
+
+    // Menu Colors
+    unsafe fn selectedMenuItemTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), selectedMenuItemTextColor]
+    }
+
+    // Table Colors
+    unsafe fn gridColor(_: Self) -> id {
+        msg_send![class!(NSColor), gridColor]
+    }
+    unsafe fn headerTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), headerTextColor]
+    }
+    unsafe fn alternatingContentBackgroundColors(_: Self) -> id {
+        msg_send![class!(NSColor), alternatingContentBackgroundColors]
+    }
+
+    // Control Colors
+    unsafe fn controlAccentColor(_: Self) -> id {
+        msg_send![class!(NSColor), controlAccentColor]
+    }
+    unsafe fn controlColor(_: Self) -> id {
+        msg_send![class!(NSColor), controlColor]
+    }
+    unsafe fn controlBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), controlBackgroundColor]
+    }
+    unsafe fn controlTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), controlTextColor]
+    }
+    unsafe fn disabledControlTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), disabledControlTextColor]
+    }
+    unsafe fn currentControlTint(_: Self) -> id {
+        msg_send![class!(NSColor), currentControlTint]
+    }
+    unsafe fn selectedControlColor(_: Self) -> id {
+        msg_send![class!(NSColor), selectedControlColor]
+    }
+    unsafe fn selectedControlTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), selectedControlTextColor]
+    }
+    unsafe fn alternateSelectedControlTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), alternateSelectedControlTextColor]
+    }
+    unsafe fn scrubberTexturedBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), scrubberTexturedBackgroundColor]
+    }
+
+    // Window Colors
+    unsafe fn windowBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), windowBackgroundColor]
+    }
+    unsafe fn windowFrameTextColor(_: Self) -> id {
+        msg_send![class!(NSColor), windowFrameTextColor]
+    }
+    unsafe fn underPageBackgroundColor(_: Self) -> id {
+        msg_send![class!(NSColor), underPageBackgroundColor]
+    }
+
+    // Highlights and Shadows
+    unsafe fn findHighlightColor(_: Self) -> id {
+        msg_send![class!(NSColor), findHighlightColor]
+    }
+    unsafe fn highlightColor(_: Self) -> id {
+        msg_send![class!(NSColor), highlightColor]
+    }
+    unsafe fn shadowColor(_: Self) -> id {
+        msg_send![class!(NSColor), shadowColor]
+    }
+
+    // Fill Colors
+    unsafe fn quaternarySystemFillColor(_: Self) -> id {
+        msg_send![class!(NSColor), quaternarySystemFillColor]
+    }
+    unsafe fn quinaryLabelColor(_: Self) -> id {
+        msg_send![class!(NSColor), quinaryLabelColor]
+    }
+    unsafe fn quinarySystemFillColor(_: Self) -> id {
+        msg_send![class!(NSColor), quinarySystemFillColor]
+    }
+    unsafe fn secondarySystemFillColor(_: Self) -> id {
+        msg_send![class!(NSColor), secondarySystemFillColor]
+    }
+    unsafe fn systemFillColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemFillColor]
+    }
+    unsafe fn tertiarySystemFillColor(_: Self) -> id {
+        msg_send![class!(NSColor), tertiarySystemFillColor]
+    }
+    unsafe fn textInsertionPointColor(_: Self) -> id {
+        msg_send![class!(NSColor), textInsertionPointColor]
+    }
+
+    // Standard Colors
+    // https://developer.apple.com/documentation/appkit/nscolor/standard_colors?language=objc
+
+    // Adaptable System Colors
+    unsafe fn systemBlueColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemBlueColor]
+    }
+    unsafe fn systemBrownColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemBrownColor]
+    }
+    unsafe fn systemCyanColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemCyanColor]
+    }
+    unsafe fn systemGrayColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemGrayColor]
+    }
+    unsafe fn systemGreenColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemGreenColor]
+    }
+    unsafe fn systemIndigoColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemIndigoColor]
+    }
+    unsafe fn systemMintColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemMintColor]
+    }
+    unsafe fn systemOrangeColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemOrangeColor]
+    }
+    unsafe fn systemPinkColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemPinkColor]
+    }
+    unsafe fn systemPurpleColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemPurpleColor]
+    }
+    unsafe fn systemRedColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemRedColor]
+    }
+    unsafe fn systemTealColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemTealColor]
+    }
+    unsafe fn systemYellowColor(_: Self) -> id {
+        msg_send![class!(NSColor), systemYellowColor]
+    }
+
+    // Transparent Color
+    unsafe fn clearColor(_: Self) -> id {
+        msg_send![class!(NSColor), clearColor]
+    }
+
+    // Fixed Colors
+    unsafe fn blackColor(_: Self) -> id {
+        msg_send![class!(NSColor), blackColor]
+    }
+    unsafe fn blueColor(_: Self) -> id {
+        msg_send![class!(NSColor), blueColor]
+    }
+    unsafe fn brownColor(_: Self) -> id {
+        msg_send![class!(NSColor), brownColor]
+    }
+    unsafe fn cyanColor(_: Self) -> id {
+        msg_send![class!(NSColor), cyanColor]
+    }
+    unsafe fn darkGrayColor(_: Self) -> id {
+        msg_send![class!(NSColor), darkGrayColor]
+    }
+    unsafe fn grayColor(_: Self) -> id {
+        msg_send![class!(NSColor), grayColor]
+    }
+    unsafe fn greenColor(_: Self) -> id {
+        msg_send![class!(NSColor), greenColor]
+    }
+    unsafe fn lightGrayColor(_: Self) -> id {
+        msg_send![class!(NSColor), lightGrayColor]
+    }
+    unsafe fn magentaColor(_: Self) -> id {
+        msg_send![class!(NSColor), magentaColor]
+    }
+    unsafe fn orangeColor(_: Self) -> id {
+        msg_send![class!(NSColor), orangeColor]
+    }
+    unsafe fn purpleColor(_: Self) -> id {
+        msg_send![class!(NSColor), purpleColor]
+    }
+    unsafe fn redColor(_: Self) -> id {
+        msg_send![class!(NSColor), redColor]
+    }
+    unsafe fn whiteColor(_: Self) -> id {
+        msg_send![class!(NSColor), whiteColor]
+    }
+    unsafe fn yellowColor(_: Self) -> id {
+        msg_send![class!(NSColor), yellowColor]
     }
 
     unsafe fn alphaComponent(self) -> CGFloat {

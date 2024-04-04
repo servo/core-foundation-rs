@@ -5459,7 +5459,6 @@ mod test {
             let _ = NSColor::tertiarySystemFillColor(nil);
             let _ = NSColor::textInsertionPointColor(nil);
 
-
             // Adaptable System Colors
             let _ = NSColor::systemBlueColor(nil);
             let _ = NSColor::systemBrownColor(nil);

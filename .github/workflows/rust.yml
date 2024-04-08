@@ -32,7 +32,10 @@ jobs:
     strategy:
       matrix:
         os: [macos-11.0, macos-12, macos-13, macos-14]
-        toolchain: [stable, 1.56.1]
+        toolchain: [stable]
+        include:
+          - os: macos-14
+            toolchain: 1.56.1
     steps:
     - uses: actions/checkout@v4
     - name: Install toolchain

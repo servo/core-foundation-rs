@@ -17,7 +17,6 @@ version = "0.8.6"
 
 [dependencies]
 libc = "0.2"
-chrono = { version = "0.4", optional = true }
 uuid = { version = "0.5", optional = true }
 
 [features]
@@ -25,7 +24,6 @@ default = ["link"]
 
 mac_os_10_7_support = ["core-foundation-sys/mac_os_10_7_support"] # backwards compatibility
 mac_os_10_8_features = ["core-foundation-sys/mac_os_10_8_features"] # enables new features
-with-chrono = ["chrono"]
 with-uuid = ["uuid"]
 # Disable to manually link. Enabled by default.
 link = ["core-foundation-sys/link"]

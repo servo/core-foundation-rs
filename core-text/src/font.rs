@@ -944,7 +944,8 @@ fn out_of_range_variations() {
     let small = new_ui_font_for_language(kCTFontSystemDetailFontType, 19., None);
 
     let axes = small.get_variation_axes();
-    if macos_version() < (10, 12, 0) {
+    let version = dbg!(macos_version());
+    if version < (10, 12, 0) {
         assert!(axes.is_none());
         return;
     }
@@ -983,7 +984,9 @@ fn out_of_range_variations() {
     // attributes greater than max are dropped on macOS <= 11
     // on macOS 12 they seem to be preserved as is.
     let var_attrs = var_attrs.find(variation_attribute);
-    if macos_version() >= (12, 0, 0) && macos_version() < (13, 0, 0) {
+
+    // Just guessing -- this passed on (14, 4, 1)
+    if version >= (14, 0, 0) {
         let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
         assert!(!var_attrs.is_empty());
         let var_attrs: CFDictionary<CFType, CFType> = unsafe { std::mem::transmute(var_attrs) };
@@ -1006,9 +1009,41 @@ fn out_of_range_variations() {
                 .unwrap()
                 .to_f64()
                 .unwrap();
-            assert_eq!(val, max + 1.);
+
+            assert_eq!(val, max, "axis: {:?} = {:?} (not {:?})", tag, val, max);
         }
-    } else if macos_version() >= (10, 15, 0) {
+    } else if version >= (12, 0, 0) && version < (13, 0, 0) {
+        let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
+        assert!(!var_attrs.is_empty());
+        let var_attrs: CFDictionary<CFType, CFType> = unsafe { std::mem::transmute(var_attrs) };
+        // attributes greater than max remain
+        for axis in axes.iter() {
+            let tag = axis
+                .find(unsafe { kCTFontVariationAxisIdentifierKey })
+                .unwrap();
+            let max = axis
+                .find(unsafe { kCTFontVariationAxisMaximumValueKey })
+                .unwrap()
+                .downcast::<CFNumber>()
+                .unwrap()
+                .to_f64()
+                .unwrap();
+            let val = var_attrs
+                .find(tag.clone())
+                .unwrap()
+                .downcast::<CFNumber>()
+                .unwrap()
+                .to_f64()
+                .unwrap();
+
+            let expected = max + 1.;
+            assert_eq!(
+                val, expected,
+                "axis: {:?} = {:?} (not {:?})",
+                tag, val, expected
+            );
+        }
+    } else if version >= (10, 15, 0) {
         assert!(var_attrs.is_none());
     } else {
         let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();

@@ -9,8 +9,8 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFTypeID};
-use string::CFStringRef;
+use crate::base::{CFAllocatorRef, CFTypeID};
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFUUID(c_void);

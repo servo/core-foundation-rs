@@ -9,10 +9,10 @@
 
 use std::os::raw::c_void;
 
-use array::CFArrayRef;
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID};
-use error::CFErrorRef;
-use url::CFURLRef;
+use crate::array::CFArrayRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID};
+use crate::error::CFErrorRef;
+use crate::url::CFURLRef;
 
 #[repr(C)]
 pub struct __CFURLEnumerator(c_void);

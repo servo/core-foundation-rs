@@ -9,10 +9,12 @@
 
 use std::os::raw::c_void;
 
-use array::CFArrayRef;
-use base::{mach_port_t, Boolean, CFAllocatorRef, CFHashCode, CFIndex, CFOptionFlags, CFTypeID};
-use date::{CFAbsoluteTime, CFTimeInterval};
-use string::CFStringRef;
+use crate::array::CFArrayRef;
+use crate::base::{
+    mach_port_t, Boolean, CFAllocatorRef, CFHashCode, CFIndex, CFOptionFlags, CFTypeID,
+};
+use crate::date::{CFAbsoluteTime, CFTimeInterval};
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFRunLoop(c_void);

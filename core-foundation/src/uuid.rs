@@ -15,7 +15,7 @@ extern crate uuid;
 use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::uuid::*;
 
-use base::TCFType;
+use crate::base::TCFType;
 
 #[cfg(feature = "with-uuid")]
 use self::uuid::Uuid;

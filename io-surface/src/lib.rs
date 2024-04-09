@@ -166,7 +166,7 @@ impl IOSurface {
     }
 }
 
-#[link(name = "IOSurface", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "IOSurface", kind = "framework"))]
 extern "C" {
     pub static kIOSurfaceAllocSize: CFStringRef;
     pub static kIOSurfaceWidth: CFStringRef;

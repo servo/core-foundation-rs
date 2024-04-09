@@ -1,11 +1,11 @@
 #![allow(non_upper_case_globals)]
+use crate::event_source::CGEventSource;
+use crate::geometry::CGPoint;
 use core_foundation::{
     base::{CFRelease, CFRetain, CFTypeID, TCFType},
     mach_port::{CFMachPort, CFMachPortRef},
 };
-use event_source::CGEventSource;
 use foreign_types::ForeignType;
-use geometry::CGPoint;
 use libc::c_void;
 use std::mem::ManuallyDrop;
 
@@ -18,6 +18,7 @@ bitflags! {
     ///
     /// [Ref](http://opensource.apple.com/source/IOHIDFamily/IOHIDFamily-700/IOHIDSystem/IOKit/hidsystem/IOLLEvent.h)
     #[repr(C)]
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
     pub struct CGEventFlags: u64 {
         const CGEventFlagNull = 0;
 
@@ -177,7 +178,7 @@ impl EventField {
     pub const MOUSE_EVENT_INSTANT_MOUSER: CGEventField = 6;
 
     /// Key to access an integer field that encodes the mouse event subtype as
-    /// a `kCFNumberIntType'.
+    /// a `kCFNumberIntType`.
     pub const MOUSE_EVENT_SUB_TYPE: CGEventField = 7;
 
     /// Key to access an integer field, non-zero when this is an autorepeat of
@@ -208,7 +209,7 @@ impl EventField {
     /// since the last scrolling event from a Mighty Mouse scroller or a
     /// single-wheel mouse scroller. The scrolling data uses a fixed-point
     /// 16.16 signed integer format. If this key is passed to
-    /// `CGEventGetDoubleValueField', the fixed-point value is converted to a
+    /// `CGEventGetDoubleValueField`, the fixed-point value is converted to a
     /// double value.
     pub const SCROLL_WHEEL_EVENT_FIXED_POINT_DELTA_AXIS_1: CGEventField = 93;
 
@@ -216,7 +217,7 @@ impl EventField {
     /// represents a line-based or pixel-based change in horizontal position
     /// since the last scrolling event from a Mighty Mouse scroller. The
     /// scrolling data uses a fixed-point 16.16 signed integer format. If this
-    /// key is passed to `CGEventGetDoubleValueField', the fixed-point value is
+    /// key is passed to `CGEventGetDoubleValueField`, the fixed-point value is
     /// converted to a double value.
     pub const SCROLL_WHEEL_EVENT_FIXED_POINT_DELTA_AXIS_2: CGEventField = 94;
 
@@ -419,16 +420,16 @@ pub type CGEventTapCallBackFn<'tap_life> =
 type CGEventTapCallBackInternal = unsafe extern "C" fn(
     proxy: CGEventTapProxy,
     etype: CGEventType,
-    event: ::sys::CGEventRef,
+    event: crate::sys::CGEventRef,
     user_info: *const c_void,
-) -> ::sys::CGEventRef;
+) -> crate::sys::CGEventRef;
 
 unsafe extern "C" fn cg_event_tap_callback_internal(
     _proxy: CGEventTapProxy,
     _etype: CGEventType,
-    _event: ::sys::CGEventRef,
+    _event: crate::sys::CGEventRef,
     _user_info: *const c_void,
-) -> ::sys::CGEventRef {
+) -> crate::sys::CGEventRef {
     let callback = _user_info as *mut CGEventTapCallBackFn;
     let event = CGEvent::from_ptr(_event);
     let new_event = (*callback)(_proxy, _etype, &event);
@@ -517,7 +518,7 @@ impl<'tap_life> CGEventTap<'tap_life> {
 foreign_type! {
     #[doc(hidden)]
     pub unsafe type CGEvent {
-        type CType = ::sys::CGEvent;
+        type CType = crate::sys::CGEvent;
         fn drop = |p| CFRelease(p as *mut _);
         fn clone = |p| CFRetain(p as *const _) as *mut _;
     }
@@ -673,14 +674,14 @@ impl CGEvent {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     /// Return the type identifier for the opaque type `CGEventRef'.
     fn CGEventGetTypeID() -> CFTypeID;
 
     /// Return a new event using the event source `source'. If `source' is NULL,
     /// the default source is used.
-    fn CGEventCreate(source: ::sys::CGEventSourceRef) -> ::sys::CGEventRef;
+    fn CGEventCreate(source: crate::sys::CGEventSourceRef) -> crate::sys::CGEventRef;
 
     /// Return a new keyboard event.
     ///
@@ -693,10 +694,10 @@ extern "C" {
     /// the SHIFT key must be down, the 'z' key must go down, and then the SHIFT
     /// and 'z' key must be released:
     fn CGEventCreateKeyboardEvent(
-        source: ::sys::CGEventSourceRef,
+        source: crate::sys::CGEventSourceRef,
         keycode: CGKeyCode,
         keydown: bool,
-    ) -> ::sys::CGEventRef;
+    ) -> crate::sys::CGEventRef;
 
     /// Return a new mouse event.
     ///
@@ -712,11 +713,11 @@ extern "C" {
     /// Mouse button 1 is the secondary mouse button (right). Mouse button 2 is
     /// the center button, and the remaining buttons are in USB device order.
     fn CGEventCreateMouseEvent(
-        source: ::sys::CGEventSourceRef,
+        source: crate::sys::CGEventSourceRef,
         mouseType: CGEventType,
         mouseCursorPosition: CGPoint,
         mouseButton: CGMouseButton,
-    ) -> ::sys::CGEventRef;
+    ) -> crate::sys::CGEventRef;
 
     /// A non-variadic variant version of CGEventCreateScrollWheelEvent.
     ///
@@ -726,42 +727,42 @@ extern "C" {
     /// event before posting it to the event system.
     #[cfg(feature = "highsierra")]
     fn CGEventCreateScrollWheelEvent2(
-        source: ::sys::CGEventSourceRef,
+        source: crate::sys::CGEventSourceRef,
         units: CGScrollEventUnit,
         wheelCount: u32,
         wheel1: i32,
         wheel2: i32,
         wheel3: i32,
-    ) -> ::sys::CGEventRef;
+    ) -> crate::sys::CGEventRef;
 
     /// Post an event into the event stream at a specified location.
     ///
     /// This function posts the specified event immediately before any event taps
     /// instantiated for that location, and the event passes through any such
     /// taps.
-    fn CGEventPost(tapLocation: CGEventTapLocation, event: ::sys::CGEventRef);
+    fn CGEventPost(tapLocation: CGEventTapLocation, event: crate::sys::CGEventRef);
 
-    fn CGEventTapPostEvent(tapProxy: CGEventTapProxy, event: ::sys::CGEventRef);
+    fn CGEventTapPostEvent(tapProxy: CGEventTapProxy, event: crate::sys::CGEventRef);
 
     #[cfg(feature = "elcapitan")]
     /// Post an event to a specified process ID
-    fn CGEventPostToPid(pid: libc::pid_t, event: ::sys::CGEventRef);
+    fn CGEventPostToPid(pid: libc::pid_t, event: crate::sys::CGEventRef);
 
     /// Set the event flags of an event.
-    fn CGEventSetFlags(event: ::sys::CGEventRef, flags: CGEventFlags);
+    fn CGEventSetFlags(event: crate::sys::CGEventRef, flags: CGEventFlags);
 
     /// Return the event flags of an event.
-    fn CGEventGetFlags(event: ::sys::CGEventRef) -> CGEventFlags;
+    fn CGEventGetFlags(event: crate::sys::CGEventRef) -> CGEventFlags;
 
     /// Return the location of an event in global display coordinates.
-    /// CGPointZero is returned if event is not a valid ::sys::CGEventRef.
-    fn CGEventGetLocation(event: ::sys::CGEventRef) -> CGPoint;
+    /// CGPointZero is returned if event is not a valid crate::sys::CGEventRef.
+    fn CGEventGetLocation(event: crate::sys::CGEventRef) -> CGPoint;
 
     /// Set the event type of an event.
-    fn CGEventSetType(event: ::sys::CGEventRef, eventType: CGEventType);
+    fn CGEventSetType(event: crate::sys::CGEventRef, eventType: CGEventType);
 
     /// Return the event type of an event (left mouse down, for example).
-    fn CGEventGetType(event: ::sys::CGEventRef) -> CGEventType;
+    fn CGEventGetType(event: crate::sys::CGEventRef) -> CGEventType;
 
     /// Set the Unicode string associated with a keyboard event.
     ///
@@ -772,13 +773,13 @@ extern "C" {
     /// keyboard event and do their own translation based on the virtual
     /// keycode and perceived event state.
     fn CGEventKeyboardSetUnicodeString(
-        event: ::sys::CGEventRef,
+        event: crate::sys::CGEventRef,
         length: libc::c_ulong,
         string: *const u16,
     );
 
     /// Return the integer value of a field in an event.
-    fn CGEventGetIntegerValueField(event: ::sys::CGEventRef, field: CGEventField) -> i64;
+    fn CGEventGetIntegerValueField(event: crate::sys::CGEventRef, field: CGEventField) -> i64;
 
     /// Set the integer value of a field in an event.
     ///
@@ -790,14 +791,14 @@ extern "C" {
     /// function and specify the field `kCGMouseEventSubtype' with a value of
     /// `kCGEventMouseSubtypeTabletPoint' or
     /// `kCGEventMouseSubtypeTabletProximity' before setting other parameters.
-    fn CGEventSetIntegerValueField(event: ::sys::CGEventRef, field: CGEventField, value: i64);
+    fn CGEventSetIntegerValueField(event: crate::sys::CGEventRef, field: CGEventField, value: i64);
 
     /// Return the floating-point value of a field in an event.
     ///
     /// In cases where the field value is represented within the event by a fixed
     /// point number or an integer, the result is scaled to the appropriate range
     /// as part of creating the floating-point representation.
-    fn CGEventGetDoubleValueField(event: ::sys::CGEventRef, field: CGEventField) -> f64;
+    fn CGEventGetDoubleValueField(event: crate::sys::CGEventRef, field: CGEventField) -> f64;
 
     /// Set the floating-point value of a field in an event.
     ///
@@ -808,7 +809,7 @@ extern "C" {
     /// In cases where the field’s value is represented within the event by a
     /// fixed point number or integer, the value parameter is scaled as needed
     /// and converted to the appropriate type.
-    fn CGEventSetDoubleValueField(event: ::sys::CGEventRef, field: CGEventField, value: f64);
+    fn CGEventSetDoubleValueField(event: crate::sys::CGEventRef, field: CGEventField, value: f64);
 
     // ::sys::CGEventTapRef is actually an CFMachPortRef
     fn CGEventTapCreate(

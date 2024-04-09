@@ -9,12 +9,12 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID};
-use data::CFDataRef;
-use dictionary::CFDictionaryRef;
-use string::CFStringRef;
-use url::CFURLRef;
-use xml_node::{CFXMLExternalID, CFXMLNodeRef, CFXMLTreeRef};
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID};
+use crate::data::CFDataRef;
+use crate::dictionary::CFDictionaryRef;
+use crate::string::CFStringRef;
+use crate::url::CFURLRef;
+use crate::xml_node::{CFXMLExternalID, CFXMLNodeRef, CFXMLTreeRef};
 
 #[repr(C)]
 pub struct __CFXMLParser(c_void);

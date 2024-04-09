@@ -11,8 +11,8 @@
 
 pub use core_foundation_sys::url::*;
 
-use base::{CFIndex, TCFType};
-use string::CFString;
+use crate::base::{CFIndex, TCFType};
+use crate::string::CFString;
 
 use core_foundation_sys::base::{kCFAllocatorDefault, Boolean};
 use std::fmt;

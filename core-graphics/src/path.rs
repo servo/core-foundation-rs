@@ -7,11 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-pub use sys::CGPathRef as SysCGPathRef;
+pub use crate::sys::CGPathRef as SysCGPathRef;
 
+use crate::geometry::{CGAffineTransform, CGPoint, CGRect};
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
 use foreign_types::ForeignType;
-use geometry::{CGAffineTransform, CGPoint, CGRect};
 use libc::c_void;
 use std::fmt::{self, Debug, Formatter};
 use std::marker::PhantomData;
@@ -22,7 +22,7 @@ use std::slice;
 foreign_type! {
     #[doc(hidden)]
     pub unsafe type CGPath {
-        type CType = ::sys::CGPath;
+        type CType = crate::sys::CGPath;
         fn drop = |p| CFRelease(p as *mut _);
         fn clone = |p| CFRetain(p as *const _) as *mut _;
     }
@@ -125,9 +125,12 @@ impl CGPathElement {
 
 type CGPathApplierFunction = unsafe extern "C" fn(info: *mut c_void, element: *const CGPathElement);
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
-    fn CGPathCreateWithRect(rect: CGRect, transform: *const CGAffineTransform) -> ::sys::CGPathRef;
-    fn CGPathApply(path: ::sys::CGPathRef, info: *mut c_void, function: CGPathApplierFunction);
+    fn CGPathCreateWithRect(
+        rect: CGRect,
+        transform: *const CGAffineTransform,
+    ) -> crate::sys::CGPathRef;
+    fn CGPathApply(path: crate::sys::CGPathRef, info: *mut c_void, function: CGPathApplierFunction);
     fn CGPathGetTypeID() -> CFTypeID;
 }

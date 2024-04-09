@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use super::sys::CGColorRef;
-use base::CGFloat;
+use crate::base::CGFloat;
 use core_foundation::base::CFTypeID;
 use core_foundation::base::TCFType;
 
@@ -28,13 +28,13 @@ impl CGColor {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     fn CGColorCreateGenericRGB(
         red: CGFloat,
         green: CGFloat,
         blue: CGFloat,
         alpha: CGFloat,
-    ) -> ::sys::CGColorRef;
+    ) -> crate::sys::CGColorRef;
     fn CGColorGetTypeID() -> CFTypeID;
 }

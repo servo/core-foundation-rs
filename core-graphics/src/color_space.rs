@@ -14,7 +14,7 @@ use foreign_types::ForeignType;
 foreign_type! {
     #[doc(hidden)]
     pub unsafe type CGColorSpace {
-        type CType = ::sys::CGColorSpace;
+        type CType = crate::sys::CGColorSpace;
         fn drop = |p| CFRelease(p as *mut _);
         fn clone = |p| CFRetain(p as *const _) as *mut _;
     }
@@ -53,7 +53,7 @@ impl CGColorSpace {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     /// The Display P3 color space, created by Apple.
     pub static kCGColorSpaceDisplayP3: CFStringRef;
@@ -111,8 +111,8 @@ extern "C" {
     /// The name of the generic gray color space.
     pub static kCGColorSpaceGenericGray: CFStringRef;
 
-    fn CGColorSpaceCreateDeviceRGB() -> ::sys::CGColorSpaceRef;
-    fn CGColorSpaceCreateDeviceGray() -> ::sys::CGColorSpaceRef;
-    fn CGColorSpaceCreateWithName(name: CFStringRef) -> ::sys::CGColorSpaceRef;
+    fn CGColorSpaceCreateDeviceRGB() -> crate::sys::CGColorSpaceRef;
+    fn CGColorSpaceCreateDeviceGray() -> crate::sys::CGColorSpaceRef;
+    fn CGColorSpaceCreateWithName(name: CFStringRef) -> crate::sys::CGColorSpaceRef;
     fn CGColorSpaceGetTypeID() -> CFTypeID;
 }

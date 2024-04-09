@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID};
+use crate::base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID};
 use std::os::raw::c_void;
 
 #[repr(C)]

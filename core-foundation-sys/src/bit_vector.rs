@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, UInt32, UInt8};
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, UInt32, UInt8};
 
 #[repr(C)]
 pub struct __CFBitVector(c_void);

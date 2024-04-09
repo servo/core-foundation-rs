@@ -7,9 +7,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use crate::string::CFStringRef;
 use std::cmp::Ordering;
 use std::os::raw::{c_int, c_short, c_uchar, c_uint, c_ushort, c_void};
-use string::CFStringRef;
 
 pub type Boolean = u8;
 pub type mach_port_t = c_uint;

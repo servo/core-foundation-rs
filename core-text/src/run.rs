@@ -104,10 +104,10 @@ impl CTRun {
 
 #[test]
 fn create_runs() {
+    use crate::font;
+    use crate::line::*;
+    use crate::string_attributes::*;
     use core_foundation::attributed_string::CFMutableAttributedString;
-    use font;
-    use line::*;
-    use string_attributes::*;
     let mut string = CFMutableAttributedString::new();
     string.replace_str(&CFString::new("Food"), CFRange::init(0, 0));
     let len = string.char_len();
@@ -145,7 +145,7 @@ fn create_runs() {
     }
 }
 
-#[link(name = "CoreText", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreText", kind = "framework"))]
 extern "C" {
     fn CTRunGetTypeID() -> CFTypeID;
     fn CTRunGetAttributes(run: CTRunRef) -> CFDictionaryRef;

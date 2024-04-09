@@ -9,10 +9,12 @@
 
 #![allow(non_upper_case_globals)]
 
-use font_descriptor;
-use font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
-use font_descriptor::{CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors};
-use font_manager::create_font_descriptor;
+use crate::font_descriptor;
+use crate::font_descriptor::{CTFontDescriptor, CTFontDescriptorRef, CTFontOrientation};
+use crate::font_descriptor::{
+    CTFontSymbolicTraits, CTFontTraits, SymbolicTraitAccessors, TraitAccessors,
+};
+use crate::font_manager::create_font_descriptor;
 
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFIndex, CFOptionFlags, CFType, CFTypeID, CFTypeRef, TCFType};
@@ -180,6 +182,22 @@ pub fn new_from_descriptor(desc: &CTFontDescriptor, pt_size: f64) -> CTFont {
     }
 }
 
+pub fn new_from_descriptor_and_options(
+    desc: &CTFontDescriptor,
+    pt_size: f64,
+    options: CTFontOptions,
+) -> CTFont {
+    unsafe {
+        let font_ref = CTFontCreateWithFontDescriptorAndOptions(
+            desc.as_concrete_TypeRef(),
+            pt_size as CGFloat,
+            ptr::null(),
+            options,
+        );
+        CTFont::wrap_under_create_rule(font_ref)
+    }
+}
+
 pub fn new_from_buffer(buffer: &[u8]) -> Result<CTFont, ()> {
     let ct_font_descriptor = create_font_descriptor(buffer)?;
     Ok(new_from_descriptor(&ct_font_descriptor, 16.0))
@@ -190,6 +208,27 @@ pub fn new_from_name(name: &str, pt_size: f64) -> Result<CTFont, ()> {
         let name: CFString = name.parse().unwrap();
         let font_ref =
             CTFontCreateWithName(name.as_concrete_TypeRef(), pt_size as CGFloat, ptr::null());
+        if font_ref.is_null() {
+            Err(())
+        } else {
+            Ok(CTFont::wrap_under_create_rule(font_ref))
+        }
+    }
+}
+
+pub fn new_from_name_and_options(
+    name: &str,
+    pt_size: f64,
+    options: CTFontOptions,
+) -> Result<CTFont, ()> {
+    unsafe {
+        let name: CFString = name.parse().unwrap();
+        let font_ref = CTFontCreateWithNameAndOptions(
+            name.as_concrete_TypeRef(),
+            pt_size as CGFloat,
+            ptr::null(),
+            options,
+        );
         if font_ref.is_null() {
             Err(())
         } else {
@@ -557,7 +596,7 @@ pub fn cascade_list_for_languages(
     }
 }
 
-#[link(name = "CoreText", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreText", kind = "framework"))]
 extern "C" {
     /*
      * CTFont.h
@@ -611,13 +650,23 @@ extern "C" {
         size: CGFloat,
         matrix: *const CGAffineTransform,
     ) -> CTFontRef;
-    //fn CTFontCreateWithNameAndOptions
+    fn CTFontCreateWithNameAndOptions(
+        name: CFStringRef,
+        size: CGFloat,
+        matrix: *const CGAffineTransform,
+        options: CTFontOptions,
+    ) -> CTFontRef;
     fn CTFontCreateWithFontDescriptor(
         descriptor: CTFontDescriptorRef,
         size: CGFloat,
         matrix: *const CGAffineTransform,
     ) -> CTFontRef;
-    //fn CTFontCreateWithFontDescriptorAndOptions
+    fn CTFontCreateWithFontDescriptorAndOptions(
+        descriptor: CTFontDescriptorRef,
+        size: CGFloat,
+        matrix: *const CGAffineTransform,
+        options: CTFontOptions,
+    ) -> CTFontRef;
     fn CTFontCreateUIFontForLanguage(
         uiType: CTFontUIFontType,
         size: CGFloat,

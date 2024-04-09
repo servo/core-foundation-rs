@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use base::CGFloat;
+use crate::base::CGFloat;
 use core_foundation::base::TCFType;
 use core_foundation::dictionary::CFDictionary;
 
@@ -162,11 +162,11 @@ impl CGAffineTransform {
 }
 
 mod ffi {
-    use base::{boolean_t, CGFloat};
+    use crate::base::{boolean_t, CGFloat};
+    use crate::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
     use core_foundation::dictionary::CFDictionaryRef;
-    use geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 
-    #[link(name = "CoreGraphics", kind = "framework")]
+    #[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
     extern "C" {
         pub fn CGRectInset(rect: CGRect, dx: CGFloat, dy: CGFloat) -> CGRect;
         pub fn CGRectMakeWithDictionaryRepresentation(

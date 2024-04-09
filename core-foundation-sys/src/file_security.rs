@@ -10,9 +10,9 @@
 use std::os::raw::c_void;
 
 #[cfg(feature = "mac_os_10_8_features")]
-use base::CFOptionFlags;
-use base::{Boolean, CFAllocatorRef, CFTypeID};
-use uuid::CFUUIDRef;
+use crate::base::CFOptionFlags;
+use crate::base::{Boolean, CFAllocatorRef, CFTypeID};
+use crate::uuid::CFUUIDRef;
 
 #[repr(C)]
 pub struct __CFFileSecurity(c_void);

@@ -9,12 +9,12 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID, SInt32, UInt16};
-use data::CFDataRef;
-use date::CFTimeInterval;
-use propertylist::CFPropertyListRef;
-use runloop::CFRunLoopSourceRef;
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID, SInt32, UInt16};
+use crate::data::CFDataRef;
+use crate::date::CFTimeInterval;
+use crate::propertylist::CFPropertyListRef;
+use crate::runloop::CFRunLoopSourceRef;
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFSocket(c_void);

@@ -24,9 +24,9 @@ use foreign_types::ForeignType;
 use std::ops::Mul;
 use std::ptr;
 
-use appkit::CGLContextObj;
-use base::{id, nil, BOOL, YES};
-use foundation::NSUInteger;
+use crate::appkit::CGLContextObj;
+use crate::base::{id, nil, BOOL, YES};
+use crate::foundation::NSUInteger;
 
 // CABase.h
 
@@ -1176,6 +1176,7 @@ impl Filter {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
     pub struct EdgeAntialiasingMask: u32 {
         const LEFT_EDGE     = 1 << 0;   // kCALayerLeftEdge
         const RIGHT_EDGE    = 1 << 1;   // kCALayerRightEdge
@@ -1185,6 +1186,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
     pub struct CornerMask: NSUInteger {
         const MIN_X_MIN_Y_CORNER =  1 << 0; // kCALayerMinXMinYCorner
         const MAX_X_MIN_Y_CORNER =  1 << 1; // kCALayerMaxXMinYCorner
@@ -1194,6 +1196,7 @@ bitflags! {
 }
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
     pub struct AutoresizingMask: u32 {
         const NOT_SIZABLE       = 0;        // kCALayerNotSizable
         const MIN_X_MARGIN      = 1 << 0;   // kCALayerMinXMargin
@@ -1356,7 +1359,7 @@ pub mod transaction {
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
 
-    use base::{id, BOOL, YES};
+    use crate::base::{id, BOOL, YES};
 
     #[inline]
     pub fn begin() {
@@ -1572,7 +1575,7 @@ impl CATransform3D {
     }
 }
 
-#[link(name = "QuartzCore", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "QuartzCore", kind = "framework"))]
 extern "C" {
     static kCARendererColorSpace: CFStringRef;
     static kCARendererMetalCommandQueue: CFStringRef;

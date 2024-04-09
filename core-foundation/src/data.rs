@@ -16,7 +16,7 @@ use std::ops::Deref;
 use std::slice;
 use std::sync::Arc;
 
-use base::{CFIndexConvertible, TCFType};
+use crate::base::{CFIndexConvertible, TCFType};
 
 declare_TCFType! {
     /// A byte buffer.
@@ -26,7 +26,7 @@ impl_TCFType!(CFData, CFDataRef, CFDataGetTypeID);
 impl_CFTypeDescription!(CFData);
 
 impl CFData {
-    /// Creates a CFData around a copy `buffer`
+    /// Creates a [`CFData`] around a copy `buffer`
     pub fn from_buffer(buffer: &[u8]) -> CFData {
         unsafe {
             let data_ref = CFDataCreate(
@@ -38,7 +38,7 @@ impl CFData {
         }
     }
 
-    /// Creates a CFData referencing `buffer` without creating a copy
+    /// Creates a [`CFData`] referencing `buffer` without creating a copy
     pub fn from_arc<T: AsRef<[u8]> + Sync + Send>(buffer: Arc<T>) -> Self {
         use crate::base::{CFAllocator, CFAllocatorContext};
         use std::os::raw::c_void;

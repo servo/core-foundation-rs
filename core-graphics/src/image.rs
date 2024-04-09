@@ -1,12 +1,12 @@
 use std::ptr;
 
-use base::CGFloat;
-use color_space::CGColorSpace;
+use crate::base::CGFloat;
+use crate::color_space::CGColorSpace;
+use crate::data_provider::{CGDataProvider, CGDataProviderRef};
+use crate::geometry::CGRect;
 use core_foundation::base::{CFRetain, CFTypeID};
 use core_foundation::data::CFData;
-use data_provider::{CGDataProvider, CGDataProviderRef};
 use foreign_types::{ForeignType, ForeignTypeRef};
-use geometry::CGRect;
 use libc::size_t;
 
 #[repr(C)]
@@ -33,7 +33,7 @@ pub enum CGImageByteOrderInfo {
 foreign_type! {
     #[doc(hidden)]
     pub unsafe type CGImage {
-        type CType = ::sys::CGImage;
+        type CType = crate::sys::CGImage;
         fn drop = CGImageRelease;
         fn clone = |p| CFRetain(p as *const _) as *mut _;
     }
@@ -125,31 +125,34 @@ impl CGImageRef {
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     fn CGImageGetTypeID() -> CFTypeID;
-    fn CGImageGetWidth(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetHeight(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetBitsPerComponent(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetBitsPerPixel(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetBytesPerRow(image: ::sys::CGImageRef) -> size_t;
-    fn CGImageGetColorSpace(image: ::sys::CGImageRef) -> ::sys::CGColorSpaceRef;
-    fn CGImageGetDataProvider(image: ::sys::CGImageRef) -> ::sys::CGDataProviderRef;
-    fn CGImageRelease(image: ::sys::CGImageRef);
+    fn CGImageGetWidth(image: crate::sys::CGImageRef) -> size_t;
+    fn CGImageGetHeight(image: crate::sys::CGImageRef) -> size_t;
+    fn CGImageGetBitsPerComponent(image: crate::sys::CGImageRef) -> size_t;
+    fn CGImageGetBitsPerPixel(image: crate::sys::CGImageRef) -> size_t;
+    fn CGImageGetBytesPerRow(image: crate::sys::CGImageRef) -> size_t;
+    fn CGImageGetColorSpace(image: crate::sys::CGImageRef) -> crate::sys::CGColorSpaceRef;
+    fn CGImageGetDataProvider(image: crate::sys::CGImageRef) -> crate::sys::CGDataProviderRef;
+    fn CGImageRelease(image: crate::sys::CGImageRef);
     fn CGImageCreate(
         width: size_t,
         height: size_t,
         bitsPerComponent: size_t,
         bitsPerPixel: size_t,
         bytesPerRow: size_t,
-        space: ::sys::CGColorSpaceRef,
+        space: crate::sys::CGColorSpaceRef,
         bitmapInfo: u32,
-        provider: ::sys::CGDataProviderRef,
+        provider: crate::sys::CGDataProviderRef,
         decode: *const CGFloat,
         shouldInterpolate: bool,
         intent: u32,
-    ) -> ::sys::CGImageRef;
-    fn CGImageCreateWithImageInRect(image: ::sys::CGImageRef, rect: CGRect) -> ::sys::CGImageRef;
+    ) -> crate::sys::CGImageRef;
+    fn CGImageCreateWithImageInRect(
+        image: crate::sys::CGImageRef,
+        rect: CGRect,
+    ) -> crate::sys::CGImageRef;
 
     //fn CGImageGetAlphaInfo(image: ::sys::CGImageRef) -> CGImageAlphaInfo;
     //fn CGImageCreateCopyWithColorSpace(image: ::sys::CGImageRef, space: ::sys::CGColorSpaceRef) -> ::sys::CGImageRef

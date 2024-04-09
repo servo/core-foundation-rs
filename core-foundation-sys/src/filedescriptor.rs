@@ -9,9 +9,9 @@
 
 use std::os::raw::{c_int, c_void};
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID};
-use runloop::CFRunLoopSourceRef;
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFTypeID};
+use crate::runloop::CFRunLoopSourceRef;
+use crate::string::CFStringRef;
 
 pub type CFFileDescriptorNativeDescriptor = c_int;
 

@@ -9,12 +9,14 @@
 
 use std::os::raw::c_void;
 
-use array::CFArrayRef;
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef, SInt32};
-use data::CFDataRef;
-use dictionary::CFDictionaryRef;
-use error::CFErrorRef;
-use string::{CFStringEncoding, CFStringRef};
+use crate::array::CFArrayRef;
+use crate::base::{
+    Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef, SInt32,
+};
+use crate::data::CFDataRef;
+use crate::dictionary::CFDictionaryRef;
+use crate::error::CFErrorRef;
+use crate::string::{CFStringEncoding, CFStringRef};
 
 #[repr(C)]
 pub struct __CFURL(c_void);

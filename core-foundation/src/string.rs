@@ -11,7 +11,7 @@
 
 pub use core_foundation_sys::string::*;
 
-use base::{CFIndexConvertible, TCFType};
+use crate::base::{CFIndexConvertible, TCFType};
 
 use core_foundation_sys::base::{kCFAllocatorDefault, kCFAllocatorNull};
 use core_foundation_sys::base::{Boolean, CFIndex, CFRange};
@@ -30,7 +30,7 @@ impl_TCFType!(CFString, CFStringRef, CFStringGetTypeID);
 impl FromStr for CFString {
     type Err = ();
 
-    /// See also CFString::new for a variant of this which does not return a Result
+    /// See also [`CFString::new()`] for a variant of this which does not return a `Result`.
     #[inline]
     fn from_str(string: &str) -> Result<CFString, ()> {
         Ok(CFString::new(string))

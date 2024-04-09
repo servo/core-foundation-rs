@@ -15,9 +15,9 @@ use core_foundation::dictionary::CFDictionary;
 use core_foundation::string::{CFString, CFStringRef};
 use foreign_types::ForeignType;
 
-use geometry::CGRect;
-use image::CGImage;
-use sys;
+use crate::geometry::CGRect;
+use crate::image::CGImage;
+use crate::sys;
 
 pub type CGWindowID = u32;
 
@@ -31,13 +31,14 @@ pub const kCGWindowBackingStoreRetained: CGWindowBackingType = 0;
 pub const kCGWindowBackingStoreNonretained: CGWindowBackingType = 1;
 pub const kCGWindowBackingStoreBuffered: CGWindowBackingType = 2;
 
+// https://developer.apple.com/documentation/coregraphics/quartz_window_services/window_list_option_constants?language=objc
 pub type CGWindowListOption = u32;
-pub const kCGWindowListOptionAll: CGWindowListOption = 1 << 0;
-pub const kCGWindowListOptionOnScreenOnly: CGWindowListOption = 1 << 1;
-pub const kCGWindowListOptionOnScreenAboveWindow: CGWindowListOption = 1 << 2;
-pub const kCGWindowListOptionOnScreenBelowWindow: CGWindowListOption = 1 << 3;
-pub const kCGWindowListOptionIncludingWindow: CGWindowListOption = 1 << 4;
-pub const kCGWindowListOptionExcludeDesktopElements: CGWindowListOption = 1 << 5;
+pub const kCGWindowListOptionAll: CGWindowListOption = 0;
+pub const kCGWindowListOptionOnScreenOnly: CGWindowListOption = 1 << 0;
+pub const kCGWindowListOptionOnScreenAboveWindow: CGWindowListOption = 1 << 1;
+pub const kCGWindowListOptionOnScreenBelowWindow: CGWindowListOption = 1 << 2;
+pub const kCGWindowListOptionIncludingWindow: CGWindowListOption = 1 << 3;
+pub const kCGWindowListExcludeDesktopElements: CGWindowListOption = 1 << 4;
 
 pub type CGWindowImageOption = u32;
 pub const kCGWindowImageDefault: CGWindowImageOption = 0;
@@ -125,7 +126,7 @@ pub fn create_image_from_array(
     }
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
     pub static kCGWindowNumber: CFStringRef;
     pub static kCGWindowStoreType: CFStringRef;

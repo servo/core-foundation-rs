@@ -9,7 +9,7 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFComparisonResult, CFTypeID};
+use crate::base::{CFAllocatorRef, CFComparisonResult, CFTypeID};
 
 #[repr(C)]
 pub struct __CFDate(c_void);

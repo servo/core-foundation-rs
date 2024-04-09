@@ -9,10 +9,10 @@
 
 use std::os::raw::{c_char, c_void};
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID};
-use date::{CFAbsoluteTime, CFTimeInterval};
-use locale::{CFCalendarIdentifier, CFLocaleRef};
-use timezone::CFTimeZoneRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID};
+use crate::date::{CFAbsoluteTime, CFTimeInterval};
+use crate::locale::{CFCalendarIdentifier, CFLocaleRef};
+use crate::timezone::CFTimeZoneRef;
 
 #[repr(C)]
 pub struct __CFCalendar(c_void);

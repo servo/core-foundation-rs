@@ -1,6 +1,6 @@
 # core-foundation-rs
 
-[![Build Status](https://travis-ci.com/servo/core-foundation-rs.svg?branch=master)](https://travis-ci.com/servo/core-foundation-rs)
+[![Build Status](https://github.com/servo/core-foundation-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/servo/core-foundation-rs/actions)
 
 ## Compatibility
 

@@ -11,7 +11,7 @@
 //!
 //! These are liable to change at any time. Use with caution!
 
-use geometry::CGRect;
+use crate::geometry::CGRect;
 use libc::{c_int, c_uint};
 use std::ptr;
 
@@ -86,7 +86,7 @@ impl CGSSurface {
 }
 
 mod ffi {
-    use geometry::CGRect;
+    use crate::geometry::CGRect;
     use libc::{c_int, c_uint};
 
     // This is an enum so that we can't easily make instances of this opaque type.
@@ -96,7 +96,7 @@ mod ffi {
     pub type CGSRegionRef = *mut CGSRegionObject;
     pub type OSStatus = i32;
 
-    #[link(name = "CoreGraphics", kind = "framework")]
+    #[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
     extern "C" {
         pub fn CGSRegionRelease(region: CGSRegionRef);
         pub fn CGSNewRegionWithRect(rect: *const CGRect, outRegion: *mut CGSRegionRef) -> CGError;

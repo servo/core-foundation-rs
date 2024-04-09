@@ -9,14 +9,14 @@
 
 use std::os::raw::c_void;
 
-use array::CFArrayRef;
-use base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID};
-use data::CFDataRef;
-use date::{CFAbsoluteTime, CFTimeInterval};
-use dictionary::CFDictionaryRef;
-use locale::CFLocaleRef;
-use notification_center::CFNotificationName;
-use string::CFStringRef;
+use crate::array::CFArrayRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFTypeID};
+use crate::data::CFDataRef;
+use crate::date::{CFAbsoluteTime, CFTimeInterval};
+use crate::dictionary::CFDictionaryRef;
+use crate::locale::CFLocaleRef;
+use crate::notification_center::CFNotificationName;
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFTimeZone(c_void);

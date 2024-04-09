@@ -12,9 +12,9 @@
 use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::timezone::*;
 
-use base::TCFType;
-use date::{CFDate, CFTimeInterval};
-use string::CFString;
+use crate::base::TCFType;
+use crate::date::{CFDate, CFTimeInterval};
+use crate::string::CFString;
 
 #[cfg(feature = "with-chrono")]
 use chrono::{FixedOffset, NaiveDateTime};
@@ -67,8 +67,8 @@ impl CFTimeZone {
         CFTimeZone::new(offset.local_minus_utc() as f64)
     }
 
-    /// The timezone database ID that identifies the time zone. E.g. "America/Los_Angeles" or
-    /// "Europe/Paris".
+    /// The timezone database ID that identifies the time zone. E.g. `"America/Los_Angeles" `or
+    /// `"Europe/Paris"`.
     pub fn name(&self) -> CFString {
         unsafe { CFString::wrap_under_get_rule(CFTimeZoneGetName(self.0)) }
     }

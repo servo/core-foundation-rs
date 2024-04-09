@@ -9,9 +9,9 @@
 
 use std::os::raw::c_void;
 
-use base::{CFAllocatorRef, CFIndex, CFTypeID};
-use dictionary::CFDictionaryRef;
-use string::CFStringRef;
+use crate::base::{CFAllocatorRef, CFIndex, CFTypeID};
+use crate::dictionary::CFDictionaryRef;
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFError(c_void);

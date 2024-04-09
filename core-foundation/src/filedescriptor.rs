@@ -12,8 +12,8 @@ pub use core_foundation_sys::filedescriptor::*;
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 use core_foundation_sys::base::{Boolean, CFIndex};
 
-use base::TCFType;
-use runloop::CFRunLoopSource;
+use crate::base::TCFType;
+use crate::runloop::CFRunLoopSource;
 
 use std::mem::MaybeUninit;
 use std::os::unix::io::{AsRawFd, RawFd};
@@ -100,10 +100,10 @@ mod test {
     extern crate libc;
 
     use super::*;
+    use crate::runloop::CFRunLoop;
     use core_foundation_sys::base::CFOptionFlags;
     use core_foundation_sys::runloop::kCFRunLoopDefaultMode;
     use libc::O_RDWR;
-    use runloop::CFRunLoop;
     use std::ffi::CString;
     use std::os::raw::c_void;
 

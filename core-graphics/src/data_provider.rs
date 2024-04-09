@@ -40,7 +40,7 @@ pub type CGDataProviderGetBytesAtPositionCallback =
 foreign_type! {
     #[doc(hidden)]
     pub unsafe type CGDataProvider {
-        type CType = ::sys::CGDataProvider;
+        type CType = crate::sys::CGDataProvider;
         fn drop = |cs| CFRelease(cs as *mut _);
         fn clone = |p| CFRetain(p as *const _) as *mut _;
     }
@@ -106,10 +106,10 @@ impl CGDataProviderRef {
 /// Encapsulates custom data that can be wrapped.
 pub trait CustomData {
     /// Returns a pointer to the start of the custom data. This pointer *must not change* during
-    /// the lifespan of this CustomData.
+    /// the lifespan of this `CustomData`.
     unsafe fn ptr(&self) -> *const u8;
     /// Returns the length of this custom data. This value must not change during the lifespan of
-    /// this CustomData.
+    /// this `CustomData`.
     unsafe fn len(&self) -> usize;
 }
 
@@ -153,9 +153,9 @@ fn test_data_provider() {
     assert!(dropped.load(SeqCst))
 }
 
-#[link(name = "CoreGraphics", kind = "framework")]
+#[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
-    fn CGDataProviderCopyData(provider: ::sys::CGDataProviderRef) -> CFDataRef;
+    fn CGDataProviderCopyData(provider: crate::sys::CGDataProviderRef) -> CFDataRef;
     //fn CGDataProviderCreateDirect
     //fn CGDataProviderCreateSequential
     //fn CGDataProviderCreateWithCFData
@@ -164,7 +164,7 @@ extern "C" {
         data: *const c_void,
         size: size_t,
         releaseData: CGDataProviderReleaseDataCallback,
-    ) -> ::sys::CGDataProviderRef;
+    ) -> crate::sys::CGDataProviderRef;
     //fn CGDataProviderCreateWithFilename(filename: *c_char) -> CGDataProviderRef;
     //fn CGDataProviderCreateWithURL
     fn CGDataProviderGetTypeID() -> CFTypeID;

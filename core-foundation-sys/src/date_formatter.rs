@@ -9,10 +9,10 @@
 
 use std::os::raw::c_void;
 
-use base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef};
-use date::{CFAbsoluteTime, CFDateRef};
-use locale::CFLocaleRef;
-use string::CFStringRef;
+use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID, CFTypeRef};
+use crate::date::{CFAbsoluteTime, CFDateRef};
+use crate::locale::CFLocaleRef;
+use crate::string::CFStringRef;
 
 #[repr(C)]
 pub struct __CFDateFormatter(c_void);

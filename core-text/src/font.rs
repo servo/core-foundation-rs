@@ -1020,7 +1020,13 @@ fn out_of_range_variations() {
                 .unwrap()
                 .to_f64()
                 .unwrap();
-            assert_eq!(val, max + 1.);
+
+            let expected = max + 1.;
+            assert_eq!(
+                val, expected,
+                "axis {:?} = {:?} (expected {:?})",
+                tag, val, expected
+            );
         }
     }
 }

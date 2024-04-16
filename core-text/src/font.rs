@@ -940,6 +940,7 @@ fn copy_system_font() {
 #[test]
 fn out_of_range_variations() {
     use crate::*;
+    use core_foundation::base::ItemRef;
 
     let small = new_ui_font_for_language(kCTFontSystemDetailFontType, 19., None);
 
@@ -985,6 +986,18 @@ fn out_of_range_variations() {
     // on macOS 12 they seem to be preserved as is.
     let var_attrs = var_attrs.find(variation_attribute);
     if version >= (12, 0, 0) && version < (13, 0, 0) {
+        check_attrs(var_attrs, axes);
+    } else if version >= (10, 15, 0) {
+        assert!(var_attrs.is_none());
+    } else {
+        let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
+        assert!(var_attrs.is_empty());
+    }
+
+    fn check_attrs(
+        var_attrs: Option<ItemRef<'_, CFType>>,
+        axes: CFArray<CFDictionary<CFString, CFType>>,
+    ) {
         let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
         assert!(!var_attrs.is_empty());
         let var_attrs: CFDictionary<CFType, CFType> = unsafe { std::mem::transmute(var_attrs) };
@@ -1009,11 +1022,6 @@ fn out_of_range_variations() {
                 .unwrap();
             assert_eq!(val, max + 1.);
         }
-    } else if version >= (10, 15, 0) {
-        assert!(var_attrs.is_none());
-    } else {
-        let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
-        assert!(var_attrs.is_empty());
     }
 }
 

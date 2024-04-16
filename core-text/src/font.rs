@@ -982,11 +982,13 @@ fn out_of_range_variations() {
     let var_desc = variation_font.copy_descriptor();
     let var_attrs = var_desc.attributes();
     dbg!(&var_attrs);
-    // attributes greater than max are dropped on macOS <= 11
-    // on macOS 12 they seem to be preserved as is.
+
+    // Handling of attributes greater than max changed between versions
     let var_attrs = var_attrs.find(variation_attribute);
-    if version >= (12, 0, 0) && version < (13, 0, 0) {
-        check_attrs(var_attrs, axes);
+    if version >= (14, 0, 0) {
+        check_attrs(0., var_attrs, axes);
+    } else if version >= (12, 0, 0) && version < (13, 0, 0) {
+        check_attrs(1., var_attrs, axes);
     } else if version >= (10, 15, 0) {
         assert!(var_attrs.is_none());
     } else {
@@ -995,6 +997,7 @@ fn out_of_range_variations() {
     }
 
     fn check_attrs(
+        clamp_diff: f64,
         var_attrs: Option<ItemRef<'_, CFType>>,
         axes: CFArray<CFDictionary<CFString, CFType>>,
     ) {
@@ -1021,7 +1024,7 @@ fn out_of_range_variations() {
                 .to_f64()
                 .unwrap();
 
-            let expected = max + 1.;
+            let expected = max + clamp_diff;
             assert_eq!(
                 val, expected,
                 "axis {:?} = {:?} (expected {:?})",

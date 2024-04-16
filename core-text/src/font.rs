@@ -940,11 +940,13 @@ fn copy_system_font() {
 #[test]
 fn out_of_range_variations() {
     use crate::*;
+    use core_foundation::base::ItemRef;
 
     let small = new_ui_font_for_language(kCTFontSystemDetailFontType, 19., None);
 
     let axes = small.get_variation_axes();
-    if macos_version() < (10, 12, 0) {
+    let version = dbg!(macos_version());
+    if version < (10, 12, 0) {
         assert!(axes.is_none());
         return;
     }
@@ -980,10 +982,25 @@ fn out_of_range_variations() {
     let var_desc = variation_font.copy_descriptor();
     let var_attrs = var_desc.attributes();
     dbg!(&var_attrs);
-    // attributes greater than max are dropped on macOS <= 11
-    // on macOS 12 they seem to be preserved as is.
+
+    // Handling of attributes greater than max changed between versions
     let var_attrs = var_attrs.find(variation_attribute);
-    if macos_version() >= (12, 0, 0) && macos_version() < (13, 0, 0) {
+    if version >= (14, 0, 0) {
+        check_attrs(0., var_attrs, axes);
+    } else if version >= (12, 0, 0) && version < (13, 0, 0) {
+        check_attrs(1., var_attrs, axes);
+    } else if version >= (10, 15, 0) {
+        assert!(var_attrs.is_none());
+    } else {
+        let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
+        assert!(var_attrs.is_empty());
+    }
+
+    fn check_attrs(
+        clamp_diff: f64,
+        var_attrs: Option<ItemRef<'_, CFType>>,
+        axes: CFArray<CFDictionary<CFString, CFType>>,
+    ) {
         let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
         assert!(!var_attrs.is_empty());
         let var_attrs: CFDictionary<CFType, CFType> = unsafe { std::mem::transmute(var_attrs) };
@@ -1006,13 +1023,14 @@ fn out_of_range_variations() {
                 .unwrap()
                 .to_f64()
                 .unwrap();
-            assert_eq!(val, max + 1.);
+
+            let expected = max + clamp_diff;
+            assert_eq!(
+                val, expected,
+                "axis {:?} = {:?} (expected {:?})",
+                tag, val, expected
+            );
         }
-    } else if macos_version() >= (10, 15, 0) {
-        assert!(var_attrs.is_none());
-    } else {
-        let var_attrs = var_attrs.unwrap().downcast::<CFDictionary>().unwrap();
-        assert!(var_attrs.is_empty());
     }
 }
 

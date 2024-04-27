@@ -9,7 +9,7 @@
 
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
 use core_foundation::string::CFStringRef;
-use foreign_types::ForeignType;
+use foreign_types::{foreign_type, ForeignType};
 
 foreign_type! {
     #[doc(hidden)]

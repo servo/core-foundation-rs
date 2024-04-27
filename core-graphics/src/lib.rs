@@ -7,19 +7,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate libc;
-
-#[macro_use]
-extern crate core_foundation;
-
-#[macro_use]
-extern crate bitflags;
-
-#[macro_use]
-extern crate foreign_types;
-
-extern crate core_graphics_types;
-
 #[cfg(target_os = "macos")]
 pub mod access;
 pub mod base;

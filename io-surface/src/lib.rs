@@ -10,12 +10,6 @@
 #![crate_name = "io_surface"]
 #![crate_type = "rlib"]
 
-extern crate cgl;
-extern crate core_foundation;
-extern crate core_foundation_sys;
-extern crate leaky_cow;
-extern crate libc;
-
 // Rust bindings to the IOSurface framework on macOS.
 
 use cgl::{kCGLNoError, CGLErrorString, CGLGetCurrentContext, CGLTexImageIOSurface2D, GLenum};

@@ -13,8 +13,10 @@ use crate::base::{id, BOOL, SEL};
 use crate::foundation::{
     NSInteger, NSPoint, NSRange, NSRect, NSRectEdge, NSSize, NSTimeInterval, NSUInteger,
 };
+use bitflags::bitflags;
 use block::Block;
 use libc;
+use objc::{class, msg_send, sel, sel_impl};
 
 pub use core_graphics::base::CGFloat;
 pub use core_graphics::geometry::CGPoint;

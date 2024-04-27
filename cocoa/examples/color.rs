@@ -1,5 +1,3 @@
-extern crate cocoa;
-
 use cocoa::base::{id, nil, selector, NO};
 
 use cocoa::appkit::{

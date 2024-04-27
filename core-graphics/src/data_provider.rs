@@ -16,7 +16,7 @@ use std::os::raw::c_void;
 use std::ptr;
 use std::sync::Arc;
 
-use foreign_types::{ForeignType, ForeignTypeRef};
+use foreign_types::{foreign_type, ForeignType, ForeignTypeRef};
 
 pub type CGDataProviderGetBytesCallback =
     Option<unsafe extern "C" fn(*mut c_void, *mut c_void, size_t) -> size_t>;

@@ -1,6 +1,3 @@
-extern crate cocoa;
-extern crate objc;
-
 use cocoa::base::{nil, selector, NO};
 use objc::*;
 

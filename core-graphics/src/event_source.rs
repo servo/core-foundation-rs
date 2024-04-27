@@ -1,5 +1,5 @@
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
-use foreign_types::ForeignType;
+use foreign_types::{foreign_type, ForeignType};
 
 /// Possible source states of an event source.
 #[repr(C)]

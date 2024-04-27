@@ -11,17 +11,6 @@
 #![crate_type = "rlib"]
 #![allow(non_snake_case)]
 
-extern crate block;
-#[macro_use]
-extern crate bitflags;
-extern crate cocoa_foundation;
-extern crate core_foundation;
-extern crate core_graphics;
-extern crate foreign_types;
-extern crate libc;
-#[macro_use]
-extern crate objc;
-
 #[cfg(target_os = "macos")]
 pub mod appkit;
 pub mod base;

@@ -10,6 +10,7 @@
 use core_foundation::base::{CFIndex, CFRange, CFType, CFTypeID, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFString;
+use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 use core_graphics::base::CGFloat;
 use core_graphics::font::CGGlyph;
 use core_graphics::geometry::CGPoint;

@@ -6,7 +6,7 @@ use crate::data_provider::{CGDataProvider, CGDataProviderRef};
 use crate::geometry::CGRect;
 use core_foundation::base::{CFRetain, CFTypeID};
 use core_foundation::data::CFData;
-use foreign_types::{ForeignType, ForeignTypeRef};
+use foreign_types::{foreign_type, ForeignType, ForeignTypeRef};
 use libc::size_t;
 
 #[repr(C)]

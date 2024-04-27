@@ -17,7 +17,7 @@ use core_foundation::number::CFNumber;
 use core_foundation::string::{CFString, CFStringRef};
 use std::ptr::NonNull;
 
-use foreign_types::ForeignType;
+use foreign_types::{foreign_type, ForeignType};
 
 use libc::{c_int, size_t};
 

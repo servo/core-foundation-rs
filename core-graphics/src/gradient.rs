@@ -13,9 +13,10 @@ use crate::base::CGFloat;
 use crate::color::CGColor;
 use crate::color_space::CGColorSpace;
 
+use bitflags::bitflags;
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFRelease, CFRetain, TCFType};
-use foreign_types::ForeignType;
+use foreign_types::{foreign_type, ForeignType};
 
 use libc::size_t;
 

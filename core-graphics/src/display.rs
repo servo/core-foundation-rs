@@ -19,7 +19,7 @@ pub use crate::geometry::{CGPoint, CGRect, CGSize};
 use crate::image::CGImage;
 use core_foundation::base::{CFRetain, TCFType};
 use core_foundation::string::{CFString, CFStringRef};
-use foreign_types::ForeignType;
+use foreign_types::{foreign_type, ForeignType};
 
 pub type CGDirectDisplayID = u32;
 pub type CGWindowID = u32;

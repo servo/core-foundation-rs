@@ -494,6 +494,10 @@ impl CTFont {
         }
     }
 
+    pub fn get_matrix(&self) -> CGAffineTransform {
+        unsafe { CTFontGetMatrix(self.as_concrete_TypeRef()) }
+    }
+
     pub fn url(&self) -> Option<CFURL> {
         unsafe {
             let result = CTFontCopyAttribute(self.0, kCTFontURLAttribute);
@@ -692,7 +696,7 @@ extern "C" {
     fn CTFontCopyFontDescriptor(font: CTFontRef) -> CTFontDescriptorRef;
     fn CTFontCopyAttribute(font: CTFontRef, attribute: CFStringRef) -> CFTypeRef;
     fn CTFontGetSize(font: CTFontRef) -> CGFloat;
-    //fn CTFontGetMatrix
+    fn CTFontGetMatrix(font: CTFontRef) -> CGAffineTransform;
     fn CTFontGetSymbolicTraits(font: CTFontRef) -> CTFontSymbolicTraits;
     fn CTFontCopyTraits(font: CTFontRef) -> CFDictionaryRef;
 

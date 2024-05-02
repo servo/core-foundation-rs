@@ -21,6 +21,7 @@ use libc::size_t;
 
 bitflags! {
     #[repr(C)]
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
     pub struct CGGradientDrawingOptions: u32 {
         const CGGradientDrawsBeforeStartLocation = (1 << 0);
         const CGGradientDrawsAfterEndLocation = (1 << 1);

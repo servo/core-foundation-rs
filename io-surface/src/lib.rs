@@ -35,9 +35,8 @@ const RGB: GLenum = 0x1907;
 const TEXTURE_RECTANGLE_ARB: GLenum = 0x84F5;
 const UNSIGNED_INT_8_8_8_8_REV: GLenum = 0x8367;
 
-#[allow(non_snake_case)]
+#[allow(non_snake_case, non_upper_case_globals)]
 pub mod IOSurfaceLockOptions {
-    #![allow(non_upper_case_globals)]
     pub const kIOSurfaceLockReadOnly: u32 = 0x00000001;
     pub const kIOSurfaceLockAvoidSync: u32 = 0x00000002;
 }

@@ -102,6 +102,26 @@ impl CGFont {
         }
     }
 
+    pub fn ascent(&self) -> c_int {
+        unsafe { CGFontGetAscent(self.as_ptr()) }
+    }
+
+    pub fn descent(&self) -> c_int {
+        unsafe { CGFontGetDescent(self.as_ptr()) }
+    }
+
+    pub fn leading(&self) -> c_int {
+        unsafe { CGFontGetLeading(self.as_ptr()) }
+    }
+
+    pub fn cap_height(&self) -> c_int {
+        unsafe { CGFontGetCapHeight(self.as_ptr()) }
+    }
+
+    pub fn x_height(&self) -> c_int {
+        unsafe { CGFontGetXHeight(self.as_ptr()) }
+    }
+
     pub fn get_units_per_em(&self) -> c_int {
         unsafe { CGFontGetUnitsPerEm(self.as_ptr()) }
     }
@@ -170,6 +190,12 @@ extern "C" {
         count: size_t,
         advances: *mut c_int,
     ) -> bool;
+
+    fn CGFontGetAscent(font: crate::sys::CGFontRef) -> c_int;
+    fn CGFontGetDescent(font: crate::sys::CGFontRef) -> c_int;
+    fn CGFontGetLeading(font: crate::sys::CGFontRef) -> c_int;
+    fn CGFontGetCapHeight(font: crate::sys::CGFontRef) -> c_int;
+    fn CGFontGetXHeight(font: crate::sys::CGFontRef) -> c_int;
     fn CGFontGetUnitsPerEm(font: crate::sys::CGFontRef) -> c_int;
 
     fn CGFontCopyTableTags(font: crate::sys::CGFontRef) -> CFArrayRef;

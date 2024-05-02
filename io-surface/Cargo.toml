@@ -3,7 +3,7 @@ name = "io-surface"
 description = "Bindings to IO Surface for macOS"
 homepage = "https://github.com/servo/core-foundation-rs"
 repository = "https://github.com/servo/core-foundation-rs"
-version = "0.15.1"
+version = "0.16.0"
 authors = ["The Servo Project Developers"]
 license = "MIT OR Apache-2.0"
 edition = "2018"
@@ -13,7 +13,7 @@ default-target = "x86_64-apple-darwin"
 
 [dependencies]
 libc = "0.2"
-core-foundation = { default-features = false, path = "../core-foundation", version = "0.9" }
+core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
 core-foundation-sys = { default-features = false, path = "../core-foundation-sys", version = "0.8" }
 cgl = "0.3"
 leaky-cow = "0.1.1"

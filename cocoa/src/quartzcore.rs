@@ -1685,6 +1685,8 @@ mod test {
 
     #[test]
     fn create_calayer() {
-        let _ = CALayer::new();
+        objc::rc::autoreleasepool(|| {
+            let _ = CALayer::new();
+        });
     }
 }

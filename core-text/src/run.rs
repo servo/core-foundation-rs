@@ -10,11 +10,14 @@
 use core_foundation::base::{CFIndex, CFRange, CFType, CFTypeID, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::CFString;
+use core_graphics::base::CGFloat;
 use core_graphics::font::CGGlyph;
 use core_graphics::geometry::CGPoint;
 use std::borrow::Cow;
 use std::os::raw::c_void;
 use std::slice;
+
+use crate::line::TypographicBounds;
 
 #[repr(C)]
 pub struct __CTRun(c_void);
@@ -77,6 +80,34 @@ impl CTRun {
                 CTRunGetPositions(self.0, CFRange::init(0, 0), vec.as_mut_ptr());
                 vec.set_len(count as usize);
                 Cow::from(vec)
+            }
+        }
+    }
+
+    pub fn get_typographic_bounds(&self) -> TypographicBounds {
+        let mut ascent = 0.0;
+        let mut descent = 0.0;
+        let mut leading = 0.0;
+        unsafe {
+            // The portion of the run to calculate the typographic bounds for. By setting this to 0,
+            // CoreText will measure the bounds from start to end, see https://developer.apple.com/documentation/coretext/1510569-ctrungettypographicbounds?language=objc.
+            let range = CFRange {
+                location: 0,
+                length: 0,
+            };
+
+            let width = CTRunGetTypographicBounds(
+                self.as_concrete_TypeRef(),
+                range,
+                &mut ascent,
+                &mut descent,
+                &mut leading,
+            );
+            TypographicBounds {
+                width,
+                ascent,
+                descent,
+                leading,
             }
         }
     }
@@ -156,4 +187,11 @@ extern "C" {
     fn CTRunGetStringIndices(run: CTRunRef, range: CFRange, buffer: *const CFIndex);
     fn CTRunGetGlyphsPtr(run: CTRunRef) -> *const CGGlyph;
     fn CTRunGetGlyphs(run: CTRunRef, range: CFRange, buffer: *const CGGlyph);
+    fn CTRunGetTypographicBounds(
+        line: CTRunRef,
+        range: CFRange,
+        ascent: *mut CGFloat,
+        descent: *mut CGFloat,
+        leading: *mut CGFloat,
+    ) -> CGFloat;
 }

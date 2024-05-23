@@ -154,6 +154,22 @@ pub const NSAppKitVersionNumber11_1: f64 = 2022.2;
 pub const NSAppKitVersionNumber11_2: f64 = 2022.3;
 pub const NSAppKitVersionNumber11_3: f64 = 2022.4;
 pub const NSAppKitVersionNumber11_4: f64 = 2022.5;
+pub const NSAppKitVersionNumber11_5: f64 = 2022.6;
+pub const NSAppKitVersionNumber12_0: f64 = 2113.0;
+pub const NSAppKitVersionNumber12_1: f64 = 2113.2;
+pub const NSAppKitVersionNumber12_2: f64 = 2113.3;
+pub const NSAppKitVersionNumber12_3: f64 = 2113.4;
+pub const NSAppKitVersionNumber12_4: f64 = 2113.5;
+pub const NSAppKitVersionNumber12_5: f64 = 2113.6;
+pub const NSAppKitVersionNumber13_0: f64 = 2299.0;
+pub const NSAppKitVersionNumber13_1: f64 = 2299.3;
+pub const NSAppKitVersionNumber13_2: f64 = 2299.3;
+pub const NSAppKitVersionNumber13_3: f64 = 2299.4;
+pub const NSAppKitVersionNumber13_4: f64 = 2299.5;
+pub const NSAppKitVersionNumber13_5: f64 = 2299.6;
+pub const NSAppKitVersionNumber13_6: f64 = 2299.7;
+pub const NSAppKitVersionNumber14_0: f64 = 2487.0;
+pub const NSAppKitVersionNumber14_1: f64 = 2487.2;
 
 pub unsafe fn NSApp() -> id {
     msg_send![class!(NSApplication), sharedApplication]

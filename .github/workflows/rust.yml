@@ -22,7 +22,7 @@ jobs:
           components: rustfmt
       - run: cargo fmt --check
   semver:
-    runs-on: macos-11.0
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
     - name: Check semver
@@ -31,7 +31,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-11.0, macos-12, macos-13, macos-14]
+        os: [macos-12, macos-13, macos-14]
         toolchain: [stable]
         include:
           - os: macos-14

@@ -22,7 +22,7 @@ jobs:
           components: rustfmt
       - run: cargo fmt --check
   semver:
-    runs-on: macos-14.0
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
     - name: Check semver

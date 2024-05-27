@@ -11,6 +11,7 @@ use crate::run::CTRun;
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::attributed_string::CFAttributedStringRef;
 use core_foundation::base::{CFIndex, CFRange, CFTypeID, TCFType};
+use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 use core_graphics::base::CGFloat;
 use core_graphics::context::CGContext;
 use core_graphics::geometry::{CGPoint, CGRect};

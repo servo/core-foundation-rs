@@ -12,13 +12,12 @@
 ///
 /// # Example with `NSWindowDelegate`
 /// ``` no_run
-/// #[macro_use] extern crate cocoa;
-/// #[macro_use] extern crate objc;
-///
 /// use cocoa::appkit::NSWindow;
 /// use cocoa::base::{id, nil};
+/// use cocoa::delegate;
 ///
 /// use objc::runtime::{Object, Sel};
+/// use objc::{msg_send, sel, sel_impl};
 ///
 /// # fn main() {
 /// unsafe {
@@ -57,7 +56,7 @@ macro_rules! delegate {
             $( ($($sel:ident :)+) => $func:expr),*
         }
     ) => ({
-        let mut decl = objc::declare::ClassDecl::new($name, class!(NSObject)).unwrap();
+        let mut decl = objc::declare::ClassDecl::new($name, objc::class!(NSObject)).unwrap();
 
         $(
             decl.add_ivar::<$var_type>(stringify!($var));

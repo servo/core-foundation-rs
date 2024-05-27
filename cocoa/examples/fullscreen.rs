@@ -1,9 +1,3 @@
-extern crate cocoa;
-extern crate core_graphics;
-
-#[macro_use]
-extern crate objc;
-
 use cocoa::appkit::{
     NSApp, NSApplication, NSApplicationActivateIgnoringOtherApps,
     NSApplicationActivationPolicyRegular, NSApplicationPresentationOptions, NSBackingStoreBuffered,
@@ -19,6 +13,7 @@ use core_graphics::display::CGDisplay;
 
 use objc::declare::ClassDecl;
 use objc::runtime::{Object, Sel};
+use objc::{class, msg_send, sel, sel_impl};
 
 fn main() {
     unsafe {

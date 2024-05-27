@@ -9,16 +9,13 @@
 
 //! Core Foundation UUID objects.
 
-#[cfg(feature = "with-uuid")]
-extern crate uuid;
-
 use core_foundation_sys::base::kCFAllocatorDefault;
 pub use core_foundation_sys::uuid::*;
 
 use crate::base::TCFType;
 
 #[cfg(feature = "with-uuid")]
-use self::uuid::Uuid;
+use uuid::Uuid;
 
 declare_TCFType! {
     /// A UUID.

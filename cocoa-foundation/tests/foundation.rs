@@ -1,8 +1,3 @@
-#[macro_use]
-extern crate objc;
-extern crate block;
-extern crate cocoa_foundation;
-
 #[cfg(test)]
 mod foundation {
     mod nsstring {
@@ -66,6 +61,7 @@ mod foundation {
     mod nsfastenumeration {
         use cocoa_foundation::base::{id, nil};
         use cocoa_foundation::foundation::{NSFastEnumeration, NSString};
+        use objc::{msg_send, sel, sel_impl};
         use std::slice;
         use std::str;
 

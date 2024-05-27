@@ -20,7 +20,7 @@ use std::os::raw::c_void;
 
 use crate::geometry::{CGAffineTransform, CGRect};
 use crate::image::CGImage;
-use foreign_types::{ForeignType, ForeignTypeRef};
+use foreign_types::{foreign_type, ForeignType, ForeignTypeRef};
 use std::cmp;
 use std::ptr;
 use std::slice;

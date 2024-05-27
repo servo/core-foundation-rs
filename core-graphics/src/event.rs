@@ -1,11 +1,13 @@
 #![allow(non_upper_case_globals)]
 use crate::event_source::CGEventSource;
 use crate::geometry::CGPoint;
+
+use bitflags::bitflags;
 use core_foundation::{
     base::{CFRelease, CFRetain, CFTypeID, TCFType},
     mach_port::{CFMachPort, CFMachPortRef},
 };
-use foreign_types::ForeignType;
+use foreign_types::{foreign_type, ForeignType};
 use libc::c_void;
 use std::mem::ManuallyDrop;
 
@@ -441,7 +443,6 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 }
 
 /// ```no_run
-///extern crate core_foundation;
 ///use core_foundation::runloop::{kCFRunLoopCommonModes, CFRunLoop};
 ///use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType};
 ///let current = CFRunLoop::get_current();

@@ -10,8 +10,10 @@
 #![allow(non_upper_case_globals)]
 
 use crate::base::{id, nil, BOOL, NO, SEL};
+use bitflags::bitflags;
 use block::Block;
 use libc;
+use objc::{class, msg_send, sel, sel_impl};
 use std::os::raw::c_void;
 use std::ptr;
 
@@ -35,7 +37,7 @@ mod macos {
     use crate::base::id;
     use core_graphics_types::base::CGFloat;
     use core_graphics_types::geometry::CGRect;
-    use objc;
+    use objc::{self, class, msg_send, sel, sel_impl};
     use std::mem;
 
     #[repr(C)]

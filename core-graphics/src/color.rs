@@ -11,6 +11,7 @@ use super::sys::CGColorRef;
 use crate::base::CGFloat;
 use core_foundation::base::CFTypeID;
 use core_foundation::base::TCFType;
+use core_foundation::{declare_TCFType, impl_TCFType};
 
 pub use super::sys::CGColorRef as SysCGColorRef;
 

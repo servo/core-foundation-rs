@@ -19,6 +19,7 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
 use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
+use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 
 use std::os::raw::c_void;
 

@@ -9,6 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
+use bitflags::bitflags;
 use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFType, CFTypeRef, TCFType};
 use core_foundation::date::CFTimeInterval;
@@ -21,6 +22,7 @@ use core_graphics::context::CGContext;
 use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 use core_graphics::path::{CGPath, SysCGPathRef};
 use foreign_types::ForeignType;
+use objc::{class, msg_send, sel, sel_impl};
 use std::ops::Mul;
 use std::ptr;
 
@@ -1358,6 +1360,7 @@ pub mod transaction {
     use block::{Block, ConcreteBlock, IntoConcreteBlock, RcBlock};
     use core_foundation::date::CFTimeInterval;
     use core_foundation::string::CFString;
+    use objc::{class, msg_send, sel, sel_impl};
 
     use crate::base::{id, BOOL, YES};
 

@@ -11,7 +11,7 @@ pub use crate::sys::CGPathRef as SysCGPathRef;
 
 use crate::geometry::{CGAffineTransform, CGPoint, CGRect};
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID};
-use foreign_types::ForeignType;
+use foreign_types::{foreign_type, ForeignType};
 use libc::c_void;
 use std::fmt::{self, Debug, Formatter};
 use std::marker::PhantomData;

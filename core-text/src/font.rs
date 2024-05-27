@@ -23,6 +23,7 @@ use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::number::CFNumber;
 use core_foundation::string::{CFString, CFStringRef, UniChar};
 use core_foundation::url::{CFURLRef, CFURL};
+use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 use core_graphics::base::CGFloat;
 use core_graphics::context::CGContext;
 use core_graphics::font::{CGFont, CGGlyph};

@@ -9,6 +9,7 @@
 
 #![allow(non_upper_case_globals)]
 
+use bitflags::bitflags;
 use libc;
 use std::ops::Deref;
 use std::ptr;
@@ -108,6 +109,41 @@ pub enum CGConfigureOption {
     ConfigureForAppOnly = 0,
     ConfigureForSession = 1,
     ConfigurePermanently = 2,
+}
+
+/// A client-supplied callback function that’s invoked whenever the configuration of a local display is changed.
+pub type CGDisplayReconfigurationCallBack =
+    unsafe extern "C" fn(display: CGDirectDisplayID, flags: u32, user_info: *const libc::c_void);
+
+bitflags! {
+    /// The configuration parameters that are passed to a display reconfiguration callback function.
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+    pub struct CGDisplayChangeSummaryFlags: u32 {
+        /// The display configuration is about to change.
+        const kCGDisplayBeginConfigurationFlag = 1;
+        /// The location of the upper-left corner of the display in the global display coordinate space has changed.
+        const kCGDisplayMovedFlag = 1 << 1;
+        /// The display is now the main display.
+        const kCGDisplaySetMainFlag = 1 << 2;
+        /// The display mode has changed.
+        const kCGDisplaySetModeFlag = 1 << 3;
+        /// The display has been added to the active display list.
+        const kCGDisplayAddFlag = 1 << 4;
+        /// The display has been removed from the active display list.
+        const kCGDisplayRemoveFlag = 1 << 5;
+        /// The display has been enabled.
+        const kCGDisplayEnabledFlag = 1 << 8;
+        /// The display has been disabled.
+        const kCGDisplayDisabledFlag = 1 << 9;
+        /// The display is now mirroring another display.
+        const kCGDisplayMirrorFlag = 1 << 10;
+        /// The display is no longer mirroring another display.
+        const kCGDisplayUnMirrorFlag = 1 << 11;
+        /// The shape of the desktop (the union of display areas) has changed.
+        const kCGDisplayDesktopShapeChangedFlag = 1 << 12;
+
+        const _ = !0;
+    }
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -724,6 +760,14 @@ extern "C" {
         y: i32,
     ) -> CGError;
     pub fn CGRestorePermanentDisplayConfiguration();
+    pub fn CGDisplayRegisterReconfigurationCallback(
+        callback: CGDisplayReconfigurationCallBack,
+        user_info: *const libc::c_void,
+    ) -> CGError;
+    pub fn CGDisplayRemoveReconfigurationCallback(
+        callback: CGDisplayReconfigurationCallBack,
+        user_info: *const libc::c_void,
+    ) -> CGError;
 
     pub fn CGDisplayCopyDisplayMode(display: CGDirectDisplayID) -> crate::sys::CGDisplayModeRef;
     pub fn CGDisplayModeGetHeight(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;

@@ -11,6 +11,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+permissions: {}
 jobs:
   rustfmt:
     runs-on: ubuntu-latest
@@ -28,6 +29,9 @@ jobs:
     - name: Check semver
       uses: obi1kenobi/cargo-semver-checks-action@v2
   build:
+    permissions:
+      contents: read #  to fetch code (actions/checkout)
+
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

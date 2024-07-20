@@ -123,7 +123,7 @@ impl CGContext {
 
     /// Creates a `CGContext` instance from an existing [`CGContextRef`] pointer.
     ///
-    /// This funtion will internally call [`CGRetain`] and hence there is no need to call it explicitly.
+    /// This function will internally call [`CGRetain`] and hence there is no need to call it explicitly.
     ///
     /// This function is particularly useful for cases when the context is not instantiated/managed
     /// by the caller, but it's retrieve via other means (e.g., by calling the method [`NSGraphicsContext::CGContext`]

@@ -339,8 +339,8 @@ pub trait NSDictionary: Sized {
     unsafe fn init(self) -> id;
     unsafe fn initWithContentsOfFile_(self, path: id) -> id;
     unsafe fn initWithContentsOfURL_(self, aURL: id) -> id;
-    unsafe fn initWithDictionary_(self, otherDicitonary: id) -> id;
-    unsafe fn initWithDictionary_copyItems_(self, otherDicitonary: id, flag: BOOL) -> id;
+    unsafe fn initWithDictionary_(self, otherDictionary: id) -> id;
+    unsafe fn initWithDictionary_copyItems_(self, otherDictionary: id, flag: BOOL) -> id;
     unsafe fn initWithObjects_forKeys_(self, objects: id, keys: id) -> id;
     unsafe fn initWithObjects_forKeys_count_(self, objects: id, keys: id, count: NSUInteger) -> id;
     unsafe fn initWithObjectsAndKeys_(self, firstObject: id) -> id;

@@ -884,7 +884,7 @@ fn copy_system_font() {
     let ps = small.postscript_name();
     let desc = small.copy_descriptor();
 
-    // check that we can construct a new vesion by descriptor
+    // check that we can construct a new version by descriptor
     let ctfont = new_from_descriptor(&desc, 20.);
     assert_eq!(big.postscript_name(), ctfont.postscript_name());
 

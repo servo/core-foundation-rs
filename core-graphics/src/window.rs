@@ -24,7 +24,7 @@ pub type CGWindowID = u32;
 pub type CGWindowSharingType = u32;
 pub const kCGWindowSharingNone: CGWindowSharingType = 0;
 pub const kCGWindowSharingReadOnly: CGWindowSharingType = 1;
-pub const kCGWindowSharingReadWrite: CGWindowSharingType = 1;
+pub const kCGWindowSharingReadWrite: CGWindowSharingType = 2;
 
 pub type CGWindowBackingType = u32;
 pub const kCGWindowBackingStoreRetained: CGWindowBackingType = 0;

@@ -7,13 +7,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use core::ffi::c_void;
 use std;
 use std::fmt;
 use std::marker::PhantomData;
 use std::mem;
 use std::mem::ManuallyDrop;
 use std::ops::{Deref, DerefMut};
-use std::os::raw::c_void;
 
 pub use core_foundation_sys::base::*;
 
@@ -373,19 +373,19 @@ unsafe impl ToVoid<*const c_void> for *const c_void {
 }
 
 unsafe impl<'a> ToVoid<CFType> for &'a CFType {
-    fn to_void(&self) -> *const ::std::os::raw::c_void {
+    fn to_void(&self) -> *const c_void {
         self.as_concrete_TypeRef().as_void_ptr()
     }
 }
 
 unsafe impl ToVoid<CFType> for CFType {
-    fn to_void(&self) -> *const ::std::os::raw::c_void {
+    fn to_void(&self) -> *const c_void {
         self.as_concrete_TypeRef().as_void_ptr()
     }
 }
 
 unsafe impl ToVoid<CFType> for CFTypeRef {
-    fn to_void(&self) -> *const ::std::os::raw::c_void {
+    fn to_void(&self) -> *const c_void {
         self.as_void_ptr()
     }
 }

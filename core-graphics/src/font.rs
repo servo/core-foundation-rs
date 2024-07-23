@@ -19,7 +19,7 @@ use std::ptr::NonNull;
 
 use foreign_types::{foreign_type, ForeignType};
 
-use libc::{c_int, size_t};
+use core::ffi::c_int;
 
 pub use core_graphics_types::base::CGGlyph;
 
@@ -181,13 +181,13 @@ extern "C" {
     fn CGFontGetGlyphBBoxes(
         font: crate::sys::CGFontRef,
         glyphs: *const CGGlyph,
-        count: size_t,
+        count: usize,
         bboxes: *mut CGRect,
     ) -> bool;
     fn CGFontGetGlyphAdvances(
         font: crate::sys::CGFontRef,
         glyphs: *const CGGlyph,
-        count: size_t,
+        count: usize,
         advances: *mut c_int,
     ) -> bool;
 

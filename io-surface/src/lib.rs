@@ -13,14 +13,13 @@
 // Rust bindings to the IOSurface framework on macOS.
 
 use cgl::{kCGLNoError, CGLErrorString, CGLGetCurrentContext, CGLTexImageIOSurface2D, GLenum};
+use core::ffi::{c_int, c_void};
 use core_foundation::base::{CFRelease, CFRetain, CFType, CFTypeID, CFTypeRef, TCFType};
 use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 use core_foundation::string::{CFString, CFStringRef};
 use core_foundation_sys::base::mach_port_t;
 use leaky_cow::LeakyCow;
-use libc::{c_int, size_t};
 use std::ffi::CStr;
-use std::os::raw::c_void;
 use std::slice;
 
 const BGRA: GLenum = 0x80E1;
@@ -125,7 +124,7 @@ impl IOSurface {
                 height,
                 BGRA as GLenum,
                 UNSIGNED_INT_8_8_8_8_REV,
-                self.as_concrete_TypeRef() as *mut libc::c_void,
+                self.as_concrete_TypeRef() as *mut c_void,
                 0,
             );
 
@@ -196,9 +195,9 @@ extern "C" {
     pub fn IOSurfaceUnlock(buffer: IOSurfaceRef, options: u32, seed: *mut u32) -> IOReturn;
     pub fn IOSurfaceGetSeed(buffer: IOSurfaceRef) -> u32;
 
-    pub fn IOSurfaceGetHeight(buffer: IOSurfaceRef) -> size_t;
+    pub fn IOSurfaceGetHeight(buffer: IOSurfaceRef) -> usize;
     pub fn IOSurfaceGetWidth(buffer: IOSurfaceRef) -> usize;
-    pub fn IOSurfaceGetBytesPerRow(buffer: IOSurfaceRef) -> size_t;
+    pub fn IOSurfaceGetBytesPerRow(buffer: IOSurfaceRef) -> usize;
     pub fn IOSurfaceGetBaseAddress(buffer: IOSurfaceRef) -> *mut c_void;
     pub fn IOSurfaceGetElementHeight(buffer: IOSurfaceRef) -> usize;
     pub fn IOSurfaceGetElementWidth(buffer: IOSurfaceRef) -> usize;

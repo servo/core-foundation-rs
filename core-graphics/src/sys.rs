@@ -1,4 +1,4 @@
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 pub enum CGImage {}
 pub type CGImageRef = *mut CGImage;

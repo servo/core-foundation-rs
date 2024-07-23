@@ -19,7 +19,6 @@ use core_foundation::url::{CFURLRef, CFURL};
 use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 use core_graphics::base::CGFloat;
 
-use std::os::raw::c_void;
 use std::path::PathBuf;
 
 /*
@@ -199,7 +198,7 @@ pub const kCTFontPriorityDynamic: CTFontPriority = 50000;
 pub const kCTFontPriorityProcess: CTFontPriority = 60000;
 
 #[repr(C)]
-pub struct __CTFontDescriptor(c_void);
+pub struct __CTFontDescriptor(core::ffi::c_void);
 
 pub type CTFontDescriptorRef = *const __CTFontDescriptor;
 

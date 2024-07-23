@@ -15,11 +15,10 @@ use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 use core_graphics::geometry::CGSize;
 use core_graphics::path::{CGPath, CGPathRef};
 use foreign_types::{ForeignType, ForeignTypeRef};
-use std::os::raw::c_void;
 use std::ptr::null;
 
 #[repr(C)]
-pub struct __CTFramesetter(c_void);
+pub struct __CTFramesetter(core::ffi::c_void);
 
 pub type CTFramesetterRef = *const __CTFramesetter;
 
@@ -83,7 +82,7 @@ extern "C" {
         framesetter: CTFramesetterRef,
         string_range: CFRange,
         path: *mut <CGPath as ForeignType>::CType,
-        attributes: *const c_void,
+        attributes: *const core::ffi::c_void,
     ) -> CTFrameRef;
     fn CTFramesetterSuggestFrameSizeWithConstraints(
         framesetter: CTFramesetterRef,

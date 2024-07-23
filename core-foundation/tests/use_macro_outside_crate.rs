@@ -1,6 +1,6 @@
+use core::ffi::c_void;
 use core_foundation::base::{CFComparisonResult, TCFType};
 use core_foundation::{declare_TCFType, impl_CFComparison, impl_CFTypeDescription, impl_TCFType};
-use std::os::raw::c_void;
 
 // sys equivalent stuff that must be declared
 

@@ -11,7 +11,7 @@ use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, CFTypeRef
 use crate::dictionary::CFDictionaryRef;
 use crate::string::CFMutableStringRef;
 use crate::string::CFStringRef;
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 #[repr(C)]
 pub struct __CFAttributedString(c_void);

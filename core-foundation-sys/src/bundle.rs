@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 use crate::array::CFArrayRef;
 #[cfg(target_os = "macos")]
@@ -17,7 +17,7 @@ use crate::dictionary::CFDictionaryRef;
 use crate::error::CFErrorRef;
 use crate::string::CFStringRef;
 use crate::url::CFURLRef;
-use std::os::raw::{c_int, c_uint};
+use core::ffi::{c_int, c_uint};
 
 #[repr(C)]
 pub struct __CFBundle(c_void);

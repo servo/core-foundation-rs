@@ -16,7 +16,7 @@ use crate::characterset::CFCharacterSetRef;
 use crate::data::CFDataRef;
 use crate::dictionary::CFDictionaryRef;
 use crate::locale::CFLocaleRef;
-use std::os::raw::{c_char, c_double, c_ulong, c_ushort, c_void};
+use core::ffi::{c_char, c_double, c_ulong, c_ushort, c_void};
 
 pub type CFStringCompareFlags = CFOptionFlags;
 pub const kCFCompareCaseInsensitive: CFStringCompareFlags = 1;

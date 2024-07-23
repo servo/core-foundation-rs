@@ -15,13 +15,12 @@ use core_graphics::base::CGFloat;
 use core_graphics::font::CGGlyph;
 use core_graphics::geometry::CGPoint;
 use std::borrow::Cow;
-use std::os::raw::c_void;
 use std::slice;
 
 use crate::line::TypographicBounds;
 
 #[repr(C)]
-pub struct __CTRun(c_void);
+pub struct __CTRun(core::ffi::c_void);
 
 pub type CTRunRef = *const __CTRun;
 

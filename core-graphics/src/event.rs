@@ -3,12 +3,12 @@ use crate::event_source::CGEventSource;
 use crate::geometry::CGPoint;
 
 use bitflags::bitflags;
+use core::ffi::{c_ulong, c_void};
 use core_foundation::{
     base::{CFRelease, CFRetain, CFTypeID, TCFType},
     mach_port::{CFMachPort, CFMachPortRef},
 };
 use foreign_types::{foreign_type, ForeignType};
-use libc::c_void;
 use std::mem::ManuallyDrop;
 
 pub type CGEventField = u32;
@@ -647,7 +647,7 @@ impl CGEvent {
     }
 
     pub fn set_string_from_utf16_unchecked(&self, buf: &[u16]) {
-        let buflen = buf.len() as libc::c_ulong;
+        let buflen = buf.len() as c_ulong;
         unsafe {
             CGEventKeyboardSetUnicodeString(self.as_ptr(), buflen, buf.as_ptr());
         }
@@ -775,7 +775,7 @@ extern "C" {
     /// keycode and perceived event state.
     fn CGEventKeyboardSetUnicodeString(
         event: crate::sys::CGEventRef,
-        length: libc::c_ulong,
+        length: c_ulong,
         string: *const u16,
     );
 

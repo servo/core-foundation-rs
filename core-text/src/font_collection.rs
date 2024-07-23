@@ -21,10 +21,8 @@ use core_foundation::set::CFSet;
 use core_foundation::string::{CFString, CFStringRef};
 use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 
-use std::os::raw::c_void;
-
 #[repr(C)]
-pub struct __CTFontCollection(c_void);
+pub struct __CTFontCollection(core::ffi::c_void);
 
 pub type CTFontCollectionRef = *const __CTFontCollection;
 

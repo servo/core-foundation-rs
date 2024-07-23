@@ -8,8 +8,8 @@
 // except according to those terms.
 
 use crate::string::CFStringRef;
+use core::ffi::{c_int, c_short, c_uchar, c_uint, c_ushort, c_void};
 use std::cmp::Ordering;
-use std::os::raw::{c_int, c_short, c_uchar, c_uint, c_ushort, c_void};
 
 pub type Boolean = u8;
 pub type mach_port_t = c_uint;

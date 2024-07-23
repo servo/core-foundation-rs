@@ -12,7 +12,7 @@
 //! These are liable to change at any time. Use with caution!
 
 use crate::geometry::CGRect;
-use libc::{c_int, c_uint};
+use core::ffi::{c_int, c_uint};
 use std::ptr;
 
 pub struct CGSRegion {
@@ -87,7 +87,7 @@ impl CGSSurface {
 
 mod ffi {
     use crate::geometry::CGRect;
-    use libc::{c_int, c_uint};
+    use core::ffi::{c_int, c_uint};
 
     // This is an enum so that we can't easily make instances of this opaque type.
     pub enum CGSRegionObject {}

@@ -15,10 +15,9 @@ use core_graphics::context::{CGContext, CGContextRef};
 use core_graphics::geometry::CGPoint;
 use core_graphics::path::{CGPath, SysCGPathRef};
 use foreign_types::{ForeignType, ForeignTypeRef};
-use std::os::raw::c_void;
 
 #[repr(C)]
-pub struct __CTFrame(c_void);
+pub struct __CTFrame(core::ffi::c_void);
 
 pub type CTFrameRef = *const __CTFrame;
 

@@ -25,7 +25,7 @@ default = ["link"]
 
 mac_os_10_7_support = ["core-foundation-sys/mac_os_10_7_support"] # backwards compatibility
 mac_os_10_8_features = ["core-foundation-sys/mac_os_10_8_features"] # enables new features
-with-uuid = ["uuid"]
+with-uuid = ["dep:uuid"]
 # Disable to manually link. Enabled by default.
 link = ["core-foundation-sys/link"]
 

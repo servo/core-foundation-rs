@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 use crate::base::{Boolean, CFAllocatorRef, CFComparatorFunction, CFIndex, CFRange, CFTypeID};
 use crate::string::CFStringRef;

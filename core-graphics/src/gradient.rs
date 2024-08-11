@@ -18,8 +18,6 @@ use core_foundation::array::{CFArray, CFArrayRef};
 use core_foundation::base::{CFRelease, CFRetain, TCFType};
 use foreign_types::{foreign_type, ForeignType};
 
-use libc::size_t;
-
 bitflags! {
     #[repr(C)]
     #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -80,7 +78,7 @@ extern "C" {
         color_space: crate::sys::CGColorSpaceRef,
         components: *const CGFloat,
         locations: *const CGFloat,
-        count: size_t,
+        count: usize,
     ) -> crate::sys::CGGradientRef;
     fn CGGradientCreateWithColors(
         color_space: crate::sys::CGColorSpaceRef,

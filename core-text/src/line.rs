@@ -16,10 +16,9 @@ use core_graphics::base::CGFloat;
 use core_graphics::context::CGContext;
 use core_graphics::geometry::{CGPoint, CGRect};
 use foreign_types::ForeignType;
-use std::os::raw::c_void;
 
 #[repr(C)]
-pub struct __CTLine(c_void);
+pub struct __CTLine(core::ffi::c_void);
 
 pub type CTLineRef = *const __CTLine;
 

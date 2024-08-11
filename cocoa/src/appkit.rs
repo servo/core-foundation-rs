@@ -15,6 +15,7 @@ use crate::foundation::{
 };
 use bitflags::bitflags;
 use block::Block;
+use core::ffi::{c_float, c_int, c_ulonglong, c_ushort, c_void};
 use libc;
 use objc::{class, msg_send, sel, sel_impl};
 
@@ -27,7 +28,6 @@ pub use self::NSBackingStoreType::*;
 pub use self::NSEventType::*;
 pub use self::NSOpenGLPFAOpenGLProfiles::*;
 pub use self::NSOpenGLPixelFormatAttribute::*;
-use std::os::raw::c_void;
 
 pub type CGLContextObj = *mut c_void;
 
@@ -281,7 +281,7 @@ bitflags! {
 
 bitflags! {
     #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
-    pub struct NSAlignmentOptions: libc::c_ulonglong {
+    pub struct NSAlignmentOptions: c_ulonglong {
         const NSAlignMinXInward         = 1 << 0;
         const NSAlignMinYInward         = 1 << 1;
         const NSAlignMaxXInward         = 1 << 2;
@@ -1060,7 +1060,7 @@ impl NSMenuItem for id {
     }
 }
 
-pub type NSWindowDepth = libc::c_int;
+pub type NSWindowDepth = c_int;
 
 bitflags! {
     #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -2620,43 +2620,43 @@ pub enum NSEventType {
 
 bitflags! {
     #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
-    pub struct NSEventMask: libc::c_ulonglong {
-        const NSLeftMouseDownMask         = 1 << NSLeftMouseDown as libc::c_ulonglong;
-        const NSLeftMouseUpMask           = 1 << NSLeftMouseUp as libc::c_ulonglong;
-        const NSRightMouseDownMask        = 1 << NSRightMouseDown as libc::c_ulonglong;
-        const NSRightMouseUpMask          = 1 << NSRightMouseUp as libc::c_ulonglong;
-        const NSMouseMovedMask            = 1 << NSMouseMoved as libc::c_ulonglong;
-        const NSLeftMouseDraggedMask      = 1 << NSLeftMouseDragged as libc::c_ulonglong;
-        const NSRightMouseDraggedMask     = 1 << NSRightMouseDragged as libc::c_ulonglong;
-        const NSMouseEnteredMask          = 1 << NSMouseEntered as libc::c_ulonglong;
-        const NSMouseExitedMask           = 1 << NSMouseExited as libc::c_ulonglong;
-        const NSKeyDownMask               = 1 << NSKeyDown as libc::c_ulonglong;
-        const NSKeyUpMask                 = 1 << NSKeyUp as libc::c_ulonglong;
-        const NSFlagsChangedMask          = 1 << NSFlagsChanged as libc::c_ulonglong;
-        const NSAppKitDefinedMask         = 1 << NSAppKitDefined as libc::c_ulonglong;
-        const NSSystemDefinedMask         = 1 << NSSystemDefined as libc::c_ulonglong;
-        const NSApplicationDefinedMask    = 1 << NSApplicationDefined as libc::c_ulonglong;
-        const NSPeriodicMask              = 1 << NSPeriodic as libc::c_ulonglong;
-        const NSCursorUpdateMask          = 1 << NSCursorUpdate as libc::c_ulonglong;
-        const NSScrollWheelMask           = 1 << NSScrollWheel as libc::c_ulonglong;
-        const NSTabletPointMask           = 1 << NSTabletPoint as libc::c_ulonglong;
-        const NSTabletProximityMask       = 1 << NSTabletProximity as libc::c_ulonglong;
-        const NSOtherMouseDownMask        = 1 << NSOtherMouseDown as libc::c_ulonglong;
-        const NSOtherMouseUpMask          = 1 << NSOtherMouseUp as libc::c_ulonglong;
-        const NSOtherMouseDraggedMask     = 1 << NSOtherMouseDragged as libc::c_ulonglong;
-        const NSEventMaskGesture          = 1 << NSEventTypeGesture as libc::c_ulonglong;
-        const NSEventMaskSwipe            = 1 << NSEventTypeSwipe as libc::c_ulonglong;
-        const NSEventMaskRotate           = 1 << NSEventTypeRotate as libc::c_ulonglong;
-        const NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as libc::c_ulonglong;
-        const NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as libc::c_ulonglong;
-        const NSEventMaskPressure         = 1 << NSEventTypePressure as libc::c_ulonglong;
+    pub struct NSEventMask: c_ulonglong {
+        const NSLeftMouseDownMask         = 1 << NSLeftMouseDown as c_ulonglong;
+        const NSLeftMouseUpMask           = 1 << NSLeftMouseUp as c_ulonglong;
+        const NSRightMouseDownMask        = 1 << NSRightMouseDown as c_ulonglong;
+        const NSRightMouseUpMask          = 1 << NSRightMouseUp as c_ulonglong;
+        const NSMouseMovedMask            = 1 << NSMouseMoved as c_ulonglong;
+        const NSLeftMouseDraggedMask      = 1 << NSLeftMouseDragged as c_ulonglong;
+        const NSRightMouseDraggedMask     = 1 << NSRightMouseDragged as c_ulonglong;
+        const NSMouseEnteredMask          = 1 << NSMouseEntered as c_ulonglong;
+        const NSMouseExitedMask           = 1 << NSMouseExited as c_ulonglong;
+        const NSKeyDownMask               = 1 << NSKeyDown as c_ulonglong;
+        const NSKeyUpMask                 = 1 << NSKeyUp as c_ulonglong;
+        const NSFlagsChangedMask          = 1 << NSFlagsChanged as c_ulonglong;
+        const NSAppKitDefinedMask         = 1 << NSAppKitDefined as c_ulonglong;
+        const NSSystemDefinedMask         = 1 << NSSystemDefined as c_ulonglong;
+        const NSApplicationDefinedMask    = 1 << NSApplicationDefined as c_ulonglong;
+        const NSPeriodicMask              = 1 << NSPeriodic as c_ulonglong;
+        const NSCursorUpdateMask          = 1 << NSCursorUpdate as c_ulonglong;
+        const NSScrollWheelMask           = 1 << NSScrollWheel as c_ulonglong;
+        const NSTabletPointMask           = 1 << NSTabletPoint as c_ulonglong;
+        const NSTabletProximityMask       = 1 << NSTabletProximity as c_ulonglong;
+        const NSOtherMouseDownMask        = 1 << NSOtherMouseDown as c_ulonglong;
+        const NSOtherMouseUpMask          = 1 << NSOtherMouseUp as c_ulonglong;
+        const NSOtherMouseDraggedMask     = 1 << NSOtherMouseDragged as c_ulonglong;
+        const NSEventMaskGesture          = 1 << NSEventTypeGesture as c_ulonglong;
+        const NSEventMaskSwipe            = 1 << NSEventTypeSwipe as c_ulonglong;
+        const NSEventMaskRotate           = 1 << NSEventTypeRotate as c_ulonglong;
+        const NSEventMaskBeginGesture     = 1 << NSEventTypeBeginGesture as c_ulonglong;
+        const NSEventMaskEndGesture       = 1 << NSEventTypeEndGesture as c_ulonglong;
+        const NSEventMaskPressure         = 1 << NSEventTypePressure as c_ulonglong;
         const NSAnyEventMask              = 0xffffffffffffffff;
     }
 }
 
 impl NSEventMask {
     pub fn from_type(ty: NSEventType) -> NSEventMask {
-        NSEventMask::from_bits_truncate(1 << ty as libc::c_ulonglong)
+        NSEventMask::from_bits_truncate(1 << ty as c_ulonglong)
     }
 }
 
@@ -2707,78 +2707,78 @@ pub enum NSEventSubtype {
     NSAWTEventType = 16,
 }
 
-pub const NSUpArrowFunctionKey: libc::c_ushort = 0xF700;
-pub const NSDownArrowFunctionKey: libc::c_ushort = 0xF701;
-pub const NSLeftArrowFunctionKey: libc::c_ushort = 0xF702;
-pub const NSRightArrowFunctionKey: libc::c_ushort = 0xF703;
-pub const NSF1FunctionKey: libc::c_ushort = 0xF704;
-pub const NSF2FunctionKey: libc::c_ushort = 0xF705;
-pub const NSF3FunctionKey: libc::c_ushort = 0xF706;
-pub const NSF4FunctionKey: libc::c_ushort = 0xF707;
-pub const NSF5FunctionKey: libc::c_ushort = 0xF708;
-pub const NSF6FunctionKey: libc::c_ushort = 0xF709;
-pub const NSF7FunctionKey: libc::c_ushort = 0xF70A;
-pub const NSF8FunctionKey: libc::c_ushort = 0xF70B;
-pub const NSF9FunctionKey: libc::c_ushort = 0xF70C;
-pub const NSF10FunctionKey: libc::c_ushort = 0xF70D;
-pub const NSF11FunctionKey: libc::c_ushort = 0xF70E;
-pub const NSF12FunctionKey: libc::c_ushort = 0xF70F;
-pub const NSF13FunctionKey: libc::c_ushort = 0xF710;
-pub const NSF14FunctionKey: libc::c_ushort = 0xF711;
-pub const NSF15FunctionKey: libc::c_ushort = 0xF712;
-pub const NSF16FunctionKey: libc::c_ushort = 0xF713;
-pub const NSF17FunctionKey: libc::c_ushort = 0xF714;
-pub const NSF18FunctionKey: libc::c_ushort = 0xF715;
-pub const NSF19FunctionKey: libc::c_ushort = 0xF716;
-pub const NSF20FunctionKey: libc::c_ushort = 0xF717;
-pub const NSF21FunctionKey: libc::c_ushort = 0xF718;
-pub const NSF22FunctionKey: libc::c_ushort = 0xF719;
-pub const NSF23FunctionKey: libc::c_ushort = 0xF71A;
-pub const NSF24FunctionKey: libc::c_ushort = 0xF71B;
-pub const NSF25FunctionKey: libc::c_ushort = 0xF71C;
-pub const NSF26FunctionKey: libc::c_ushort = 0xF71D;
-pub const NSF27FunctionKey: libc::c_ushort = 0xF71E;
-pub const NSF28FunctionKey: libc::c_ushort = 0xF71F;
-pub const NSF29FunctionKey: libc::c_ushort = 0xF720;
-pub const NSF30FunctionKey: libc::c_ushort = 0xF721;
-pub const NSF31FunctionKey: libc::c_ushort = 0xF722;
-pub const NSF32FunctionKey: libc::c_ushort = 0xF723;
-pub const NSF33FunctionKey: libc::c_ushort = 0xF724;
-pub const NSF34FunctionKey: libc::c_ushort = 0xF725;
-pub const NSF35FunctionKey: libc::c_ushort = 0xF726;
-pub const NSInsertFunctionKey: libc::c_ushort = 0xF727;
-pub const NSDeleteFunctionKey: libc::c_ushort = 0xF728;
-pub const NSHomeFunctionKey: libc::c_ushort = 0xF729;
-pub const NSBeginFunctionKey: libc::c_ushort = 0xF72A;
-pub const NSEndFunctionKey: libc::c_ushort = 0xF72B;
-pub const NSPageUpFunctionKey: libc::c_ushort = 0xF72C;
-pub const NSPageDownFunctionKey: libc::c_ushort = 0xF72D;
-pub const NSPrintScreenFunctionKey: libc::c_ushort = 0xF72E;
-pub const NSScrollLockFunctionKey: libc::c_ushort = 0xF72F;
-pub const NSPauseFunctionKey: libc::c_ushort = 0xF730;
-pub const NSSysReqFunctionKey: libc::c_ushort = 0xF731;
-pub const NSBreakFunctionKey: libc::c_ushort = 0xF732;
-pub const NSResetFunctionKey: libc::c_ushort = 0xF733;
-pub const NSStopFunctionKey: libc::c_ushort = 0xF734;
-pub const NSMenuFunctionKey: libc::c_ushort = 0xF735;
-pub const NSUserFunctionKey: libc::c_ushort = 0xF736;
-pub const NSSystemFunctionKey: libc::c_ushort = 0xF737;
-pub const NSPrintFunctionKey: libc::c_ushort = 0xF738;
-pub const NSClearLineFunctionKey: libc::c_ushort = 0xF739;
-pub const NSClearDisplayFunctionKey: libc::c_ushort = 0xF73A;
-pub const NSInsertLineFunctionKey: libc::c_ushort = 0xF73B;
-pub const NSDeleteLineFunctionKey: libc::c_ushort = 0xF73C;
-pub const NSInsertCharFunctionKey: libc::c_ushort = 0xF73D;
-pub const NSDeleteCharFunctionKey: libc::c_ushort = 0xF73E;
-pub const NSPrevFunctionKey: libc::c_ushort = 0xF73F;
-pub const NSNextFunctionKey: libc::c_ushort = 0xF740;
-pub const NSSelectFunctionKey: libc::c_ushort = 0xF741;
-pub const NSExecuteFunctionKey: libc::c_ushort = 0xF742;
-pub const NSUndoFunctionKey: libc::c_ushort = 0xF743;
-pub const NSRedoFunctionKey: libc::c_ushort = 0xF744;
-pub const NSFindFunctionKey: libc::c_ushort = 0xF745;
-pub const NSHelpFunctionKey: libc::c_ushort = 0xF746;
-pub const NSModeSwitchFunctionKey: libc::c_ushort = 0xF747;
+pub const NSUpArrowFunctionKey: c_ushort = 0xF700;
+pub const NSDownArrowFunctionKey: c_ushort = 0xF701;
+pub const NSLeftArrowFunctionKey: c_ushort = 0xF702;
+pub const NSRightArrowFunctionKey: c_ushort = 0xF703;
+pub const NSF1FunctionKey: c_ushort = 0xF704;
+pub const NSF2FunctionKey: c_ushort = 0xF705;
+pub const NSF3FunctionKey: c_ushort = 0xF706;
+pub const NSF4FunctionKey: c_ushort = 0xF707;
+pub const NSF5FunctionKey: c_ushort = 0xF708;
+pub const NSF6FunctionKey: c_ushort = 0xF709;
+pub const NSF7FunctionKey: c_ushort = 0xF70A;
+pub const NSF8FunctionKey: c_ushort = 0xF70B;
+pub const NSF9FunctionKey: c_ushort = 0xF70C;
+pub const NSF10FunctionKey: c_ushort = 0xF70D;
+pub const NSF11FunctionKey: c_ushort = 0xF70E;
+pub const NSF12FunctionKey: c_ushort = 0xF70F;
+pub const NSF13FunctionKey: c_ushort = 0xF710;
+pub const NSF14FunctionKey: c_ushort = 0xF711;
+pub const NSF15FunctionKey: c_ushort = 0xF712;
+pub const NSF16FunctionKey: c_ushort = 0xF713;
+pub const NSF17FunctionKey: c_ushort = 0xF714;
+pub const NSF18FunctionKey: c_ushort = 0xF715;
+pub const NSF19FunctionKey: c_ushort = 0xF716;
+pub const NSF20FunctionKey: c_ushort = 0xF717;
+pub const NSF21FunctionKey: c_ushort = 0xF718;
+pub const NSF22FunctionKey: c_ushort = 0xF719;
+pub const NSF23FunctionKey: c_ushort = 0xF71A;
+pub const NSF24FunctionKey: c_ushort = 0xF71B;
+pub const NSF25FunctionKey: c_ushort = 0xF71C;
+pub const NSF26FunctionKey: c_ushort = 0xF71D;
+pub const NSF27FunctionKey: c_ushort = 0xF71E;
+pub const NSF28FunctionKey: c_ushort = 0xF71F;
+pub const NSF29FunctionKey: c_ushort = 0xF720;
+pub const NSF30FunctionKey: c_ushort = 0xF721;
+pub const NSF31FunctionKey: c_ushort = 0xF722;
+pub const NSF32FunctionKey: c_ushort = 0xF723;
+pub const NSF33FunctionKey: c_ushort = 0xF724;
+pub const NSF34FunctionKey: c_ushort = 0xF725;
+pub const NSF35FunctionKey: c_ushort = 0xF726;
+pub const NSInsertFunctionKey: c_ushort = 0xF727;
+pub const NSDeleteFunctionKey: c_ushort = 0xF728;
+pub const NSHomeFunctionKey: c_ushort = 0xF729;
+pub const NSBeginFunctionKey: c_ushort = 0xF72A;
+pub const NSEndFunctionKey: c_ushort = 0xF72B;
+pub const NSPageUpFunctionKey: c_ushort = 0xF72C;
+pub const NSPageDownFunctionKey: c_ushort = 0xF72D;
+pub const NSPrintScreenFunctionKey: c_ushort = 0xF72E;
+pub const NSScrollLockFunctionKey: c_ushort = 0xF72F;
+pub const NSPauseFunctionKey: c_ushort = 0xF730;
+pub const NSSysReqFunctionKey: c_ushort = 0xF731;
+pub const NSBreakFunctionKey: c_ushort = 0xF732;
+pub const NSResetFunctionKey: c_ushort = 0xF733;
+pub const NSStopFunctionKey: c_ushort = 0xF734;
+pub const NSMenuFunctionKey: c_ushort = 0xF735;
+pub const NSUserFunctionKey: c_ushort = 0xF736;
+pub const NSSystemFunctionKey: c_ushort = 0xF737;
+pub const NSPrintFunctionKey: c_ushort = 0xF738;
+pub const NSClearLineFunctionKey: c_ushort = 0xF739;
+pub const NSClearDisplayFunctionKey: c_ushort = 0xF73A;
+pub const NSInsertLineFunctionKey: c_ushort = 0xF73B;
+pub const NSDeleteLineFunctionKey: c_ushort = 0xF73C;
+pub const NSInsertCharFunctionKey: c_ushort = 0xF73D;
+pub const NSDeleteCharFunctionKey: c_ushort = 0xF73E;
+pub const NSPrevFunctionKey: c_ushort = 0xF73F;
+pub const NSNextFunctionKey: c_ushort = 0xF740;
+pub const NSSelectFunctionKey: c_ushort = 0xF741;
+pub const NSExecuteFunctionKey: c_ushort = 0xF742;
+pub const NSUndoFunctionKey: c_ushort = 0xF743;
+pub const NSRedoFunctionKey: c_ushort = 0xF744;
+pub const NSFindFunctionKey: c_ushort = 0xF745;
+pub const NSHelpFunctionKey: c_ushort = 0xF746;
+pub const NSModeSwitchFunctionKey: c_ushort = 0xF747;
 
 pub trait NSEvent: Sized {
     // Creating Events
@@ -2793,7 +2793,7 @@ pub trait NSEvent: Sized {
         characters: id,      /* (NSString *) */
         unmodCharacters: id, /* (NSString *) */
         repeatKey: BOOL,
-        code: libc::c_ushort,
+        code: c_ushort,
     ) -> id /* (NSEvent *) */;
     unsafe fn mouseEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_clickCount_pressure_(
         _: Self,
@@ -2805,7 +2805,7 @@ pub trait NSEvent: Sized {
         context: id, /* (NSGraphicsContext *) */
         eventNumber: NSInteger,
         clickCount: NSInteger,
-        pressure: libc::c_float,
+        pressure: c_float,
     ) -> id /* (NSEvent *) */;
     unsafe fn enterExitEventWithType_location_modifierFlags_timestamp_windowNumber_context_eventNumber_trackingNumber_userData_(
         _: Self,
@@ -2853,7 +2853,7 @@ pub trait NSEvent: Sized {
     unsafe fn keyRepeatInterval(_: Self) -> NSTimeInterval;
     unsafe fn characters(self) -> id /* (NSString *) */;
     unsafe fn charactersIgnoringModifiers(self) -> id /* (NSString *) */;
-    unsafe fn keyCode(self) -> libc::c_ushort;
+    unsafe fn keyCode(self) -> c_ushort;
     unsafe fn isARepeat(self) -> BOOL;
 
     // Getting Mouse Event Information
@@ -2862,7 +2862,7 @@ pub trait NSEvent: Sized {
     unsafe fn mouseLocation(_: Self) -> NSPoint;
     unsafe fn buttonNumber(self) -> NSInteger;
     unsafe fn clickCount(self) -> NSInteger;
-    unsafe fn pressure(self) -> libc::c_float;
+    unsafe fn pressure(self) -> c_float;
     unsafe fn stage(self) -> NSInteger;
     unsafe fn setMouseCoalescingEnabled_(_: Self, flag: BOOL);
     unsafe fn isMouseCoalescingEnabled(_: Self) -> BOOL;
@@ -2891,7 +2891,7 @@ pub trait NSEvent: Sized {
     unsafe fn pointingDeviceType(self) -> NSPointingDeviceType;
     unsafe fn systemTabletID(self) -> NSUInteger;
     unsafe fn tabletID(self) -> NSUInteger;
-    unsafe fn uniqueID(self) -> libc::c_ulonglong;
+    unsafe fn uniqueID(self) -> c_ulonglong;
     unsafe fn vendorID(self) -> NSUInteger;
     unsafe fn vendorPointingDeviceType(self) -> NSUInteger;
 
@@ -2900,8 +2900,8 @@ pub trait NSEvent: Sized {
     unsafe fn absoluteY(self) -> NSInteger;
     unsafe fn absoluteZ(self) -> NSInteger;
     unsafe fn buttonMask(self) -> NSEventButtonMask;
-    unsafe fn rotation(self) -> libc::c_float;
-    unsafe fn tangentialPressure(self) -> libc::c_float;
+    unsafe fn rotation(self) -> c_float;
+    unsafe fn tangentialPressure(self) -> c_float;
     unsafe fn tilt(self) -> NSPoint;
     unsafe fn vendorDefined(self) -> id;
 
@@ -2953,7 +2953,7 @@ impl NSEvent for id {
         characters: id,      /* (NSString *) */
         unmodCharacters: id, /* (NSString *) */
         repeatKey: BOOL,
-        code: libc::c_ushort,
+        code: c_ushort,
     ) -> id /* (NSEvent *) */ {
         msg_send![class!(NSEvent), keyEventWithType:eventType
                                             location:location
@@ -2977,7 +2977,7 @@ impl NSEvent for id {
         context: id, /* (NSGraphicsContext *) */
         eventNumber: NSInteger,
         clickCount: NSInteger,
-        pressure: libc::c_float,
+        pressure: c_float,
     ) -> id /* (NSEvent *) */ {
         msg_send![class!(NSEvent), mouseEventWithType:eventType
                                               location:location
@@ -3107,7 +3107,7 @@ impl NSEvent for id {
         msg_send![self, charactersIgnoringModifiers]
     }
 
-    unsafe fn keyCode(self) -> libc::c_ushort {
+    unsafe fn keyCode(self) -> c_ushort {
         msg_send![self, keyCode]
     }
 
@@ -3137,7 +3137,7 @@ impl NSEvent for id {
         msg_send![self, clickCount]
     }
 
-    unsafe fn pressure(self) -> libc::c_float {
+    unsafe fn pressure(self) -> c_float {
         msg_send![self, pressure]
     }
 
@@ -3229,7 +3229,7 @@ impl NSEvent for id {
         msg_send![self, tabletID]
     }
 
-    unsafe fn uniqueID(self) -> libc::c_ulonglong {
+    unsafe fn uniqueID(self) -> c_ulonglong {
         msg_send![self, uniqueID]
     }
 
@@ -3259,11 +3259,11 @@ impl NSEvent for id {
         msg_send![self, buttonMask]
     }
 
-    unsafe fn rotation(self) -> libc::c_float {
+    unsafe fn rotation(self) -> c_float {
         msg_send![self, rotation]
     }
 
-    unsafe fn tangentialPressure(self) -> libc::c_float {
+    unsafe fn tangentialPressure(self) -> c_float {
         msg_send![self, tangentialPressure]
     }
 
@@ -4335,7 +4335,7 @@ impl NSTabView for id {
         msg_send![self, drawsBackground]
     }
     unsafe fn setDrawsBackground_(self, drawsBackground: BOOL) {
-        msg_send![self, setDrawsBackground: drawsBackground as libc::c_int]
+        msg_send![self, setDrawsBackground: drawsBackground as c_int]
     }
 
     unsafe fn minimumSize(self) -> id {
@@ -4357,7 +4357,7 @@ impl NSTabView for id {
     unsafe fn setAllowsTruncatedLabels_(self, allowTruncatedLabels: BOOL) {
         msg_send![
             self,
-            setAllowsTruncatedLabels: allowTruncatedLabels as libc::c_int
+            setAllowsTruncatedLabels: allowTruncatedLabels as c_int
         ]
     }
 
@@ -4413,7 +4413,7 @@ impl NSTabViewItem for id {
     }
 
     unsafe fn drawLabel_inRect_(self, shouldTruncateLabel: BOOL, labelRect: NSRect) {
-        msg_send![self, drawLabel:shouldTruncateLabel as libc::c_int inRect:labelRect]
+        msg_send![self, drawLabel:shouldTruncateLabel as c_int inRect:labelRect]
     }
 
     unsafe fn label(self) -> id {
@@ -4424,7 +4424,7 @@ impl NSTabViewItem for id {
     }
 
     unsafe fn sizeOfLabel_(self, computeMin: BOOL) {
-        msg_send![self, sizeOfLabel: computeMin as libc::c_int]
+        msg_send![self, sizeOfLabel: computeMin as c_int]
     }
 
     unsafe fn tabState(self) -> NSTabState {

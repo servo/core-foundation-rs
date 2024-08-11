@@ -7,6 +7,7 @@ version = "0.24.0"
 authors = ["The Servo Project Developers"]
 license = "MIT OR Apache-2.0"
 edition = "2018"
+rust-version = "1.65"
 
 [features]
 default = ["link"]

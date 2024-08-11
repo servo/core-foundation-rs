@@ -10,7 +10,6 @@ edition = "2018"
 rust-version = "1.65"
 
 [dependencies]
-bitflags = "2"
 core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
 
 [features]

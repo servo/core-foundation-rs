@@ -10,32 +10,32 @@
 use core_foundation::base::{CFRelease, CFRetain, CFTypeID, TCFType};
 use core_foundation::data::{CFData, CFDataRef};
 
-use libc::{off_t, size_t};
+use core::ffi::c_void;
+use libc::off_t;
 use std::mem;
-use std::os::raw::c_void;
 use std::ptr;
 use std::sync::Arc;
 
 use foreign_types::{foreign_type, ForeignType, ForeignTypeRef};
 
 pub type CGDataProviderGetBytesCallback =
-    Option<unsafe extern "C" fn(*mut c_void, *mut c_void, size_t) -> size_t>;
+    Option<unsafe extern "C" fn(*mut c_void, *mut c_void, usize) -> usize>;
 pub type CGDataProviderReleaseInfoCallback = Option<unsafe extern "C" fn(*mut c_void)>;
 pub type CGDataProviderRewindCallback = Option<unsafe extern "C" fn(*mut c_void)>;
-pub type CGDataProviderSkipBytesCallback = Option<unsafe extern "C" fn(*mut c_void, size_t)>;
+pub type CGDataProviderSkipBytesCallback = Option<unsafe extern "C" fn(*mut c_void, usize)>;
 pub type CGDataProviderSkipForwardCallback =
     Option<unsafe extern "C" fn(*mut c_void, off_t) -> off_t>;
 
 pub type CGDataProviderGetBytePointerCallback =
     Option<unsafe extern "C" fn(*mut c_void) -> *mut c_void>;
 pub type CGDataProviderGetBytesAtOffsetCallback =
-    Option<unsafe extern "C" fn(*mut c_void, *mut c_void, size_t, size_t)>;
+    Option<unsafe extern "C" fn(*mut c_void, *mut c_void, usize, usize)>;
 pub type CGDataProviderReleaseBytePointerCallback =
     Option<unsafe extern "C" fn(*mut c_void, *const c_void)>;
 pub type CGDataProviderReleaseDataCallback =
-    Option<unsafe extern "C" fn(*mut c_void, *const c_void, size_t)>;
+    Option<unsafe extern "C" fn(*mut c_void, *const c_void, usize)>;
 pub type CGDataProviderGetBytesAtPositionCallback =
-    Option<unsafe extern "C" fn(*mut c_void, *mut c_void, off_t, size_t)>;
+    Option<unsafe extern "C" fn(*mut c_void, *mut c_void, off_t, usize)>;
 
 foreign_type! {
     #[doc(hidden)]
@@ -58,13 +58,13 @@ impl CGDataProvider {
     pub fn from_buffer<T: AsRef<[u8]> + Sync + Send>(buffer: Arc<T>) -> Self {
         unsafe {
             let ptr = (*buffer).as_ref().as_ptr() as *const c_void;
-            let len = (*buffer).as_ref().len() as size_t;
+            let len = (*buffer).as_ref().len() as usize;
             let info = Arc::into_raw(buffer) as *mut c_void;
             let result = CGDataProviderCreateWithData(info, ptr, len, Some(release::<T>));
             return CGDataProvider::from_ptr(result);
         }
 
-        unsafe extern "C" fn release<T>(info: *mut c_void, _: *const c_void, _: size_t) {
+        unsafe extern "C" fn release<T>(info: *mut c_void, _: *const c_void, _: usize) {
             drop(Arc::from_raw(info as *mut T))
         }
     }
@@ -73,7 +73,7 @@ impl CGDataProvider {
     /// case, so it's up to the user to ensure the memory safety here.
     pub unsafe fn from_slice(buffer: &[u8]) -> Self {
         let ptr = buffer.as_ptr() as *const c_void;
-        let len = buffer.len() as size_t;
+        let len = buffer.len() as usize;
         let result = CGDataProviderCreateWithData(ptr::null_mut(), ptr, len, None);
         CGDataProvider::from_ptr(result)
     }
@@ -88,7 +88,7 @@ impl CGDataProvider {
         let data_provider = CGDataProviderCreateWithData(userdata, ptr, len, Some(release));
         return CGDataProvider::from_ptr(data_provider);
 
-        unsafe extern "C" fn release(info: *mut c_void, _: *const c_void, _: size_t) {
+        unsafe extern "C" fn release(info: *mut c_void, _: *const c_void, _: usize) {
             drop(mem::transmute::<*mut c_void, Box<Box<dyn CustomData>>>(
                 info,
             ))
@@ -162,7 +162,7 @@ extern "C" {
     fn CGDataProviderCreateWithData(
         info: *mut c_void,
         data: *const c_void,
-        size: size_t,
+        size: usize,
         releaseData: CGDataProviderReleaseDataCallback,
     ) -> crate::sys::CGDataProviderRef;
     //fn CGDataProviderCreateWithFilename(filename: *c_char) -> CGDataProviderRef;

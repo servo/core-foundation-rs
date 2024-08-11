@@ -12,7 +12,7 @@ use crate::base::{CFAllocatorRef, CFIndex, CFTypeID, CFTypeRef, LangCode, Region
 use crate::dictionary::CFDictionaryRef;
 use crate::notification_center::CFNotificationName;
 use crate::string::CFStringRef;
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 #[repr(C)]
 pub struct __CFLocale(c_void);

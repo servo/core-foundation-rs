@@ -10,7 +10,7 @@
 #![allow(non_upper_case_globals)]
 
 use bitflags::bitflags;
-use libc;
+use core::ffi::{c_double, c_void};
 use std::ops::Deref;
 use std::ptr;
 
@@ -101,7 +101,7 @@ pub use core_foundation::dictionary::{
     CFDictionary, CFDictionaryGetValueIfPresent, CFDictionaryRef,
 };
 
-pub type CGDisplayConfigRef = *mut libc::c_void;
+pub type CGDisplayConfigRef = *mut c_void;
 
 #[repr(u32)]
 #[derive(Clone, Copy)]
@@ -113,7 +113,7 @@ pub enum CGConfigureOption {
 
 /// A client-supplied callback function that’s invoked whenever the configuration of a local display is changed.
 pub type CGDisplayReconfigurationCallBack =
-    unsafe extern "C" fn(display: CGDirectDisplayID, flags: u32, user_info: *const libc::c_void);
+    unsafe extern "C" fn(display: CGDirectDisplayID, flags: u32, user_info: *const c_void);
 
 bitflags! {
     /// The configuration parameters that are passed to a display reconfiguration callback function.
@@ -703,7 +703,7 @@ extern "C" {
     pub fn CGDisplayIsStereo(display: CGDirectDisplayID) -> boolean_t;
     pub fn CGDisplayMirrorsDisplay(display: CGDirectDisplayID) -> CGDirectDisplayID;
     pub fn CGDisplayPrimaryDisplay(display: CGDirectDisplayID) -> CGDirectDisplayID;
-    pub fn CGDisplayRotation(display: CGDirectDisplayID) -> libc::c_double;
+    pub fn CGDisplayRotation(display: CGDirectDisplayID) -> c_double;
     pub fn CGDisplayScreenSize(display: CGDirectDisplayID) -> CGSize;
     pub fn CGDisplaySerialNumber(display: CGDirectDisplayID) -> u32;
     pub fn CGDisplayUnitNumber(display: CGDirectDisplayID) -> u32;
@@ -721,8 +721,8 @@ extern "C" {
         matching_display_count: *mut u32,
     ) -> CGError;
     pub fn CGDisplayModelNumber(display: CGDirectDisplayID) -> u32;
-    pub fn CGDisplayPixelsHigh(display: CGDirectDisplayID) -> libc::size_t;
-    pub fn CGDisplayPixelsWide(display: CGDirectDisplayID) -> libc::size_t;
+    pub fn CGDisplayPixelsHigh(display: CGDirectDisplayID) -> usize;
+    pub fn CGDisplayPixelsWide(display: CGDirectDisplayID) -> usize;
     pub fn CGDisplayBounds(display: CGDirectDisplayID) -> CGRect;
     pub fn CGDisplayCreateImage(display: CGDirectDisplayID) -> crate::sys::CGImageRef;
     pub fn CGDisplayCreateImageForRect(
@@ -762,19 +762,19 @@ extern "C" {
     pub fn CGRestorePermanentDisplayConfiguration();
     pub fn CGDisplayRegisterReconfigurationCallback(
         callback: CGDisplayReconfigurationCallBack,
-        user_info: *const libc::c_void,
+        user_info: *const c_void,
     ) -> CGError;
     pub fn CGDisplayRemoveReconfigurationCallback(
         callback: CGDisplayReconfigurationCallBack,
-        user_info: *const libc::c_void,
+        user_info: *const c_void,
     ) -> CGError;
 
     pub fn CGDisplayCopyDisplayMode(display: CGDirectDisplayID) -> crate::sys::CGDisplayModeRef;
-    pub fn CGDisplayModeGetHeight(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;
-    pub fn CGDisplayModeGetWidth(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;
-    pub fn CGDisplayModeGetPixelHeight(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;
-    pub fn CGDisplayModeGetPixelWidth(mode: crate::sys::CGDisplayModeRef) -> libc::size_t;
-    pub fn CGDisplayModeGetRefreshRate(mode: crate::sys::CGDisplayModeRef) -> libc::c_double;
+    pub fn CGDisplayModeGetHeight(mode: crate::sys::CGDisplayModeRef) -> usize;
+    pub fn CGDisplayModeGetWidth(mode: crate::sys::CGDisplayModeRef) -> usize;
+    pub fn CGDisplayModeGetPixelHeight(mode: crate::sys::CGDisplayModeRef) -> usize;
+    pub fn CGDisplayModeGetPixelWidth(mode: crate::sys::CGDisplayModeRef) -> usize;
+    pub fn CGDisplayModeGetRefreshRate(mode: crate::sys::CGDisplayModeRef) -> c_double;
     pub fn CGDisplayModeGetIOFlags(mode: crate::sys::CGDisplayModeRef) -> u32;
     pub fn CGDisplayModeCopyPixelEncoding(mode: crate::sys::CGDisplayModeRef) -> CFStringRef;
     pub fn CGDisplayModeGetIODisplayModeID(mode: crate::sys::CGDisplayModeRef) -> i32;

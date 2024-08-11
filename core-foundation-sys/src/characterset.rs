@@ -10,7 +10,7 @@
 use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFRange, CFTypeID, UTF32Char};
 use crate::data::CFDataRef;
 use crate::string::{CFStringRef, UniChar};
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 pub type CFCharacterSetPredefinedSet = CFIndex;
 

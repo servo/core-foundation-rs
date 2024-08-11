@@ -11,7 +11,7 @@ use crate::base::{mach_port_t, Boolean};
 pub use crate::base::{CFAllocatorRef, CFIndex, CFTypeID};
 use crate::runloop::CFRunLoopSourceRef;
 use crate::string::CFStringRef;
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 #[repr(C)]
 pub struct __CFMachPort(c_void);

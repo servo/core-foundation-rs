@@ -31,8 +31,6 @@ use core_graphics::geometry::{CGAffineTransform, CGPoint, CGRect, CGSize};
 use core_graphics::path::CGPath;
 
 use foreign_types::ForeignType;
-use libc::{self, size_t};
-use std::os::raw::c_void;
 use std::ptr;
 
 type CGContextRef = *mut <CGContext as ForeignType>::CType;
@@ -130,7 +128,7 @@ impl From<CTFontNameSpecifier> for CFStringRef {
 }
 
 #[repr(C)]
-pub struct __CTFont(c_void);
+pub struct __CTFont(core::ffi::c_void);
 
 pub type CTFontRef = *const __CTFont;
 
@@ -394,7 +392,7 @@ impl CTFont {
         unsafe { CTFontGetLeading(self.0) }
     }
 
-    pub fn units_per_em(&self) -> libc::c_uint {
+    pub fn units_per_em(&self) -> core::ffi::c_uint {
         unsafe { CTFontGetUnitsPerEm(self.0) }
     }
 
@@ -489,7 +487,7 @@ impl CTFont {
                 self.as_concrete_TypeRef(),
                 glyphs.as_ptr(),
                 positions.as_ptr(),
-                glyphs.len() as size_t,
+                glyphs.len(),
                 context.as_ptr(),
             )
         }
@@ -724,7 +722,7 @@ extern "C" {
     fn CTFontGetAscent(font: CTFontRef) -> CGFloat;
     fn CTFontGetDescent(font: CTFontRef) -> CGFloat;
     fn CTFontGetLeading(font: CTFontRef) -> CGFloat;
-    fn CTFontGetUnitsPerEm(font: CTFontRef) -> libc::c_uint;
+    fn CTFontGetUnitsPerEm(font: CTFontRef) -> core::ffi::c_uint;
     fn CTFontGetGlyphCount(font: CTFontRef) -> CFIndex;
     fn CTFontGetBoundingBox(font: CTFontRef) -> CGRect;
     fn CTFontGetUnderlinePosition(font: CTFontRef) -> CGFloat;
@@ -753,7 +751,7 @@ extern "C" {
         glyphs: *const CGGlyph,
         advances: *mut CGSize,
         count: CFIndex,
-    ) -> libc::c_double;
+    ) -> core::ffi::c_double;
     fn CTFontGetVerticalTranslationsForGlyphs(
         font: CTFontRef,
         orientation: CTFontOrientation,
@@ -781,7 +779,7 @@ extern "C" {
         font: CTFontRef,
         glyphs: *const CGGlyph,
         positions: *const CGPoint,
-        count: size_t,
+        count: usize,
         context: CGContextRef,
     );
     //fn CTFontGetLigatureCaretPositions

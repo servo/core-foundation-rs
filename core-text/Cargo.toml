@@ -22,6 +22,5 @@ link = ["core-foundation/link", "core-graphics/link"]
 
 [dependencies]
 foreign-types = "0.5"
-libc = "0.2"
 core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
 core-graphics = { default-features = false, path = "../core-graphics", version = "0.24" }

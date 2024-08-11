@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::{c_char, c_void};
+use core::ffi::{c_char, c_void};
 
 use crate::base::{Boolean, CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID};
 use crate::date::{CFAbsoluteTime, CFTimeInterval};

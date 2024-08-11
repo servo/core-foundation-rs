@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 #[cfg(feature = "mac_os_10_8_features")]
 use crate::base::CFOptionFlags;

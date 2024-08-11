@@ -8,7 +8,7 @@
 // except according to those terms.
 
 use crate::base::{CFAllocatorRef, CFIndex, CFOptionFlags, CFRange, CFTypeID};
-use std::os::raw::c_void;
+use core::ffi::c_void;
 
 #[repr(C)]
 pub struct __CFData(c_void);

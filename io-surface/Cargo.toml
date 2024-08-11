@@ -13,7 +13,6 @@ rust-version = "1.65"
 default-target = "x86_64-apple-darwin"
 
 [dependencies]
-libc = "0.2"
 core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
 core-foundation-sys = { default-features = false, path = "../core-foundation-sys", version = "0.8" }
 cgl = "0.3"

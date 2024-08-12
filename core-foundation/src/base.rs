@@ -29,8 +29,7 @@ pub trait CFIndexConvertible {
 impl CFIndexConvertible for usize {
     #[inline]
     fn to_CFIndex(self) -> CFIndex {
-        let max_CFIndex = CFIndex::max_value();
-        if self > (max_CFIndex as usize) {
+        if self > (CFIndex::MAX as usize) {
             panic!("value out of range")
         }
         self as CFIndex

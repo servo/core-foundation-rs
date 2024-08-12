@@ -1,2 +1,16 @@
 [workspace]
 members = ["core-foundation", "core-foundation-sys", "core-graphics-types", "core-graphics", "core-text", "cocoa", "cocoa-foundation", "io-surface"]
+
+[workspace.package]
+authors = ["The Servo Project Developers"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/servo/core-foundation-rs"
+rust-version = "1.65"
+
+[workspace.dependencies]
+cocoa-foundation = { default-features = false, path = "cocoa-foundation", version = "0.2" }
+core-foundation = { default-features = false, path = "core-foundation", version = "0.10" }
+core-foundation-sys = { default-features = false, path = "core-foundation-sys", version = "0.8" }
+core-graphics = { default-features = false, path = "core-graphics", version = "0.24" }
+core-graphics-types = { default-features = false, path = "core-graphics-types", version = "0.2" }

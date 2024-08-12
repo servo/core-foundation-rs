@@ -1,13 +1,17 @@
 [package]
 name = "core-foundation-sys"
 description = "Bindings to Core Foundation for macOS"
-homepage = "https://github.com/servo/core-foundation-rs"
-repository = "https://github.com/servo/core-foundation-rs"
 version = "0.8.7"
-authors = ["The Servo Project Developers"]
-license = "MIT OR Apache-2.0"
-edition = "2018"
-rust-version = "1.65"
+
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+default-target = "x86_64-apple-darwin"
 
 [dependencies]
 
@@ -17,7 +21,3 @@ mac_os_10_7_support = [] # backwards compatibility
 mac_os_10_8_features = [] # enables new features
 # Disable to manually link. Enabled by default.
 link = []
-
-[package.metadata.docs.rs]
-all-features = true
-default-target = "x86_64-apple-darwin"

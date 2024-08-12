@@ -46,12 +46,20 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+  typos:
+    # If this fails, consider changing your text or adding something to .typos.toml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: check typos
+        uses: crate-ci/typos@v1.23.6
   build_result:
     name: Result
     runs-on: ubuntu-latest
     needs:
       - "build"
       - "semver"
+      - "typos"
     steps:
       - name: Mark the job as successful
         run: exit 0

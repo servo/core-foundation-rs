@@ -1,13 +1,25 @@
 [package]
 name = "core-graphics"
 description = "Bindings to Core Graphics for macOS"
-homepage = "https://github.com/servo/core-foundation-rs"
-repository = "https://github.com/servo/core-foundation-rs"
 version = "0.24.0"
-authors = ["The Servo Project Developers"]
-license = "MIT OR Apache-2.0"
-edition = "2018"
-rust-version = "1.65"
+
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+default-target = "x86_64-apple-darwin"
+
+[dependencies]
+core-foundation.workspace = true
+core-graphics-types.workspace = true
+
+bitflags = "2"
+foreign-types = "0.5.0"
+libc = "0.2"
 
 [features]
 default = ["link"]
@@ -15,14 +27,3 @@ elcapitan = []
 highsierra = []
 # Disable to manually link. Enabled by default.
 link = ["core-foundation/link", "core-graphics-types/link"]
-
-[dependencies]
-bitflags = "2"
-core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
-core-graphics-types = { default-features = false, path = "../core-graphics-types", version = "0.2" }
-foreign-types = "0.5.0"
-libc = "0.2"
-
-[package.metadata.docs.rs]
-all-features = true
-default-target = "x86_64-apple-darwin"

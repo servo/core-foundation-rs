@@ -1,16 +1,23 @@
 [package]
 name = "core-text"
 version = "21.0.0"
-authors = ["The Servo Project Developers"]
 description = "Bindings to the Core Text framework."
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/servo/core-foundation-rs"
-edition = "2018"
-rust-version = "1.65"
+
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 default-target = "x86_64-apple-darwin"
+
+[dependencies]
+core-foundation.workspace = true
+core-graphics.workspace = true
+
+foreign-types = "0.5"
 
 [features]
 default = ["mountainlion", "link"]
@@ -19,8 +26,3 @@ default = ["mountainlion", "link"]
 mountainlion = []
 # Disable to manually link. Enabled by default.
 link = ["core-foundation/link", "core-graphics/link"]
-
-[dependencies]
-foreign-types = "0.5"
-core-foundation = { default-features = false, path = "../core-foundation", version = "0.10" }
-core-graphics = { default-features = false, path = "../core-graphics", version = "0.24" }

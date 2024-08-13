@@ -26,7 +26,7 @@ pub type NSInteger = core::ffi::c_long;
 #[cfg(target_pointer_width = "64")]
 pub type NSUInteger = core::ffi::c_ulong;
 
-pub const NSIntegerMax: NSInteger = NSInteger::max_value();
+pub const NSIntegerMax: NSInteger = NSInteger::MAX;
 pub const NSNotFound: NSInteger = NSIntegerMax;
 
 const UTF8_ENCODING: usize = 4;

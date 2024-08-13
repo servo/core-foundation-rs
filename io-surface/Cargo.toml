@@ -12,6 +12,9 @@ rust-version.workspace = true
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 
+[lints]
+workspace = true
+
 [dependencies]
 core-foundation.workspace = true
 core-foundation-sys.workspace = true

@@ -841,13 +841,13 @@ fn macos_version() -> (i32, i32, i32) {
     let k = unsafe { propertylist::CFPropertyList::wrap_under_create_rule(list) };
 
     let dict = unsafe {
-        std::mem::transmute::<_, CFDictionary<CFType, CFType>>(
+        std::mem::transmute::<CFDictionary, CFDictionary<CFType, CFType>>(
             k.downcast::<CFDictionary>().unwrap(),
         )
     };
 
     let version = dict
-        .find(&CFString::new("ProductVersion").as_CFType())
+        .find(CFString::new("ProductVersion").as_CFType())
         .as_ref()
         .unwrap()
         .downcast::<CFString>()

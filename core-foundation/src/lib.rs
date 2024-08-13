@@ -209,9 +209,12 @@ macro_rules! impl_CFTypeDescription {
 #[macro_export]
 macro_rules! impl_CFComparison {
     ($ty:ident, $compare:ident) => {
-        impl PartialOrd for $ty {
+        impl_CFComparison!($ty<>, $compare);
+    };
+    ($ty:ident<$($p:ident $(: $bound:path)*),*>, $compare:ident) => {
+        impl<$($p $(: $bound)*),*> PartialOrd for $ty<$($p),*> {
             #[inline]
-            fn partial_cmp(&self, other: &$ty) -> Option<::std::cmp::Ordering> {
+            fn partial_cmp(&self, other: &$ty<$($p),*>) -> Option<::std::cmp::Ordering> {
                 unsafe {
                     Some(
                         $compare(
@@ -225,9 +228,9 @@ macro_rules! impl_CFComparison {
             }
         }
 
-        impl Ord for $ty {
+        impl<$($p $(: $bound)*),*> Ord for $ty<$($p),*> {
             #[inline]
-            fn cmp(&self, other: &$ty) -> ::std::cmp::Ordering {
+            fn cmp(&self, other: &$ty<$($p),*>) -> ::std::cmp::Ordering {
                 self.partial_cmp(other).unwrap()
             }
         }

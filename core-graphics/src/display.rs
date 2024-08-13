@@ -20,6 +20,7 @@ pub use crate::geometry::{CGPoint, CGRect, CGSize};
 use crate::image::CGImage;
 use core_foundation::base::{CFRetain, TCFType};
 use core_foundation::string::{CFString, CFStringRef};
+use core_graphics_types::base::kCGErrorSuccess;
 use foreign_types::{foreign_type, ForeignType};
 
 pub type CGDirectDisplayID = u32;
@@ -185,7 +186,7 @@ impl CGDisplay {
         let result = unsafe {
             CGGetDisplaysWithPoint(point, 0, ptr::null_mut(), &mut matching_display_count)
         };
-        if result == 0 {
+        if result == kCGErrorSuccess {
             Ok(matching_display_count)
         } else {
             Err(result)
@@ -213,7 +214,7 @@ impl CGDisplay {
             )
         };
 
-        if result == 0 {
+        if result == kCGErrorSuccess {
             Ok((displays, matching_display_count))
         } else {
             Err(result)
@@ -227,7 +228,7 @@ impl CGDisplay {
         let mut matching_display_count: u32 = 0;
         let result =
             unsafe { CGGetDisplaysWithRect(rect, 0, ptr::null_mut(), &mut matching_display_count) };
-        if result == 0 {
+        if result == kCGErrorSuccess {
             Ok(matching_display_count)
         } else {
             Err(result)
@@ -254,7 +255,7 @@ impl CGDisplay {
             )
         };
 
-        if result == 0 {
+        if result == kCGErrorSuccess {
             Ok((displays, matching_display_count))
         } else {
             Err(result)

@@ -24,3 +24,8 @@ declare_TCFType!(CFFooBar, CFFooBarRef);
 impl_TCFType!(CFFooBar, CFFooBarRef, CFFooBarGetTypeID);
 impl_CFTypeDescription!(CFFooBar);
 impl_CFComparison!(CFFooBar, fake_compare);
+
+declare_TCFType!(CFGenericFooBar<T: Clone>, CFFooBarRef);
+impl_TCFType!(CFGenericFooBar<T: Clone>, CFFooBarRef, CFFooBarGetTypeID);
+impl_CFTypeDescription!(CFGenericFooBar<T: Clone>);
+impl_CFComparison!(CFGenericFooBar<T: Clone>, fake_compare);

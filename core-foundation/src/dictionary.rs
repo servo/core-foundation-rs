@@ -471,7 +471,7 @@ pub mod test {
         assert_eq!(mut_dict.retain_count(), 2);
         assert_eq!(dict.retain_count(), 2);
         assert_eq!(
-            *dict.get(&CFString::from_static_string("Bar")),
+            *dict.get(CFString::from_static_string("Bar")),
             CFBoolean::false_value()
         );
 

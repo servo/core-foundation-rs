@@ -10,6 +10,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
 
 jobs:
   rustfmt:
@@ -46,6 +47,9 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+    - name: Run clippy
+      if: matrix.os == 'macos-14' && matrix.toolchain == 'stable'
+      run: cargo clippy --all-targets --workspace
   typos:
     # If this fails, consider changing your text or adding something to .typos.toml
     runs-on: ubuntu-latest

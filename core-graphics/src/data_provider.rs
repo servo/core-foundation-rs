@@ -58,7 +58,7 @@ impl CGDataProvider {
     pub fn from_buffer<T: AsRef<[u8]> + Sync + Send>(buffer: Arc<T>) -> Self {
         unsafe {
             let ptr = (*buffer).as_ref().as_ptr() as *const c_void;
-            let len = (*buffer).as_ref().len() as usize;
+            let len = (*buffer).as_ref().len();
             let info = Arc::into_raw(buffer) as *mut c_void;
             let result = CGDataProviderCreateWithData(info, ptr, len, Some(release::<T>));
             return CGDataProvider::from_ptr(result);
@@ -69,11 +69,11 @@ impl CGDataProvider {
         }
     }
 
-    /// Creates a data prvider from a given slice. The data provider does not own the slice in this
+    /// Creates a data provider from a given slice. The data provider does not own the slice in this
     /// case, so it's up to the user to ensure the memory safety here.
     pub unsafe fn from_slice(buffer: &[u8]) -> Self {
         let ptr = buffer.as_ptr() as *const c_void;
-        let len = buffer.len() as usize;
+        let len = buffer.len();
         let result = CGDataProviderCreateWithData(ptr::null_mut(), ptr, len, None);
         CGDataProvider::from_ptr(result)
     }

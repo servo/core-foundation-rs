@@ -461,7 +461,7 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 ///             .mach_port
 ///             .create_runloop_source(0)
 ///             .expect("Somethings is bad ");
-///         current.add_source(&loop_source, CFRunLoopMode::common());
+///         current.add_source(&loop_source, CFRunLoopMode::common_modes());
 ///         tap.enable();
 ///         CFRunLoop::run_current();
 ///     },

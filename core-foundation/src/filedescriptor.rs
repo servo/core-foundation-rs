@@ -154,7 +154,7 @@ mod test {
         let run_loop = CFRunLoop::get_current();
         let source = CFRunLoopSource::from_file_descriptor(&cf_fd, 0);
         assert!(source.is_some());
-        run_loop.add_source(&source.unwrap(), CFRunLoopMode::default());
+        run_loop.add_source(&source.unwrap(), CFRunLoopMode::default_mode());
 
         info.value = 0;
         cf_fd.enable_callbacks(kCFFileDescriptorReadCallBack);

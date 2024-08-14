@@ -29,12 +29,12 @@ impl<'a> CFRunLoopMode<'a> {
     }
 
     #[doc(alias = "kCFRunLoopCommonModes")]
-    pub fn common() -> CFRunLoopMode<'static> {
+    pub fn common_modes() -> CFRunLoopMode<'static> {
         unsafe { CFRunLoopMode(kCFRunLoopCommonModes, PhantomData) }
     }
 
     #[doc(alias = "kCFRunLoopDefaultMode")]
-    pub fn default() -> CFRunLoopMode<'static> {
+    pub fn default_mode() -> CFRunLoopMode<'static> {
         unsafe { CFRunLoopMode(kCFRunLoopDefaultMode, PhantomData) }
     }
 }
@@ -240,7 +240,7 @@ mod test {
 
         let run_loop_timer =
             CFRunLoopTimer::new(now + 0.20f64, 0f64, 0, 0, timer_popped, &mut context);
-        run_loop.add_timer(&run_loop_timer, CFRunLoopMode::default());
+        run_loop.add_timer(&run_loop_timer, CFRunLoopMode::default_mode());
 
         CFRunLoop::run_current();
         let elapsed = elapsed_rx.try_recv().unwrap();
@@ -294,7 +294,7 @@ mod test {
             };
 
             let runloop = CFRunLoop::get_current();
-            runloop.add_observer(&observer, CFRunLoopMode::default());
+            runloop.add_observer(&observer, CFRunLoopMode::default_mode());
 
             let timer = CFRunLoopTimer::new(
                 CFDate::now().abs_time() + 1f64,
@@ -304,10 +304,13 @@ mod test {
                 observe_timer_popped,
                 null_mut(),
             );
-            runloop.add_timer(&timer, CFRunLoopMode::default());
+            runloop.add_timer(&timer, CFRunLoopMode::default_mode());
 
-            let result =
-                CFRunLoop::run_in_mode(CFRunLoopMode::default(), Duration::from_secs(10), false);
+            let result = CFRunLoop::run_in_mode(
+                CFRunLoopMode::default_mode(),
+                Duration::from_secs(10),
+                false,
+            );
 
             assert_eq!(result, CFRunLoopRunResult::Stopped);
 

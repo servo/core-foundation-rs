@@ -1,1 +1,1 @@
-doc-valid-idents = ["CoreFoundation", ".."]
+doc-valid-idents = ["ACEScg", "CoreFoundation", ".."]

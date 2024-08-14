@@ -38,7 +38,9 @@ impl CGEventSource {
 
 #[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
 extern "C" {
-    /// Return the type identifier for the opaque type `CGEventSourceRef'.
+    /// Return the type identifier for the opaque type [`CGEventSourceRef`].
+    ///
+    /// [`CGEventSourceRef`]: crate::sys::CGEventSourceRef
     fn CGEventSourceGetTypeID() -> CFTypeID;
 
     /// Return a Quartz event source created with a specified source state.

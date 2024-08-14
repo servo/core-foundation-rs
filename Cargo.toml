@@ -8,8 +8,10 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/servo/core-foundation-rs"
 rust-version = "1.65"
 
-# TODO: Remove most of these by fixing the actual issues.
 [workspace.lints]
+clippy.doc_markdown = "warn"
+
+# TODO: Remove most of these by fixing the actual issues.
 clippy.assertions_on_constants = "allow"
 clippy.len_without_is_empty = "allow"
 clippy.manual_range_contains = "allow"

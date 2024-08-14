@@ -1,9 +1,10 @@
 [workspace]
 members = ["core-foundation", "core-foundation-sys", "core-graphics-types", "core-graphics", "core-text", "cocoa", "cocoa-foundation", "io-surface"]
+resolver = "2"
 
 [workspace.package]
 authors = ["The Servo Project Developers"]
-edition = "2018"
+edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/servo/core-foundation-rs"
 rust-version = "1.65"

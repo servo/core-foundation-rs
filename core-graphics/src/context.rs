@@ -14,7 +14,7 @@ use crate::font::{CGFont, CGGlyph};
 use crate::geometry::{CGPoint, CGSize};
 use crate::gradient::{CGGradient, CGGradientDrawingOptions};
 use crate::path::CGPathRef;
-use core::ffi::{c_int, c_void};
+use core::ffi::c_void;
 use core_foundation::base::{CFTypeID, TCFType};
 
 use crate::geometry::{CGAffineTransform, CGRect};
@@ -223,6 +223,7 @@ impl CGContextRef {
         unsafe { CGContextSetAllowsFontSmoothing(self.as_ptr(), allows_font_smoothing) }
     }
 
+    #[cfg(feature = "private-apis")]
     pub fn set_font_smoothing_style(&self, style: i32) {
         unsafe {
             CGContextSetFontSmoothingStyle(self.as_ptr(), style as _);
@@ -639,7 +640,8 @@ extern "C" {
     fn CGContextSetBlendMode(c: crate::sys::CGContextRef, blendMode: CGBlendMode);
     fn CGContextSetAllowsFontSmoothing(c: crate::sys::CGContextRef, allowsFontSmoothing: bool);
     fn CGContextSetShouldSmoothFonts(c: crate::sys::CGContextRef, shouldSmoothFonts: bool);
-    fn CGContextSetFontSmoothingStyle(c: crate::sys::CGContextRef, style: c_int);
+    #[cfg(feature = "private-apis")]
+    fn CGContextSetFontSmoothingStyle(c: crate::sys::CGContextRef, style: core::ffi::c_int);
     fn CGContextSetAllowsAntialiasing(c: crate::sys::CGContextRef, allowsAntialiasing: bool);
     fn CGContextSetShouldAntialias(c: crate::sys::CGContextRef, shouldAntialias: bool);
     fn CGContextSetAllowsFontSubpixelQuantization(

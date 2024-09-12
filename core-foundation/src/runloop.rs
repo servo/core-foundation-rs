@@ -9,6 +9,8 @@
 
 #![allow(non_upper_case_globals)]
 
+use std::marker::PhantomData;
+
 use core_foundation_sys::base::CFIndex;
 use core_foundation_sys::base::{kCFAllocatorDefault, CFOptionFlags};
 pub use core_foundation_sys::runloop::*;
@@ -19,7 +21,23 @@ use crate::date::{CFAbsoluteTime, CFTimeInterval};
 use crate::filedescriptor::CFFileDescriptor;
 use crate::string::CFString;
 
-pub type CFRunLoopMode = CFStringRef;
+pub struct CFRunLoopMode<'a>(CFStringRef, PhantomData<&'a CFString>);
+
+impl<'a> CFRunLoopMode<'a> {
+    pub fn new(s: &'a CFString) -> CFRunLoopMode<'a> {
+        CFRunLoopMode(s.as_concrete_TypeRef(), PhantomData)
+    }
+
+    #[doc(alias = "kCFRunLoopCommonModes")]
+    pub fn common_modes() -> CFRunLoopMode<'static> {
+        unsafe { CFRunLoopMode(kCFRunLoopCommonModes, PhantomData) }
+    }
+
+    #[doc(alias = "kCFRunLoopDefaultMode")]
+    pub fn default_mode() -> CFRunLoopMode<'static> {
+        unsafe { CFRunLoopMode(kCFRunLoopDefaultMode, PhantomData) }
+    }
+}
 
 declare_TCFType!(CFRunLoop, CFRunLoopRef);
 impl_TCFType!(CFRunLoop, CFRunLoopRef, CFRunLoopGetTypeID);
@@ -59,7 +77,7 @@ impl CFRunLoop {
     }
 
     pub fn run_in_mode(
-        mode: CFStringRef,
+        mode: CFRunLoopMode,
         duration: std::time::Duration,
         return_after_source_handled: bool,
     ) -> CFRunLoopRunResult {
@@ -67,7 +85,7 @@ impl CFRunLoop {
         let return_after_source_handled = if return_after_source_handled { 1 } else { 0 };
 
         unsafe {
-            match CFRunLoopRunInMode(mode, seconds, return_after_source_handled) {
+            match CFRunLoopRunInMode(mode.0, seconds, return_after_source_handled) {
                 2 => CFRunLoopRunResult::Stopped,
                 3 => CFRunLoopRunResult::TimedOut,
                 4 => CFRunLoopRunResult::HandledSource,
@@ -95,50 +113,50 @@ impl CFRunLoop {
     }
 
     pub fn contains_timer(&self, timer: &CFRunLoopTimer, mode: CFRunLoopMode) -> bool {
-        unsafe { CFRunLoopContainsTimer(self.0, timer.0, mode) != 0 }
+        unsafe { CFRunLoopContainsTimer(self.0, timer.0, mode.0) != 0 }
     }
 
     pub fn add_timer(&self, timer: &CFRunLoopTimer, mode: CFRunLoopMode) {
         unsafe {
-            CFRunLoopAddTimer(self.0, timer.0, mode);
+            CFRunLoopAddTimer(self.0, timer.0, mode.0);
         }
     }
 
     pub fn remove_timer(&self, timer: &CFRunLoopTimer, mode: CFRunLoopMode) {
         unsafe {
-            CFRunLoopRemoveTimer(self.0, timer.0, mode);
+            CFRunLoopRemoveTimer(self.0, timer.0, mode.0);
         }
     }
 
     pub fn contains_source(&self, source: &CFRunLoopSource, mode: CFRunLoopMode) -> bool {
-        unsafe { CFRunLoopContainsSource(self.0, source.0, mode) != 0 }
+        unsafe { CFRunLoopContainsSource(self.0, source.0, mode.0) != 0 }
     }
 
     pub fn add_source(&self, source: &CFRunLoopSource, mode: CFRunLoopMode) {
         unsafe {
-            CFRunLoopAddSource(self.0, source.0, mode);
+            CFRunLoopAddSource(self.0, source.0, mode.0);
         }
     }
 
     pub fn remove_source(&self, source: &CFRunLoopSource, mode: CFRunLoopMode) {
         unsafe {
-            CFRunLoopRemoveSource(self.0, source.0, mode);
+            CFRunLoopRemoveSource(self.0, source.0, mode.0);
         }
     }
 
     pub fn contains_observer(&self, observer: &CFRunLoopObserver, mode: CFRunLoopMode) -> bool {
-        unsafe { CFRunLoopContainsObserver(self.0, observer.0, mode) != 0 }
+        unsafe { CFRunLoopContainsObserver(self.0, observer.0, mode.0) != 0 }
     }
 
     pub fn add_observer(&self, observer: &CFRunLoopObserver, mode: CFRunLoopMode) {
         unsafe {
-            CFRunLoopAddObserver(self.0, observer.0, mode);
+            CFRunLoopAddObserver(self.0, observer.0, mode.0);
         }
     }
 
     pub fn remove_observer(&self, observer: &CFRunLoopObserver, mode: CFRunLoopMode) {
         unsafe {
-            CFRunLoopRemoveObserver(self.0, observer.0, mode);
+            CFRunLoopRemoveObserver(self.0, observer.0, mode.0);
         }
     }
 }
@@ -222,9 +240,8 @@ mod test {
 
         let run_loop_timer =
             CFRunLoopTimer::new(now + 0.20f64, 0f64, 0, 0, timer_popped, &mut context);
-        unsafe {
-            run_loop.add_timer(&run_loop_timer, kCFRunLoopDefaultMode);
-        }
+        run_loop.add_timer(&run_loop_timer, CFRunLoopMode::default_mode());
+
         CFRunLoop::run_current();
         let elapsed = elapsed_rx.try_recv().unwrap();
         println!("wait_200_milliseconds, elapsed: {}", elapsed);
@@ -277,7 +294,7 @@ mod test {
             };
 
             let runloop = CFRunLoop::get_current();
-            runloop.add_observer(&observer, unsafe { kCFRunLoopDefaultMode });
+            runloop.add_observer(&observer, CFRunLoopMode::default_mode());
 
             let timer = CFRunLoopTimer::new(
                 CFDate::now().abs_time() + 1f64,
@@ -287,11 +304,13 @@ mod test {
                 observe_timer_popped,
                 null_mut(),
             );
-            runloop.add_timer(&timer, unsafe { kCFRunLoopDefaultMode });
+            runloop.add_timer(&timer, CFRunLoopMode::default_mode());
 
-            let result = unsafe {
-                CFRunLoop::run_in_mode(kCFRunLoopDefaultMode, Duration::from_secs(10), false)
-            };
+            let result = CFRunLoop::run_in_mode(
+                CFRunLoopMode::default_mode(),
+                Duration::from_secs(10),
+                false,
+            );
 
             assert_eq!(result, CFRunLoopRunResult::Stopped);
 

@@ -659,6 +659,12 @@ impl CGEvent {
         unsafe { CGEventGetLocation(self.as_ptr()) }
     }
 
+    pub fn set_location(&self, location: CGPoint) {
+        unsafe {
+            CGEventSetLocation(self.as_ptr(), location);
+        }
+    }
+
     #[cfg(feature = "elcapitan")]
     pub fn post_to_pid(&self, pid: libc::pid_t) {
         unsafe {
@@ -866,6 +872,14 @@ extern "C" {
         userInfo: *const c_void,
     ) -> CFMachPortRef;
 
+    /// Enable or disable an event tap.
+    ///
+    /// Event taps are normally enabled when created. If an event tap becomes
+    /// unresponsive, or if a user requests that event taps be disabled, then
+    /// a `kCGEventTapDisabled` event is passed to the event tap callback
+    /// function. Event taps may be re-enabled by calling this function.
     fn CGEventTapEnable(tap: CFMachPortRef, enable: bool);
 
+    /// Set the location of a mouse event.
+    fn CGEventSetLocation(event: crate::sys::CGEventRef, location: CGPoint);
 }

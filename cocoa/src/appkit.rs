@@ -250,8 +250,8 @@ pub enum NSWindowTitleVisibility {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum NSWindowTabbingMode {
     NSWindowTabbingModeAutomatic = 0,
-    NSWindowTabbingModeDisallowed = 1,
-    NSWindowTabbingModePreferred = 2,
+    NSWindowTabbingModePreferred = 1,
+    NSWindowTabbingModeDisallowed = 2,
 }
 
 #[repr(u64)]

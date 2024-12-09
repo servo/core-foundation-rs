@@ -57,7 +57,7 @@ bitflags! {
 /// layouts may have the 'A' key label on a different physical key;
 /// in this case, pressing 'A' will generate a different virtual
 /// keycode. Constants with the 'JIS_' or 'ISO_' prefix behave
-/// analogous. Keys without a prefix are independent of the
+/// analogously. Keys without a prefix are independent of the
 /// keyboard layout.
 ///
 /// [Ref](https://github.com/phracker/MacOSX-SDKs/blob/master/MacOSX10.13.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h#L197-L327)

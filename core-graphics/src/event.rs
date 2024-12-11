@@ -521,11 +521,13 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
     let callback = _user_info as *mut CGEventTapCallBackFn;
     let event = CGEvent::from_ptr(_event);
     let new_event = (*callback)(_proxy, _etype, &event);
-    let event = match new_event {
-        Some(new_event) => new_event,
-        None => event,
-    };
-    ManuallyDrop::new(event).as_ptr()
+    match new_event {
+        Some(new_event) => ManuallyDrop::new(new_event).as_ptr(),
+        None => {
+            std::mem::forget(event);
+            std::ptr::null_mut() as crate::sys::CGEventRef
+        }
+    }
 }
 
 /// ```no_run

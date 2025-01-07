@@ -27,6 +27,13 @@ impl CGColor {
             CGColor::wrap_under_create_rule(ptr)
         }
     }
+
+    pub fn srgb(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) -> Self {
+        unsafe {
+            let ptr = CGColorCreateSRGB(red, green, blue, alpha);
+            CGColor::wrap_under_create_rule(ptr)
+        }
+    }
 }
 
 #[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
@@ -37,5 +44,13 @@ extern "C" {
         blue: CGFloat,
         alpha: CGFloat,
     ) -> crate::sys::CGColorRef;
+
+    fn CGColorCreateSRGB(
+        red: CGFloat,
+        green: CGFloat,
+        blue: CGFloat,
+        alpha: CGFloat,
+    ) -> crate::sys::CGColorRef;
+
     fn CGColorGetTypeID() -> CFTypeID;
 }

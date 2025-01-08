@@ -32,7 +32,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-12, macos-13, macos-14]
+        os: [macos-13, macos-14, macos-15]
         toolchain: [stable]
         include:
           - os: macos-14
@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: check typos
-        uses: crate-ci/typos@v1.23.6
+        uses: crate-ci/typos@v1.29.4
   build_result:
     name: Result
     runs-on: ubuntu-latest

@@ -50,7 +50,7 @@ impl<'a, T: FromVoid> Iterator for CFArrayIterator<'a, T> {
     }
 }
 
-impl<'a, T: FromVoid> ExactSizeIterator for CFArrayIterator<'a, T> {
+impl<T: FromVoid> ExactSizeIterator for CFArrayIterator<'_, T> {
     fn len(&self) -> usize {
         (self.array.len() - self.index) as usize
     }

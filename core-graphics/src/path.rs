@@ -80,7 +80,7 @@ pub struct CGPathElementRef<'a> {
     phantom: PhantomData<&'a CGPathElement>,
 }
 
-impl<'a> CGPathElementRef<'a> {
+impl CGPathElementRef<'_> {
     fn new<'b>(element: *const CGPathElement) -> CGPathElementRef<'b> {
         CGPathElementRef {
             element,
@@ -89,7 +89,7 @@ impl<'a> CGPathElementRef<'a> {
     }
 }
 
-impl<'a> Deref for CGPathElementRef<'a> {
+impl Deref for CGPathElementRef<'_> {
     type Target = CGPathElement;
     fn deref(&self) -> &CGPathElement {
         unsafe { &*self.element }

@@ -47,8 +47,8 @@ bitflags! {
 ///
 /// These constants are the virtual keycodes defined originally in
 /// Inside Mac Volume V, pg. V-191. They identify physical keys on a
-/// keyboard. The struct contains the values of the ANSIKeyCode,
-/// KeyCode, ISOKeyCode and JISKeyCode of the original Carbon headers.
+/// keyboard. The struct contains the values of the `ANSIKeyCode`,
+/// `KeyCode`, `ISOKeyCode` and `JISKeyCode` of the original Carbon headers.
 ///
 /// Those constants with "ANSI" in the name are labeled
 /// according to the key position on an ANSI-standard US keyboard.

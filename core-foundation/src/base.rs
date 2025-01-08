@@ -253,7 +253,7 @@ impl TCFType for CFType {
 /// A reference to an element inside a container
 pub struct ItemRef<'a, T: 'a>(ManuallyDrop<T>, PhantomData<&'a T>);
 
-impl<'a, T> Deref for ItemRef<'a, T> {
+impl<T> Deref for ItemRef<'_, T> {
     type Target = T;
 
     fn deref(&self) -> &T {
@@ -261,13 +261,13 @@ impl<'a, T> Deref for ItemRef<'a, T> {
     }
 }
 
-impl<'a, T: fmt::Debug> fmt::Debug for ItemRef<'a, T> {
+impl<T: fmt::Debug> fmt::Debug for ItemRef<'_, T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         self.0.fmt(f)
     }
 }
 
-impl<'a, T: PartialEq> PartialEq for ItemRef<'a, T> {
+impl<T: PartialEq> PartialEq for ItemRef<'_, T> {
     fn eq(&self, other: &Self) -> bool {
         self.0.eq(&other.0)
     }
@@ -276,7 +276,7 @@ impl<'a, T: PartialEq> PartialEq for ItemRef<'a, T> {
 /// A reference to a mutable element inside a container
 pub struct ItemMutRef<'a, T: 'a>(ManuallyDrop<T>, PhantomData<&'a T>);
 
-impl<'a, T> Deref for ItemMutRef<'a, T> {
+impl<T> Deref for ItemMutRef<'_, T> {
     type Target = T;
 
     fn deref(&self) -> &T {
@@ -284,19 +284,19 @@ impl<'a, T> Deref for ItemMutRef<'a, T> {
     }
 }
 
-impl<'a, T> DerefMut for ItemMutRef<'a, T> {
+impl<T> DerefMut for ItemMutRef<'_, T> {
     fn deref_mut(&mut self) -> &mut T {
         &mut self.0
     }
 }
 
-impl<'a, T: fmt::Debug> fmt::Debug for ItemMutRef<'a, T> {
+impl<T: fmt::Debug> fmt::Debug for ItemMutRef<'_, T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         self.0.fmt(f)
     }
 }
 
-impl<'a, T: PartialEq> PartialEq for ItemMutRef<'a, T> {
+impl<T: PartialEq> PartialEq for ItemMutRef<'_, T> {
     fn eq(&self, other: &Self) -> bool {
         self.0.eq(&other.0)
     }
@@ -371,7 +371,7 @@ unsafe impl ToVoid<*const c_void> for *const c_void {
     }
 }
 
-unsafe impl<'a> ToVoid<CFType> for &'a CFType {
+unsafe impl ToVoid<CFType> for &CFType {
     fn to_void(&self) -> *const c_void {
         self.as_concrete_TypeRef().as_void_ptr()
     }

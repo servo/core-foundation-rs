@@ -28,6 +28,7 @@ impl CGColor {
         }
     }
 
+    #[cfg(feature = "catalina")]
     pub fn srgb(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) -> Self {
         unsafe {
             let ptr = CGColorCreateSRGB(red, green, blue, alpha);
@@ -45,6 +46,7 @@ extern "C" {
         alpha: CGFloat,
     ) -> crate::sys::CGColorRef;
 
+    #[cfg(feature = "catalina")]
     fn CGColorCreateSRGB(
         red: CGFloat,
         green: CGFloat,

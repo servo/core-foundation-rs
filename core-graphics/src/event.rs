@@ -7,9 +7,10 @@ use core::ffi::{c_ulong, c_void};
 use core_foundation::{
     base::{CFRelease, CFRetain, CFTypeID, TCFType},
     mach_port::{CFMachPort, CFMachPortInvalidate, CFMachPortRef},
+    runloop::{kCFRunLoopCommonModes, CFRunLoop},
 };
 use foreign_types::{foreign_type, ForeignType};
-use std::mem::ManuallyDrop;
+use std::{mem::ManuallyDrop, ptr};
 
 pub type CGEventField = u32;
 pub type CGKeyCode = u16;
@@ -503,8 +504,21 @@ macro_rules! CGEventMaskBit {
 }
 
 pub type CGEventTapProxy = *const c_void;
-type CGEventTapCallBackFn<'tap_life> =
-    Box<dyn Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life>;
+
+/// What the system should do with the event passed to the callback.
+///
+/// This value is ignored if [`CGEventTapOptions::ListenOnly`] is specified.
+pub enum CallbackResult {
+    /// Pass the event unchanged to other consumers.
+    Keep,
+    /// Drop the event so it is not passed to later consumers.
+    Drop,
+    /// Replace the event with a different one.
+    Replace(CGEvent),
+}
+
+type CGEventTapCallbackFn<'tap_life> =
+    Box<dyn Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CallbackResult + 'tap_life>;
 type CGEventTapCallBackInternal = unsafe extern "C" fn(
     proxy: CGEventTapProxy,
     etype: CGEventType,
@@ -513,53 +527,47 @@ type CGEventTapCallBackInternal = unsafe extern "C" fn(
 ) -> crate::sys::CGEventRef;
 
 unsafe extern "C" fn cg_event_tap_callback_internal(
-    _proxy: CGEventTapProxy,
-    _etype: CGEventType,
-    _event: crate::sys::CGEventRef,
-    _user_info: *const c_void,
+    proxy: CGEventTapProxy,
+    etype: CGEventType,
+    event: crate::sys::CGEventRef,
+    user_info: *const c_void,
 ) -> crate::sys::CGEventRef {
-    let callback = _user_info as *mut CGEventTapCallBackFn;
-    let event = CGEvent::from_ptr(_event);
-    let new_event = (*callback)(_proxy, _etype, &event);
-    let event = match new_event {
-        Some(new_event) => new_event,
-        None => event,
-    };
-    ManuallyDrop::new(event).as_ptr()
+    let callback = user_info as *mut CGEventTapCallbackFn;
+    let event = ManuallyDrop::new(CGEvent::from_ptr(event));
+    let response = (*callback)(proxy, etype, &event);
+    use CallbackResult::*;
+    match response {
+        Keep => event.as_ptr(),
+        Drop => ptr::null_mut(),
+        Replace(new_event) => ManuallyDrop::new(new_event).as_ptr(),
+    }
 }
 
 /// ```no_run
 /// use core_foundation::runloop::{kCFRunLoopCommonModes, CFRunLoop};
-/// use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType};
+/// use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType, CallbackResult};
 /// let current = CFRunLoop::get_current();
 ///
-/// CGEventTap::with(
+/// CGEventTap::with_enabled(
 ///     CGEventTapLocation::HID,
 ///     CGEventTapPlacement::HeadInsertEventTap,
 ///     CGEventTapOptions::Default,
 ///     vec![CGEventType::MouseMoved],
 ///     |_proxy, _type, event| {
 ///         println!("{:?}", event.location());
-///         None
+///         CallbackResult::Keep
 ///     },
-///     |tap| {
-///         let loop_source = tap
-///             .mach_port()
-///             .create_runloop_source(0)
-///             .expect("Runloop source creation failed");
-///         current.add_source(&loop_source, unsafe { kCFRunLoopCommonModes });
-///         tap.enable();
-///         CFRunLoop::run_current();
-///     },
+///     ||  CFRunLoop::run_current(),
 /// ).expect("Failed to install event tap");
 /// ```
+#[must_use = "CGEventTap is disabled when dropped"]
 pub struct CGEventTap<'tap_life> {
     mach_port: CFMachPort,
-    _callback: Box<CGEventTapCallBackFn<'tap_life>>,
+    _callback: Box<CGEventTapCallbackFn<'tap_life>>,
 }
 
 impl CGEventTap<'static> {
-    pub fn new<F: Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'static>(
+    pub fn new<F: Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CallbackResult + Send + 'static>(
         tap: CGEventTapLocation,
         place: CGEventTapPlacement,
         options: CGEventTapOptions,
@@ -567,43 +575,58 @@ impl CGEventTap<'static> {
         callback: F,
     ) -> Result<Self, ()> {
         // SAFETY: callback is 'static so even if this object is forgotten it
-        // will be valid to call.
+        // will be valid to call. F is safe to send across threads.
         unsafe { Self::new_unchecked(tap, place, options, events_of_interest, callback) }
     }
 }
 
 impl<'tap_life> CGEventTap<'tap_life> {
-    pub fn with<R>(
+    /// Configures an event tap with the supplied options and callback, then
+    /// calls `with_fn`.
+    ///
+    /// Note that the current thread run loop must run within `with_fn` for the
+    /// tap to process events. The tap is destroyed when `with_fn` returns.
+    pub fn with_enabled<R>(
         tap: CGEventTapLocation,
         place: CGEventTapPlacement,
         options: CGEventTapOptions,
         events_of_interest: std::vec::Vec<CGEventType>,
-        callback: impl Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life,
-        with_fn: impl FnOnce(&Self) -> R,
+        callback: impl Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CallbackResult + 'tap_life,
+        with_fn: impl FnOnce() -> R,
     ) -> Result<R, ()> {
         // SAFETY: We are okay to bypass the 'static restriction because the
         // event tap is dropped before returning. The callback therefore cannot
-        // be called after its lifetime expires.
+        // be called after its lifetime expires. Since we only enable the tap
+        // on the current thread run loop and don't hand it to user code, we
+        // know that the callback will only be called from the current thread.
         let event_tap: Self =
             unsafe { Self::new_unchecked(tap, place, options, events_of_interest, callback)? };
-        Ok(with_fn(&event_tap))
+        let loop_source = event_tap
+            .mach_port()
+            .create_runloop_source(0)
+            .expect("Runloop source creation failed");
+        CFRunLoop::get_current().add_source(&loop_source, unsafe { kCFRunLoopCommonModes });
+        event_tap.enable();
+        Ok(with_fn())
     }
 
     /// Caller is responsible for ensuring that this object is dropped before
-    /// `'tap_life` expires.
+    /// `'tap_life` expires. Either state captured by `callback` must be safe to
+    /// send across threads, or the tap must only be installed on the current
+    /// thread's run loop.
     pub unsafe fn new_unchecked(
         tap: CGEventTapLocation,
         place: CGEventTapPlacement,
         options: CGEventTapOptions,
         events_of_interest: std::vec::Vec<CGEventType>,
-        callback: impl Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life,
+        callback: impl Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CallbackResult + 'tap_life,
     ) -> Result<Self, ()> {
         let event_mask: CGEventMask = events_of_interest
             .iter()
             .fold(CGEventType::Null as CGEventMask, |mask, &etype| {
                 mask | CGEventMaskBit!(etype)
             });
-        let cb: Box<CGEventTapCallBackFn> = Box::new(Box::new(callback));
+        let cb: Box<CGEventTapCallbackFn> = Box::new(Box::new(callback));
         let cbr = Box::into_raw(cb);
         unsafe {
             let event_tap_ref = CGEventTapCreate(

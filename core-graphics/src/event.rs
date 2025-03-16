@@ -567,6 +567,7 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 ///     },
 /// ).expect("Failed to install event tap");
 /// ```
+#[must_use = "CGEventTap is disabled when dropped"]
 pub struct CGEventTap<'tap_life> {
     mach_port: CFMachPort,
     _callback: Box<CGEventTapCallbackFn<'tap_life>>,

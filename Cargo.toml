@@ -25,6 +25,11 @@ clippy.result_unit_err = "allow"
 clippy.too_many_arguments = "allow"
 clippy.type_complexity = "allow"
 
+# Work around an issue in the objc crate.
+# https://github.com/SSheldon/rust-objc/issues/125
+[workspace.lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(feature, values("cargo-clippy"))'] }
+
 [workspace.dependencies]
 cocoa-foundation = { default-features = false, path = "cocoa-foundation", version = "0.2" }
 core-foundation = { default-features = false, path = "core-foundation", version = "0.10" }

@@ -498,7 +498,7 @@ pub type CGEventMask = u64;
 /* Generate an event mask for a single type of event. */
 macro_rules! CGEventMaskBit {
     ($eventType:expr) => {
-        1 << $eventType as CGEventMask
+        (1 << $eventType as CGEventMask)
     };
 }
 

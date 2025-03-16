@@ -29,5 +29,5 @@ clippy.type_complexity = "allow"
 cocoa-foundation = { default-features = false, path = "cocoa-foundation", version = "0.2" }
 core-foundation = { default-features = false, path = "core-foundation", version = "0.10" }
 core-foundation-sys = { default-features = false, path = "core-foundation-sys", version = "0.8" }
-core-graphics = { default-features = false, path = "core-graphics", version = "0.24" }
+core-graphics = { default-features = false, path = "core-graphics", version = "0.25" }
 core-graphics-types = { default-features = false, path = "core-graphics-types", version = "0.2" }

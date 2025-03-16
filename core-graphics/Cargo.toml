@@ -28,5 +28,6 @@ libc = "0.2"
 default = ["link"]
 elcapitan = []
 highsierra = []
+catalina = []
 # Disable to manually link. Enabled by default.
 link = ["core-foundation/link", "core-graphics-types/link"]

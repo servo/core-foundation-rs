@@ -4953,18 +4953,18 @@ impl NSCursor for id {
 }
 
 pub trait NSDockTile: Sized {
-    unsafe fn showsApplicatinBadge(self) -> BOOL;
-    unsafe fn setShowsApplicatinBadge_(self, value: BOOL) -> id;
+    unsafe fn showsApplicationBadge(self) -> BOOL;
+    unsafe fn setShowsApplicationBadge_(self, value: BOOL) -> id;
     unsafe fn badgeLabel(self) -> id /* NSString */;
     unsafe fn setBadgeLabel_(self, label: id /* NSString */) -> id;
 }
 
 impl NSDockTile for id {
-    unsafe fn showsApplicatinBadge(self) -> BOOL {
+    unsafe fn showsApplicationBadge(self) -> BOOL {
         msg_send![self, showsApplicationBadge]
     }
 
-    unsafe fn setShowsApplicatinBadge_(self, value: BOOL) -> id {
+    unsafe fn setShowsApplicationBadge_(self, value: BOOL) -> id {
         msg_send![self, setShowsApplicationBadge: value]
     }
 

@@ -9,7 +9,7 @@ use core_foundation::{
     mach_port::{CFMachPort, CFMachPortInvalidate, CFMachPortRef},
 };
 use foreign_types::{foreign_type, ForeignType};
-use std::mem::ManuallyDrop;
+use std::{mem::ManuallyDrop, ptr};
 
 pub type CGEventField = u32;
 pub type CGKeyCode = u16;
@@ -503,8 +503,21 @@ macro_rules! CGEventMaskBit {
 }
 
 pub type CGEventTapProxy = *const c_void;
-type CGEventTapCallBackFn<'tap_life> =
-    Box<dyn Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life>;
+
+/// What the system should do with the event passed to the callback.
+///
+/// This value is ignored if [`CGEventTapOptions::ListenOnly`] is specified.
+pub enum CallbackResult {
+    /// Pass the event unchanged to other consumers.
+    Keep,
+    /// Drop the event so it is not passed to later consumers.
+    Drop,
+    /// Replace the event with a different one.
+    Replace(CGEvent),
+}
+
+type CGEventTapCallbackFn<'tap_life> =
+    Box<dyn Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CallbackResult + 'tap_life>;
 type CGEventTapCallBackInternal = unsafe extern "C" fn(
     proxy: CGEventTapProxy,
     etype: CGEventType,
@@ -513,24 +526,25 @@ type CGEventTapCallBackInternal = unsafe extern "C" fn(
 ) -> crate::sys::CGEventRef;
 
 unsafe extern "C" fn cg_event_tap_callback_internal(
-    _proxy: CGEventTapProxy,
-    _etype: CGEventType,
-    _event: crate::sys::CGEventRef,
-    _user_info: *const c_void,
+    proxy: CGEventTapProxy,
+    etype: CGEventType,
+    event: crate::sys::CGEventRef,
+    user_info: *const c_void,
 ) -> crate::sys::CGEventRef {
-    let callback = _user_info as *mut CGEventTapCallBackFn;
-    let event = CGEvent::from_ptr(_event);
-    let new_event = (*callback)(_proxy, _etype, &event);
-    let event = match new_event {
-        Some(new_event) => new_event,
-        None => event,
-    };
-    ManuallyDrop::new(event).as_ptr()
+    let callback = user_info as *mut CGEventTapCallbackFn;
+    let event = ManuallyDrop::new(CGEvent::from_ptr(event));
+    let response = (*callback)(proxy, etype, &event);
+    use CallbackResult::*;
+    match response {
+        Keep => event.as_ptr(),
+        Drop => ptr::null_mut(),
+        Replace(new_event) => ManuallyDrop::new(new_event).as_ptr(),
+    }
 }
 
 /// ```no_run
 /// use core_foundation::runloop::{kCFRunLoopCommonModes, CFRunLoop};
-/// use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType};
+/// use core_graphics::event::{CGEventTap, CGEventTapLocation, CGEventTapPlacement, CGEventTapOptions, CGEventType, CallbackResult};
 /// let current = CFRunLoop::get_current();
 ///
 /// CGEventTap::with(
@@ -540,7 +554,7 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 ///     vec![CGEventType::MouseMoved],
 ///     |_proxy, _type, event| {
 ///         println!("{:?}", event.location());
-///         None
+///         CallbackResult::Keep
 ///     },
 ///     |tap| {
 ///         let loop_source = tap
@@ -555,11 +569,11 @@ unsafe extern "C" fn cg_event_tap_callback_internal(
 /// ```
 pub struct CGEventTap<'tap_life> {
     mach_port: CFMachPort,
-    _callback: Box<CGEventTapCallBackFn<'tap_life>>,
+    _callback: Box<CGEventTapCallbackFn<'tap_life>>,
 }
 
 impl CGEventTap<'static> {
-    pub fn new<F: Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'static>(
+    pub fn new<F: Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CallbackResult + 'static>(
         tap: CGEventTapLocation,
         place: CGEventTapPlacement,
         options: CGEventTapOptions,
@@ -578,7 +592,7 @@ impl<'tap_life> CGEventTap<'tap_life> {
         place: CGEventTapPlacement,
         options: CGEventTapOptions,
         events_of_interest: std::vec::Vec<CGEventType>,
-        callback: impl Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life,
+        callback: impl Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CallbackResult + 'tap_life,
         with_fn: impl FnOnce(&Self) -> R,
     ) -> Result<R, ()> {
         // SAFETY: We are okay to bypass the 'static restriction because the
@@ -596,14 +610,14 @@ impl<'tap_life> CGEventTap<'tap_life> {
         place: CGEventTapPlacement,
         options: CGEventTapOptions,
         events_of_interest: std::vec::Vec<CGEventType>,
-        callback: impl Fn(CGEventTapProxy, CGEventType, &CGEvent) -> Option<CGEvent> + 'tap_life,
+        callback: impl Fn(CGEventTapProxy, CGEventType, &CGEvent) -> CallbackResult + 'tap_life,
     ) -> Result<Self, ()> {
         let event_mask: CGEventMask = events_of_interest
             .iter()
             .fold(CGEventType::Null as CGEventMask, |mask, &etype| {
                 mask | CGEventMaskBit!(etype)
             });
-        let cb: Box<CGEventTapCallBackFn> = Box::new(Box::new(callback));
+        let cb: Box<CGEventTapCallbackFn> = Box::new(Box::new(callback));
         let cbr = Box::into_raw(cb);
         unsafe {
             let event_tap_ref = CGEventTapCreate(

@@ -649,6 +649,7 @@ impl NSString for id {
     unsafe fn isEqualToString(self, other: &str) -> bool {
         let other = NSString::alloc(nil).init_str(other);
         let rv: BOOL = msg_send![self, isEqualToString: other];
+        let _: () = msg_send![other, release];
         rv != NO
     }
 

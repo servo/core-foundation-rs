@@ -7,6 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! This crate has been deprecated in favour of the `objc2-io-surface` crate.
+#![deprecated = "use the objc2-io-surface crate instead"]
 #![crate_name = "io_surface"]
 #![crate_type = "rlib"]
 

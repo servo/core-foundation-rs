@@ -1,3 +1,4 @@
+#![allow(deprecated)] // the cocoa crate is deprecated
 use cocoa::appkit::{
     NSApp, NSApplication, NSApplicationActivateIgnoringOtherApps,
     NSApplicationActivationPolicyRegular, NSBackingStoreBuffered, NSMenu, NSMenuItem,

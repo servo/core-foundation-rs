@@ -38,6 +38,7 @@
 /// # }
 /// ```
 #[macro_export]
+#[deprecated = "use the objc2::define_class! macro instead"]
 macro_rules! delegate {
     (
         $name:expr, {

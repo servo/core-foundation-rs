@@ -7,6 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![deprecated = "use the objc2-app-kit crate instead"]
 #![allow(non_upper_case_globals)]
 
 use crate::base::{id, BOOL, SEL};

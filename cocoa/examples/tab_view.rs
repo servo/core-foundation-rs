@@ -1,3 +1,4 @@
+#![allow(deprecated)] // the cocoa crate is deprecated
 use cocoa::base::{id, nil, selector, NO};
 
 use cocoa::appkit::{

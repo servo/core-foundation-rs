@@ -7,14 +7,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! This crate has been deprecated in favour of the `objc2` crates.
 #![crate_name = "cocoa"]
 #![crate_type = "rlib"]
-#![allow(non_snake_case)]
+#![allow(non_snake_case, deprecated)]
 
 #[cfg(target_os = "macos")]
 pub mod appkit;
-pub mod base;
-pub mod foundation;
+pub use cocoa_foundation::base;
+pub use cocoa_foundation::foundation;
 #[cfg(target_os = "macos")]
 pub mod quartzcore;
 #[macro_use]

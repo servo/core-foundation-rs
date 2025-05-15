@@ -7,7 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#![allow(non_snake_case)]
+//! This crate has been deprecated in favour of the `objc2-foundation` crate.
+#![allow(non_snake_case, deprecated)]
 
 pub mod base;
 pub mod foundation;

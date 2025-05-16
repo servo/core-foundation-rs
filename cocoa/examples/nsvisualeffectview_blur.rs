@@ -1,3 +1,4 @@
+#![allow(deprecated)] // the cocoa crate is deprecated
 use cocoa::base::{nil, selector, NO};
 use objc::*;
 

@@ -1,3 +1,5 @@
+#![allow(deprecated)]
+
 #[cfg(test)]
 mod foundation {
     mod nsstring {

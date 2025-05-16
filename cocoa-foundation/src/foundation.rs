@@ -6,7 +6,7 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
+#![deprecated = "use the objc2-foundation crate instead"]
 #![allow(non_upper_case_globals)]
 
 use crate::base::{id, nil, BOOL, NO, SEL};

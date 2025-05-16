@@ -7,6 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![deprecated = "use the objc2-quartz-core crate instead"]
 #![allow(non_upper_case_globals)]
 
 use bitflags::bitflags;

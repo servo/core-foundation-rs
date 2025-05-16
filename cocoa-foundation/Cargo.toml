@@ -1,7 +1,7 @@
 [package]
 name = "cocoa-foundation"
 description = "Bindings to Cocoa Foundation for macOS"
-version = "0.2.0"
+version = "0.2.1"
 
 authors.workspace = true
 edition.workspace = true

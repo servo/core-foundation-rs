@@ -18,35 +18,17 @@ pub use crate::base::{boolean_t, CGError};
 pub use crate::geometry::{CGPoint, CGRect, CGSize};
 
 use crate::image::CGImage;
+use crate::window::{
+    kCGNullWindowID, CGWindowID, CGWindowImageOption, CGWindowLevel, CGWindowListOption,
+};
 use core_foundation::base::{CFRetain, TCFType};
 use core_foundation::string::{CFString, CFStringRef};
 use core_graphics_types::base::kCGErrorSuccess;
 use foreign_types::{foreign_type, ForeignType};
 
 pub type CGDirectDisplayID = u32;
-pub type CGWindowID = u32;
-pub type CGWindowLevel = i32;
 
-pub const kCGNullWindowID: CGWindowID = 0 as CGWindowID;
 pub const kCGNullDirectDisplayID: CGDirectDisplayID = 0 as CGDirectDisplayID;
-
-pub type CGWindowListOption = u32;
-
-pub const kCGWindowListOptionAll: CGWindowListOption = 0;
-pub const kCGWindowListOptionOnScreenOnly: CGWindowListOption = 1 << 0;
-pub const kCGWindowListOptionOnScreenAboveWindow: CGWindowListOption = 1 << 1;
-pub const kCGWindowListOptionOnScreenBelowWindow: CGWindowListOption = 1 << 2;
-pub const kCGWindowListOptionIncludingWindow: CGWindowListOption = 1 << 3;
-pub const kCGWindowListExcludeDesktopElements: CGWindowListOption = 1 << 4;
-
-pub type CGWindowImageOption = u32;
-
-pub const kCGWindowImageDefault: CGWindowImageOption = 0;
-pub const kCGWindowImageBoundsIgnoreFraming: CGWindowImageOption = 1 << 0;
-pub const kCGWindowImageShouldBeOpaque: CGWindowImageOption = 1 << 1;
-pub const kCGWindowImageOnlyShadows: CGWindowImageOption = 1 << 2;
-pub const kCGWindowImageBestResolution: CGWindowImageOption = 1 << 3;
-pub const kCGWindowImageNominalResolution: CGWindowImageOption = 1 << 4;
 
 pub const kDisplayModeValidFlag: u32 = 0x00000001;
 pub const kDisplayModeSafeFlag: u32 = 0x00000002;

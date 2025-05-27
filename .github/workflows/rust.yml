@@ -62,14 +62,15 @@ jobs:
   build_result:
     name: Result
     runs-on: ubuntu-latest
+    if: always()
     needs:
       - "build"
       - "semver"
       - "typos"
     steps:
-      - name: Mark the job as successful
+      - name: Success
         run: exit 0
-        if: success()
-      - name: Mark the job as unsuccessful
+        if: ${{ !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+      - name: Failure
         run: exit 1
-        if: "!success()"
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')

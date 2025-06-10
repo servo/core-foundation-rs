@@ -23,5 +23,6 @@ pub mod font_manager;
 pub mod frame;
 pub mod framesetter;
 pub mod line;
+pub mod typesetter;
 pub mod run;
 pub mod string_attributes;

@@ -68,7 +68,7 @@ fn main() {
         let cs_name_bytes = cs_name.UTF8String() as *const u8;
         let cs_name_string =
             std::str::from_utf8(std::slice::from_raw_parts(cs_name_bytes, cs_name.len())).unwrap();
-        println!("NSColorSpace: {:?}", cs_name_string);
+        println!("NSColorSpace: {cs_name_string:?}");
 
         // Creating an NSColorSpace from CGColorSpaceRef.
         let cg_cs = cs.CGColorSpace();
@@ -77,7 +77,7 @@ fn main() {
         let cs_name_bytes = cs_name.UTF8String() as *const u8;
         let cs_name_string =
             std::str::from_utf8(std::slice::from_raw_parts(cs_name_bytes, cs_name.len())).unwrap();
-        println!("initWithCGColorSpace_: {:?}", cs_name_string);
+        println!("initWithCGColorSpace_: {cs_name_string:?}");
 
         app.run();
     }

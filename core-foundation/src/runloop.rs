@@ -227,7 +227,7 @@ mod test {
         }
         CFRunLoop::run_current();
         let elapsed = elapsed_rx.try_recv().unwrap();
-        println!("wait_200_milliseconds, elapsed: {}", elapsed);
+        println!("wait_200_milliseconds, elapsed: {elapsed}");
         assert!(elapsed > 0.19 && elapsed < 0.35);
     }
 

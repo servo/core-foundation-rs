@@ -19,8 +19,8 @@ use core_foundation::url::{CFURLRef, CFURL};
 use core_foundation::{declare_TCFType, impl_CFTypeDescription, impl_TCFType};
 use core_graphics::base::CGFloat;
 
-use std::path::PathBuf;
 use core_foundation::boolean::CFBoolean;
+use std::path::PathBuf;
 
 /*
 * CTFontTraits.h
@@ -154,7 +154,11 @@ impl TraitAccessorPrivate for CTFontTraits {
                 // but can occur in practice with certain fonts in MacOS 13 (Ventura). When this
                 // does occur in Ventura, the value returned is always a CFBoolean, so we attempt to
                 // convert into a boolean and create a number from there.
-                let value_as_bool = bool::from(cftype.downcast::<CFBoolean>().expect("Should be able to convert value into CFBoolean"));
+                let value_as_bool = bool::from(
+                    cftype
+                        .downcast::<CFBoolean>()
+                        .expect("Should be able to convert value into CFBoolean"),
+                );
                 CFNumber::from(value_as_bool as i32)
             }
         }

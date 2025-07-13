@@ -130,7 +130,7 @@ impl<K, V> CFDictionary<K, V> {
     {
         let ptr = key.to_void();
         self.find(key)
-            .unwrap_or_else(|| panic!("No entry found for key {:p}", ptr))
+            .unwrap_or_else(|| panic!("No entry found for key {ptr:p}"))
     }
 
     pub fn get_keys_and_values(&self) -> (Vec<*const c_void>, Vec<*const c_void>) {
@@ -266,7 +266,7 @@ impl<K, V> CFMutableDictionary<K, V> {
     {
         let ptr = key.to_void();
         self.find(key)
-            .unwrap_or_else(|| panic!("No entry found for key {:p}", ptr))
+            .unwrap_or_else(|| panic!("No entry found for key {ptr:p}"))
     }
 
     pub fn get_keys_and_values(&self) -> (Vec<*const c_void>, Vec<*const c_void>) {

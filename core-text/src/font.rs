@@ -907,7 +907,7 @@ fn copy_system_font() {
     // but we can still construct the CGFont by name
     let cgfont = CGFont::from_name(&CFString::new(&ps)).unwrap();
     let cgfont = new_from_CGFont(&cgfont, 0.);
-    println!("{:?}", cgfont);
+    println!("{cgfont:?}");
     let desc = cgfont.copy_descriptor();
     let matching = unsafe {
         crate::font_descriptor::CTFontDescriptorCreateMatchingFontDescriptor(
@@ -923,7 +923,7 @@ fn copy_system_font() {
         .find(CFString::from_static_string("NSFontSizeAttribute"))
         .is_some());
 
-    println!("{:?}", matching);
+    println!("{matching:?}");
     println!(
         "{:?}",
         matching
@@ -1030,8 +1030,7 @@ fn out_of_range_variations() {
             let expected = max + clamp_diff;
             assert_eq!(
                 val, expected,
-                "axis {:?} = {:?} (expected {:?})",
-                tag, val, expected
+                "axis {tag:?} = {val:?} (expected {expected:?})",
             );
         }
     }

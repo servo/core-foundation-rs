@@ -12,6 +12,7 @@ env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: "-D warnings"
 
+permissions: {}
 jobs:
   rustfmt:
     runs-on: ubuntu-latest
@@ -31,6 +32,9 @@ jobs:
       continue-on-error: true
       uses: obi1kenobi/cargo-semver-checks-action@v2
   build:
+    permissions:
+      contents: read #  to fetch code (actions/checkout)
+
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

@@ -96,7 +96,7 @@ impl CFPropertyListSubClass for crate::boolean::CFBoolean {}
 impl CFPropertyListSubClass for crate::number::CFNumber {}
 
 declare_TCFType! {
-    /// A CFPropertyList struct. This is superclass to [`CFData`], [`CFString`], [`CFArray`],
+    /// A `CFPropertyList` struct. This is superclass to [`CFData`], [`CFString`], [`CFArray`],
     /// [`CFDictionary`], [`CFDate`], [`CFBoolean`], and [`CFNumber`].
     ///
     /// This superclass type does not have its own `CFTypeID`, instead each instance has the `CFTypeID`

@@ -438,6 +438,10 @@ impl CTFont {
         CTFontGetVerticalTranslationsForGlyphs(self.0, orientation, glyphs, translations, count)
     }
 
+    pub fn has_table(&self, tag: u32) -> bool {
+        unsafe { CTFontHasTable(self.0, tag as CTFontTableTag) }
+    }
+
     pub fn get_font_table(&self, tag: u32) -> Option<CFData> {
         unsafe {
             let result = CTFontCopyTable(
@@ -805,6 +809,8 @@ extern "C" {
     ) -> CFDataRef;
 
     fn CTFontGetTypeID() -> CFTypeID;
+
+    fn CTFontHasTable(font: CTFontRef, table: CTFontTableTag) -> bool;
 }
 
 #[test]

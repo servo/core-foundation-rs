@@ -242,7 +242,7 @@ mod tests {
         use crate::string::{CFString, CFStringRef};
 
         let cf_string = CFString::from_static_string("alongerstring");
-        let array: CFArray = CFArray::from_CFTypes(&[cf_string.clone()]).into_untyped();
+        let array: CFArray = CFArray::from_CFTypes(std::slice::from_ref(&cf_string)).into_untyped();
 
         let cf_strings = array
             .iter()

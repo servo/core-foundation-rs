@@ -44,7 +44,7 @@ impl CTRun {
         unsafe { CTRunGetGlyphCount(self.0) }
     }
 
-    pub fn glyphs(&self) -> Cow<[CGGlyph]> {
+    pub fn glyphs(&self) -> Cow<'_, [CGGlyph]> {
         unsafe {
             // CTRunGetGlyphsPtr can return null under some not understood circumstances.
             // If it does the Apple documentation tells us to allocate our own buffer and call
@@ -64,7 +64,7 @@ impl CTRun {
         }
     }
 
-    pub fn positions(&self) -> Cow<[CGPoint]> {
+    pub fn positions(&self) -> Cow<'_, [CGPoint]> {
         unsafe {
             // CTRunGetPositionsPtr can return null under some not understood circumstances.
             // If it does the Apple documentation tells us to allocate our own buffer and call
@@ -112,7 +112,7 @@ impl CTRun {
         }
     }
 
-    pub fn string_indices(&self) -> Cow<[CFIndex]> {
+    pub fn string_indices(&self) -> Cow<'_, [CFIndex]> {
         unsafe {
             // CTRunGetStringIndicesPtr can return null under some not understood circumstances.
             // If it does the Apple documentation tells us to allocate our own buffer and call

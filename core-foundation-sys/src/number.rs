@@ -97,7 +97,7 @@ mod test {
             _ => panic!("should not happen"),
         };
 
-        // this is new new style of matching for consts
+        // this is new style of matching for consts
         match type_id {
             kCFNumberFloat32Type => assert!(true),
             _ => panic!("should not happen"),

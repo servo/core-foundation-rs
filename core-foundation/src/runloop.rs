@@ -146,6 +146,9 @@ impl CFRunLoop {
 declare_TCFType!(CFRunLoopTimer, CFRunLoopTimerRef);
 impl_TCFType!(CFRunLoopTimer, CFRunLoopTimerRef, CFRunLoopTimerGetTypeID);
 
+unsafe impl Send for CFRunLoopTimer {}
+unsafe impl Sync for CFRunLoopTimer {}
+
 impl CFRunLoopTimer {
     pub fn new(
         fireDate: CFAbsoluteTime,
@@ -177,6 +180,9 @@ impl_TCFType!(
     CFRunLoopSourceGetTypeID
 );
 
+unsafe impl Send for CFRunLoopSource {}
+unsafe impl Sync for CFRunLoopSource {}
+
 impl CFRunLoopSource {
     pub fn from_file_descriptor(fd: &CFFileDescriptor, order: CFIndex) -> Option<CFRunLoopSource> {
         fd.to_run_loop_source(order)
@@ -189,6 +195,9 @@ impl_TCFType!(
     CFRunLoopObserverRef,
     CFRunLoopObserverGetTypeID
 );
+
+unsafe impl Send for CFRunLoopObserver {}
+unsafe impl Sync for CFRunLoopObserver {}
 
 #[cfg(test)]
 mod test {

@@ -192,6 +192,32 @@ pub trait TCFType {
     /// when following Core Foundation's "Get Rule". The reference count *is* bumped.
     unsafe fn wrap_under_get_rule(reference: Self::Ref) -> Self;
 
+    /// Like `wrap_under_create_rule`, but returns `None` if the reference is null instead of
+    /// panicking.
+    unsafe fn try_wrap_under_create_rule(obj: Self::Ref) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        if obj.as_void_ptr().is_null() {
+            None
+        } else {
+            Some(Self::wrap_under_create_rule(obj))
+        }
+    }
+
+    /// Like `wrap_under_get_rule`, but returns `None` if the reference is null instead of
+    /// panicking.
+    unsafe fn try_wrap_under_get_rule(reference: Self::Ref) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        if reference.as_void_ptr().is_null() {
+            None
+        } else {
+            Some(Self::wrap_under_get_rule(reference))
+        }
+    }
+
     /// Returns the reference count of the object. It is unwise to do anything other than test
     /// whether the return value of this method is greater than zero.
     #[inline]

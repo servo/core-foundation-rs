@@ -7,7 +7,7 @@ authors = ["The Servo Project Developers"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/servo/core-foundation-rs"
-rust-version = "1.68"
+rust-version = "1.71"
 
 [workspace.lints]
 clippy.doc_markdown = "warn"

@@ -44,7 +44,7 @@ impl CTFontCollection {
                 // This returns null if there are no matching font descriptors.
                 None
             } else {
-               Some(CFArray::wrap_under_create_rule(font_descriptors))
+                Some(CFArray::wrap_under_create_rule(font_descriptors))
             }
         }
     }

@@ -15,7 +15,7 @@ default-target = "x86_64-apple-darwin"
 [lints]
 workspace = true
 
-[dependencies]
+[target.'cfg(target_vendor = "apple")'.dependencies]
 core-foundation.workspace = true
 core-graphics-types.workspace = true
 

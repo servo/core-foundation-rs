@@ -12,6 +12,7 @@
 #![deprecated = "use the objc2-io-surface crate instead"]
 #![crate_name = "io_surface"]
 #![crate_type = "rlib"]
+#![cfg(target_vendor = "apple")]
 
 // Rust bindings to the IOSurface framework on macOS.
 

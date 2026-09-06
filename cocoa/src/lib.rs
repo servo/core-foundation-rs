@@ -11,6 +11,7 @@
 
 #![crate_name = "cocoa"]
 #![crate_type = "rlib"]
+#![cfg(target_vendor = "apple")]
 #![allow(non_snake_case, deprecated)]
 
 #[cfg(target_os = "macos")]

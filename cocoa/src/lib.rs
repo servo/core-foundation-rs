@@ -8,6 +8,7 @@
 // except according to those terms.
 
 //! This crate has been deprecated in favour of the `objc2` crates.
+
 #![crate_name = "cocoa"]
 #![crate_type = "rlib"]
 #![allow(non_snake_case, deprecated)]

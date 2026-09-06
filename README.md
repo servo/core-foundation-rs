@@ -1,6 +1,9 @@
 # core-foundation-rs
 
-[![Build Status](https://github.com/servo/core-foundation-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/servo/core-foundation-rs/actions)
+[![crates.io](https://img.shields.io/crates/v/core-foundation.svg)](https://crates.io/crates/core-foundation)
+[![docs.rs](https://docs.rs/core-foundation/badge.svg)](https://docs.rs/core-foundation)
+[![build status](https://github.com/servo/core-foundation-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/servo/core-foundation-rs/actions)
+[![dependency status](https://deps.rs/repo/github/servo/core-foundation-rs/status.svg)](https://deps.rs/repo/github/servo/core-foundation-rs)
 
 ## Compatibility
 

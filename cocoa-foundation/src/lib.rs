@@ -8,6 +8,8 @@
 // except according to those terms.
 
 //! This crate has been deprecated in favour of the `objc2-foundation` crate.
+
+#![cfg(target_vendor = "apple")]
 #![allow(non_snake_case, deprecated)]
 
 pub mod base;

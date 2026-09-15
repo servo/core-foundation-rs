@@ -311,9 +311,8 @@ impl CTFontDescriptor {
         unsafe {
             let value = CTFontDescriptorCopyAttribute(self.0, kCTFontTraitsAttribute);
             assert!(!value.is_null());
-            let value = CFType::wrap_under_create_rule(value);
-            assert!(value.instance_of::<CFDictionary>());
-            CFDictionary::wrap_under_get_rule(value.as_CFTypeRef() as CFDictionaryRef)
+            // Use wrap_under_create_rule for the dictionary directly to maintain ownership
+            CFDictionary::wrap_under_create_rule(value as CFDictionaryRef)
         }
     }
 

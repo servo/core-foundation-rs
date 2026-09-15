@@ -21,8 +21,9 @@ pub fn copy_available_font_family_names() -> CFArray<CFString> {
 pub fn create_font_descriptor(buffer: &[u8]) -> Result<CTFontDescriptor, ()> {
     let cf_data = CFData::from_buffer(buffer);
     unsafe {
-        let ct_font_descriptor_ref =
-            CTFontManagerCreateFontDescriptorFromData(cf_data.as_concrete_TypeRef());
+        // Keep cf_data alive by getting the raw pointer within the unsafe block
+        let data_ref = cf_data.as_concrete_TypeRef();
+        let ct_font_descriptor_ref = CTFontManagerCreateFontDescriptorFromData(data_ref);
         if ct_font_descriptor_ref.is_null() {
             return Err(());
         }

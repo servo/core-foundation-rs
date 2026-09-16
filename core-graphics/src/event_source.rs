@@ -34,6 +34,10 @@ impl CGEventSource {
             }
         }
     }
+
+    pub unsafe fn get_location(&self) -> CGPoint {
+        CGEventSourceGetLocation(self.as_ptr() as *mut _)
+    }
 }
 
 #[cfg_attr(feature = "link", link(name = "CoreGraphics", kind = "framework"))]
@@ -45,4 +49,6 @@ extern "C" {
 
     /// Return a Quartz event source created with a specified source state.
     fn CGEventSourceCreate(stateID: CGEventSourceStateID) -> crate::sys::CGEventSourceRef;
+
+    fn CGEventSourceGetLocation(source: *mut sys::CGEventSource) -> CGPoint;
 }

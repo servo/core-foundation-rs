@@ -7,6 +7,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![cfg(target_vendor = "apple")]
+
 #[cfg(target_os = "macos")]
 pub mod access;
 pub mod base;

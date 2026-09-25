@@ -7,5 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![cfg(target_vendor = "apple")]
+
 pub mod base;
 pub mod geometry;

@@ -9,6 +9,7 @@
 
 #![crate_name = "core_text"]
 #![crate_type = "rlib"]
+#![cfg(target_vendor = "apple")]
 #![allow(non_snake_case)]
 
 /*!

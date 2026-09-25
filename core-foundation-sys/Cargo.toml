@@ -16,7 +16,7 @@ default-target = "x86_64-apple-darwin"
 [lints]
 workspace = true
 
-[dependencies]
+[target.'cfg(target_vendor = "apple")'.dependencies]
 
 [features]
 default = ["link"]

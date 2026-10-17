@@ -430,12 +430,11 @@ impl CTFont {
 
     pub unsafe fn get_vertical_translations_for_glyphs(
         &self,
-        orientation: CTFontOrientation,
         glyphs: *const CGGlyph,
         translations: *mut CGSize,
         count: CFIndex,
     ) {
-        CTFontGetVerticalTranslationsForGlyphs(self.0, orientation, glyphs, translations, count)
+        CTFontGetVerticalTranslationsForGlyphs(self.0, glyphs, translations, count)
     }
 
     pub fn has_table(&self, tag: u32) -> bool {
@@ -758,7 +757,6 @@ extern "C" {
     ) -> core::ffi::c_double;
     fn CTFontGetVerticalTranslationsForGlyphs(
         font: CTFontRef,
-        orientation: CTFontOrientation,
         glyphs: *const CGGlyph,
         translations: *mut CGSize,
         count: CFIndex,
@@ -811,6 +809,32 @@ extern "C" {
     fn CTFontGetTypeID() -> CFTypeID;
 
     fn CTFontHasTable(font: CTFontRef, table: CTFontTableTag) -> bool;
+}
+
+#[test]
+fn vertical_translations_for_glyphs() {
+    let font = new_from_name("Helvetica", 12.).unwrap();
+    let characters = [u16::from(b'A'), u16::from(b'B')];
+    let mut glyphs = [0; 2];
+    let mut translations = [CGSize::new(CGFloat::NAN, CGFloat::NAN); 2];
+
+    unsafe {
+        assert!(font.get_glyphs_for_characters(
+            characters.as_ptr(),
+            glyphs.as_mut_ptr(),
+            characters.len() as CFIndex,
+        ));
+        font.get_vertical_translations_for_glyphs(
+            glyphs.as_ptr(),
+            translations.as_mut_ptr(),
+            glyphs.len() as CFIndex,
+        );
+    }
+
+    for translation in translations {
+        assert!(translation.width.is_finite());
+        assert!(translation.height.is_finite());
+    }
 }
 
 #[test]

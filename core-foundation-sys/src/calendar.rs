@@ -111,10 +111,10 @@ extern "C" {
     pub fn CFCalendarSetTimeZone(identifier: CFCalendarIdentifier, tz: CFTimeZoneRef);
 
     /* Getting the Identifier */
-    pub fn CFCalendarGetIdentifier(identifier: CFCalendarIdentifier) -> CFCalendarIdentifier;
+    pub fn CFCalendarGetIdentifier(calendar: CFCalendarRef) -> CFCalendarIdentifier;
 
     /* Getting and Setting the Locale */
-    pub fn CFCalendarCopyLocale(identifier: CFCalendarIdentifier) -> CFLocaleRef;
+    pub fn CFCalendarCopyLocale(calendar: CFCalendarRef) -> CFLocaleRef;
     pub fn CFCalendarSetLocale(identifier: CFCalendarIdentifier, locale: CFLocaleRef);
 
     /* Getting and Setting Day Information */
@@ -125,4 +125,27 @@ extern "C" {
 
     /* Getting the Type ID */
     pub fn CFCalendarGetTypeID() -> CFTypeID;
+}
+
+#[test]
+#[cfg(target_os = "macos")]
+fn calendar_identifier_and_locale() {
+    use crate::base::{kCFAllocatorDefault, CFEqual, CFGetTypeID, CFRelease};
+    use crate::locale::{kCFGregorianCalendar, CFLocaleGetTypeID};
+
+    unsafe {
+        let calendar = CFCalendarCreateWithIdentifier(kCFAllocatorDefault, kCFGregorianCalendar);
+        assert!(!calendar.is_null());
+
+        let identifier = CFCalendarGetIdentifier(calendar);
+        assert!(!identifier.is_null());
+        assert_ne!(CFEqual(identifier.cast(), kCFGregorianCalendar.cast()), 0);
+
+        let locale = CFCalendarCopyLocale(calendar);
+        assert!(!locale.is_null());
+        assert_eq!(CFGetTypeID(locale.cast()), CFLocaleGetTypeID());
+
+        CFRelease(locale.cast());
+        CFRelease(calendar.cast());
+    }
 }

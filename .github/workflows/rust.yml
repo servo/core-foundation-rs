@@ -23,7 +23,7 @@ jobs:
           components: rustfmt
       - run: cargo fmt --check
   semver:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@v4
     - name: Check semver
@@ -34,11 +34,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-14, macos-15, macos-15-intel]
+        os: [macos-15, macos-15-intel]
         toolchain: [stable]
-        include:
-          - os: macos-14
-            toolchain: "1.71.0"
     steps:
     - uses: actions/checkout@v4
     - name: Install toolchain
